@@ -446,6 +446,197 @@ button {
   outline-offset: 2px;
 }
 
+/* 导航 v2：第二份 Liquid Glass 规格的暖白胶囊、反光层与磁吸滑块。 */
+.glass-nav {
+  --nav-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  isolation: isolate;
+  width: min(680px, calc(100vw - 32px));
+  max-width: none;
+  height: 54px;
+  padding: 0;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(44px) saturate(210%) brightness(1.08);
+  -webkit-backdrop-filter: blur(44px) saturate(210%) brightness(1.08);
+  border: 0.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 16px 36px -8px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: background 500ms var(--nav-ease), border-color 500ms var(--nav-ease), box-shadow 500ms var(--nav-ease), transform 400ms var(--nav-ease);
+}
+
+.glass-nav:active { transform: scale(0.992); }
+
+.nav-specular {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  border-radius: inherit;
+  background: radial-gradient(140px circle at var(--nav-pointer-x, 50%) var(--nav-pointer-y, 50%), rgba(255, 255, 255, 0.38), transparent 70%);
+  transition: opacity 350ms ease;
+}
+
+.glass-nav:hover .nav-specular { opacity: 1; }
+
+.nav-magnetic-pill {
+  position: absolute;
+  top: 6px;
+  z-index: 2;
+  height: calc(100% - 12px);
+  width: 0;
+  opacity: 0;
+  pointer-events: none;
+  border: 0.5px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  transform: scale(0.92);
+  transition: left 380ms cubic-bezier(0.175, 0.885, 0.32, 1.12), width 380ms cubic-bezier(0.175, 0.885, 0.32, 1.12), transform 300ms var(--nav-ease), opacity 250ms ease;
+}
+
+.nav-magnetic-pill.is-visible { opacity: 1; transform: scale(1); }
+
+.nav-default,
+.nav-search-mode {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  transition: opacity 350ms var(--nav-ease), transform 420ms var(--nav-ease), filter 350ms var(--nav-ease);
+}
+
+.nav-default {
+  justify-content: space-between;
+  gap: 0;
+}
+
+.nav-wordmark {
+  position: relative;
+  z-index: 3;
+  padding: 7px 14px;
+  color: #1d1d1f;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: 0.8px;
+}
+
+.nav-divider {
+  flex: 0 0 auto;
+  width: 1px;
+  height: 16px;
+  margin: 0 2px;
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 1px;
+}
+
+.nav-links {
+  position: relative;
+  z-index: 3;
+  gap: 1px;
+}
+
+.nav-links a,
+.nav-search {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 13px;
+  color: rgba(29, 29, 31, 0.72);
+  font-size: 14px;
+  font-weight: 430;
+  letter-spacing: 0.3px;
+  transition: color 200ms ease, transform 150ms ease;
+}
+
+.nav-wordmark:hover,
+.nav-links a:hover,
+.nav-search:hover,
+.nav-links a[aria-current='page'] {
+  color: #1d1d1f;
+  background: transparent;
+  box-shadow: none;
+}
+
+.nav-links a:active,
+.nav-search:active { transform: scale(0.94); }
+
+.nav-search-mode {
+  z-index: 4;
+  gap: 8px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(20px) scale(0.98);
+  filter: blur(4px);
+}
+
+.glass-nav.is-searching .nav-default {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-24px) scale(0.96);
+  filter: blur(4px);
+}
+
+.glass-nav.is-searching .nav-search-mode {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  filter: blur(0);
+}
+
+.glass-nav.is-searching .nav-magnetic-pill { opacity: 0 !important; }
+
+.nav-search-exit,
+.nav-search-clear {
+  display: grid;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  place-items: center;
+  border-radius: 50%;
+  color: #1d1d1f;
+  transition: background 200ms ease, transform 150ms ease;
+}
+
+.nav-search-exit svg,
+.nav-search-clear svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.2; }
+.nav-search-clear svg { width: 15px; height: 15px; stroke-width: 2.4; }
+.nav-search-exit:hover,
+.nav-search-clear:hover { color: #1d1d1f; background: rgba(255, 255, 255, 0.75); }
+.nav-search-exit:active,
+.nav-search-clear:active { transform: scale(0.88); }
+
+.nav-search-input {
+  padding: 6px 0;
+  color: #1d1d1f;
+  font-size: 15px;
+  letter-spacing: 0.2px;
+}
+
+.nav-search-input::placeholder { color: #86868b; opacity: 1; }
+
+.nav-search-panel { top: 86px; }
+
+@media (max-width: 767px) {
+  .glass-nav { width: 184px; height: 44px; }
+  .nav-default,
+  .nav-search-mode { padding: 0 8px; }
+  .nav-wordmark { padding: 5px 10px; font-size: 13px; }
+  .nav-search { padding: 5px 9px; font-size: 12px; }
+  .nav-search-mode { gap: 4px; }
+  .nav-search-exit,
+  .nav-search-clear { flex-basis: 28px; width: 28px; height: 28px; }
+}
+
 /* ---- 导航 Search Mode（Stage 4C：原地搜索，不跳页） ---- */
 .nav-default[hidden],
 .nav-search-mode[hidden],

@@ -17,19 +17,22 @@ const searchUrl = withBase('search/');
 ---
 <header class="site-header" data-pagefind-ignore>
   <nav class="glass-nav" aria-label="主导航">
+    <div class="nav-specular" aria-hidden="true"></div>
+    <div class="nav-magnetic-pill" aria-hidden="true"></div>
+
     <!-- 默认状态 -->
     <div class="nav-default" data-nav-default>
-      <a class="nav-wordmark" href={withBase()}>VDVXDV</a>
+      <a class="nav-wordmark" href={withBase()} data-nav-interactive>VDVXDV</a>
 
       <div class="nav-divider" aria-hidden="true"></div>
 
       <ul class="nav-links">
-        <li><a href={projectsUrl} aria-current={isCurrentSection(projectsUrl) ? 'page' : undefined}>项目</a></li>
-        <li><a href={essaysUrl} aria-current={isCurrentSection(essaysUrl) ? 'page' : undefined}>随笔</a></li>
-        <li><a href={articlesUrl} aria-current={isCurrentSection(articlesUrl) ? 'page' : undefined}>文章</a></li>
-        <li><a href={fragmentsUrl} aria-current={isCurrentSection(fragmentsUrl) ? 'page' : undefined}>碎片</a></li>
-        <li><a href={imagesUrl} aria-current={isCurrentSection(imagesUrl) ? 'page' : undefined}>影像</a></li>
-        <li><a href={aboutUrl} aria-current={isCurrentSection(aboutUrl) ? 'page' : undefined}>关于</a></li>
+        <li><a href={projectsUrl} data-nav-interactive aria-current={isCurrentSection(projectsUrl) ? 'page' : undefined}>项目</a></li>
+        <li><a href={essaysUrl} data-nav-interactive aria-current={isCurrentSection(essaysUrl) ? 'page' : undefined}>随笔</a></li>
+        <li><a href={articlesUrl} data-nav-interactive aria-current={isCurrentSection(articlesUrl) ? 'page' : undefined}>文章</a></li>
+        <li><a href={fragmentsUrl} data-nav-interactive aria-current={isCurrentSection(fragmentsUrl) ? 'page' : undefined}>碎片</a></li>
+        <li><a href={imagesUrl} data-nav-interactive aria-current={isCurrentSection(imagesUrl) ? 'page' : undefined}>影像</a></li>
+        <li><a href={aboutUrl} data-nav-interactive aria-current={isCurrentSection(aboutUrl) ? 'page' : undefined}>关于</a></li>
       </ul>
 
       <div class="nav-divider" aria-hidden="true"></div>
@@ -38,6 +41,7 @@ const searchUrl = withBase('search/');
         class="nav-search"
         href={searchUrl}
         data-search-trigger
+        data-nav-interactive
         aria-haspopup="true"
         aria-expanded="false"
         >搜索</a
@@ -45,8 +49,10 @@ const searchUrl = withBase('search/');
     </div>
 
     <!-- Search Mode（原地转换） -->
-    <div class="nav-search-mode" data-search-mode hidden>
-      <button type="button" class="nav-search-exit" data-search-exit aria-label="退出搜索">←</button>
+    <div class="nav-search-mode" data-search-mode aria-hidden="true" inert>
+      <button type="button" class="nav-search-exit" data-search-exit aria-label="退出搜索">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+      </button>
       <input
         type="search"
         class="nav-search-input"
@@ -55,7 +61,9 @@ const searchUrl = withBase('search/');
         aria-label="搜索关键词"
         autocomplete="off"
       />
-      <button type="button" class="nav-search-clear" data-search-clear aria-label="清空关键词">×</button>
+      <button type="button" class="nav-search-clear" data-search-clear aria-label="清空关键词">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+      </button>
     </div>
   </nav>
 
@@ -84,20 +92,29 @@ const searchUrl = withBase('search/');
   const panelStatus = document.querySelector('[data-search-panel-status]') as HTMLElement;
   const panelResults = document.querySelector('[data-search-panel-results]') as HTMLElement;
   const panelAll = document.querySelector('[data-search-panel-all]') as HTMLAnchorElement;
+  const nav = document.querySelector('.glass-nav') as HTMLElement;
+  const magneticPill = nav.querySelector('.nav-magnetic-pill') as HTMLElement;
+  const navItems = [...nav.querySelectorAll<HTMLElement>('[data-nav-interactive]')];
 
   let timer: ReturnType<typeof setTimeout> | null = null;
 
   function openSearchMode() {
-    navDefault.hidden = true;
-    searchMode.hidden = false;
+    nav.classList.add('is-searching');
+    navDefault.setAttribute('aria-hidden', 'true');
+    searchMode.setAttribute('aria-hidden', 'false');
+    navDefault.inert = true;
+    searchMode.inert = false;
     panel.hidden = true;
     trigger.setAttribute('aria-expanded', 'true');
     searchInput.focus();
   }
 
   function closeSearchMode() {
-    navDefault.hidden = false;
-    searchMode.hidden = true;
+    nav.classList.remove('is-searching');
+    navDefault.setAttribute('aria-hidden', 'false');
+    searchMode.setAttribute('aria-hidden', 'true');
+    navDefault.inert = false;
+    searchMode.inert = true;
     panel.hidden = true;
     searchInput.value = '';
     panelStatus.textContent = '';
@@ -131,7 +148,7 @@ const searchUrl = withBase('search/');
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !searchMode.hidden) {
+    if (e.key === 'Escape' && nav.classList.contains('is-searching')) {
       closeSearchMode();
     }
   });
@@ -140,12 +157,31 @@ const searchUrl = withBase('search/');
   // 点击 Search UI（Header 胶囊与结果 Panel）之外任意位置 → 退出 Search Mode。
   // 用 pointerdown 而非 input blur，避免点击结果时 panel 先消失导致链接无法点击。
   document.addEventListener('pointerdown', (event) => {
-    if (searchMode.hidden) return;
+    if (!nav.classList.contains('is-searching')) return;
     const target = event.target as Node;
     const header = document.querySelector('.site-header') as HTMLElement;
     if (header.contains(target) || panel.contains(target)) return;
     closeSearchMode();
   });
+
+  nav.addEventListener('pointermove', (event) => {
+    const rect = nav.getBoundingClientRect();
+    nav.style.setProperty('--nav-pointer-x', `${event.clientX - rect.left}px`);
+    nav.style.setProperty('--nav-pointer-y', `${event.clientY - rect.top}px`);
+  });
+
+  navItems.forEach((item) => {
+    item.addEventListener('pointerenter', () => {
+      if (nav.classList.contains('is-searching')) return;
+      const navRect = nav.getBoundingClientRect();
+      const itemRect = item.getBoundingClientRect();
+      magneticPill.style.left = `${itemRect.left - navRect.left}px`;
+      magneticPill.style.width = `${itemRect.width}px`;
+      magneticPill.classList.add('is-visible');
+    });
+  });
+
+  nav.addEventListener('pointerleave', () => magneticPill.classList.remove('is-visible'));
 
   searchInput.addEventListener('input', () => {
     if (timer) clearTimeout(timer);
