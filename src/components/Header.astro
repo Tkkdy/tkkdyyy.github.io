@@ -2,19 +2,11 @@
 // 全局顶部导航：紧凑 Liquid Glass 胶囊（全站唯一玻璃元素）。
 // 默认状态与 v0.2.6 一致；点击"搜索"原地进入 Search Mode（不跳页），
 // Pagefind 按需加载（首次搜索时才请求）；无 JS 时"搜索"仍是 /search/ 链接（渐进增强）。
-// 可选栏目仅在存在 published 内容时显示；未来 CMS 发布后会在下一次构建自动出现。
-import { getPublishedArticles } from '../lib/content/articles';
-import { getPublishedEssays } from '../lib/content/essays';
-import { getPublishedImages } from '../lib/content/images';
+// 全部七个栏目已接通真实路由（项目/随笔/文章/碎片/影像/关于/搜索）。
 import { withBase } from '../lib/site-url';
 
 const currentPath = Astro.url.pathname;
 const isCurrentSection = (href: string) => currentPath === href || currentPath.startsWith(href);
-const [articles, essays, images] = await Promise.all([
-  getPublishedArticles(),
-  getPublishedEssays(),
-  getPublishedImages(),
-]);
 const projectsUrl = withBase('projects/');
 const essaysUrl = withBase('essays/');
 const articlesUrl = withBase('articles/');
@@ -33,10 +25,10 @@ const searchUrl = withBase('search/');
 
       <ul class="nav-links">
         <li><a href={projectsUrl} aria-current={isCurrentSection(projectsUrl) ? 'page' : undefined}>项目</a></li>
-        {essays.length > 0 && <li><a href={essaysUrl} aria-current={isCurrentSection(essaysUrl) ? 'page' : undefined}>随笔</a></li>}
-        {articles.length > 0 && <li><a href={articlesUrl} aria-current={isCurrentSection(articlesUrl) ? 'page' : undefined}>文章</a></li>}
+        <li><a href={essaysUrl} aria-current={isCurrentSection(essaysUrl) ? 'page' : undefined}>随笔</a></li>
+        <li><a href={articlesUrl} aria-current={isCurrentSection(articlesUrl) ? 'page' : undefined}>文章</a></li>
         <li><a href={fragmentsUrl} aria-current={isCurrentSection(fragmentsUrl) ? 'page' : undefined}>碎片</a></li>
-        {images.length > 0 && <li><a href={imagesUrl} aria-current={isCurrentSection(imagesUrl) ? 'page' : undefined}>影像</a></li>}
+        <li><a href={imagesUrl} aria-current={isCurrentSection(imagesUrl) ? 'page' : undefined}>影像</a></li>
         <li><a href={aboutUrl} aria-current={isCurrentSection(aboutUrl) ? 'page' : undefined}>关于</a></li>
       </ul>
 

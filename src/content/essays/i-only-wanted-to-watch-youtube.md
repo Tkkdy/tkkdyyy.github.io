@@ -3,7 +3,7 @@ title: "初中时，我只是想看 YouTube"
 slug: "i-only-wanted-to-watch-youtube"
 summary: "我最初只是想看一些游戏实况，后来却莫名其妙地搭建起了自己的整个互联网世界。那是一段缺乏指引，但充满纯粹好奇心的野蛮生长期。"
 publishedAt: 2026-08-01
-status: draft
+status: published
 homepage:
   show: true
   order: 1
