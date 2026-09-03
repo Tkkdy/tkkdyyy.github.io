@@ -372,6 +372,80 @@ button {
   }
 }
 
+/* 首页导航：以 Apple Liquid Glass 为视觉参考；仅调整导航控件本身。 */
+.home .glass-nav {
+  padding: 10px 28px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.35));
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow:
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.85),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.04),
+    0 12px 32px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: background 300ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.home .glass-nav:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.42));
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.95),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.04),
+    0 16px 40px rgba(0, 0, 0, 0.1),
+    0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.home .nav-default { gap: 0; }
+
+.home .nav-wordmark {
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  color: rgba(26, 26, 26, 0.92);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+}
+
+.home .nav-divider {
+  margin: 0 8px;
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.15) 20%, rgba(0, 0, 0, 0.15) 80%, transparent);
+}
+
+.home .nav-links { gap: 2px; }
+
+.home .nav-links a,
+.home .nav-search {
+  display: block;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  color: rgba(30, 30, 30, 0.85);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  transition: background 200ms cubic-bezier(0.4, 0, 0.2, 1), color 200ms cubic-bezier(0.4, 0, 0.2, 1), transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.home .nav-wordmark:hover,
+.home .nav-links a:hover,
+.home .nav-search:hover {
+  color: #000;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0.5px 1px rgba(255, 255, 255, 0.6);
+}
+
+.home .nav-links a:active,
+.home .nav-search:active { transform: scale(0.96); }
+
+.home .nav-links a[aria-current='page'] { color: var(--home-interactive-ruby, #861d2b); }
+
+.home .nav-wordmark:focus-visible,
+.home .nav-links a:focus-visible,
+.home .nav-search:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 /* ---- 导航 Search Mode（Stage 4C：原地搜索，不跳页） ---- */
 .nav-default[hidden],
 .nav-search-mode[hidden],
