@@ -372,8 +372,8 @@ button {
   }
 }
 
-/* 首页导航：以 Apple Liquid Glass 为视觉参考；仅调整导航控件本身。 */
-.home .glass-nav {
+/* 全站导航：以 Apple Liquid Glass 为视觉参考；仅调整导航控件本身。 */
+.glass-nav {
   padding: 10px 28px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.35));
   backdrop-filter: blur(28px) saturate(190%);
@@ -387,7 +387,7 @@ button {
   transition: background 300ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.home .glass-nav:hover {
+.glass-nav:hover {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.42));
   box-shadow:
     inset 0 1px 2px rgba(255, 255, 255, 0.95),
@@ -396,9 +396,9 @@ button {
     0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
-.home .nav-default { gap: 0; }
+.nav-default { gap: 0; }
 
-.home .nav-wordmark {
+.nav-wordmark {
   padding: 6px 12px;
   border-radius: var(--radius-full);
   color: rgba(26, 26, 26, 0.92);
@@ -407,15 +407,15 @@ button {
   letter-spacing: 0.8px;
 }
 
-.home .nav-divider {
+.nav-divider {
   margin: 0 8px;
   background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.15) 20%, rgba(0, 0, 0, 0.15) 80%, transparent);
 }
 
-.home .nav-links { gap: 2px; }
+.nav-links { gap: 2px; }
 
-.home .nav-links a,
-.home .nav-search {
+.nav-links a,
+.nav-search {
   display: block;
   padding: 6px 14px;
   border-radius: var(--radius-full);
@@ -426,22 +426,22 @@ button {
   transition: background 200ms cubic-bezier(0.4, 0, 0.2, 1), color 200ms cubic-bezier(0.4, 0, 0.2, 1), transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.home .nav-wordmark:hover,
-.home .nav-links a:hover,
-.home .nav-search:hover {
+.nav-wordmark:hover,
+.nav-links a:hover,
+.nav-search:hover {
   color: #000;
   background: rgba(255, 255, 255, 0.5);
   box-shadow: inset 0 0.5px 1px rgba(255, 255, 255, 0.6);
 }
 
-.home .nav-links a:active,
-.home .nav-search:active { transform: scale(0.96); }
+.nav-links a:active,
+.nav-search:active { transform: scale(0.96); }
 
-.home .nav-links a[aria-current='page'] { color: var(--home-interactive-ruby, #861d2b); }
+.nav-links a[aria-current='page'] { color: var(--home-interactive-ruby, #861d2b); }
 
-.home .nav-wordmark:focus-visible,
-.home .nav-links a:focus-visible,
-.home .nav-search:focus-visible {
+.nav-wordmark:focus-visible,
+.nav-links a:focus-visible,
+.nav-search:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
