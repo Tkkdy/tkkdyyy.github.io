@@ -1,0 +1,18 @@
+---
+// Projects Homepage：真实 Collection 提供内容，专用 composition 决定不同项目 anatomy。
+// Project Detail 继续由 /projects/[slug]/ 处理，本页不重设计详情页。
+import ProjectLayout from '../../layouts/ProjectLayout.astro';
+import ProjectsHomepage from '../../components/projects/ProjectsHomepage.astro';
+import { getPublishedProjects } from '../../lib/content/projects';
+
+const projects = await getPublishedProjects();
+---
+
+<ProjectLayout
+  title="Projects — VDVXDV"
+  description="VDVXDV 的真实项目档案：正在开发的系统、可用工具、学习输出与技术实验。"
+  bodyClass="projects-index-page"
+  showFooter={false}
+>
+  <ProjectsHomepage projects={projects} />
+</ProjectLayout>

@@ -1,0 +1,102 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import { PROJECT_STATUS_LABELS } from '../../lib/content/projects';
+import { formatDate } from '../../lib/content/homepage';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+---
+
+<article class="project-detail">
+  <a class="project-detail-back" href="/projects/">← 返回项目列表</a>
+
+  <header class="project-detail-header">
+    <div class="project-detail-status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span class="project-detail-status-label">
+        {PROJECT_STATUS_LABELS[data.projectStatus]}
+      </span>
+    </div>
+
+    <h1 class="project-detail-name">{data.name}</h1>
+    <p class="project-detail-tagline">{data.tagline}</p>
+    <p class="project-detail-desc">{data.description}</p>
+
+    <div class="project-detail-meta">
+      {data.updatedAt && (
+        <time class="project-detail-meta-item" datetime={formatDate(data.updatedAt)}>
+          更新于 {formatDate(data.updatedAt)}
+        </time>
+      )}
+      {data.startedAt && (
+        <time class="project-detail-meta-item" datetime={formatDate(data.startedAt)}>
+          开始于 {formatDate(data.startedAt)}
+        </time>
+      )}
+    </div>
+
+    {data.techStack && data.techStack.length > 0 && (
+      <ul class="project-detail-tech" aria-label="技术栈">
+        {data.techStack.map((tech) => <li class="project-tag">{tech}</li>)}
+      </ul>
+    )}
+
+    <div class="project-detail-actions">
+      {data.liveUrl && (
+        <a class="btn-outline" href={data.liveUrl.toString()} target="_blank" rel="noopener noreferrer">
+          在线体验 ↗
+        </a>
+      )}
+      {data.githubUrl && (
+        <a class="btn-outline" href={data.githubUrl.toString()} target="_blank" rel="noopener noreferrer">
+          GitHub ↗
+        </a>
+      )}
+    </div>
+  </header>
+
+  {data.screenshots && data.screenshots.length > 0 && (
+    <section class="project-section" aria-label="项目截图">
+      <div class="section-header project-section-header">
+        <span>Screenshots</span>
+        <span>截图</span>
+      </div>
+      {data.screenshots.map((shot) => (
+        <figure class="project-screenshot">
+          <img src={shot.src} alt={shot.alt} />
+          {shot.caption && <figcaption>{shot.caption}</figcaption>}
+        </figure>
+      ))}
+    </section>
+  )}
+
+  <div class="project-detail-body">
+    <div class="prose"><Content /></div>
+  </div>
+
+  {data.changelog && data.changelog.length > 0 && (
+    <section class="project-section" aria-label="更新日志">
+      <div class="section-header project-section-header">
+        <span>Changelog</span>
+        <span>更新日志</span>
+      </div>
+      <div class="changelog-list">
+        {data.changelog.map((entry) => (
+          <div class="changelog-row">
+            <span class="changelog-version">{entry.version}</span>
+            <time class="changelog-date" datetime={formatDate(entry.date)}>
+              {formatDate(entry.date)}
+            </time>
+            <p class="changelog-summary">{entry.summary}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+</article>

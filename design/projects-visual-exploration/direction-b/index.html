@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
+    <title>In Progress — VDVXDV</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="nav-wrapper">
+        <nav class="nav-pill">
+            <a href="#" class="nav-brand">VDVXDV</a>
+            <div class="nav-links desktop-only">
+                <a href="#" class="active">项目</a>
+                <a href="#">随笔</a>
+                <a href="#">文章</a>
+                <a href="#">碎片</a>
+                <a href="#">影像</a>
+                <a href="#">关于</a>
+            </div>
+            <a href="#" class="nav-search">搜索</a>
+        </nav>
+    </div>
+
+    <main class="container">
+        <header class="page-header">
+            <h1 class="page-title">Work in progress.</h1>
+            <p class="page-intro">记录正在生长的想法、原型与实验，以及它们在时间中的演变。</p>
+        </header>
+
+        <span class="section-label">Current Workshop</span>
+        <section class="workshop-active">
+            <aside class="active-meta">
+                <div class="status-indicator">
+                    <span class="dot"></span> Developing · 开发中
+                </div>
+                <dl class="meta-list">
+                    <div>
+                        <dt>Tech</dt>
+                        <dd>Python, LLM</dd>
+                    </div>
+                    <div>
+                        <dt>Updated</dt>
+                        <dd>2026-08-05</dd>
+                    </div>
+                </dl>
+            </aside>
+            <div class="active-content">
+                <h2 class="active-title"><a href="#detail-deferred">Morning Radar</a></h2>
+                <p class="active-tagline">为个人筛选每天真正值得关注的变化。</p>
+                <p class="active-desc">一个自动收集、筛选和整理过去二十四小时重要信息的个人晨报系统。将碎片化的信息流转化为高质量、可阅读的结构化上下文。</p>
+            </div>
+        </section>
+
+        <span class="section-label">Notes & Archives</span>
+        <section class="process-notes">
+            
+            <!-- Item 1 -->
+            <article class="note-block note-pos-1">
+                <header class="note-header">
+                    <span class="proto-badge">PROTOTYPE ONLY</span>
+                    <span class="note-date">2026-07-28</span>
+                    <span class="note-status"><span class="status-dot active"></span> 维护中</span>
+                </header>
+                <div class="note-body">
+                    <h3 class="note-title"><a href="#detail-deferred">Repository Atlas</a></h3>
+                    <p class="note-tagline">让陌生代码库更快形成可验证的理解。</p>
+                    <p class="note-desc">通过本地语法树分析与轻量级搜索引擎构建项目拓扑，辅助心智模型的快速建立与校验。</p>
+                </div>
+                <footer class="note-footer">
+                    <span class="note-tech">TypeScript / AST / Search</span>
+                    <div class="note-links"><a href="#detail-deferred">GitHub only</a></div>
+                </footer>
+            </article>
+
+            <!-- Item 2 -->
+            <article class="note-block note-pos-2">
+                <header class="note-header">
+                    <span class="proto-badge">PROTOTYPE ONLY</span>
+                    <span class="note-date">2026-06-12</span>
+                    <span class="note-status"><span class="status-dot"></span> 构思中</span>
+                </header>
+                <div class="note-body">
+                    <h3 class="note-title"><a href="#detail-deferred">一套面向长期个人知识工作的上下文编排实验</a></h3>
+                    <p class="note-tagline">让资料、决定与行动保持连续。</p>
+                    <p class="note-desc">探索在长期研究中，如何通过隐式关联与时间戳记录，将散落的笔记与网页快照重新组织为动态上下文。</p>
+                </div>
+                <footer class="note-footer">
+                    <span class="note-tech">无 tech</span>
+                    <div class="note-links"><span>无外链</span></div>
+                </footer>
+            </article>
+
+            <!-- Item 3 -->
+            <article class="note-block note-pos-3">
+                <header class="note-header">
+                    <span class="proto-badge">PROTOTYPE ONLY</span>
+                    <span class="note-date">2026-05-30</span>
+                    <span class="note-status"><span class="status-dot active"></span> 可使用</span>
+                </header>
+                <div class="note-body">
+                    <h3 class="note-title"><a href="#detail-deferred">Quiet Relay</a></h3>
+                    <p class="note-tagline">在低干扰条件下转发真正需要处理的变化。</p>
+                    <p class="note-desc">使用无服务器函数构建的个人消息网关，基于自定义规则集进行信息降噪与异步定时投递。</p>
+                </div>
+                <footer class="note-footer">
+                    <span class="note-tech">Python / Webhook</span>
+                    <div class="note-links"><a href="#detail-deferred">Live only</a></div>
+                </footer>
+            </article>
+
+            <!-- Item 4 -->
+            <article class="note-block note-pos-4">
+                <header class="note-header">
+                    <span class="proto-badge">PROTOTYPE ONLY</span>
+                    <span class="note-date">2026-04-18</span>
+                    <span class="note-status"><span class="status-dot pause"></span> 暂停</span>
+                </header>
+                <div class="note-body">
+                    <h3 class="note-title"><a href="#detail-deferred">Local Index</a></h3>
+                    <p class="note-tagline">离线整理散落在设备中的个人文本线索。</p>
+                    <p class="note-desc">基于全文本搜索引擎的本地归档守护进程，试图建立独立于特定云服务或应用的数据图谱。</p>
+                </div>
+                <footer class="note-footer">
+                    <span class="note-tech">Rust / SQLite / Local-first</span>
+                    <div class="note-links"><span>无外链</span></div>
+                </footer>
+            </article>
+
+            <!-- Item 5 -->
+            <article class="note-block note-pos-5">
+                <header class="note-header">
+                    <span class="proto-badge">PROTOTYPE ONLY</span>
+                    <span class="note-date">2026-03-02</span>
+                    <span class="note-status"><span class="status-dot done"></span> 已完成</span>
+                </header>
+                <div class="note-body">
+                    <h3 class="note-title"><a href="#detail-deferred">Signal Cabinet</a></h3>
+                    <p class="note-tagline">保存小型技术实验与失败记录。</p>
+                    <p class="note-desc">一组松散的 HTML/CSS 切片集合，用于封存未能演化为完整项目、但值得保留的早期界面与交互实验。</p>
+                </div>
+                <footer class="note-footer">
+                    <span class="note-tech">HTML / CSS</span>
+                    <div class="note-links">
+                        <a href="#detail-deferred">Live</a>
+                        <span>, </span>
+                        <a href="#detail-deferred">GitHub</a>
+                    </div>
+                </footer>
+            </article>
+
+        </section>
+
+        <footer class="site-footer">
+            <p id="detail-deferred">Project detail is deferred to a later exploration.</p>
+        </footer>
+    </main>
+
+</body>
+</html>

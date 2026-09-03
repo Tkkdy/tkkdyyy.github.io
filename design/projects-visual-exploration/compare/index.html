@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
+  <title>VDVXDV Projects — Visual Exploration</title>
+  <style>
+    :root {
+      --canvas: #f6f4ee;
+      --ink: #1c1b1a;
+      --body: #4a4844;
+      --muted: #7a766f;
+      --accent: #7a3f46;
+      --rule: rgba(28, 27, 26, 0.14);
+      --sans: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      --serif: "Iowan Old Style", "Noto Serif SC", "Songti SC", Georgia, serif;
+      --mono: "SFMono-Regular", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    main {
+      width: min(1040px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 96px 0 72px;
+    }
+
+    header {
+      max-width: 620px;
+      margin-bottom: 72px;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    header p {
+      margin-top: 20px;
+      color: var(--body);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .directions { border-top: 1px solid var(--rule); }
+
+    .direction {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      align-items: baseline;
+      gap: 28px;
+      padding: 34px 0;
+      border-bottom: 1px solid var(--rule);
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .index,
+    .open {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .direction h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      font-weight: 500;
+      line-height: 1.25;
+    }
+
+    .direction p {
+      max-width: 620px;
+      margin-top: 8px;
+      color: var(--body);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .direction,
+    .direction h2,
+    .open { transition: color 160ms ease, transform 160ms ease; }
+
+    .direction:hover h2,
+    .direction:focus-visible h2,
+    .direction:hover .open,
+    .direction:focus-visible .open { color: var(--accent); }
+
+    .direction:hover .open,
+    .direction:focus-visible .open { transform: translateX(2px); }
+
+    .direction:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 8px;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      margin-top: 56px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 640px) {
+      main {
+        width: min(100% - 40px, 1040px);
+        padding-top: 72px;
+      }
+
+      header { margin-bottom: 48px; }
+
+      .direction {
+        grid-template-columns: 36px 1fr;
+        gap: 16px;
+        padding: 28px 0;
+      }
+
+      .open {
+        grid-column: 2;
+        margin-top: -10px;
+      }
+
+      footer { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Projects visual exploration.</h1>
+      <p>三种不同的信息组织哲学。它们共享同一份 Production 事实与 VDVXDV 品牌基因，但分别把 Projects 理解为档案、工作室和数字物件集合。</p>
+    </header>
+
+    <nav class="directions" aria-label="Projects visual directions">
+      <a class="direction" href="../direction-a/">
+        <span class="index">A</span>
+        <span>
+          <h2>Editorial Project Archive</h2>
+          <p>平等、按时间展开的项目档案。编号与技术痕迹存在，但不形成数据库。</p>
+        </span>
+        <span class="open">Open →</span>
+      </a>
+
+      <a class="direction" href="../direction-b/">
+        <span class="index">B</span>
+        <span>
+          <h2>Living Workshop</h2>
+          <p>突出正在生长的 Morning Radar，其余项目成为不同生命阶段的工作室记录。</p>
+        </span>
+        <span class="open">Open →</span>
+      </a>
+
+      <a class="direction" href="../direction-c/">
+        <span class="index">C</span>
+        <span>
+          <h2>Digital Artifacts</h2>
+          <p>每个项目拥有不同的 typographic anatomy，像被制作出来的数字物件，而非列表数据项。</p>
+        </span>
+        <span class="open">Open →</span>
+      </a>
+    </nav>
+
+    <footer>
+      <span>Exploration only · No production changes</span>
+      <span>Project detail deferred</span>
+    </footer>
+  </main>
+</body>
+</html>

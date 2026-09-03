@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDVXDV - Projects Archive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        archive: {
+                            bg: '#FCFCFC',
+                            line: '#E5E5E5',
+                            text: '#1A1A1A',
+                            muted: '#737373',
+                            accent: '#0A0A0A'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        serif: ['Noto Serif SC', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: theme('colors.archive.bg');
+            color: theme('colors.archive.text');
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 隐藏滚动条但保留功能，增强档案感 */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.archive.line');
+        }
+
+        /* 结构化线条 */
+        .stage-row {
+            border-bottom: 1px solid theme('colors.archive.line');
+        }
+
+        /* Flip Card 核心逻辑 */
+        .flip-container {
+            perspective: 1000px;
+        }
+        .flip-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .flip-container.flipped .flip-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-front, .flip-back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .flip-back {
+            transform: rotateY(180deg);
+        }
+
+        /* 减少动画偏好支持 */
+        @media (prefers-reduced-motion: reduce) {
+            .flip-inner {
+                transition: none;
+            }
+            .pet-state-img {
+                transition: none !important;
+            }
+        }
+
+        /* 焦点样式 */
+        :focus-visible {
+            outline: 2px solid theme('colors.archive.text');
+            outline-offset: 2px;
+        }
+
+        .img-crisp {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+    </style>
+</head>
+<body class="font-sans min-h-screen flex flex-col pb-12">
+
+    <header class="fixed top-6 left-0 right-0 z-50 flex justify-center pointer-events-none">
+        <nav class="pointer-events-auto bg-white/80 backdrop-blur-md border border-archive-line rounded-full px-6 py-2.5 flex items-center gap-6 text-[13px] font-medium tracking-wide shadow-sm">
+            <span class="font-bold text-archive-text mr-2">VDVXDV</span>
+            <a href="#" class="text-archive-text underline decoration-archive-line underline-offset-4">项目</a>
+            <a href="#" class="text-archive-muted hover:text-archive-text transition-colors">随笔</a>
+            <a href="#" class="text-archive-muted hover:text-archive-text transition-colors">文章</a>
+            <a href="#" class="text-archive-muted hover:text-archive-text transition-colors">碎片</a>
+            <a href="#" class="text-archive-muted hover:text-archive-text transition-colors">影像</a>
+            <a href="#" class="text-archive-muted hover:text-archive-text transition-colors">关于</a>
+            <span class="w-[1px] h-3 bg-archive-line ml-2"></span>
+            <button class="text-archive-muted hover:text-archive-text transition-colors ml-2">搜索</button>
+        </nav>
+    </header>
+
+    <main class="flex-grow pt-32 w-full max-w-[1440px] mx-auto px-6 md:px-12 lg:px-24">
+        
+        <div class="mb-24 md:w-1/2">
+            <h1 class="font-serif text-3xl mb-4 leading-tight">Work in progress.</h1>
+            <p class="text-archive-muted text-sm leading-relaxed">记录正在生长的想法、原型与实验，以及它们在时间中的演变。这里是结构化信号的切片档案。</p>
+        </div>
+
+        <section class="stage-row py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 relative group">
+            <div class="md:col-span-3 flex flex-col gap-6 pt-2">
+                <div class="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-archive-muted">
+                    <span class="w-2 h-2 rounded-full bg-green-500/80 animate-pulse"></span>
+                    Developing
+                </div>
+                <div>
+                    <h2 class="font-serif text-2xl mb-1">Morning Radar</h2>
+                    <p class="text-[13px] text-archive-muted">Tech: Python, LLM, GH Actions</p>
+                </div>
+                <div class="hidden md:flex flex-col gap-2 text-[11px] font-mono text-archive-muted border-l border-archive-line pl-4 mt-8">
+                    <div class="text-archive-text">collect()</div>
+                    <div class="text-archive-line ml-1">↓</div>
+                    <div>dedupe_signals()</div>
+                    <div class="text-archive-line ml-1">↓</div>
+                    <div>score_relevance()</div>
+                    <div class="text-archive-line ml-1">↓</div>
+                    <div>generate_brief()</div>
+                    <div class="text-archive-line ml-1">↓</div>
+                    <div class="text-archive-text">static_publish()</div>
+                </div>
+            </div>
+            <div class="md:col-span-9 bg-[#F4F4F2] border border-archive-line p-4 md:p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <img src="morning-radar-2026-08-15.png" alt="Morning Radar 真实截图" class="w-full max-w-4xl shadow-sm border border-archive-line/50 object-contain max-h-[70vh]">
+            </div>
+        </section>
+
+        <section class="stage-row py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16">
+            <div class="md:col-span-3 flex flex-col gap-6 pt-2">
+                <div class="text-[11px] font-mono uppercase tracking-wider text-archive-muted border-b border-archive-line pb-2 inline-block w-max">
+                    Interactive Entity
+                </div>
+                <div>
+                    <h2 class="font-serif text-2xl mb-1">Desktop Pet</h2>
+                    <p class="text-[13px] text-archive-muted mb-4">State response observation.</p>
+                    <p class="text-[11px] font-mono text-archive-muted bg-white border border-archive-line px-2 py-1 inline-block">Click entity to trigger state</p>
+                </div>
+            </div>
+            
+            <div class="md:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Main Pet Stage -->
+                <div class="border border-archive-line bg-white h-[400px] flex items-center justify-center relative cursor-pointer group" id="pet-stage" tabindex="0" role="button" aria-label="Toggle pet state">
+                    <div class="absolute top-3 left-3 text-[10px] font-mono text-archive-muted">State: <span id="pet-state-label" class="text-archive-text">IDLE</span></div>
+                    
+                    <!-- 真实图片使用 -->
+                    <img src="desktop-pet-idle.png" alt="Pet Idle" class="pet-state-img absolute h-[80%] object-contain transition-opacity duration-200 opacity-100" id="img-idle">
+                    
+                    <!-- 使用 blink process 图模拟闭眼动作 (通过 css object-position 截取单帧) -->
+                    <div class="pet-state-img absolute h-[80%] w-[300px] transition-opacity duration-200 opacity-0 overflow-hidden flex justify-center" id="img-blink">
+                         <img src="desktop-pet-blink-process.jpg" alt="Pet Blink" class="h-full max-w-none object-cover" style="object-position: 50% 50%;">
+                    </div>
+                </div>
+
+                <!-- Mini Her Artifact -->
+                <div class="border border-archive-line bg-[#1A1A1A] h-[400px] flex flex-col relative overflow-hidden">
+                    <div class="absolute top-3 left-3 text-[10px] font-mono text-[#888] z-10 bg-[#1a1a1a]/80 px-1">Artifact: Mini Her</div>
+                    <div class="absolute bottom-3 right-3 text-[10px] font-mono text-green-400 z-10">9 states / 57 verified frames</div>
+                    <div class="flex-grow flex items-center justify-center p-4">
+                        <img src="mini-her-contact-sheet.jpg" alt="Mini Her Contact Sheet" class="w-full h-full object-contain img-crisp opacity-90">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stage-row py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16">
+            <div class="md:col-span-3 flex flex-col gap-6 pt-2">
+                <div class="text-[11px] font-mono uppercase tracking-wider text-archive-muted">
+                    Usable Locally · Pending
+                </div>
+                <div>
+                    <h2 class="font-serif text-2xl mb-1">VDVXDV Arch</h2>
+                    <p class="text-[13px] text-archive-muted">Astro 7 / Collections</p>
+                </div>
+                
+                <div class="mt-4 flex gap-2">
+                    <button id="btn-desktop" class="text-[12px] font-mono px-3 py-1.5 border border-archive-text bg-archive-text text-white transition-colors">Viewport: Desktop</button>
+                    <button id="btn-mobile" class="text-[12px] font-mono px-3 py-1.5 border border-archive-line bg-transparent text-archive-muted hover:text-archive-text transition-colors">Mobile</button>
+                </div>
+            </div>
+            
+            <div class="md:col-span-9 bg-[#EAEAEA] border border-archive-line overflow-hidden relative flex items-center justify-center py-12 px-4 min-h-[500px]">
+                <!-- Desktop View -->
+                <div id="view-desktop" class="w-full max-w-4xl shadow-sm transition-opacity duration-300 opacity-100 absolute">
+                    <div class="w-full h-6 bg-white border-b border-archive-line flex items-center px-3 gap-1.5 rounded-t-sm">
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-300"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-300"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-300"></div>
+                    </div>
+                    <img src="vdvxdv-home-desktop.png" alt="Desktop View" class="w-full border-x border-b border-archive-line rounded-b-sm">
+                </div>
+                
+                <!-- Mobile View -->
+                <div id="view-mobile" class="w-full max-w-[390px] shadow-xl transition-opacity duration-300 opacity-0 absolute pointer-events-none">
+                    <div class="w-full h-8 bg-black rounded-t-[2rem] flex justify-center pt-2 relative z-10 -mb-4">
+                        <div class="w-24 h-4 bg-black rounded-full"></div>
+                    </div>
+                    <img src="vdvxdv-home-mobile.png" alt="Mobile View" class="w-full border-x border-b border-archive-line bg-white">
+                </div>
+            </div>
+        </section>
+
+        <section class="stage-row py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16">
+            <div class="md:col-span-3 flex flex-col gap-6 pt-2">
+                <div class="text-[11px] font-mono uppercase tracking-wider text-archive-muted">
+                    Unofficial · V-Dependent
+                </div>
+                <div>
+                    <h2 class="font-serif text-2xl mb-1">Codex Reconnect</h2>
+                    <p class="text-[13px] text-archive-muted">Proxy Fix / NO UI</p>
+                </div>
+                <div class="text-[11px] text-archive-muted mt-auto hidden md:block">
+                    Click card to view<br>sanitized trace.
+                </div>
+            </div>
+            
+            <div class="md:col-span-9 h-[280px]">
+                <div class="flip-container w-full h-full cursor-pointer group" id="codex-flip" tabindex="0" role="button" aria-label="Toggle proxy fix trace">
+                    <div class="flip-inner border border-archive-line">
+                        
+                        <!-- Front Face -->
+                        <div class="flip-front bg-white p-8 flex flex-col justify-center relative">
+                            <div class="absolute top-4 right-4 border border-archive-line px-2 py-1 text-[10px] font-mono text-archive-muted group-hover:bg-gray-50 transition-colors">FLIP ↵</div>
+                            
+                            <div class="flex items-center gap-4 text-sm font-mono tracking-tight mb-8 overflow-x-auto whitespace-nowrap pb-2">
+                                <span class="text-red-500/80">Symptom</span>
+                                <span class="text-archive-line">→</span>
+                                <span class="text-orange-400">Safe Diagnosis</span>
+                                <span class="text-archive-line">→</span>
+                                <span class="text-blue-500/80">User Confirmation</span>
+                                <span class="text-archive-line">→</span>
+                                <span class="text-green-600/80">Verified Result</span>
+                            </div>
+                            <div class="text-[13px] max-w-xl text-archive-text leading-relaxed">
+                                介入了本地代理与服务端的心跳检测机制。通过构建微型中间件，在不触碰原始核心逻辑的前提下，解决了特定版本下的连接断开重连失败问题。
+                            </div>
+                        </div>
+
+                        <!-- Back Face (Trace) -->
+                        <div class="flip-back bg-[#111111] text-[#E0E0E0] p-8 font-mono text-[11px] flex flex-col justify-between">
+                            <div>
+                                <div class="text-[#888] mb-4"># Sanitized decision trace. Environment variables stripped.</div>
+                                <div class="opacity-80">
+                                    <span class="text-blue-400">[14:32:01] INFO</span>: Intercepted connection drop on port 443.<br>
+                                    <span class="text-blue-400">[14:32:01] INFO</span>: Initializing fallback handshake...<br>
+                                    <span class="text-yellow-400">[14:32:02] WARN</span>: Original token sanitized from local log context.<br>
+                                    <span class="text-blue-400">[14:32:02] INFO</span>: Routing through local ghost proxy.<br>
+                                    <span class="text-green-400">[14:32:04] SUCCESS</span>: Connection re-established. 0 payload loss.
+                                </div>
+                            </div>
+                            <div class="text-[#555] text-[10px] self-end">END OF TRACE</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 border-b border-archive-line">
+            
+            <!-- C Games -->
+            <section class="py-16 flex flex-col gap-6 md:border-r border-archive-line md:pr-16">
+                 <div class="text-[11px] font-mono uppercase tracking-wider text-archive-muted">
+                    Prototype Only
+                </div>
+                <div>
+                    <h2 class="font-serif text-2xl mb-1">C Console Series</h2>
+                    <p class="text-[13px] text-archive-muted">Terminal standard out.</p>
+                </div>
+                
+                <div class="bg-white border border-archive-line p-6 mt-4 font-mono text-[12px] leading-tight flex-grow flex flex-col">
+                    <div class="text-archive-muted mb-4 border-b border-archive-line pb-2">Targets: Tetris, Snake, 2048, Tic-tac-toe, Guess Num.</div>
+                    <pre class="text-archive-text opacity-90 mt-2">
+  Score: 12400   Level: 4
+  +------------------+
+  | .  .  .  .  .  . |
+  | .  .  .  .  .  . |
+  | .  .  [][] .  .  |
+  | .  .  [][] .  .  |
+  | .  .  .  .  .  . |
+  | .  .  .  .  .  . |
+  | [][] .  .  .  .  |
+  | [][] .  .  [][]  |
+  | [][][][] . [][]  |
+  +------------------+
+                    </pre>
+                </div>
+            </section>
+
+            <!-- ESP32 -->
+            <section class="py-16 flex flex-col gap-6 md:pl-0">
+                <div class="text-[11px] font-mono uppercase tracking-wider text-archive-muted">
+                    Hardware Trace
+                </div>
+                <div>
+                    <h2 class="font-serif text-2xl mb-1">ESP32 LED</h2>
+                    <p class="text-[13px] text-archive-muted">GPIO / PWM Logic</p>
+                </div>
+
+                <div class="bg-white border border-archive-line p-6 mt-4 font-mono text-[11px] flex-grow flex flex-col gap-4 text-archive-text overflow-hidden">
+                    <div>
+                        <span class="text-archive-muted block mb-1">// Setup</span>
+                        <span class="text-blue-800">const int</span> ledPin = 25;<br>
+                        pinMode(ledPin, OUTPUT);
+                    </div>
+                    <div class="border-t border-archive-line/50 pt-3">
+                        <span class="text-archive-muted block mb-1">// Digital Blink</span>
+                        digitalWrite(ledPin, HIGH);<br>
+                        delay(1000);<br>
+                        digitalWrite(ledPin, LOW);
+                    </div>
+                    <div class="border-t border-archive-line/50 pt-3">
+                        <span class="text-archive-muted block mb-1">// PWM Breathing</span>
+                        <span class="text-blue-800">for</span>(int i=0; i&lt;255; i++) {<br>
+                        &nbsp;&nbsp;ledcWrite(0, i);<br>
+                        &nbsp;&nbsp;delay(10);<br>
+                        }
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <footer class="fixed bottom-0 left-0 w-full h-8 bg-[#161616] flex items-center px-4 z-50">
+        <div class="font-mono text-[11px] text-[#A0A0A0] flex items-center w-full">
+            <span>vdvxdv/projects — 6 signals indexed · production untouched</span>
+            <span class="ml-1 text-white animate-pulse">_</span>
+            <span class="ml-auto opacity-50">v2.0.26-build</span>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Desktop Pet Interaction
+            const petStage = document.getElementById('pet-stage');
+            const imgIdle = document.getElementById('img-idle');
+            const imgBlink = document.getElementById('img-blink');
+            const stateLabel = document.getElementById('pet-state-label');
+            let isBlinking = false;
+
+            const togglePetState = () => {
+                isBlinking = !isBlinking;
+                if(isBlinking) {
+                    imgIdle.style.opacity = '0';
+                    imgBlink.style.opacity = '1';
+                    stateLabel.textContent = 'BLINKING';
+                    stateLabel.classList.add('text-archive-muted');
+                } else {
+                    imgIdle.style.opacity = '1';
+                    imgBlink.style.opacity = '0';
+                    stateLabel.textContent = 'IDLE';
+                    stateLabel.classList.remove('text-archive-muted');
+                }
+            };
+
+            petStage.addEventListener('click', togglePetState);
+            petStage.addEventListener('keydown', (e) => {
+                if(e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    togglePetState();
+                }
+            });
+
+            // 2. Website Viewport Toggle
+            const btnDesktop = document.getElementById('btn-desktop');
+            const btnMobile = document.getElementById('btn-mobile');
+            const viewDesktop = document.getElementById('view-desktop');
+            const viewMobile = document.getElementById('view-mobile');
+
+            btnDesktop.addEventListener('click', () => {
+                // Style buttons
+                btnDesktop.className = "text-[12px] font-mono px-3 py-1.5 border border-archive-text bg-archive-text text-white transition-colors";
+                btnMobile.className = "text-[12px] font-mono px-3 py-1.5 border border-archive-line bg-transparent text-archive-muted hover:text-archive-text transition-colors";
+                // Show view
+                viewDesktop.style.opacity = '1';
+                viewMobile.style.opacity = '0';
+                viewMobile.classList.add('pointer-events-none');
+            });
+
+            btnMobile.addEventListener('click', () => {
+                // Style buttons
+                btnMobile.className = "text-[12px] font-mono px-3 py-1.5 border border-archive-text bg-archive-text text-white transition-colors";
+                btnDesktop.className = "text-[12px] font-mono px-3 py-1.5 border border-archive-line bg-transparent text-archive-muted hover:text-archive-text transition-colors";
+                // Show view
+                viewDesktop.style.opacity = '0';
+                viewMobile.style.opacity = '1';
+                viewMobile.classList.remove('pointer-events-none');
+            });
+
+            // 3. Codex Flip Card
+            const flipContainer = document.getElementById('codex-flip');
+            
+            const toggleFlip = () => {
+                flipContainer.classList.toggle('flipped');
+            };
+
+            flipContainer.addEventListener('click', toggleFlip);
+            flipContainer.addEventListener('keydown', (e) => {
+                if(e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleFlip();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

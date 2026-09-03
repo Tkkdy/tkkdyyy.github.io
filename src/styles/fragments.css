@@ -1,0 +1,135 @@
+/*
+ * VDVXDV Fragment — 时间流页（/fragments）
+ *
+ * 碎片是短内容（CONTENT_MODEL §6）：短、直接、像时间流。
+ * 不制造标题、不放大卡片；延续首页碎片的竖线编辑语言。
+ * 窄列阅读宽度，正文即内容。
+ */
+
+.fragments-page {
+  max-width: var(--max-width-content);
+  margin-inline: auto;
+  padding: 128px 24px 96px;
+}
+
+@media (min-width: 768px) {
+  .fragments-page {
+    padding: 192px 32px 128px;
+  }
+}
+
+.fragments-page-header {
+  margin-bottom: 56px;
+}
+
+.fragments-page-title {
+  margin-top: 24px;
+  font-family: var(--font-serif);
+  font-size: 2.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* 时间流主体：窄列，聚焦内容本身 */
+.fragment-flow {
+  max-width: 42rem;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.fragment-entry {
+  position: relative;
+  padding-left: 20px;
+  border-left: 1px solid var(--color-border-strong);
+}
+
+.fragment-entry-date {
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+/* 碎片正文（Markdown 渲染内容，单段为 <p>） */
+.fragment-entry-body {
+  font-size: 15.5px;
+  line-height: 1.8;
+  color: var(--color-ink);
+}
+
+.fragment-entry-body p {
+  margin: 0.3em 0;
+}
+
+.fragment-entry-body p:first-child {
+  margin-top: 0;
+}
+
+.fragment-entry-body p:last-child {
+  margin-bottom: 0;
+}
+
+.fragment-entry-body a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+/* 碎片配图（image 存在且文件真实存在时才渲染） */
+.fragment-entry-image {
+  margin-bottom: 14px;
+}
+
+.fragment-entry-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-media);
+}
+
+.fragment-entry-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.fragment-entry-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 2px;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.fragment-entry-link:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.fragment-entry-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.fragment-tag {
+  padding: 1px 6px;
+  border: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}

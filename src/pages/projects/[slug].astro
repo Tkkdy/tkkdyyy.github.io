@@ -1,0 +1,31 @@
+---
+// 项目详情页 /projects/[slug]
+// 静态生成：只生成 status = published 的项目（draft / archived 不生成公开详情页）。
+// 路由只负责数据与 renderer dispatch：
+// Morning Radar 使用已批准的专属技术档案；其他项目保留 neutral fallback。
+import ProjectLayout from '../../layouts/ProjectLayout.astro';
+import GenericProjectDetail from '../../components/projects/GenericProjectDetail.astro';
+import MorningRadarDetail from '../../components/projects/MorningRadarDetail.astro';
+import { getPublishedProjects } from '../../lib/content/projects';
+
+export async function getStaticPaths() {
+  const projects = await getPublishedProjects();
+  return projects.map((project) => ({
+    params: { slug: project.data.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const isMorningRadar = data.slug === 'morning-radar';
+---
+
+<ProjectLayout
+  title={`${data.name} — VDVXDV`}
+  description={data.description}
+  bodyClass={isMorningRadar ? 'morning-radar-detail-page' : undefined}
+  showFooter={!isMorningRadar}
+>
+  {isMorningRadar ? <MorningRadarDetail project={project} /> : <GenericProjectDetail project={project} />}
+</ProjectLayout>

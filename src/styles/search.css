@@ -1,0 +1,187 @@
+/*
+ * VDVXDV Search — 搜索页样式（/search）
+ *
+ * 延续 v0.2.6 视觉语言：编辑感、克制、留白。
+ * 搜索框是普通编辑式输入，不做 SaaS Dashboard 组件。
+ * 仅本页面加载客户端 JS（Pagefind）。
+ */
+
+.search-page {
+  max-width: var(--max-width-content);
+  margin-inline: auto;
+  padding: 128px 24px 96px;
+}
+
+@media (min-width: 768px) {
+  .search-page {
+    padding: 192px 32px 128px;
+  }
+}
+
+.search-page-header {
+  margin-bottom: 48px;
+}
+
+.search-page-title {
+  margin-top: 24px;
+  font-family: var(--font-serif);
+  font-size: 2.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* ---- 搜索框 ---- */
+.search-form {
+  max-width: 42rem;
+}
+
+.search-label {
+  display: block;
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.search-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-media);
+  background-color: var(--color-canvas);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--color-ink);
+  transition: border-color 150ms ease;
+}
+
+.search-input::placeholder {
+  color: var(--color-ink-muted);
+  opacity: 0.7;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+/* ---- 状态反馈（aria-live 对辅助技术播报） ---- */
+.search-status {
+  max-width: 42rem;
+  margin-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--color-ink-muted);
+}
+
+.search-hint {
+  max-width: 42rem;
+  margin-top: 40px;
+  font-size: 15.5px;
+  line-height: 1.8;
+  color: var(--color-ink-muted);
+}
+
+.search-hint kbd {
+  padding: 1px 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-media);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--color-ink);
+}
+
+/* ---- 结果列表 ---- */
+.search-results {
+  max-width: 42rem;
+  display: flex;
+  flex-direction: column;
+  margin-top: 24px;
+}
+
+.search-result {
+  padding: 24px 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.search-result:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.search-result-title {
+  display: inline-block;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-ink);
+  transition: color 150ms ease;
+}
+
+.search-result-title:hover {
+  color: var(--color-accent);
+}
+
+.search-result-title:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-media);
+}
+
+.search-result-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--color-ink-muted);
+}
+
+.search-result-type {
+  padding: 1px 6px;
+  border: 1px solid var(--color-border);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.search-result-url {
+  color: var(--color-ink-muted);
+  opacity: 0.8;
+}
+
+.search-result-excerpt {
+  margin-top: 10px;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: var(--color-ink-soft);
+}
+
+.search-result-excerpt mark {
+  background: rgba(122, 63, 70, 0.12);
+  color: var(--color-ink);
+  border-radius: 2px;
+}
+
+/* ---- 无结果状态 ---- */
+.search-empty {
+  max-width: 42rem;
+  margin-top: 24px;
+  padding: 24px 0;
+  border-top: 1px solid var(--color-border);
+  font-size: 15.5px;
+  line-height: 1.8;
+  color: var(--color-ink-soft);
+}
+
+.search-empty strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}

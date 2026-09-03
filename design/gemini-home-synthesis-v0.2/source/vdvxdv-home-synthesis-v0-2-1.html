@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDVXDV</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: '#F7F5EF',
+                        surface: '#EAE5D9',
+                        ink: '#191918',
+                        'ink-soft': '#46443F',
+                        'ink-muted': '#77736B',
+                        'ink-inverse': '#F7F5EF',
+                        border: 'rgba(25, 25, 24, 0.12)',
+                        'border-strong': 'rgba(25, 25, 24, 0.28)',
+                        dark: '#191918',
+                        'dark-surface': '#242320',
+                        accent: '#7A3F46',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'SF Pro Display', 'system-ui', 'sans-serif'],
+                        serif: ['"Noto Serif SC"', '"Source Han Serif SC"', 'serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    maxWidth: {
+                        'page': '1440px',
+                        'content': '1200px',
+                        'reading': '720px',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: theme('colors.canvas');
+            color: theme('colors.ink');
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .glass-nav {
+            background: rgba(247, 245, 239, 0.72);
+            backdrop-filter: blur(16px) saturate(120%);
+            -webkit-backdrop-filter: blur(16px) saturate(120%);
+            border: 1px solid rgba(25, 25, 24, 0.08);
+            box-shadow: 0 4px 24px -6px rgba(25, 25, 24, 0.05);
+        }
+
+        .img-wrap {
+            overflow: hidden;
+            background-color: theme('colors.surface');
+        }
+
+        /* Pure CSS Placeholder System */
+        .css-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(25, 25, 24, 0.03);
+            border: 1px dashed rgba(25, 25, 24, 0.15);
+            color: rgba(25, 25, 24, 0.3);
+            font-family: theme('fontFamily.mono');
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .group:hover .css-placeholder {
+            background-color: rgba(25, 25, 24, 0.06);
+            border-color: rgba(25, 25, 24, 0.25);
+            color: rgba(25, 25, 24, 0.5);
+        }
+
+        /* Inverse styles for the dark section placeholders */
+        .dark-section .css-placeholder {
+            background-color: rgba(247, 245, 239, 0.05);
+            border-color: rgba(247, 245, 239, 0.2);
+            color: rgba(247, 245, 239, 0.3);
+        }
+
+        .dark-section .group:hover .css-placeholder {
+            background-color: rgba(247, 245, 239, 0.1);
+            border-color: rgba(247, 245, 239, 0.3);
+            color: rgba(247, 245, 239, 0.5);
+        }
+
+        ::selection {
+            background: theme('colors.accent');
+            color: theme('colors.ink-inverse');
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-ink selection:bg-accent selection:text-ink-inverse">
+
+    <header class="fixed top-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+        <nav class="glass-nav pointer-events-auto flex items-center gap-6 px-6 py-3 rounded-full mx-auto max-w-fit transition-all">
+            <a href="#" class="font-semibold tracking-wide text-sm hover:text-accent transition-colors">VDVXDV</a>
+            
+            <div class="w-px h-4 bg-border hidden sm:block"></div>
+            
+            <ul class="hidden sm:flex items-center gap-5 text-[13px] font-medium text-ink-soft">
+                <li><a href="#" class="hover:text-ink transition-colors">项目</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">随笔</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">文章</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">碎片</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">影像</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">关于</a></li>
+            </ul>
+            
+            <button class="text-[13px] font-medium text-ink hover:text-accent transition-colors ml-2 sm:ml-0" aria-label="Search">
+                搜索
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <section class="max-w-content mx-auto px-6 sm:px-8 pt-40 pb-24 md:pt-48 md:pb-32">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
+                
+                <div class="lg:col-span-5 flex flex-col justify-start">
+                    <h1 class="text-4xl md:text-5xl font-serif font-medium leading-tight mb-8">
+                        个人项目、<br>
+                        写作与影像的<br>
+                        安静记录。
+                    </h1>
+                    <p class="text-ink-soft leading-relaxed max-w-sm text-[15px]">
+                        探索技术与表达的交叉点。这里是 VDVXDV 的公开个人空间，记录正在进行的构建、长时间的思考以及沿途捕捉的切片。
+                    </p>
+                    
+                    <div class="mt-12 flex gap-6 text-sm font-medium">
+                        <a href="#" class="group flex items-center gap-2 hover:text-accent transition-colors">
+                            查看项目 
+                            <span class="text-ink-muted group-hover:text-accent group-hover:translate-x-1 transition-all">→</span>
+                        </a>
+                        <a href="#" class="group flex items-center gap-2 hover:text-accent transition-colors">
+                            阅读文章
+                            <span class="text-ink-muted group-hover:text-accent group-hover:translate-x-1 transition-all">→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 lg:pl-12">
+                    <div class="mb-8 border-t border-border pt-3 flex justify-between items-start text-xs font-mono tracking-widest text-ink-muted uppercase">
+                        <span>Featured</span>
+                        <span>精选文章</span>
+                    </div>
+
+                    <a href="#" class="group block cursor-pointer">
+                        <div class="img-wrap mb-6 aspect-[4/3] sm:aspect-[16/9] w-full">
+                            <div class="css-placeholder">Image Placeholder / 封面占位</div>
+                        </div>
+                        <div class="flex flex-col gap-3">
+                            <h2 class="text-2xl font-serif font-medium group-hover:text-accent transition-colors">上下文正在成为个人 AI 的真正界面</h2>
+                            <p class="text-ink-soft text-[15px] leading-relaxed max-w-2xl">
+                                当模型长期理解一个人的项目、文件、偏好和决定时，它才开始跨越工具的属性，成为真正的能力延伸。模型会更新，但积累的上下文可以复用。
+                            </p>
+                            <div class="text-xs text-ink-muted font-mono mt-2">
+                                2026-08-05 · 技术思考
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="bg-dark text-ink-inverse py-24 md:py-32 dark-section">
+            <div class="max-w-content mx-auto px-6 sm:px-8">
+                
+                <div class="mb-16 border-t border-ink-inverse/20 pt-3 flex justify-between items-start text-xs font-mono tracking-widest text-ink-inverse/60 uppercase">
+                    <span>Projects</span>
+                    <span>项目</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24 items-center">
+                    <a href="#" class="group block img-wrap bg-dark-surface aspect-square md:aspect-[4/5] relative">
+                        <div class="css-placeholder">Project Visual / 项目视觉占位</div>
+                        <div class="absolute bottom-4 left-4 flex gap-2">
+                            <span class="px-2 py-1 bg-ink/80 backdrop-blur-sm text-[11px] font-mono rounded text-ink-inverse/80">Python</span>
+                            <span class="px-2 py-1 bg-ink/80 backdrop-blur-sm text-[11px] font-mono rounded text-ink-inverse/80">LLM</span>
+                        </div>
+                    </a>
+                    
+                    <div>
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="w-2 h-2 rounded-full bg-accent"></span>
+                            <span class="text-xs font-mono text-ink-inverse/70 uppercase tracking-wider">Developing · 开发中</span>
+                        </div>
+                        <h2 class="text-3xl md:text-4xl font-medium mb-6">Morning Radar</h2>
+                        <p class="text-ink-inverse/80 text-[16px] leading-relaxed mb-10 max-w-md">
+                            一个自动收集、筛选和整理过去二十四小时重要信息的个人晨报系统。将碎片化的信息流转化为高质量、可阅读的结构化上下文。
+                        </p>
+                        <a href="#" class="inline-flex items-center gap-2 text-sm font-medium border-b border-ink-inverse/30 pb-1 hover:border-ink-inverse transition-colors">
+                            查看项目详情 <span>→</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="max-w-content mx-auto px-6 sm:px-8 py-24 md:py-32">
+            
+            <div class="mb-16 border-t border-border pt-3 flex justify-between items-start text-xs font-mono tracking-widest text-ink-muted uppercase">
+                <span>Essays & Fragments</span>
+                <span>随笔与碎片</span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8">
+                
+                <div class="lg:col-span-7">
+                    <a href="#" class="group block">
+                        <div class="grid grid-cols-1 sm:grid-cols-5 gap-6 sm:gap-8 items-start">
+                            <div class="sm:col-span-2 img-wrap aspect-[3/4]">
+                                <div class="css-placeholder">Image / 插图占位</div>
+                            </div>
+                            <div class="sm:col-span-3 pt-2">
+                                <h3 class="text-xl font-serif font-medium mb-4 group-hover:text-accent transition-colors">初中时，我只是想看 YouTube</h3>
+                                <p class="text-ink-soft text-[15px] leading-relaxed mb-6">
+                                    我最初只是想看一些游戏实况，后来却莫名其妙地搭建起了自己的整个互联网世界。那是一段缺乏指引，但充满纯粹好奇心的野蛮生长期。
+                                </p>
+                                <div class="text-xs text-ink-muted font-mono">2026-08-01 · 回忆</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="lg:col-span-4 lg:col-start-9 flex flex-col gap-10">
+                    <article class="relative pl-4 border-l-2 border-surface hover:border-accent/30 transition-colors">
+                        <div class="text-[13px] text-ink-muted font-mono mb-3">2026-08-05</div>
+                        <p class="text-[15px] text-ink-soft leading-relaxed">
+                            上下文也许是这个时代最容易被低估的个人资产。模型会更新，工具会消失，但积累过的判断和经历仍然可以继续复用。
+                        </p>
+                    </article>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="max-w-page mx-auto px-6 sm:px-8 py-24 md:py-32 mb-12">
+            
+            <div class="max-w-content mx-auto mb-12 border-t border-border pt-3 flex justify-between items-start text-xs font-mono tracking-widest text-ink-muted uppercase">
+                <span>Photography</span>
+                <span>影像</span>
+            </div>
+
+            <!-- CSS Placeholder layout demonstrating mixed aspect ratios without external image dependencies -->
+            <div class="flex flex-col md:flex-row gap-6 md:gap-8 max-w-content mx-auto items-start">
+                
+                <!-- Landscape (Primary) -->
+                <div class="flex-grow-[2] basis-[60%] flex flex-col">
+                    <a href="#" class="group block img-wrap w-full aspect-[4/3]">
+                        <div class="css-placeholder">Landscape / 横图比例 (4:3)</div>
+                    </a>
+                    <div class="mt-4 flex justify-between items-center text-xs text-ink-muted font-mono">
+                        <span>雨落下来以前</span>
+                        <span>2026-07-30</span>
+                    </div>
+                </div>
+
+                <!-- Portrait & Square (Supporting demonstrations) -->
+                <div class="flex-grow basis-[40%] flex flex-col gap-12 mt-8 md:mt-24">
+                    <div class="flex flex-col">
+                        <a href="#" class="group block img-wrap w-full aspect-[3/4]">
+                            <div class="css-placeholder">Portrait / 竖图比例 (3:4)</div>
+                        </a>
+                    </div>
+                    
+                    <div class="flex flex-col items-end">
+                        <a href="#" class="group block img-wrap w-2/3 aspect-square">
+                            <div class="css-placeholder">Square / 方图比例 (1:1)</div>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-border mt-24">
+        <div class="max-w-content mx-auto px-6 sm:px-8 py-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+            <div>
+                <a href="#" class="font-semibold tracking-wide text-lg text-ink">VDVXDV</a>
+                <p class="text-sm text-ink-muted mt-2">© 2026. A personal space.</p>
+            </div>
+            
+            <div class="flex gap-6 text-sm font-medium">
+                <a href="#" class="text-ink-soft hover:text-accent transition-colors">GitHub</a>
+                <a href="#" class="text-ink-soft hover:text-accent transition-colors">Mail</a>
+                <a href="#" class="text-ink-soft hover:text-accent transition-colors">RSS</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

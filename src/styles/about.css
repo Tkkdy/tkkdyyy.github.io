@@ -1,0 +1,101 @@
+/*
+ * VDVXDV About — 页面样式
+ *
+ * 延续 v0.2.6 视觉语言：编辑感、安静、留白（DESIGN §23）。
+ * 不用技能条 / Logo 墙 / 简历时间线；内容窄列阅读。
+ */
+
+.about-page {
+  max-width: var(--max-width-content);
+  margin-inline: auto;
+  padding: 128px 24px 96px;
+}
+
+@media (min-width: 768px) {
+  .about-page {
+    padding: 192px 32px 128px;
+  }
+}
+
+.about-page-header {
+  margin-bottom: 56px;
+}
+
+.about-page-title {
+  margin-top: 24px;
+  font-family: var(--font-serif);
+  font-size: 2.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* 内容区：窄列，安静 */
+.about-body {
+  max-width: 42rem;
+}
+
+.about-lead {
+  margin-bottom: 48px;
+  font-size: 18px;
+  line-height: 1.8;
+  color: var(--color-ink);
+}
+
+.about-section {
+  margin-bottom: 48px;
+}
+
+.about-section h2 {
+  margin-bottom: 20px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.about-section p {
+  margin-bottom: 16px;
+  font-size: 15.5px;
+  line-height: 1.8;
+  color: var(--color-ink-soft);
+}
+
+.about-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 0;
+  border-top: 1px solid var(--color-border);
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: var(--color-ink-soft);
+}
+
+.about-list li:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.about-list strong {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.about-list a {
+  font-weight: 500;
+  color: var(--color-ink);
+  border-bottom: 1px solid var(--color-border);
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.about-list a:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDVXDV</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500&family=Noto+Serif+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: '#F5F3EC',        /* Base warm ivory */
+                        'surface-sand': '#EBE7DD', /* Sandstone for Featured block */
+                        'surface-taupe': '#EAE5E3',/* Very pale taupe/wine for Essays block */
+                        'surface-photo': '#EBE9E4',/* Light taupe for Photography block */
+                        ink: '#191918',
+                        'ink-soft': '#46443F',
+                        'ink-muted': '#77736B',
+                        'ink-inverse': '#F7F5EF',
+                        border: 'rgba(25, 25, 24, 0.12)',
+                        'border-strong': 'rgba(25, 25, 24, 0.28)',
+                        dark: '#1A1918',          /* Deep Ink for Projects */
+                        accent: '#7A3F46',        /* Dark Wine accent */
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'SF Pro Display', 'system-ui', 'sans-serif'],
+                        serif: ['"Noto Serif SC"', '"Source Han Serif SC"', 'serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    maxWidth: {
+                        'page': '1440px',
+                        'content': '1200px',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: theme('colors.canvas');
+            color: theme('colors.ink');
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* B-Style Liquid Glass Navigation */
+        .glass-nav {
+            background: rgba(245, 243, 236, 0.65);
+            backdrop-filter: blur(16px) saturate(120%);
+            -webkit-backdrop-filter: blur(16px) saturate(120%);
+            border: 1px solid rgba(25, 25, 24, 0.06);
+            box-shadow: 0 4px 24px -6px rgba(25, 25, 24, 0.04);
+        }
+
+        /* Pure CSS Placeholder System */
+        .css-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(25, 25, 24, 0.03);
+            border: 1px dashed rgba(25, 25, 24, 0.15);
+            color: rgba(25, 25, 24, 0.35);
+            font-family: theme('fontFamily.mono');
+            transition: all 0.5s ease;
+        }
+
+        .css-placeholder span {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .css-placeholder .ratio {
+            font-size: 0.65rem;
+            opacity: 0.6;
+            margin-top: 0.25rem;
+        }
+
+        .group:hover .css-placeholder {
+            background-color: rgba(25, 25, 24, 0.05);
+            border-color: rgba(25, 25, 24, 0.25);
+            color: rgba(25, 25, 24, 0.5);
+        }
+
+        /* Dark section placeholder overrides */
+        .dark-section .css-placeholder {
+            background-color: rgba(247, 245, 239, 0.04);
+            border-color: rgba(247, 245, 239, 0.15);
+            color: rgba(247, 245, 239, 0.4);
+        }
+
+        .dark-section .group:hover .css-placeholder {
+            background-color: rgba(247, 245, 239, 0.08);
+            border-color: rgba(247, 245, 239, 0.3);
+            color: rgba(247, 245, 239, 0.6);
+        }
+
+        ::selection {
+            background: theme('colors.accent');
+            color: theme('colors.ink-inverse');
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-ink selection:bg-accent selection:text-ink-inverse">
+
+    <header class="fixed top-5 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+        <nav class="glass-nav pointer-events-auto flex items-center gap-5 px-5 py-2.5 rounded-full mx-auto max-w-fit transition-all">
+            <a href="#" class="font-medium tracking-wide text-[14px] hover:text-accent transition-colors">VDVXDV</a>
+            
+            <div class="w-px h-3.5 bg-border hidden sm:block"></div>
+            
+            <ul class="hidden sm:flex items-center gap-4 text-[13px] font-medium text-ink-soft">
+                <li><a href="#" class="hover:text-ink transition-colors">项目</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">随笔</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">文章</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">碎片</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">影像</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">关于</a></li>
+            </ul>
+            
+            <button class="text-[13px] font-medium text-ink hover:text-accent transition-colors ml-2 sm:ml-0" aria-label="Search">
+                搜索
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <section class="max-w-content mx-auto px-6 sm:px-8 pt-44 pb-12 md:pt-52 md:pb-16">
+            <div class="max-w-2xl">
+                <h1 class="text-4xl md:text-5xl font-serif font-medium leading-[1.2] mb-8">
+                    个人项目、<br>
+                    写作与影像的安静记录。
+                </h1>
+                <p class="text-ink-soft leading-relaxed text-[15px] max-w-md">
+                    探索技术与表达的交叉点。这里是 VDVXDV 的公开个人空间，记录正在进行的构建、长时间的思考以及沿途捕捉的切片。
+                </p>
+            </div>
+        </section>
+
+        <!-- Block 1: Featured Article (Sandstone Background) -->
+        <section class="px-4 sm:px-6 lg:px-8 max-w-page mx-auto">
+            <div class="bg-surface-sand rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 lg:p-20 transition-colors">
+                
+                <div class="mb-10 border-t border-border pt-3 flex justify-between items-start text-[11px] font-mono tracking-widest text-ink-muted uppercase">
+                    <span>Featured Article</span>
+                    <span>精选文章</span>
+                </div>
+
+                <a href="#" class="group block cursor-pointer">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+                        <div class="lg:col-span-7 order-2 lg:order-1 flex flex-col gap-5">
+                            <div class="text-xs text-accent font-mono">2026-08-05 · 技术思考</div>
+                            <h2 class="text-3xl md:text-4xl font-serif font-medium group-hover:text-accent transition-colors leading-tight">
+                                上下文正在成为个人 AI 的真正界面
+                            </h2>
+                            <p class="text-ink-soft text-[15px] md:text-[16px] leading-relaxed max-w-xl">
+                                当模型长期理解一个人的项目、文件、偏好和决定时，它才开始跨越工具的属性，成为真正的能力延伸。模型会更新，但积累的上下文可以复用。
+                            </p>
+                            <div class="mt-4 flex items-center gap-2 text-sm font-medium text-ink group-hover:text-accent transition-colors">
+                                开始阅读 <span class="group-hover:translate-x-1 transition-transform">→</span>
+                            </div>
+                        </div>
+                        
+                        <div class="lg:col-span-5 order-1 lg:order-2">
+                            <div class="w-full aspect-[4/3] overflow-hidden rounded-xl bg-canvas/50">
+                                <div class="css-placeholder">
+                                    <span>Article Visual</span>
+                                    <span class="ratio">4:3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- Block 2: Projects (Dark Ink Full-width Background) -->
+        <section class="bg-dark text-ink-inverse mt-16 md:mt-24 py-24 md:py-32 dark-section">
+            <div class="max-w-content mx-auto px-6 sm:px-8">
+                
+                <div class="mb-16 border-t border-ink-inverse/20 pt-3 flex justify-between items-start text-[11px] font-mono tracking-widest text-ink-inverse/50 uppercase">
+                    <span>Active Projects</span>
+                    <span>项目</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-center">
+                    <div class="md:col-span-6 lg:col-span-5">
+                        <a href="#" class="group block w-full aspect-square relative overflow-hidden rounded-xl bg-dark-surface">
+                            <div class="css-placeholder">
+                                <span>Project Interface</span>
+                                <span class="ratio">1:1</span>
+                            </div>
+                            <div class="absolute bottom-4 left-4 flex gap-2">
+                                <span class="px-2 py-1 bg-ink/80 backdrop-blur-sm text-[10px] font-mono rounded text-ink-inverse/80">Python</span>
+                                <span class="px-2 py-1 bg-ink/80 backdrop-blur-sm text-[10px] font-mono rounded text-ink-inverse/80">LLM</span>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="md:col-span-6 lg:col-span-7 flex flex-col justify-center">
+                        <div class="flex items-center gap-3 mb-5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                            <span class="text-[11px] font-mono text-ink-inverse/60 uppercase tracking-wider">Developing · 开发中</span>
+                        </div>
+                        <h3 class="text-3xl md:text-4xl font-medium mb-5">Morning Radar</h3>
+                        <p class="text-ink-inverse/70 text-[15px] md:text-[16px] leading-relaxed mb-10 max-w-lg">
+                            一个自动收集、筛选和整理过去二十四小时重要信息的个人晨报系统。将碎片化的信息流转化为高质量、可阅读的结构化上下文。
+                        </p>
+                        <div>
+                            <a href="#" class="inline-flex items-center gap-2 text-sm font-medium border-b border-ink-inverse/30 pb-1 hover:border-ink-inverse transition-colors">
+                                查看项目详情 <span class="text-xs">→</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Block 3: Essays & Fragments (Pale Taupe/Wine Background) -->
+        <section class="px-4 sm:px-6 lg:px-8 max-w-page mx-auto mt-16 md:mt-24">
+            <div class="bg-surface-taupe rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 lg:p-20">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-start">
+                    
+                    <!-- Essays Column -->
+                    <div class="lg:col-span-7">
+                        <div class="mb-10 border-t border-border pt-3 flex justify-between items-start text-[11px] font-mono tracking-widest text-ink-muted uppercase">
+                            <span>Essays</span>
+                            <span>随笔</span>
+                        </div>
+
+                        <a href="#" class="group block">
+                            <div class="flex flex-col gap-6">
+                                <div class="w-full aspect-[16/9] sm:aspect-[2/1] overflow-hidden rounded-xl bg-canvas/50">
+                                    <div class="css-placeholder">
+                                        <span>Atmosphere Photo</span>
+                                        <span class="ratio">16:9</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-3">
+                                    <h3 class="text-2xl font-serif font-medium group-hover:text-accent transition-colors">初中时，我只是想看 YouTube</h3>
+                                    <p class="text-ink-soft text-[15px] leading-relaxed max-w-xl">
+                                        我最初只是想看一些游戏实况，后来却莫名其妙地搭建起了自己的整个互联网世界。那是一段缺乏指引，但充满纯粹好奇心的野蛮生长期。
+                                    </p>
+                                    <div class="text-[11px] text-ink-muted font-mono mt-2">2026-08-01</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Fragments Column (Vertical Editorial Stack) -->
+                    <!-- Feedback 3: Added left border, padding, and top margin to decouple from 2-col symmetry -->
+                    <div class="lg:col-span-5 lg:pl-12 lg:border-l lg:border-border/40 lg:mt-16">
+                        <div class="mb-10 border-t border-border pt-3 flex justify-between items-start text-[11px] font-mono tracking-widest text-ink-muted uppercase">
+                            <span>Fragments</span>
+                            <span>碎片</span>
+                        </div>
+
+                        <!-- Feedback 1 & 2: Vertical layout, staggered indents, disjointed thin lines -->
+                        <div class="flex flex-col">
+                            
+                            <!-- 1. Real Published Fragment -->
+                            <article class="border-l border-ink-muted/30 pl-5 md:pl-6 py-1 mb-10 md:mb-12">
+                                <div class="text-[11px] text-ink-muted font-mono tracking-wider uppercase mb-3">
+                                    Aug 05, 2026
+                                </div>
+                                <p class="text-[15px] text-ink-soft leading-relaxed max-w-sm">
+                                    上下文也许是这个时代最容易被低估的个人资产。模型会更新，工具会消失，但积累过的判断和经历仍然可以继续复用。
+                                </p>
+                            </article>
+                            
+                            <!-- 2. Structural Placeholder (Indented right, medium opacity) -->
+                            <article class="border-l border-border/60 pl-5 md:pl-6 py-1 mb-10 md:mb-12 ml-8 md:ml-16 opacity-60 pointer-events-none">
+                                <div class="text-[10px] text-ink-muted/60 font-mono tracking-wider uppercase mb-3">
+                                    Slot Pending
+                                </div>
+                                <!-- CSS text lines replacing fake data -->
+                                <div class="flex flex-col gap-2.5 max-w-[220px] mt-3">
+                                    <div class="h-1.5 bg-ink-muted/20 rounded-full w-full"></div>
+                                    <div class="h-1.5 bg-ink-muted/20 rounded-full w-4/5"></div>
+                                    <div class="h-1.5 bg-ink-muted/20 rounded-full w-5/6"></div>
+                                </div>
+                            </article>
+
+                            <!-- 3. Structural Placeholder (Slightly indented, fading out) -->
+                            <article class="border-l border-border/40 pl-5 md:pl-6 py-1 ml-3 md:ml-6 opacity-30 pointer-events-none">
+                                <div class="text-[10px] text-ink-muted/60 font-mono tracking-wider uppercase mb-3">
+                                    Slot Pending
+                                </div>
+                                <!-- CSS text lines replacing fake data -->
+                                <div class="flex flex-col gap-2.5 max-w-[180px] mt-3">
+                                    <div class="h-1.5 bg-ink-muted/20 rounded-full w-11/12"></div>
+                                    <div class="h-1.5 bg-ink-muted/20 rounded-full w-2/3"></div>
+                                </div>
+                            </article>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Block 4: Photography (Canvas Background) -->
+        <section class="px-4 sm:px-6 lg:px-8 max-w-page mx-auto mt-16 md:mt-24 mb-24 md:mb-32">
+            
+            <!-- Feedback 2: Wrapped in a dedicated color block container to establish distinct section identity -->
+            <div class="bg-surface-photo rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 lg:p-20">
+                
+                <div class="max-w-content mx-auto mb-16 border-t border-border pt-3 flex justify-between items-start text-[11px] font-mono tracking-widest text-ink-muted uppercase">
+                    <span>Photography</span>
+                    <span>影像</span>
+                </div>
+
+                <!-- CSS Placeholder layout demonstrating mixed aspect ratios -->
+                <div class="flex flex-col md:flex-row gap-8 md:gap-12 max-w-content mx-auto items-start">
+                    
+                    <!-- Landscape -->
+                    <div class="flex-grow-[2] basis-[65%] flex flex-col">
+                        <a href="#" class="group block w-full aspect-[4/3] overflow-hidden rounded-xl bg-canvas/50">
+                            <div class="css-placeholder">
+                                <span>Landscape Photo</span>
+                                <span class="ratio">4:3</span>
+                            </div>
+                        </a>
+                        <div class="mt-4 flex justify-between items-center text-[11px] text-ink-muted font-mono">
+                            <span>雨落下来以前</span>
+                            <span>2026-07-30</span>
+                        </div>
+                    </div>
+
+                    <!-- Portrait & Square -->
+                    <div class="flex-grow basis-[35%] flex flex-col gap-16 mt-8 md:mt-24">
+                        <div class="flex flex-col">
+                            <a href="#" class="group block w-full aspect-[3/4] overflow-hidden rounded-xl bg-canvas/50">
+                                <div class="css-placeholder">
+                                    <span>Portrait Photo</span>
+                                    <span class="ratio">3:4</span>
+                                </div>
+                            </a>
+                        </div>
+                        
+                        <div class="flex flex-col items-end">
+                            <a href="#" class="group block w-2/3 aspect-square overflow-hidden rounded-xl bg-canvas/50">
+                                <div class="css-placeholder">
+                                    <span>Square Photo</span>
+                                    <span class="ratio">1:1</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+        </section>
+
+    </main>
+
+    <footer class="border-t border-border">
+        <div class="max-w-content mx-auto px-6 sm:px-8 py-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+            <div>
+                <a href="#" class="font-medium tracking-wide text-[15px] text-ink">VDVXDV</a>
+                <p class="text-[13px] text-ink-muted mt-2">© 2026. A personal space.</p>
+            </div>
+            
+            <div class="flex gap-6 text-[13px] font-medium">
+                <a href="#" class="text-ink-soft hover:text-accent transition-colors">GitHub</a>
+                <a href="#" class="text-ink-soft hover:text-accent transition-colors">Mail</a>
+                <a href="#" class="text-ink-soft hover:text-accent transition-colors">RSS</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

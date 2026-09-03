@@ -1,0 +1,47 @@
+---
+import { render } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { formatArticleDate, getPublishedArticles } from '../../lib/content/articles';
+
+export async function getStaticPaths() {
+  const articles = await getPublishedArticles();
+  return articles.map((article) => ({
+    params: { slug: article.data.slug },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { data } = article;
+const { Content } = await render(article);
+---
+
+<ArticleLayout
+  title={`${data.title} — VDVXDV`}
+  description={data.description}
+  ogType="article"
+  bodyClass="article-detail-body-page"
+>
+  <article class="article-detail">
+    <header class="article-detail-header">
+      <h1 class="article-detail-title">{data.title}</h1>
+
+      <div class="article-detail-meta">
+        <time datetime={data.publishedAt.toISOString().slice(0, 10)}>
+          {formatArticleDate(data.publishedAt)}
+        </time>
+        {data.readingTime !== undefined && <span>{data.readingTime} min read</span>}
+        {data.category && <span>{data.category}</span>}
+      </div>
+    </header>
+
+    <div class="prose">
+      <Content />
+
+      <div class="article-ending-mark" aria-hidden="true">· · ·</div>
+      <nav class="article-ending" aria-label="文章结束" data-pagefind-ignore>
+        <a href="/articles/">Close Book</a>
+      </nav>
+    </div>
+  </article>
+</ArticleLayout>

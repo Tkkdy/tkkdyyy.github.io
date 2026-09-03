@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDVXDV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 颜色系统：温暖、近黑、克制的强调色 */
+            --color-canvas: #F4F2EC;
+            --color-surface: #FCFBF7;
+            --color-ink-main: #1A1A19;
+            --color-ink-soft: #4A4A48;
+            --color-ink-muted: #7A7A77;
+            --color-accent-rust: #9B4A3A; /* 砖红/铁锈红，带来力量与温度 */
+            
+            /* 边框系统：建立精确的技术网格 */
+            --border-hairline: rgba(26, 26, 25, 0.12);
+            --border-strong: rgba(26, 26, 25, 0.3);
+
+            /* 字体栈 */
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-serif: 'Noto Serif SC', 'Source Han Serif SC', serif;
+            --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+            /* Liquid Glass 导航参数 */
+            --glass-bg: rgba(244, 242, 236, 0.65);
+            --glass-blur: blur(16px);
+            --glass-border: rgba(26, 26, 25, 0.08);
+        }
+
+        body {
+            background-color: var(--color-canvas);
+            color: var(--color-ink-main);
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .font-serif-zh { font-family: var(--font-serif); }
+        .font-mono-tech { font-family: var(--font-mono); }
+
+        /* 网格线系统 (Anthropic Research 风格启发) */
+        .grid-blueprint {
+            border-left: 1px solid var(--border-hairline);
+            border-right: 1px solid var(--border-hairline);
+        }
+        
+        .border-b-hairline { border-bottom: 1px solid var(--border-hairline); }
+        .border-r-hairline { border-right: 1px solid var(--border-hairline); }
+        .border-t-hairline { border-top: 1px solid var(--border-hairline); }
+        
+        /* 文本颜色工具类 */
+        .text-ink { color: var(--color-ink-main); }
+        .text-ink-soft { color: var(--color-ink-soft); }
+        .text-ink-muted { color: var(--color-ink-muted); }
+        .text-accent { color: var(--color-accent-rust); }
+
+        /* Liquid Glass 导航 */
+        .liquid-nav {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 24px -6px rgba(0,0,0,0.05);
+        }
+
+        /* 图片占位符样式（带有一点胶片感） */
+        .image-placeholder {
+            background-color: #E6E4DD;
+            mix-blend-mode: multiply;
+        }
+
+        /* 自定义选区颜色 */
+        ::selection {
+            background-color: var(--color-accent-rust);
+            color: #fff;
+        }
+
+        /* 强调下划线悬停效果 */
+        .hover-underline {
+            position: relative;
+            text-decoration: none;
+        }
+        .hover-underline::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: currentColor;
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        .hover-underline:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center">
+
+    <header class="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+        <!-- 导航胶囊，面积小，紧凑，半透明 -->
+        <nav class="liquid-nav rounded-full px-6 py-2.5 flex items-center gap-6 pointer-events-auto transition-transform duration-300 ease-in-out">
+            <a href="#" class="font-sans font-semibold text-sm tracking-widest text-ink hover-underline">VDVXDV</a>
+            
+            <div class="w-px h-4 bg-[var(--border-strong)]"></div>
+            
+            <div class="hidden md:flex items-center gap-5 text-sm font-medium text-ink-soft">
+                <a href="#" class="hover:text-ink transition-colors">项目</a>
+                <a href="#" class="hover:text-ink transition-colors">随笔</a>
+                <a href="#" class="text-ink transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-[var(--color-accent-rust)] after:rounded-full">文章</a>
+                <a href="#" class="hover:text-ink transition-colors">碎片</a>
+                <a href="#" class="hover:text-ink transition-colors">影像</a>
+                <a href="#" class="hover:text-ink transition-colors">关于</a>
+            </div>
+            
+            <div class="w-px h-4 bg-[var(--border-strong)] hidden md:block"></div>
+            
+            <button class="text-ink-soft hover:text-ink transition-colors" aria-label="Search">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
+
+            <!-- 移动端菜单触发器 -->
+            <button class="md:hidden text-ink-soft ml-2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </nav>
+    </header>
+
+    <main class="w-full max-w-[1280px] px-4 md:px-8 mt-32 mb-24 flex-grow">
+        
+        <!-- 大网格容器，建立精确感 -->
+        <div class="grid-blueprint border-t-hairline">
+            
+            <!-- 首屏：身份声明与微小技术标识 -->
+            <section class="grid grid-cols-1 md:grid-cols-12 border-b-hairline">
+                <div class="col-span-1 md:col-span-8 p-6 md:p-12 md:border-r-hairline flex flex-col justify-center">
+                    <p class="font-mono-tech text-xs text-ink-muted mb-6 tracking-widest uppercase">[ SYS.READY // v0.1 ]</p>
+                    <h1 class="font-sans text-5xl md:text-7xl font-semibold tracking-tight text-ink mb-6">
+                        VDVXDV
+                    </h1>
+                    <p class="font-serif-zh text-xl md:text-2xl text-ink-soft leading-relaxed max-w-2xl">
+                        探索技术如何塑造个人语境。<br class="hidden md:block" />
+                        这里记录了我在软件开发、写作与视觉叙事中的长期观察。
+                    </p>
+                </div>
+                <div class="col-span-1 md:col-span-4 p-6 md:p-12 flex flex-col justify-end">
+                    <div class="space-y-4 font-mono-tech text-xs text-ink-muted">
+                        <div class="flex justify-between border-b-hairline pb-2">
+                            <span>STATUS</span>
+                            <span class="text-accent">ONLINE</span>
+                        </div>
+                        <div class="flex justify-between border-b-hairline pb-2">
+                            <span>LATEST_UPDATE</span>
+                            <span>2026.08.05</span>
+                        </div>
+                        <div class="flex justify-between border-b-hairline pb-2">
+                            <span>ENV</span>
+                            <span>PRODUCTION</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-1 md:grid-cols-12">
+                
+                <!-- 左侧/上部：代表性文章 (高视觉优先级，人文温度) -->
+                <article class="col-span-1 md:col-span-7 border-b-hairline md:border-b-0 md:border-r-hairline p-6 md:p-12 group cursor-pointer">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="w-2 h-2 rounded-full bg-ink"></span>
+                        <span class="font-sans text-xs font-semibold tracking-widest uppercase text-ink">Featured Article</span>
+                    </div>
+                    
+                    <!-- 极简的大面积占位图，代表文章封面 -->
+                    <div class="w-full aspect-[4/3] image-placeholder overflow-hidden mb-8 relative">
+                         <img src="https://images.unsplash.com/photo-1518342469493-9c878d2b270a?q=80&w=1000&auto=format&fit=crop" alt="Abstract gradient" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out" />
+                    </div>
+
+                    <div class="flex gap-4 items-baseline mb-4">
+                        <span class="font-mono-tech text-xs text-ink-muted">2026.08.05</span>
+                        <span class="font-mono-tech text-xs text-accent bg-[#9B4A3A]/10 px-2 py-0.5 rounded-sm">TECH_THOUGHT</span>
+                    </div>
+
+                    <h2 class="font-serif-zh text-2xl md:text-3xl text-ink font-bold leading-tight mb-4 group-hover:text-accent transition-colors">
+                        上下文正在成为个人 AI 的真正界面
+                    </h2>
+                    
+                    <p class="font-serif-zh text-ink-soft text-base md:text-lg leading-relaxed mb-6">
+                        当 AI 长期理解一个人的项目、文件、偏好和决定，它才开始成为真正的能力延伸。模型会更新，工具会消失，但积累过的判断和经历仍然可以继续复用。
+                    </p>
+
+                    <a href="#" class="inline-flex items-center gap-2 font-sans text-sm font-medium text-ink hover-underline">
+                        开始阅读 <span class="font-mono-tech">-></span>
+                    </a>
+                </article>
+
+                <!-- 右侧/下部：重点项目 (工程感，网格，数据优先) -->
+                <aside class="col-span-1 md:col-span-5 flex flex-col">
+                    <div class="p-6 md:p-8 border-b-hairline bg-[var(--color-surface)]">
+                        <div class="flex items-center justify-between mb-8">
+                            <div class="flex items-center gap-3">
+                                <span class="w-2 h-2 bg-transparent border border-ink"></span>
+                                <span class="font-sans text-xs font-semibold tracking-widest uppercase text-ink">Active Projects</span>
+                            </div>
+                            <a href="#" class="font-sans text-xs text-ink-muted hover:text-ink transition-colors">View All+</a>
+                        </div>
+
+                        <!-- 项目项 1 -->
+                        <div class="group cursor-pointer mb-8">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="font-mono-tech text-[10px] bg-ink text-[var(--color-canvas)] px-1.5 py-0.5">DEV</span>
+                                <h3 class="font-sans text-lg font-semibold text-ink group-hover:text-accent transition-colors">Morning Radar</h3>
+                            </div>
+                            <p class="font-serif-zh text-sm text-ink-soft mb-3 leading-relaxed">
+                                为个人筛选每天真正值得关注的变化。一个自动收集、筛选和整理过去二十四小时重要信息的晨报系统。
+                            </p>
+                            <div class="flex gap-2 font-mono-tech text-xs text-ink-muted">
+                                <span>Python</span>
+                                <span>·</span>
+                                <span>DeepSeek</span>
+                            </div>
+                        </div>
+
+                        <!-- 项目项 2 -->
+                        <div class="group cursor-pointer">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="font-mono-tech text-[10px] border border-ink text-ink px-1.5 py-0.5">MAINTAIN</span>
+                                <h3 class="font-sans text-lg font-semibold text-ink group-hover:text-accent transition-colors">VDVXDV Website</h3>
+                            </div>
+                            <p class="font-serif-zh text-sm text-ink-soft mb-3 leading-relaxed">
+                                个人互联网空间的工程化实践。不使用模板，从零构建内容模型与视觉系统。
+                            </p>
+                            <div class="flex gap-2 font-mono-tech text-xs text-ink-muted">
+                                <span>Astro</span>
+                                <span>·</span>
+                                <span>Tailwind</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 随笔区 (紧凑排版) -->
+                    <div class="p-6 md:p-8 flex-grow flex flex-col">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="font-serif-zh italic text-lg text-ink-muted">Essays</span>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <article class="group cursor-pointer">
+                                <div class="font-mono-tech text-xs text-ink-muted mb-1">08.01</div>
+                                <h4 class="font-serif-zh text-base text-ink font-medium mb-1 group-hover:text-accent transition-colors">初中时，我只是想看 YouTube</h4>
+                                <p class="font-serif-zh text-sm text-ink-soft line-clamp-2">我最初只是想看一些游戏实况，后来却莫名其妙地搭建起了自己的整个互联网世界。</p>
+                            </article>
+                            
+                            <article class="group cursor-pointer">
+                                <div class="font-mono-tech text-xs text-ink-muted mb-1">07.15</div>
+                                <h4 class="font-serif-zh text-base text-ink font-medium mb-1 group-hover:text-accent transition-colors">没有目标的设计迭代</h4>
+                                <p class="font-serif-zh text-sm text-ink-soft line-clamp-2">有时候在界面上移动像素并不是为了解决特定的转化率问题，而仅仅是为了让它看起来“对”。</p>
+                            </article>
+                        </div>
+                    </div>
+                </aside>
+
+            </section>
+
+            <section class="border-t-hairline p-6 md:p-12">
+                 <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono-tech text-xs font-semibold tracking-widest uppercase text-ink">[ IMG_STREAM ]</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-6 md:gap-12 items-end">
+                    <div class="w-full md:w-3/4 image-placeholder aspect-video relative overflow-hidden group cursor-pointer">
+                        <img src="https://images.unsplash.com/photo-1428908728789-d2de25dbd4e2?q=80&w=1200&auto=format&fit=crop" alt="Rainy window" class="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-700 ease-in-out" />
+                        <div class="absolute inset-0 border border-black/10"></div>
+                    </div>
+                    
+                    <div class="w-full md:w-1/4 pb-2">
+                        <h4 class="font-serif-zh text-lg text-ink font-medium mb-2">雨落下来以前</h4>
+                        <p class="font-sans text-sm text-ink-soft mb-4">空气突然安静了一会。</p>
+                        <div class="space-y-1 font-mono-tech text-[11px] text-ink-muted">
+                            <p>CAPTURED: 2026.07.30</p>
+                            <p>LOC: SHANTOU</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="w-full max-w-[1280px] px-4 md:px-8 mb-12">
+        <div class="grid-blueprint border-t-hairline border-b-hairline py-8 px-6 md:px-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div class="font-sans text-2xl font-bold tracking-tighter text-ink">
+                VDVXDV.
+            </div>
+            
+            <div class="flex gap-6 font-mono-tech text-xs text-ink-soft">
+                <a href="#" class="hover:text-ink transition-colors">GITHUB</a>
+                <a href="#" class="hover:text-ink transition-colors">EMAIL</a>
+                <a href="#" class="hover:text-ink transition-colors">RSS</a>
+            </div>
+            
+            <div class="font-mono-tech text-[10px] text-ink-muted">
+                &copy; 2026 / NO TRACKING. NO ADS.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

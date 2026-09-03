@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDVXDV Articles Visual Exploration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           GLOBAL VARIABLES & RESET
+           ========================================================================== */
+        :root {
+            --font-ui: 'Inter', -apple-system, sans-serif;
+            --font-serif: 'Noto Serif SC', serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --c-white: #ffffff;
+            --c-bg: #FAFAFA;
+            --c-bg-subtle: #F3F3F3;
+            --c-text-main: #111111;
+            --c-text-muted: #666666;
+            --c-text-light: #999999;
+            --c-border: #E5E5E5;
+            --c-border-dark: #111111;
+            
+            --z-header: 100;
+            --z-switcher: 200;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-ui);
+            color: var(--c-text-main);
+            background-color: var(--c-bg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        ul, ol {
+            list-style: none;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ==========================================================================
+           SHARED COMPONENTS (Header, Footer, Media Placeholder)
+           ========================================================================== */
+        .glass-header {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 40px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+            z-index: var(--z-header);
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .glass-header a {
+            color: var(--c-text-muted);
+            transition: color 0.2s ease;
+        }
+
+        .glass-header a:hover, .glass-header a.active {
+            color: var(--c-text-main);
+        }
+
+        .glass-header .brand {
+            font-weight: 600;
+            color: var(--c-text-main);
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .glass-header {
+                top: 16px;
+                width: calc(100% - 32px);
+                overflow-x: auto;
+                padding: 12px 20px;
+                gap: 16px;
+                justify-content: flex-start;
+            }
+            .glass-header::-webkit-scrollbar {
+                display: none;
+            }
+        }
+
+        .site-footer {
+            margin-top: 120px;
+            padding: 40px 24px;
+            border-top: 1px solid var(--c-border);
+            text-align: center;
+            font-size: 13px;
+            color: var(--c-text-light);
+            font-family: var(--font-mono);
+        }
+
+        .media-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-color: var(--c-bg-subtle);
+            border: 1px solid var(--c-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin: 40px 0;
+        }
+        
+        .media-placeholder::before, .media-placeholder::after {
+            content: '';
+            position: absolute;
+            background-color: var(--c-border);
+        }
+        .media-placeholder::before { width: 100%; height: 1px; }
+        .media-placeholder::after { width: 1px; height: 100%; }
+
+        .media-caption {
+            margin-top: -24px;
+            margin-bottom: 40px;
+            font-size: 13px;
+            color: var(--c-text-muted);
+            text-align: center;
+            font-family: var(--font-ui);
+        }
+
+        /* ==========================================================================
+           PROTOTYPE SWITCHER (Dev Tool)
+           ========================================================================== */
+        .switcher {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #111;
+            color: #fff;
+            padding: 16px;
+            border-radius: 12px;
+            z-index: var(--z-switcher);
+            font-size: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            font-family: var(--font-ui);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .switcher-title {
+            font-weight: 600;
+            color: #888;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .switcher-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .switcher button {
+            background: #222;
+            color: #ccc;
+            border: 1px solid #333;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .switcher button.active {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        .switcher button:hover:not(.active) {
+            background: #333;
+        }
+
+        /* ==========================================================================
+           COMMON PROSE (Stress Test Styles)
+           Base rules modified per direction via specific scoping.
+           ========================================================================== */
+        .prose h2, .prose h3 {
+            font-family: var(--font-ui);
+            color: var(--c-text-main);
+            margin-top: 2em;
+            margin-bottom: 1em;
+            font-weight: 600;
+        }
+        
+        .prose p {
+            margin-bottom: 1.5em;
+        }
+
+        .prose a {
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 3px;
+        }
+
+        .prose strong { font-weight: 600; }
+        .prose em { font-style: italic; }
+        
+        .prose code {
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            background: var(--c-bg-subtle);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+        }
+
+        .prose pre {
+            background: #111;
+            color: #eee;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 2em 0;
+        }
+
+        .prose blockquote {
+            border-left: 2px solid var(--c-text-main);
+            padding-left: 24px;
+            margin: 2em 0;
+            font-style: italic;
+            color: var(--c-text-muted);
+        }
+
+        .prose ul, .prose ol {
+            margin-bottom: 1.5em;
+            padding-left: 24px;
+        }
+        .prose ul { list-style: disc; }
+        .prose ol { list-style: decimal; }
+        .prose li { margin-bottom: 0.5em; }
+
+        .prose table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2em 0;
+            font-size: 14px;
+        }
+        
+        .prose th, .prose td {
+            border-bottom: 1px solid var(--c-border);
+            padding: 12px 8px;
+            text-align: left;
+        }
+        .prose th { font-weight: 500; font-family: var(--font-ui); color: var(--c-text-muted); }
+
+        .prose hr {
+            border: none;
+            border-top: 1px solid var(--c-border);
+            margin: 3em 0;
+        }
+
+        /* ==========================================================================
+           DIRECTION A: Independent Editorial
+           Keywords: Asymmetrical, Fine lines, Large Typography, Whitespace
+           ========================================================================== */
+        .dir-a {
+            --w-container: 1200px;
+            background-color: #FAFAFA;
+        }
+
+        .dir-a .container {
+            max-width: var(--w-container);
+            margin: 120px auto 0;
+            padding: 0 40px;
+        }
+
+        /* A: List */
+        .dir-a-list .page-title {
+            font-size: 48px;
+            font-family: var(--font-serif);
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            margin-bottom: 80px;
+            border-bottom: 1px solid var(--c-border-dark);
+            padding-bottom: 40px;
+        }
+
+        .dir-a-list .article-item {
+            display: grid;
+            grid-template-columns: 200px 1fr 200px;
+            gap: 40px;
+            padding: 40px 0;
+            border-bottom: 1px solid var(--c-border);
+        }
+
+        .dir-a-list .item-meta-left {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--c-text-muted);
+            text-transform: uppercase;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .dir-a-list .item-title {
+            font-family: var(--font-serif);
+            font-size: 28px;
+            font-weight: 500;
+            line-height: 1.4;
+            margin-bottom: 16px;
+            letter-spacing: -0.01em;
+        }
+
+        .dir-a-list .item-desc {
+            font-family: var(--font-serif);
+            font-size: 15px;
+            color: var(--c-text-muted);
+            line-height: 1.7;
+            max-width: 600px;
+        }
+
+        .dir-a-list .item-meta-right {
+            text-align: right;
+            font-family: var(--font-ui);
+            font-size: 13px;
+            color: var(--c-text-light);
+        }
+
+        .dir-a-list .tag {
+            display: inline-block;
+            border: 1px solid var(--c-border);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-right: 4px;
+        }
+
+        /* A: Detail */
+        .dir-a-detail .hero {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 60px;
+            margin-bottom: 80px;
+            align-items: start;
+        }
+
+        .dir-a-detail .hero-meta {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--c-text-muted);
+            border-top: 1px solid var(--c-border-dark);
+            padding-top: 16px;
+        }
+        
+        .dir-a-detail .meta-group {
+            margin-bottom: 24px;
+        }
+        .dir-a-detail .meta-label { color: var(--c-text-light); margin-bottom: 4px; display: block;}
+
+        .dir-a-detail .hero-content h1 {
+            font-family: var(--font-serif);
+            font-size: 44px;
+            font-weight: 600;
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+        }
+
+        .dir-a-detail .hero-content .lead {
+            font-family: var(--font-ui);
+            font-size: 18px;
+            color: var(--c-text-muted);
+            line-height: 1.6;
+            max-width: 700px;
+        }
+
+        .dir-a-detail .prose-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 60px;
+        }
+
+        .dir-a-detail .prose {
+            max-width: 680px;
+            font-family: var(--font-serif);
+            font-size: 17px;
+            line-height: 2;
+            color: #222;
+        }
+
+        .dir-a-detail .prose blockquote {
+            font-size: 22px;
+            line-height: 1.6;
+            border-left: none;
+            padding-left: 0;
+            margin: 3em 0;
+            color: var(--c-text-main);
+            border-top: 1px solid var(--c-border);
+            border-bottom: 1px solid var(--c-border);
+            padding: 32px 0;
+        }
+
+        @media (max-width: 1024px) {
+            .dir-a-list .article-item { grid-template-columns: 150px 1fr; }
+            .dir-a-list .item-meta-right { display: none; }
+            .dir-a-detail .hero, .dir-a-detail .prose-container { grid-template-columns: 1fr; gap: 40px; }
+            .dir-a-detail .hero-meta { display: flex; flex-wrap: wrap; gap: 24px; border-top: none; border-bottom: 1px solid var(--c-border); padding-bottom: 24px;}
+        }
+        @media (max-width: 768px) {
+            .dir-a .container { padding: 0 24px; margin-top: 100px; }
+            .dir-a-list .page-title { font-size: 32px; margin-bottom: 40px; }
+            .dir-a-list .article-item { grid-template-columns: 1fr; gap: 16px; padding: 32px 0;}
+            .dir-a-list .item-meta-left { flex-direction: row; justify-content: space-between; border-bottom: 1px solid var(--c-border); padding-bottom: 8px; }
+            .dir-a-detail .hero-content h1 { font-size: 32px; }
+            .dir-a-detail .prose { font-size: 16px; line-height: 1.8; }
+            .prose pre, .prose table { max-width: calc(100vw - 48px); overflow-x: auto; display: block; }
+        }
+
+        /* ==========================================================================
+           DIRECTION B: Personal Archive
+           Keywords: Chronology, Index, Tabular, Technical Order, Compact
+           ========================================================================== */
+        .dir-b {
+            --w-container: 1000px;
+            background-color: #F8F9FA; /* Slightly cooler */
+        }
+
+        .dir-b .container {
+            max-width: var(--w-container);
+            margin: 120px auto 0;
+            padding: 0 40px;
+        }
+
+        /* B: List */
+        .dir-b-list .archive-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 60px;
+            font-family: var(--font-mono);
+            border-bottom: 2px solid var(--c-text-main);
+            padding-bottom: 16px;
+        }
+
+        .dir-b-list .archive-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .dir-b-list .archive-stats {
+            font-size: 13px;
+            color: var(--c-text-muted);
+        }
+
+        .dir-b-list .year-section {
+            margin-bottom: 60px;
+        }
+
+        .dir-b-list .year-marker {
+            font-family: var(--font-mono);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--c-text-main);
+            position: sticky;
+            top: 80px;
+            background: #F8F9FA;
+            padding: 8px 0;
+            z-index: 10;
+        }
+
+        .dir-b-list .archive-item {
+            display: grid;
+            grid-template-columns: 100px 1fr 140px;
+            gap: 24px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--c-border);
+            align-items: baseline;
+            transition: background 0.2s;
+        }
+        
+        .dir-b-list .archive-item:hover {
+            background: rgba(0,0,0,0.02);
+        }
+
+        .dir-b-list .item-date {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--c-text-muted);
+        }
+
+        .dir-b-list .item-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .dir-b-list .item-title {
+            font-family: var(--font-ui);
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--c-text-main);
+        }
+
+        .dir-b-list .item-desc {
+            font-family: var(--font-serif);
+            font-size: 14px;
+            color: var(--c-text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 90%;
+        }
+
+        .dir-b-list .item-category {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            text-align: right;
+            color: var(--c-text-light);
+        }
+
+        /* B: Detail */
+        .dir-b-detail .doc-header {
+            background: var(--c-white);
+            border: 1px solid var(--c-border);
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .dir-b-detail .doc-title {
+            font-family: var(--font-ui);
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 24px;
+        }
+
+        .dir-b-detail .doc-meta-table {
+            width: 100%;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            border-collapse: collapse;
+        }
+
+        .dir-b-detail .doc-meta-table td {
+            padding: 8px 0;
+            border-top: 1px dashed var(--c-border);
+        }
+        .dir-b-detail .doc-meta-table td:first-child {
+            color: var(--c-text-light);
+            width: 150px;
+        }
+
+        .dir-b-detail .prose {
+            font-family: var(--font-ui); /* UI font for archive body for technical feel */
+            font-size: 15px;
+            line-height: 1.8;
+            color: #333;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        
+        .dir-b-detail .prose h2, .dir-b-detail .prose h3 {
+            font-family: var(--font-mono);
+            font-weight: 500;
+            letter-spacing: -0.02em;
+        }
+
+        @media (max-width: 768px) {
+            .dir-b .container { padding: 0 24px; margin-top: 100px; }
+            .dir-b-list .archive-item {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                padding: 24px 0;
+            }
+            .dir-b-list .item-desc { white-space: normal; max-width: 100%; }
+            .dir-b-list .item-category { text-align: left; }
+            .dir-b-list .item-date { font-weight: 600; color: var(--c-text-main); }
+            
+            .dir-b-detail .doc-header { padding: 24px 16px; }
+            .dir-b-detail .doc-title { font-size: 24px; }
+            .dir-b-detail .doc-meta-table td { display: block; width: 100%; border-top: none; padding: 4px 0; }
+            .dir-b-detail .doc-meta-table td:first-child { font-weight: 600; padding-top: 12px; }
+            .dir-b-detail .doc-meta-table tr { border-bottom: 1px dashed var(--c-border); display: block; padding-bottom: 12px;}
+        }
+
+        /* ==========================================================================
+           DIRECTION C: Quiet Reading Room
+           Keywords: Intimate, Slow Reading, Centered, Generous Margins
+           ========================================================================== */
+        .dir-c {
+            --w-container: 720px;
+            background-color: #FDFAFF; /* Very faint warm pearl */
+        }
+
+        .dir-c .container {
+            max-width: var(--w-container);
+            margin: 160px auto 0;
+            padding: 0 32px;
+        }
+
+        /* C: List */
+        .dir-c-list .reading-list {
+            display: flex;
+            flex-direction: column;
+            gap: 80px;
+        }
+
+        .dir-c-list .reading-item {
+            text-align: center;
+        }
+
+        .dir-c-list .item-date {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 14px;
+            color: var(--c-text-light);
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .dir-c-list .item-title {
+            font-family: var(--font-serif);
+            font-size: 26px;
+            font-weight: 600;
+            color: var(--c-text-main);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .dir-c-list .item-desc {
+            font-family: var(--font-serif);
+            font-size: 15px;
+            color: var(--c-text-muted);
+            line-height: 1.8;
+            max-width: 540px;
+            margin: 0 auto;
+        }
+
+        /* C: Detail */
+        .dir-c-detail .reading-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .dir-c-detail .reading-title {
+            font-family: var(--font-serif);
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--c-text-main);
+            margin-bottom: 32px;
+        }
+
+        .dir-c-detail .reading-meta {
+            font-family: var(--font-serif);
+            font-size: 14px;
+            color: var(--c-text-light);
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            font-style: italic;
+        }
+
+        .dir-c-detail .prose {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            line-height: 2.2;
+            color: #2c2c2c;
+            letter-spacing: 0.01em;
+        }
+        
+        .dir-c-detail .prose p {
+            margin-bottom: 2em;
+            text-align: justify;
+        }
+
+        .dir-c-detail .prose h2 {
+            text-align: center;
+            font-family: var(--font-serif);
+            font-weight: 600;
+            margin: 3em 0 1.5em;
+            position: relative;
+        }
+        
+        .dir-c-detail .prose h2::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 1px;
+            background: var(--c-border-dark);
+            margin: 16px auto 0;
+        }
+
+        .dir-c-detail .end-mark {
+            text-align: center;
+            margin: 80px 0;
+        }
+        .dir-c-detail .end-mark span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--c-text-light);
+            margin: 0 8px;
+        }
+
+        @media (max-width: 768px) {
+            .dir-c .container { margin-top: 100px; padding: 0 24px; }
+            .dir-c-list .reading-item { text-align: left; }
+            .dir-c-list .item-desc { margin: 0; }
+            .dir-c-detail .reading-header { text-align: left; margin-bottom: 40px; }
+            .dir-c-detail .reading-meta { justify-content: flex-start; flex-wrap: wrap; gap: 12px; }
+            .dir-c-detail .prose { font-size: 16px; line-height: 2; }
+            .dir-c-detail .prose p { text-align: left; }
+            .dir-c-detail .prose h2 { text-align: left; }
+            .dir-c-detail .prose h2::after { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="glass-header">
+        <a href="#" class="brand">VDVXDV</a>
+        <a href="#">项目</a>
+        <a href="#">随笔</a>
+        <a href="#" class="active">文章</a>
+        <a href="#">碎片</a>
+        <a href="#">影像</a>
+        <a href="#">关于</a>
+        <a href="#" style="margin-left:auto;">搜索</a>
+    </nav>
+
+    <div class="switcher">
+        <div class="switcher-title">Visual Prototype</div>
+        <div class="switcher-row">
+            <button onclick="switchView('a-list')" id="btn-a-list" class="active">A: Editorial List</button>
+            <button onclick="switchView('a-detail')" id="btn-a-detail">A: Detail</button>
+        </div>
+        <div class="switcher-row">
+            <button onclick="switchView('b-list')" id="btn-b-list">B: Archive List</button>
+            <button onclick="switchView('b-detail')" id="btn-b-detail">B: Detail</button>
+        </div>
+        <div class="switcher-row">
+            <button onclick="switchView('c-list')" id="btn-c-list">C: Reading List</button>
+            <button onclick="switchView('c-detail')" id="btn-c-detail">C: Detail</button>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         DIRECTION A: Independent Editorial
+         ========================================================================== -->
+    <div id="view-a-list" class="view-container dir-a">
+        <div class="container dir-a-list">
+            <h1 class="page-title">Articles.</h1>
+            
+            <div class="article-list">
+                <!-- Item 1: Fixture -->
+                <a href="#" class="article-item" onclick="switchView('a-detail'); return false;">
+                    <div class="item-meta-left">
+                        <span>No. 042</span>
+                        <span>Aug 05, 2026</span>
+                    </div>
+                    <div class="item-main">
+                        <h2 class="item-title">上下文正在成为个人 AI 的真正界面</h2>
+                        <p class="item-desc">当模型长期理解一个人的项目、文件、偏好和决定时，它才开始跨越工具的属性，成为真正的能力延伸。模型会更新，但积累的上下文可以复用。</p>
+                    </div>
+                    <div class="item-meta-right">
+                        <span class="tag">AI</span>
+                        <span class="tag">上下文</span>
+                        <span class="tag">个人助理</span>
+                        <div style="margin-top: 16px;">Tech_Thought</div>
+                    </div>
+                </a>
+
+                <!-- Item 2 -->
+                <a href="#" class="article-item">
+                    <div class="item-meta-left">
+                        <span>No. 041</span>
+                        <span>Jul 12, 2026</span>
+                    </div>
+                    <div class="item-main">
+                        <h2 class="item-title">排版示例 / Layout Sample: 探讨现代 Web 渲染架构与边缘计算的融合边界</h2>
+                        <p class="item-desc">解析从 SSR 到 Edge Rendering 的演进路径，以及在极致性能要求下，内容交付网络如何改变应用架构设计。</p>
+                    </div>
+                    <div class="item-meta-right">
+                        <span class="tag">Web Architecture</span>
+                        <div style="margin-top: 16px;">Engineering</div>
+                    </div>
+                </a>
+
+                <!-- Item 3 -->
+                <a href="#" class="article-item">
+                    <div class="item-meta-left">
+                        <span>No. 040</span>
+                        <span>Jun 28, 2026</span>
+                    </div>
+                    <div class="item-main">
+                        <h2 class="item-title">排版示例 / Layout Sample: A Brief History of Typography in Digital Interfaces</h2>
+                        <p class="item-desc">From pixel fonts to variable typefaces. How screen resolution shaped the way we read on digital devices over three decades.</p>
+                    </div>
+                    <div class="item-meta-right">
+                        <span class="tag">Design</span>
+                        <span class="tag">Typography</span>
+                        <div style="margin-top: 16px;">Design_Theory</div>
+                    </div>
+                </a>
+
+                <!-- Item 4 (Optional Cover Enhancement Example) -->
+                <a href="#" class="article-item">
+                    <div class="item-meta-left">
+                        <span>No. 039</span>
+                        <span>May 15, 2026</span>
+                    </div>
+                    <div class="item-main">
+                        <div style="width: 100%; aspect-ratio: 21/9; background: #E5E5E5; margin-bottom: 24px;"></div>
+                        <h2 class="item-title">排版示例 / Layout Sample: 关于近期摄影与视觉碎片的阶段性整理</h2>
+                        <p class="item-desc">不依赖算法推荐，建立个人的视觉索引系统。2026 上半年的街头观察与色彩记录。</p>
+                    </div>
+                    <div class="item-meta-right">
+                        <span class="tag">Photography</span>
+                        <div style="margin-top: 16px;">Visuals</div>
+                    </div>
+                </a>
+
+                <!-- Item 5 -->
+                <a href="#" class="article-item">
+                    <div class="item-meta-left">
+                        <span>No. 038</span>
+                        <span>Apr 02, 2026</span>
+                    </div>
+                    <div class="item-main">
+                        <h2 class="item-title">排版示例 / Layout Sample: 为什么我们需要更慢的阅读？</h2>
+                        <p class="item-desc">在信息极度充裕的时代，刻意制造阅读的阻力，重建理解的深度。</p>
+                    </div>
+                    <div class="item-meta-right">
+                        <div style="margin-top: 16px;">Essays</div>
+                    </div>
+                </a>
+
+                <!-- Item 6 -->
+                <a href="#" class="article-item">
+                    <div class="item-meta-left">
+                        <span>No. 037</span>
+                        <span>Feb 18, 2026</span>
+                    </div>
+                    <div class="item-main">
+                        <h2 class="item-title">排版示例 / Layout Sample: The Architecture of Digital Gardens</h2>
+                        <p class="item-desc">Beyond blogs and streams. Building interconnected knowledge spaces that grow over time.</p>
+                    </div>
+                    <div class="item-meta-right">
+                        <span class="tag">PKM</span>
+                        <div style="margin-top: 16px;">Tech_Thought</div>
+                    </div>
+                </a>
+
+                <!-- Item 7 -->
+                <a href="#" class="article-item">
+                    <div class="item-meta-left">
+                        <span>No. 036</span>
+                        <span>Jan 05, 2026</span>
+                    </div>
+                    <div class="item-main">
+                        <h2 class="item-title">排版示例 / Layout Sample: 笔记系统的重构与长期记忆外包</h2>
+                        <p class="item-desc">一次彻底的工具迁移记录：从层级目录到标签图谱，再到 AI 辅助的模糊检索。</p>
+                    </div>
+                    <div class="item-meta-right">
+                        <span class="tag">Workflow</span>
+                        <div style="margin-top: 16px;">Tools</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <footer class="site-footer">© 2026 VDVXDV. All rights reserved.</footer>
+    </div>
+
+    <div id="view-a-detail" class="view-container dir-a hidden">
+        <div class="container dir-a-detail">
+            <div class="hero">
+                <div class="hero-meta">
+                    <div class="meta-group">
+                        <span class="meta-label">Published</span>
+                        <span>2026-08-05</span>
+                    </div>
+                    <div class="meta-group">
+                        <span class="meta-label">Category</span>
+                        <span>Tech_Thought</span>
+                    </div>
+                    <div class="meta-group">
+                        <span class="meta-label">Reading Time</span>
+                        <span>12 min read</span>
+                    </div>
+                    <div class="meta-group">
+                        <span class="meta-label">Tags</span>
+                        <span class="tag">AI</span> <span class="tag">上下文</span> <span class="tag">个人助理</span>
+                    </div>
+                </div>
+                <div class="hero-content">
+                    <h1>上下文正在成为个人 AI 的真正界面</h1>
+                    <p class="lead">当模型长期理解一个人的项目、文件、偏好和决定时，它才开始跨越工具的属性，成为真正的能力延伸。模型会更新，但积累的上下文可以复用。</p>
+                </div>
+            </div>
+
+            <div class="prose-container">
+                <div class="sidebar"></div> <!-- Empty spacer for asymmetric grid -->
+                <article class="prose">
+                    <p>这是一个排版测试段落。在探讨个人与计算设备的交互历史时，我们通常将目光聚焦于图形用户界面（GUI）的演进。从早期的命令行，到视窗系统，再到触控时代，界面的核心目标始终是降低人机沟通的门槛。</p>
+                    
+                    <h2>1. 语境的持久化</h2>
+                    <p>然而，大语言模型的出现正在改变这一范式。真正的智能并不完全来自于模型参数的绝对规模，而在于模型能够调用的<strong>上下文质量（Context Quality）</strong>。当你每天需要重新解释你的项目背景时，AI 只是一个高级打字机；但当它能够无缝读取你过去三个月的工作文档、代码库和思维碎片时，它才开始成为个人的数字分身。</p>
+
+                    <blockquote>
+                        The true interface is not the chat window, but the shared memory space. <br>
+                        真正的界面不是对话框，而是共享的记忆空间。
+                    </blockquote>
+
+                    <h3>1.1 记忆的层次结构</h3>
+                    <p>构建一个有效的个人上下文系统，通常需要以下几个层次的抽象：</p>
+                    <ul>
+                        <li><strong>短期记忆 (Short-term context)</strong>: 当前正在编辑的文件、剪贴板内容、当前会话状态。</li>
+                        <li><strong>中期记忆 (Project context)</strong>: 正在进行的特定项目文档、需求列表、近期的讨论记录。</li>
+                        <li><strong>长期记忆 (Personal ontology)</strong>: 个人的写作风格、代码规范、价值观偏好、历史归档数据。</li>
+                    </ul>
+
+                    <p>要在系统中实现这种记忆的持久化，我们往往需要通过向量数据库或本地知识图谱来管理。以下是一段用于结构化存储 <code>Context</code> 接口的 TypeScript 示例：</p>
+
+                    <pre><code>interface ContextBlock {
+    id: string;
+    content: string;
+    sourceUri: string;
+    timestamp: number;
+    embedding?: number[];
+    tags: string[];
+}
+
+class ContextManager {
+    private storage: LocalVectorDB;
+
+    async retrieveRelevant(query: string, limit: number = 5): Promise&lt;ContextBlock[]&gt; {
+        const queryVector = await embed(query);
+        return this.storage.search(queryVector, limit);
+    }
+}</code></pre>
+
+                    <h2>2. 工具与助理的边界</h2>
+                    <p>我们可以通过一张表格来清晰对比“传统 AI 工具”与“拥有上下文的个人助理”之间的本质区别：</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>特性</th>
+                                <th>传统 AI 工具</th>
+                                <th>上下文感知助理</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>交互起点</td>
+                                <td>每次都是“白板 (Blank slate)”</td>
+                                <td>基于历史状态的延续</td>
+                            </tr>
+                            <tr>
+                                <td>输入成本</td>
+                                <td>高 (需要编写大量 prompt)</td>
+                                <td>低 (仅需指令，背景已就绪)</td>
+                            </tr>
+                            <tr>
+                                <td>输出质量</td>
+                                <td>通用、标准化</td>
+                                <td>高度个性化、符合特定规范</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>当我们建立起这种基于上下文的交互后，阅读和书写的方式也将发生改变。视觉上的呈现需要配合这种深度的理解。</p>
+
+                    <div class="media-placeholder">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--c-border-dark)" stroke-width="1"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                    </div>
+                    <p class="media-caption">图 1: 个人知识图谱与模型交互架构示意图 (Geometric Placeholder)</p>
+
+                    <p>最终，系统设计的美学应当退居幕后，让内容和智能的流动成为主体。这也是为什么我们在这个原型设计中，试图寻找一种既克制又精确的视觉语言。<em>让技术感来自秩序，让人文感来自痕迹。</em></p>
+
+                    <hr>
+                    <p style="text-align: center; color: var(--c-text-muted); font-family: var(--font-ui); font-size: 14px;">
+                        <a href="#" onclick="switchView('a-list'); return false;">← Back to Articles</a>
+                    </p>
+                </article>
+            </div>
+        </div>
+        <footer class="site-footer">© 2026 VDVXDV. All rights reserved.</footer>
+    </div>
+
+
+    <!-- ==========================================================================
+         DIRECTION B: Personal Archive
+         ========================================================================== -->
+    <div id="view-b-list" class="view-container dir-b hidden">
+        <div class="container dir-b-list">
+            <div class="archive-header">
+                <div class="archive-title">Index_Articles</div>
+                <div class="archive-stats">Total: 42 documents / Last updated: 2026-08-05</div>
+            </div>
+
+            <div class="year-section">
+                <div class="year-marker">2026</div>
+                <div class="archive-list">
+                    
+                    <!-- Item 1: Fixture -->
+                    <a href="#" class="archive-item" onclick="switchView('b-detail'); return false;">
+                        <div class="item-date">08-05</div>
+                        <div class="item-content">
+                            <div class="item-title">上下文正在成为个人 AI 的真正界面</div>
+                            <div class="item-desc">当模型长期理解一个人的项目、文件、偏好和决定时，它才开始跨越工具的属性，成为真正的能力延伸。</div>
+                        </div>
+                        <div class="item-category">[Tech_Thought]</div>
+                    </a>
+
+                    <!-- Item 2 -->
+                    <a href="#" class="archive-item">
+                        <div class="item-date">07-12</div>
+                        <div class="item-content">
+                            <div class="item-title">排版示例 / Layout Sample: 探讨现代 Web 渲染架构与边缘计算的融合边界</div>
+                            <div class="item-desc">解析从 SSR 到 Edge Rendering 的演进路径，以及在极致性能要求下，内容交付网络如何改变应用架构设计。</div>
+                        </div>
+                        <div class="item-category">[Engineering]</div>
+                    </a>
+
+                    <!-- Item 3 -->
+                    <a href="#" class="archive-item">
+                        <div class="item-date">06-28</div>
+                        <div class="item-content">
+                            <div class="item-title">排版示例 / Layout Sample: A Brief History of Typography in Digital Interfaces</div>
+                            <div class="item-desc">From pixel fonts to variable typefaces. How screen resolution shaped the way we read.</div>
+                        </div>
+                        <div class="item-category">[Design_Theory]</div>
+                    </a>
+                    
+                    <!-- Item 4 -->
+                    <a href="#" class="archive-item">
+                        <div class="item-date">05-15</div>
+                        <div class="item-content">
+                            <div class="item-title">排版示例 / Layout Sample: 关于近期摄影与视觉碎片的阶段性整理</div>
+                            <div class="item-desc">不依赖算法推荐，建立个人的视觉索引系统。2026 上半年的街头观察与色彩记录。</div>
+                        </div>
+                        <div class="item-category">[Visuals]</div>
+                    </a>
+
+                    <!-- Item 5 -->
+                    <a href="#" class="archive-item">
+                        <div class="item-date">04-02</div>
+                        <div class="item-content">
+                            <div class="item-title">排版示例 / Layout Sample: 为什么我们需要更慢的阅读？</div>
+                            <div class="item-desc">在信息极度充裕的时代，刻意制造阅读的阻力，重建理解的深度。</div>
+                        </div>
+                        <div class="item-category">[Essays]</div>
+                    </a>
+
+                    <!-- Item 6 -->
+                    <a href="#" class="archive-item">
+                        <div class="item-date">02-18</div>
+                        <div class="item-content">
+                            <div class="item-title">排版示例 / Layout Sample: The Architecture of Digital Gardens</div>
+                            <div class="item-desc">Beyond blogs and streams. Building interconnected knowledge spaces that grow over time.</div>
+                        </div>
+                        <div class="item-category">[Tech_Thought]</div>
+                    </a>
+
+                    <!-- Item 7 -->
+                    <a href="#" class="archive-item">
+                        <div class="item-date">01-05</div>
+                        <div class="item-content">
+                            <div class="item-title">排版示例 / Layout Sample: 笔记系统的重构与长期记忆外包</div>
+                            <div class="item-desc">一次彻底的工具迁移记录：从层级目录到标签图谱，再到 AI 辅助的模糊检索。</div>
+                        </div>
+                        <div class="item-category">[Tools]</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <footer class="site-footer">EOF</footer>
+    </div>
+
+    <div id="view-b-detail" class="view-container dir-b hidden">
+        <div class="container dir-b-detail">
+            
+            <div class="doc-header">
+                <h1 class="doc-title">上下文正在成为个人 AI 的真正界面</h1>
+                <table class="doc-meta-table">
+                    <tr>
+                        <td>ID / Slug</td>
+                        <td>context-as-the-true-interface</td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td>当模型长期理解一个人的项目、文件、偏好和决定时，它才开始跨越工具的属性，成为真正的能力延伸。模型会更新，但积累的上下文可以复用。</td>
+                    </tr>
+                    <tr>
+                        <td>Timestamps</td>
+                        <td>Published: 2026-08-05 &nbsp;&nbsp;|&nbsp;&nbsp; Updated: 2026-08-06</td>
+                    </tr>
+                    <tr>
+                        <td>Metadata</td>
+                        <td>Category: Tech_Thought &nbsp;&nbsp;|&nbsp;&nbsp; Tags: AI, 上下文, 个人助理 &nbsp;&nbsp;|&nbsp;&nbsp; Read Time: 12m</td>
+                    </tr>
+                </table>
+            </div>
+
+            <article class="prose">
+                <p>这是一个排版测试段落。在探讨个人与计算设备的交互历史时，我们通常将目光聚焦于图形用户界面（GUI）的演进。从早期的命令行，到视窗系统，再到触控时代，界面的核心目标始终是降低人机沟通的门槛。</p>
+                
+                <h2>1. 语境的持久化</h2>
+                <p>然而，大语言模型的出现正在改变这一范式。真正的智能并不完全来自于模型参数的绝对规模，而在于模型能够调用的<strong>上下文质量（Context Quality）</strong>。当你每天需要重新解释你的项目背景时，AI 只是一个高级打字机；但当它能够无缝读取你过去三个月的工作文档、代码库和思维碎片时，它才开始成为个人的数字分身。</p>
+
+                <blockquote>
+                    The true interface is not the chat window, but the shared memory space. <br>
+                    真正的界面不是对话框，而是共享的记忆空间。
+                </blockquote>
+
+                <h3>1.1 记忆的层次结构</h3>
+                <p>构建一个有效的个人上下文系统，通常需要以下几个层次的抽象：</p>
+                <ul>
+                    <li><strong>短期记忆 (Short-term context)</strong>: 当前正在编辑的文件、剪贴板内容、当前会话状态。</li>
+                    <li><strong>中期记忆 (Project context)</strong>: 正在进行的特定项目文档、需求列表、近期的讨论记录。</li>
+                    <li><strong>长期记忆 (Personal ontology)</strong>: 个人的写作风格、代码规范、价值观偏好、历史归档数据。</li>
+                </ul>
+
+                <p>要在系统中实现这种记忆的持久化，我们往往需要通过向量数据库或本地知识图谱来管理。以下是一段用于结构化存储 <code>Context</code> 接口的 TypeScript 示例：</p>
+
+                <pre><code>interface ContextBlock {
+  id: string;
+  content: string;
+  sourceUri: string;
+  timestamp: number;
+  embedding?: number[];
+  tags: string[];
+}
+
+class ContextManager {
+  private storage: LocalVectorDB;
+
+  async retrieveRelevant(query: string, limit: number = 5): Promise&lt;ContextBlock[]&gt; {
+    const queryVector = await embed(query);
+    return this.storage.search(queryVector, limit);
+  }
+}</code></pre>
+
+                <h2>2. 工具与助理的边界</h2>
+                <p>我们可以通过一张表格来清晰对比“传统 AI 工具”与“拥有上下文的个人助理”之间的本质区别：</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>特性</th>
+                            <th>传统 AI 工具</th>
+                            <th>上下文感知助理</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>交互起点</td>
+                            <td>每次都是“白板 (Blank slate)”</td>
+                            <td>基于历史状态的延续</td>
+                        </tr>
+                        <tr>
+                            <td>输入成本</td>
+                            <td>高 (需要编写大量 prompt)</td>
+                            <td>低 (仅需指令，背景已就绪)</td>
+                        </tr>
+                        <tr>
+                            <td>输出质量</td>
+                            <td>通用、标准化</td>
+                            <td>高度个性化、符合特定规范</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="media-placeholder">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                </div>
+                <p class="media-caption">Fig. 1 — Data Flow in Context Retrieval Architecture</p>
+
+                <p>最终，系统设计的美学应当退居幕后，让内容和智能的流动成为主体。这也是为什么我们在这个原型设计中，试图寻找一种既克制又精确的视觉语言。<em>让技术感来自秩序，让人文感来自痕迹。</em></p>
+
+                <hr>
+                <p style="font-family: var(--font-mono); text-align: center; font-size: 13px;">
+                    <a href="#" onclick="switchView('b-list'); return false;">[ Return to Index ]</a>
+                </p>
+            </article>
+        </div>
+        <footer class="site-footer">EOF</footer>
+    </div>
+
+
+    <!-- ==========================================================================
+         DIRECTION C: Quiet Reading Room
+         ========================================================================== -->
+    <div id="view-c-list" class="view-container dir-c hidden">
+        <div class="container dir-c-list">
+            <div class="reading-list">
+                
+                <!-- Item 1: Fixture -->
+                <article class="reading-item">
+                    <time class="item-date">August 5, 2026</time>
+                    <a href="#" onclick="switchView('c-detail'); return false;">
+                        <h2 class="item-title">上下文正在成为个人 AI 的真正界面</h2>
+                    </a>
+                    <p class="item-desc">当模型长期理解一个人的项目、文件、偏好和决定时，它才开始跨越工具的属性，成为真正的能力延伸。模型会更新，但积累的上下文可以复用。</p>
+                </article>
+
+                <!-- Item 2 -->
+                <article class="reading-item">
+                    <time class="item-date">July 12, 2026</time>
+                    <a href="#">
+                        <h2 class="item-title">排版示例 / Layout Sample: 探讨现代 Web 渲染架构与边缘计算的融合边界</h2>
+                    </a>
+                    <p class="item-desc">解析从 SSR 到 Edge Rendering 的演进路径，以及在极致性能要求下，内容交付网络如何改变应用架构设计。</p>
+                </article>
+
+                <!-- Item 3 -->
+                <article class="reading-item">
+                    <time class="item-date">June 28, 2026</time>
+                    <a href="#">
+                        <h2 class="item-title">排版示例 / Layout Sample: A Brief History of Typography in Digital Interfaces</h2>
+                    </a>
+                    <p class="item-desc">From pixel fonts to variable typefaces. How screen resolution shaped the way we read on digital devices over three decades.</p>
+                </article>
+
+                <!-- Item 4 -->
+                <article class="reading-item">
+                    <time class="item-date">May 15, 2026</time>
+                    <a href="#">
+                        <h2 class="item-title">排版示例 / Layout Sample: 关于近期摄影与视觉碎片的阶段性整理</h2>
+                    </a>
+                    <p class="item-desc">不依赖算法推荐，建立个人的视觉索引系统。2026 上半年的街头观察与色彩记录。</p>
+                </article>
+
+                <!-- Item 5 -->
+                <article class="reading-item">
+                    <time class="item-date">April 2, 2026</time>
+                    <a href="#">
+                        <h2 class="item-title">排版示例 / Layout Sample: 为什么我们需要更慢的阅读？</h2>
+                    </a>
+                    <p class="item-desc">在信息极度充裕的时代，刻意制造阅读的阻力，重建理解的深度。</p>
+                </article>
+
+                <!-- Item 6 -->
+                <article class="reading-item">
+                    <time class="item-date">February 18, 2026</time>
+                    <a href="#">
+                        <h2 class="item-title">排版示例 / Layout Sample: The Architecture of Digital Gardens</h2>
+                    </a>
+                    <p class="item-desc">Beyond blogs and streams. Building interconnected knowledge spaces that grow over time.</p>
+                </article>
+
+                <!-- Item 7 -->
+                <article class="reading-item">
+                    <time class="item-date">January 5, 2026</time>
+                    <a href="#">
+                        <h2 class="item-title">排版示例 / Layout Sample: 笔记系统的重构与长期记忆外包</h2>
+                    </a>
+                    <p class="item-desc">一次彻底的工具迁移记录：从层级目录到标签图谱，再到 AI 辅助的模糊检索。</p>
+                </article>
+
+            </div>
+        </div>
+        <footer class="site-footer" style="border-top:none;">VDVXDV. 2026</footer>
+    </div>
+
+    <div id="view-c-detail" class="view-container dir-c hidden">
+        <div class="container dir-c-detail">
+            
+            <header class="reading-header">
+                <h1 class="reading-title">上下文正在成为个人 AI 的<br>真正界面</h1>
+                <div class="reading-meta">
+                    <span>August 5, 2026</span>
+                    <span>12 min read</span>
+                    <span>Tech_Thought</span>
+                </div>
+            </header>
+
+            <article class="prose">
+                <p>这是一个排版测试段落。在探讨个人与计算设备的交互历史时，我们通常将目光聚焦于图形用户界面（GUI）的演进。从早期的命令行，到视窗系统，再到触控时代，界面的核心目标始终是降低人机沟通的门槛。</p>
+                
+                <p>然而，大语言模型的出现正在改变这一范式。真正的智能并不完全来自于模型参数的绝对规模，而在于模型能够调用的<strong>上下文质量（Context Quality）</strong>。当你每天需要重新解释你的项目背景时，AI 只是一个高级打字机；但当它能够无缝读取你过去三个月的工作文档、代码库和思维碎片时，它才开始成为个人的数字分身。</p>
+
+                <blockquote>
+                    The true interface is not the chat window, but the shared memory space. 真正的界面不是对话框，而是共享的记忆空间。
+                </blockquote>
+
+                <h2>语境的持久化与层次</h2>
+                
+                <p>构建一个有效的个人上下文系统，通常需要以下几个层次的抽象：</p>
+                <ul>
+                    <li><strong>短期记忆</strong>: 当前正在编辑的文件、剪贴板内容、当前会话状态。</li>
+                    <li><strong>中期记忆</strong>: 正在进行的特定项目文档、需求列表、近期的讨论记录。</li>
+                    <li><strong>长期记忆</strong>: 个人的写作风格、代码规范、价值观偏好、历史归档数据。</li>
+                </ul>
+
+                <p>要在系统中实现这种记忆的持久化，我们往往需要通过向量数据库或本地知识图谱来管理。以下是一段用于结构化存储上下文接口的系统示例：</p>
+
+                <pre><code>interface ContextBlock {
+    id: string;
+    content: string;
+    sourceUri: string;
+    timestamp: number;
+    embedding?: number[];
+    tags: string[];
+}
+
+class ContextManager {
+    private storage: LocalVectorDB;
+
+    async retrieveRelevant(query: string, limit: number = 5) {
+        const queryVector = await embed(query);
+        return this.storage.search(queryVector, limit);
+    }
+}</code></pre>
+
+                <h2>工具与助理的边界</h2>
+                
+                <p>我们可以通过一张表格来清晰对比传统计算工具与拥有上下文的个人助理之间的本质区别：</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>交互模式</th>
+                            <th>传统 AI 工具</th>
+                            <th>上下文感知助理</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>起始状态</td>
+                            <td>每次都是“白板”</td>
+                            <td>基于历史状态延续</td>
+                        </tr>
+                        <tr>
+                            <td>输入要求</td>
+                            <td>需编写大量提示词</td>
+                            <td>仅需短指令</td>
+                        </tr>
+                        <tr>
+                            <td>输出特征</td>
+                            <td>通用化、标准化</td>
+                            <td>高度个性化</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="media-placeholder" style="border: none; background-color: #F0EDF2;">
+                    <!-- Very soft geometric abstraction -->
+                    <div style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid #ccc; position: absolute; left: calc(50% - 20px); opacity: 0.5;"></div>
+                    <div style="width: 100px; height: 100px; border-radius: 50%; border: 1px solid #ccc; position: absolute; right: calc(50% - 20px); opacity: 0.5;"></div>
+                </div>
+                <p class="media-caption" style="font-family: var(--font-serif); font-style: italic;">插图：记忆的重叠与交织</p>
+
+                <p>最终，系统设计的美学应当退居幕后，让内容和智能的流动成为主体。这也是为什么我们在这个原型设计中，试图寻找一种既克制又精确的视觉语言。让技术感来自秩序，让人文感来自痕迹。</p>
+
+                <div class="end-mark">
+                    <span></span><span></span><span></span>
+                </div>
+
+                <p style="text-align: center; font-size: 15px; font-style: italic;">
+                    <a href="#" onclick="switchView('c-list'); return false;">Close Book</a>
+                </p>
+            </article>
+        </div>
+        <footer class="site-footer" style="border-top:none;">VDVXDV. 2026</footer>
+    </div>
+
+    <script>
+        function switchView(viewId) {
+            // Hide all views
+            document.querySelectorAll('.view-container').forEach(el => {
+                el.classList.add('hidden');
+            });
+            // Show selected view
+            document.getElementById('view-' + viewId).classList.remove('hidden');
+            
+            // Update button states
+            document.querySelectorAll('.switcher button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('btn-' + viewId).classList.add('active');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+    </script>
+</body>
+</html>

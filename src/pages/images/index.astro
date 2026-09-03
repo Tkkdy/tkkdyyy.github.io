@@ -1,0 +1,66 @@
+---
+// 影像栏目 /images
+// 编辑式摄影档案流：横 / 竖 / 方图按原比例交错，而不是统一卡片网格。
+import ImageLayout from '../../layouts/ImageLayout.astro';
+import ImageFrame from '../../components/images/ImageFrame.astro';
+import {
+  getImageDisplayTitle,
+  getImageOrientation,
+  getPublishedImages,
+  imageFileExists,
+} from '../../lib/content/images';
+import { formatDate } from '../../lib/content/homepage';
+
+const images = await getPublishedImages();
+---
+
+<ImageLayout title="影像 — VDVXDV" bodyClass="images-page-body">
+  <section class="images-page" aria-labelledby="images-title">
+    <header class="images-page-header">
+      <p class="images-kicker">Visual Journal</p>
+      <h1 id="images-title" class="images-page-title">Images.</h1>
+      <p class="images-page-lead">
+        单张照片组成的安静记录。比例保留，信息克制，不做成相册目录。
+      </p>
+    </header>
+
+    {
+      images.length === 0 ? (
+        <p class="images-empty">公开影像正在慢慢出现。</p>
+      ) : (
+        <div class="image-flow">
+          {images.map((image) => {
+            const { data } = image;
+            const orientation = getImageOrientation(data);
+            const hasFile = imageFileExists(data.image);
+            const caption = data.caption ?? data.title;
+            return (
+              <article class:list={['image-entry', `is-${orientation}`]}>
+                <a class="image-entry-link" href={`/images/${data.slug}/`} aria-label={getImageDisplayTitle(data)}>
+                  <ImageFrame
+                    src={data.image}
+                    alt={data.alt}
+                    title={data.title}
+                    orientation={orientation}
+                    hasFile={hasFile}
+                    sizes="(min-width: 1100px) 720px, 92vw"
+                  />
+                </a>
+                {(caption || data.location) && (
+                  <div class="image-entry-copy">
+                    {caption && <p class="image-entry-caption">{caption}</p>}
+                    <p class="image-entry-meta">
+                      <time datetime={formatDate(data.publishedAt)}>{formatDate(data.publishedAt)}</time>
+                      {data.location && <span>{data.location}</span>}
+                    </p>
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      )
+    }
+  </section>
+</ImageLayout>
+

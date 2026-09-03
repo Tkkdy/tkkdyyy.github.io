@@ -1,0 +1,109 @@
+---
+// 页脚：品牌信息 + 联系方式。
+// RSS 已接通 /rss.xml；GitHub / Mail 无真实公开 URL，保持占位。
+// Footer 样式随组件自带（scoped style），任何页面使用本组件即生效。
+---
+<footer class="site-footer" data-pagefind-ignore>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a class="footer-wordmark" href="/">VDVXDV</a>
+      <p class="footer-desc">
+        这是一个属于技术创作者的个人网站。用来安放长文、项目与一闪而过的念头。
+      </p>
+      <p class="footer-copyright">© 2026. All rights reserved.</p>
+    </div>
+
+    <nav class="footer-connect" aria-label="联系方式">
+      <span class="footer-connect-label">Connect</span>
+      <a href="#">GitHub</a>
+      <a href="#">Mail</a>
+      <a href="/rss.xml">RSS</a>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  /* Footer 样式（从 home.css 迁移，改为组件级 scoped style：
+     Stage 4C 修复——原样式仅首页加载，导致子页面 Footer 裸渲染） */
+  .site-footer {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+    max-width: 960px; /* 比正文收窄：Connect 不漂到极远，避免大块空白 */
+    margin-inline: auto;
+    padding: 48px 24px;
+  }
+
+  @media (min-width: 640px) {
+    .footer-inner {
+      padding: 48px 32px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .footer-inner {
+      flex-direction: row;
+    }
+  }
+
+  .footer-brand {
+    max-width: 24rem;
+  }
+
+  .footer-wordmark {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  .footer-desc {
+    margin-top: 16px;
+    font-size: 13px;
+    line-height: 1.625;
+    color: var(--color-ink-muted);
+  }
+
+  .footer-copyright {
+    margin-top: 24px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(122, 118, 111, 0.6);
+  }
+
+  .footer-connect {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .footer-connect-label {
+    margin-bottom: 8px;
+    color: rgba(122, 118, 111, 0.5);
+  }
+
+  .footer-connect a {
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-ink);
+    transition: color 150ms ease, border-color 150ms ease;
+  }
+
+  .footer-connect a:hover {
+    /* Footer 不使用 Ruby（Ruby 只属于首屏）：hover 以下划线加深反馈 */
+    border-color: var(--color-ink);
+  }
+</style>

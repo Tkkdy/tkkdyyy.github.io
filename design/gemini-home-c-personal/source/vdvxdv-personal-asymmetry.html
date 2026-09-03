@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDVXDV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- 引入 Inter 作为无衬线界面字体，Noto Serif SC 作为衬线编辑字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* 基础颜色 - 保持暖白与近黑 */
+            --color-canvas: #F5F4F0; /* 更柔和的暖白背景 */
+            --color-surface-offset: #EAE6DF; /* 用于非对称色块的低饱和砂色 */
+            --color-ink-main: #1A1A19;
+            --color-ink-soft: #4A4844;
+            --color-ink-muted: #827E76;
+            
+            /* 边框与玻璃效 */
+            --color-border-subtle: rgba(26, 26, 25, 0.1);
+            --glass-bg: rgba(245, 244, 240, 0.75);
+            
+            /* 字体栈 */
+            --font-interface: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-editorial: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', serif;
+
+            /* 间距基准 */
+            --space-section: clamp(4rem, 10vw, 8rem);
+        }
+
+        body {
+            background-color: var(--color-canvas);
+            color: var(--color-ink-main);
+            font-family: var(--font-interface);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* 字体工具类 */
+        .font-editorial { font-family: var(--font-editorial); }
+        .font-interface { font-family: var(--font-interface); }
+        
+        .text-ink-main { color: var(--color-ink-main); }
+        .text-ink-soft { color: var(--color-ink-soft); }
+        .text-ink-muted { color: var(--color-ink-muted); }
+
+        /* 克制的 Liquid Glass 导航 */
+        .nav-glass {
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(12px) saturate(160%);
+            -webkit-backdrop-filter: blur(12px) saturate(160%);
+            border: 0.5px solid var(--color-border-subtle);
+            box-shadow: 0 4px 24px -8px rgba(0,0,0,0.05);
+        }
+
+        /* 隐藏滚动条但保留滚动功能 (用于水平滚动区域) */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 图片占位符效果 */
+        .img-placeholder {
+            background-color: var(--color-surface-offset);
+            position: relative;
+            overflow: hidden;
+        }
+        .img-placeholder::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* 自定义网格辅助 (用于大屏上的非对称布局) */
+        @media (min-width: 768px) {
+            .grid-asymmetric {
+                display: grid;
+                grid-template-columns: repeat(12, 1fr);
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body class="selection:bg-neutral-800 selection:text-white">
+
+    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-2xl nav-glass rounded-full px-6 py-3 transition-all duration-300">
+        <div class="flex items-center justify-between font-interface text-sm font-medium tracking-wide">
+            <a href="#" class="text-ink-main hover:opacity-70 transition-opacity">VDVXDV</a>
+            
+            <!-- 桌面端菜单 -->
+            <div class="hidden md:flex items-center space-x-6 text-ink-soft">
+                <a href="#projects" class="hover:text-ink-main transition-colors">项目</a>
+                <a href="#essays" class="hover:text-ink-main transition-colors">随笔</a>
+                <a href="#articles" class="hover:text-ink-main transition-colors">文章</a>
+                <a href="#fragments" class="hover:text-ink-main transition-colors">碎片</a>
+                <a href="#images" class="hover:text-ink-main transition-colors">影像</a>
+                <span class="w-px h-3 bg-neutral-300 mx-2"></span>
+                <a href="#about" class="hover:text-ink-main transition-colors">关于</a>
+            </div>
+
+            <!-- 移动端菜单按钮 -->
+            <button class="md:hidden text-ink-main">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-24">
+
+        <!-- 放弃居中，利用网格制造偏移和错落感 -->
+        <header class="pt-40 md:pt-56 pb-20 md:pb-32 grid-asymmetric">
+            
+            <!-- 左侧：文本信息，占据第 1 到 7 列 -->
+            <div class="col-span-1 md:col-start-1 md:col-span-7 flex flex-col justify-center z-10">
+                <h1 class="font-interface text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tighter text-ink-main mb-8">
+                    VDVXDV
+                </h1>
+                <p class="font-editorial text-xl md:text-2xl text-ink-soft leading-relaxed max-w-xl mb-12">
+                    这是一个属于技术创作者的个人网站。<br class="hidden md:block">
+                    用来安放长文、项目与一闪而过的念头。
+                </p>
+                
+                <div class="flex items-center gap-6 font-interface text-sm font-medium">
+                    <a href="#projects" class="flex items-center gap-2 text-ink-main border-b border-ink-main pb-0.5 hover:opacity-70 transition-opacity">
+                        查看项目
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="#articles" class="text-ink-soft hover:text-ink-main transition-colors">阅读文章</a>
+                </div>
+            </div>
+
+            <!-- 右侧：视觉元素，刻意向下偏移，占据第 8 到 12 列 -->
+            <div class="col-span-1 md:col-start-9 md:col-span-4 mt-16 md:mt-32">
+                <div class="aspect-[3/4] w-full img-placeholder rounded-sm shadow-sm relative group overflow-hidden">
+                    <img src="https://placehold.co/600x800/EAE6DF/827E76?text=Personal+Vision" alt="个人视觉代表图" class="w-full h-full object-cover mix-blend-multiply opacity-80 group-hover:scale-105 transition-transform duration-700 ease-out">
+                    <div class="absolute bottom-4 left-4 right-4 text-xs font-interface text-ink-muted uppercase tracking-widest border-t border-[var(--color-border-subtle)] pt-2 mix-blend-multiply">
+                        Curated Environment / 2026
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section id="articles" class="py-20 md:py-32 border-t border-[var(--color-border-subtle)]">
+            <div class="flex items-baseline justify-between mb-16">
+                <h2 class="font-interface text-sm font-semibold tracking-widest uppercase text-ink-muted">Selected Writing</h2>
+                <a href="#" class="font-interface text-sm text-ink-soft hover:text-ink-main underline decoration-1 underline-offset-4">所有文章</a>
+            </div>
+
+            <div class="grid-asymmetric">
+                <!-- 主推文章：大图、衬线标题，突破传统卡片 -->
+                <article class="col-span-1 md:col-start-1 md:col-span-7 mb-16 md:mb-0 group cursor-pointer">
+                    <div class="w-full aspect-[16/9] md:aspect-[4/3] img-placeholder mb-8 rounded-sm overflow-hidden">
+                        <img src="https://placehold.co/1200x900/D9DCD6/4A4844?text=Context" alt="文章封面" class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500">
+                    </div>
+                    <!-- 排版信息左缩进，增加呼吸感 -->
+                    <div class="md:pl-8 border-l border-transparent group-hover:border-[var(--color-border-subtle)] transition-colors duration-300">
+                        <div class="flex items-center gap-3 font-interface text-xs text-ink-muted mb-4">
+                            <span>2026-08-05</span>
+                            <span class="w-1 h-1 rounded-full bg-neutral-300"></span>
+                            <span>技术思考</span>
+                        </div>
+                        <h3 class="font-editorial text-2xl md:text-3xl font-bold text-ink-main leading-tight mb-4 group-hover:opacity-80 transition-opacity">
+                            上下文正在成为个人 AI 的真正界面
+                        </h3>
+                        <p class="font-editorial text-ink-soft text-lg leading-relaxed max-w-xl">
+                            当 AI 长期理解一个人的项目、文件、偏好和决定，它才开始成为真正的能力延伸。
+                        </p>
+                    </div>
+                </article>
+
+                <!-- 移除虚构的次要精选文章，保留非对称留白空间 -->
+                <div class="col-span-1 md:col-start-9 md:col-span-4 flex flex-col justify-end">
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="py-20 md:py-32 relative">
+            <!-- 非对称背景色块，向右延伸至边界，但不铺满左侧 -->
+            <div class="absolute inset-y-0 right-[-100vw] left-0 md:left-24 bg-[var(--color-surface-offset)] -z-10 rounded-l-2xl md:rounded-l-[3rem]"></div>
+
+            <div class="grid-asymmetric">
+                <div class="col-span-1 md:col-start-2 md:col-span-10 py-12 md:py-20">
+                    <div class="flex items-baseline justify-between mb-12">
+                        <h2 class="font-interface text-sm font-semibold tracking-widest uppercase text-ink-muted">Projects & Experiments</h2>
+                        <a href="#" class="font-interface text-sm text-ink-soft hover:text-ink-main underline decoration-1 underline-offset-4">所有项目</a>
+                    </div>
+
+                    <!-- 项目列表：不用全封闭卡片，用空间和线条分隔 -->
+                    <div class="space-y-16">
+                        <!-- 项目 1 -->
+                        <div class="group flex flex-col md:flex-row gap-8 md:gap-16 items-start">
+                            <div class="w-16 h-16 shrink-0 bg-white shadow-sm border border-[var(--color-border-subtle)] rounded-xl flex items-center justify-center font-interface font-bold text-xl text-ink-main">
+                                M
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex flex-wrap items-center gap-3 mb-2">
+                                    <h3 class="font-interface text-2xl font-semibold text-ink-main">Morning Radar</h3>
+                                    <span class="px-2 py-0.5 rounded-full border border-ink-main text-[10px] font-interface uppercase tracking-wider text-ink-main">开发中</span>
+                                </div>
+                                <p class="font-interface text-lg text-ink-main mb-2">为个人筛选每天真正值得关注的变化。</p>
+                                <p class="font-interface text-md text-ink-soft mb-6">一个自动收集、筛选和整理过去二十四小时重要信息的个人晨报系统。</p>
+                                
+                                <div class="flex items-center gap-4">
+                                    <a href="https://example.github.io/morning-radar/" target="_blank" class="bg-ink-main text-white px-5 py-2.5 rounded-lg font-interface text-sm font-medium hover:bg-neutral-800 transition-colors">
+                                        在线体验
+                                    </a>
+                                    <a href="https://github.com/example/morning-radar" target="_blank" class="font-interface text-sm text-ink-soft hover:text-ink-main flex items-center gap-1">
+                                        GitHub
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="border-[var(--color-border-subtle)]">
+
+                        <!-- 项目 2 -->
+                        <div class="group flex flex-col md:flex-row gap-8 md:gap-16 items-start">
+                            <div class="w-16 h-16 shrink-0 bg-white shadow-sm border border-[var(--color-border-subtle)] rounded-xl flex items-center justify-center font-interface font-bold text-xl text-ink-main">
+                                P
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex flex-wrap items-center gap-3 mb-2">
+                                    <h3 class="font-interface text-2xl font-semibold text-ink-main">Personal Website</h3>
+                                    <span class="px-2 py-0.5 rounded-full border border-transparent bg-neutral-200 text-[10px] font-interface uppercase tracking-wider text-ink-soft">维护中</span>
+                                </div>
+                                <p class="font-interface text-lg text-ink-main mb-2">一个属于技术创作者的个人网站。</p>
+                                <p class="font-interface text-md text-ink-soft mb-6">基于 Markdown 和文件系统的静态个人数字空间生成工具，分离内容与表现。</p>
+                                
+                                <div class="flex items-center gap-4">
+                                    <button class="bg-white border border-[var(--color-border-subtle)] text-ink-main px-5 py-2.5 rounded-lg font-interface text-sm font-medium hover:bg-neutral-50 transition-colors">
+                                        查看项目详情
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="border-[var(--color-border-subtle)]">
+
+                        <!-- 项目 3 -->
+                        <div class="group flex flex-col md:flex-row gap-8 md:gap-16 items-start">
+                            <div class="w-16 h-16 shrink-0 bg-[var(--color-surface-offset)] shadow-sm border border-[var(--color-border-subtle)] rounded-xl flex items-center justify-center font-interface font-bold text-xl text-ink-muted">
+                                D
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex flex-wrap items-center gap-3 mb-2">
+                                    <h3 class="font-interface text-2xl font-semibold text-ink-muted">Desktop Pet</h3>
+                                    <span class="px-2 py-0.5 rounded-full border border-transparent bg-[var(--color-canvas)] text-[10px] font-interface uppercase tracking-wider text-ink-muted">构思中</span>
+                                </div>
+                                <p class="font-interface text-lg text-ink-muted mb-2">桌面宠物养成系统。</p>
+                                <p class="font-interface text-md text-ink-muted opacity-80 mb-6">暂不实现完整系统，目前作为远期概念进行记录。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="essays" class="py-20 md:py-32">
+            <div class="grid-asymmetric">
+                <!-- 左侧：随笔，带有一张插图 -->
+                <div class="col-span-1 md:col-start-2 md:col-span-5">
+                    <h2 class="font-interface text-sm font-semibold tracking-widest uppercase text-ink-muted mb-12">Essays</h2>
+                    <article class="group cursor-pointer">
+                        <div class="aspect-square w-2/3 max-w-[240px] img-placeholder mb-6 rounded-sm ml-auto mr-4 md:mr-12 -rotate-2 group-hover:rotate-0 transition-transform duration-500">
+                           <img src="https://placehold.co/400x400/EAE6DF/4A4844?text=Vibe" alt="随笔气氛图" class="w-full h-full object-cover mix-blend-multiply opacity-70">
+                        </div>
+                        <h3 class="font-editorial text-xl font-bold text-ink-main mb-3">初中时，我只是想看 YouTube</h3>
+                        <p class="font-editorial text-ink-soft leading-relaxed">
+                            我最初只是想看一些游戏实况，后来却莫名其妙地搭建起了自己的整个互联网世界。
+                        </p>
+                    </article>
+                </div>
+
+                <!-- 右侧：碎片时间流 -->
+                <div class="col-span-1 md:col-start-8 md:col-span-4 mt-16 md:mt-0">
+                    <h2 class="font-interface text-sm font-semibold tracking-widest uppercase text-ink-muted mb-12">Fragments</h2>
+                    <div class="space-y-8 border-l border-[var(--color-border-subtle)] pl-6 relative">
+                        <!-- 碎片 1 -->
+                        <div class="relative">
+                            <div class="absolute -left-[29px] top-1.5 w-2 h-2 rounded-full bg-ink-muted ring-4 ring-[var(--color-canvas)]"></div>
+                            <time class="font-interface text-xs text-ink-muted block mb-2">2026-08-05 14:20</time>
+                            <p class="font-interface text-sm text-ink-main leading-relaxed">
+                                上下文也许是这个时代最容易被低估的个人资产。模型会更新，工具会消失，但积累过的判断和经历仍然可以继续复用。
+                            </p>
+                        </div>
+                        <!-- 移除虚构的碎片 2 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="images" class="py-20 md:py-32 border-t border-[var(--color-border-subtle)]">
+            <h2 class="font-interface text-sm font-semibold tracking-widest uppercase text-ink-muted mb-16 text-center">Visual Flow</h2>
+            
+            <!-- 使用 Flex 实现错落的水平滚动（手机端）或网格（桌面端） -->
+            <div class="flex overflow-x-auto md:grid grid-asymmetric gap-6 pb-8 no-scrollbar snap-x snap-mandatory">
+                <!-- 图 1：大竖图 -->
+                <div class="shrink-0 w-[80vw] md:w-auto md:col-start-2 md:col-span-4 snap-center group cursor-pointer">
+                    <div class="aspect-[3/4] img-placeholder rounded-sm overflow-hidden mb-4">
+                        <img src="https://placehold.co/600x800/DCE0D9/4A4844?text=Photo+1" alt="下雨前，窗外偏灰蓝色的天空与远处建筑" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    </div>
+                    <div class="flex justify-between items-center font-interface text-xs text-ink-muted">
+                        <span>雨落下来以前</span>
+                        <span>汕头</span>
+                    </div>
+                </div>
+                <!-- 移除虚构的图 2 -->
+            </div>
+        </section>
+
+    </main>
+
+    <footer id="about" class="bg-ink-main text-[var(--color-canvas)] py-20 mt-12">
+        <div class="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-24 grid grid-cols-1 md:grid-cols-12 gap-12">
+            <div class="md:col-span-6 lg:col-span-4">
+                <h2 class="font-interface text-2xl font-semibold mb-6">VDVXDV</h2>
+                <p class="font-editorial text-sm text-neutral-400 leading-relaxed mb-8">
+                    这是一个属于技术创作者的个人网站。不追求绝对的极简，也不盲从喧哗的特效。只提供一块安静、清晰的地方，用来安放长文、项目与一闪而过的念头。
+                </p>
+                <p class="font-interface text-xs text-neutral-500">© 2026 VDVXDV. All rights reserved.</p>
+            </div>
+            
+            <div class="md:col-start-9 md:col-span-4 flex flex-col gap-4 font-interface text-sm">
+                <h3 class="text-xs font-semibold tracking-widest uppercase text-neutral-500 mb-2">Connect</h3>
+                <a href="#" class="hover:text-white transition-colors flex items-center justify-between group border-b border-neutral-800 pb-2">
+                    GitHub
+                    <span class="opacity-0 group-hover:opacity-100 transition-opacity">↗</span>
+                </a>
+                <a href="#" class="hover:text-white transition-colors flex items-center justify-between group border-b border-neutral-800 pb-2">
+                    Email
+                    <span class="opacity-0 group-hover:opacity-100 transition-opacity">↗</span>
+                </a>
+                <a href="#" class="hover:text-white transition-colors flex items-center justify-between group border-b border-neutral-800 pb-2">
+                    RSS Feed
+                    <span class="opacity-0 group-hover:opacity-100 transition-opacity">↗</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

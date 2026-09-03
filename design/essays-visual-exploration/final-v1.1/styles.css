@@ -1,0 +1,153 @@
+@import url("../final-v1/styles.css");
+
+:root {
+  --body-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", Georgia, serif;
+}
+
+/* v1.1 polish: make the page introduction read as identity, not Row 0. */
+.index-intro {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 42px;
+  min-height: 300px;
+  padding: 24px 0 76px;
+  align-items: start;
+  border-top-color: rgba(33, 31, 27, 0.11);
+  border-bottom-color: rgba(33, 31, 27, 0.25);
+}
+
+.index-identity {
+  grid-column: 1;
+  width: min(590px, calc(100% - 198px));
+  margin-left: 198px;
+}
+
+.index-identity .label {
+  margin-bottom: 33px;
+  padding: 0;
+  color: var(--ink-soft);
+  letter-spacing: 0.14em;
+}
+
+.index-identity h1 {
+  margin: 0 0 24px;
+  font-size: 56px;
+  line-height: 1.08;
+  letter-spacing: 0.055em;
+}
+
+.index-identity p {
+  max-width: 540px;
+  margin: 0;
+  color: #4c4943;
+  font-size: 18px;
+  line-height: 2;
+}
+
+.index-intro .counter {
+  grid-column: 2;
+  justify-self: end;
+  padding-top: 4px;
+  color: var(--ink-soft);
+  letter-spacing: 0.13em;
+}
+
+.essay-list {
+  padding-top: 42px;
+}
+
+.essay-row:first-child {
+  padding-top: 46px;
+}
+
+/* v1.1 polish: refinement comes from the face and weight, never pale ink. */
+.prose {
+  color: #1c1b19;
+  font-family: var(--body-serif);
+  font-size: 17.5px;
+  font-weight: 300;
+  line-height: 2.05;
+  letter-spacing: 0.02em;
+}
+
+.prose p {
+  margin-bottom: 2.15em;
+}
+
+.prose h2 {
+  color: var(--ink);
+  font-family: var(--body-serif);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0.005em;
+}
+
+.text-prose .opening {
+  color: #2e2c28;
+  font-size: 19px;
+  font-weight: 300;
+  line-height: 2.05;
+}
+
+@media (max-width: 820px) {
+  .index-intro {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    min-height: 0;
+    padding: 18px 0 52px;
+  }
+
+  .index-identity {
+    grid-column: 1 / -1;
+    width: auto;
+    margin: 0;
+  }
+
+  .index-identity .label {
+    margin-bottom: 26px;
+  }
+
+  .index-identity h1 {
+    margin-bottom: 20px;
+    font-size: 48px;
+  }
+
+  .index-identity p {
+    max-width: 340px;
+    font-size: 16px;
+    line-height: 1.95;
+  }
+
+  .index-intro .counter {
+    position: absolute;
+    top: 18px;
+    right: 0;
+  }
+
+  .essay-list {
+    padding-top: 18px;
+  }
+
+  .essay-row:first-child {
+    padding-top: 36px;
+  }
+
+  .prose {
+    font-size: 17.2px;
+    font-weight: 350;
+    line-height: 2.05;
+    letter-spacing: 0.012em;
+  }
+
+  .prose h2 {
+    font-size: 25px;
+    font-weight: 450;
+  }
+
+  .text-prose .opening {
+    font-size: 18px;
+    font-weight: 350;
+  }
+}

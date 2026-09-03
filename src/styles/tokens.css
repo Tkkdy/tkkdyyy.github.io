@@ -1,0 +1,47 @@
+/*
+ * VDVXDV Home — Design Tokens
+ *
+ * 来源：v0.2.6 最终首页原型（design/gemini-home-synthesis-v0.2/source/vdvxdv-home-synthesis-v0-2-6.html）
+ * 这些值是已批准设计的 Source of Truth，Stage 1 不做修改。
+ */
+
+:root {
+  /* ---- 颜色 ---- */
+  --color-canvas: #F6F4EE;            /* 暖象牙白，全站基础背景 */
+  --color-surface-sand: #EBE7DE;      /* 燕麦砂岩，Featured / Photography 表面 */
+  --color-surface-taupe: #E5E0D8;     /* 灰褐，Essays / Fragments 色块 */
+  --color-surface-charcoal: #33302B;  /* 暖炭褐，按钮悬停 */
+  --color-surface-project: #1C1B19;   /* 暖科技黑，Projects 深色带 */
+
+  --color-ink: #1C1B1A;               /* 主文字 */
+  --color-ink-soft: #4A4844;          /* 正文 */
+  --color-ink-muted: #7A766F;         /* 日期、标签、元数据 */
+  --color-ink-inverse: #F8F6F0;       /* 深色带上的文字 */
+
+  --color-accent: #7A3F46;            /* 克制酒红，交互强调色 */
+
+  --color-border: rgba(28, 27, 26, 0.12);       /* 标准细分隔线 */
+  --color-border-strong: rgba(28, 27, 26, 0.28); /* 更强分隔线 */
+  --color-border-inverse: rgba(248, 246, 240, 0.10);  /* 深色带分隔线 */
+  --color-border-inverse-strong: rgba(248, 246, 240, 0.30); /* 深色带按钮边框 */
+
+  /* ---- 字体 ---- */
+  --font-sans: 'Inter', 'SF Pro Display', system-ui, sans-serif;
+  --font-serif: 'Noto Serif SC', 'Source Han Serif SC', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* ---- 布局 ---- */
+  --max-width-page: 1440px;
+  --max-width-content: 1120px;
+
+  /* ---- 圆角 ---- */
+  --radius-media: 2px;        /* 图片占位与按钮，接近直角 */
+  --radius-photo-section: 1rem; /* 全站唯一的大圆角容器：Photography */
+  --radius-full: 9999px;      /* 仅导航胶囊 */
+
+  /* ---- 阴影（原型中只出现在少量媒体元素上） ---- */
+  --shadow-essay: 0 8px 32px rgba(28, 27, 26, 0.05);
+  --shadow-photo-portrait: 0 12px 40px -12px rgba(28, 27, 26, 0.10);
+  --shadow-photo-square: 0 4px 16px rgba(28, 27, 26, 0.06);
+  --shadow-tag: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}

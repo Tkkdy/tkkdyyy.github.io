@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDVXDV Projects Archive</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <nav class="nav-pill">
+            <span class="nav-brand">VDVXDV</span>
+            <span class="nav-divider"></span>
+            <a href="#" class="nav-link active">项目</a>
+            <a href="#" class="nav-link">随笔</a>
+            <a href="#" class="nav-link desktop-only">文章</a>
+            <a href="#" class="nav-link desktop-only">碎片</a>
+            <a href="#" class="nav-link desktop-only">影像</a>
+            <a href="#" class="nav-link desktop-only">关于</a>
+            <a href="#" class="nav-link">搜索</a>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        
+        <section class="intro-section">
+            <div class="intro-content">
+                <div class="intro-label">
+                    <svg width="8" height="8" viewBox="0 0 10 10" style="fill:var(--ink);"><polygon points="5,0 10,10 0,10"/></svg>
+                    PROJECTS ARCHIVE
+                </div>
+                <h1 class="intro-title font-serif text-ink">Digital artifacts.</h1>
+                <p class="text-body">
+                    这里记录我正在做、做过，以及持续变化中的系统、实验与数字物件。
+                </p>
+            </div>
+            
+            <div class="intro-visual-container" aria-hidden="true">
+                <!-- Restrained technical visual: faint grid, circle, point -->
+                <svg viewBox="0 0 200 200" width="100%" height="100%">
+                    <defs>
+                        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <circle cx="2" cy="2" r="1" style="fill:var(--muted); opacity:0.15;"/>
+                        </pattern>
+                    </defs>
+                    <rect width="200" height="200" fill="url(#grid)" />
+                    <circle cx="100" cy="100" r="60" class="svg-faint" stroke-width="0.75" />
+                    <circle cx="142" cy="58" r="3.5" class="svg-ruby" />
+                    <line x1="100" y1="40" x2="100" y2="160" class="svg-faint" stroke-width="0.75" stroke-dasharray="3 4" />
+                </svg>
+            </div>
+        </section>
+
+        <div class="projects-layout">
+            
+            <!-- 01: Morning Radar -->
+            <article class="project-container perspective-1000 p01" role="button" aria-pressed="false" tabindex="0">
+                <div class="project-surface stack-grid">
+                    <div class="face front">
+                        <div class="signal-arc">
+                            <!-- Extremely restrained tech density: one single hairline arc -->
+                            <svg viewBox="0 0 100 100" preserveAspectRatio="none" width="100%" height="100%">
+                                <path d="M100,100 Q40,50 -10,110" stroke="var(--muted)" stroke-width="0.3" fill="none" opacity="0.4"/>
+                            </svg>
+                        </div>
+                        <div style="position:relative; z-index:10;">
+                            <span class="project-num">01 &mdash; CURRENT WORK</span>
+                            <h2 class="project-name font-serif text-ink">Morning Radar</h2>
+                            <p class="project-desc text-body">为个人筛选每天真正值得关注的变化。</p>
+                        </div>
+                        <div style="position:relative; z-index:10; margin-top:4rem; font-family:var(--font-mono); font-size:0.625rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">
+                            Status: Developing
+                        </div>
+                    </div>
+                    <div class="face back">
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <h2 class="back-name font-serif">Morning Radar</h2>
+                                <span class="project-num" style="margin:0;">01</span>
+                            </div>
+                            <p class="back-desc">
+                                一个自动收集、筛选和整理过去二十四小时重要信息的个人晨报系统。将碎片化的信息流转化为高质量、可阅读的结构化上下文。
+                            </p>
+                            <div class="meta-grid">
+                                <div>
+                                    <span class="meta-label">Status</span>
+                                    <span>Developing &middot; 开发中</span>
+                                </div>
+                                <div>
+                                    <span class="meta-label">Tech</span>
+                                    <span>Python / LLM</span>
+                                </div>
+                                <div>
+                                    <span class="meta-label">Updated</span>
+                                    <span>2026-08-05</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 02: Repository Atlas -->
+            <article class="project-container perspective-1000 p02" role="button" aria-pressed="false" tabindex="0">
+                <div class="project-surface stack-grid">
+                    <div class="face front">
+                        <div>
+                            <span class="project-num">02</span>
+                            <h2 class="project-name font-serif text-ink">Repository Atlas</h2>
+                            <p class="project-desc text-body">让陌生代码库更快形成可验证的理解。</p>
+                        </div>
+                        <div style="font-family:var(--font-mono); font-size:0.625rem; color:var(--muted); margin-top:2rem;">
+                            维护中 &middot; 2026-07-28
+                        </div>
+                        <!-- Minimal punctuation -->
+                        <div style="position:absolute; bottom:1.5rem; right:1.5rem; opacity:0.2; pointer-events:none;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="1">
+                                <circle cx="12" cy="6" r="1.5"/><circle cx="6" cy="18" r="1.5"/><circle cx="18" cy="18" r="1.5"/>
+                                <path d="M12 7.5 L6 16.5 M12 7.5 L18 16.5" stroke-dasharray="2 2"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="face back">
+                        <div>
+                            <h2 class="back-name font-serif">Repository Atlas</h2>
+                            <p class="back-desc">
+                                通过静态分析与符号索引，为复杂的开源仓库生成一份结构化阅读地图，帮助个人在陌生技术栈中快速建立可验证的上下文。
+                            </p>
+                            <div class="meta-grid" style="display:flex; flex-direction:column; gap:0.5rem;">
+                                <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Status</span>维护中</div>
+                                <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Tech</span>TypeScript / AST / Search</div>
+                                <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Updated</span>2026-07-28</div>
+                                <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Link</span><span class="safe-link">GitHub &nearr;</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 03: 上下文编排实验 -->
+            <article class="project-container perspective-1000 p03" role="button" aria-pressed="false" tabindex="0">
+                <div class="project-surface stack-grid">
+                    <div class="face front">
+                        <div>
+                            <span class="project-num">03</span>
+                            <h2 class="project-name font-serif text-ink">一套面向长期个人知识工作的上下文编排实验</h2>
+                            <p class="project-desc text-body">让资料、决定与行动保持连续。</p>
+                        </div>
+                        <div style="font-family:var(--font-mono); font-size:0.625rem; color:var(--muted); text-align:right; margin-top:1.5rem;">
+                            构思中 &middot; 2026-06-12
+                        </div>
+                    </div>
+                    <div class="face back">
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <h2 class="back-name font-serif" style="font-size:1.05rem; line-height:1.4;">一套面向长期个人知识工作的上下文编排实验</h2>
+                                <span class="project-num" style="margin:0; flex-shrink:0; margin-left:1rem;">03</span>
+                            </div>
+                            <p class="back-desc" style="max-width:32rem; margin-top:1rem;">
+                                探索在长期研究中，如何把材料、思考快照和执行步骤缝合在同一语境中，减少时间跨度带来的认知损耗。
+                            </p>
+                            <div class="meta-grid">
+                                <div><span class="meta-label">Status</span>构思中</div>
+                                <div><span class="meta-label">Tech</span>无 Tech 依赖</div>
+                                <div><span class="meta-label">Updated</span>2026-06-12</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 04: Quiet Relay -->
+            <article class="project-container perspective-1000 p04" role="button" aria-pressed="false" tabindex="0">
+                <div class="project-surface stack-grid">
+                    <div class="face front">
+                        <div>
+                            <span class="project-num">04</span>
+                            <h2 class="project-name font-serif text-ink" style="font-size:1.25rem;">Quiet Relay</h2>
+                            <p class="project-desc text-body">在低干扰条件下转发真正需要处理的变化。</p>
+                        </div>
+                        <div style="display:flex; flex-direction:column; align-items:flex-start; gap:0.75rem;">
+                            <div style="display:flex; gap:0.25rem; opacity:0.3;">
+                                <span style="width:4px; height:4px; border-radius:50%; background:var(--ink);"></span>
+                                <span style="width:4px; height:4px; border-radius:50%; border:1px solid var(--ink);"></span>
+                                <span style="width:4px; height:4px; border-radius:50%; border:1px solid var(--ink);"></span>
+                            </div>
+                            <div style="font-family:var(--font-mono); font-size:0.625rem; color:var(--muted);">
+                                可使用 &middot; 2026-05-30
+                            </div>
+                        </div>
+                    </div>
+                    <div class="face back">
+                        <div style="max-width:24rem;">
+                            <h2 class="back-name font-serif" style="margin-bottom:0.5rem;">Quiet Relay</h2>
+                            <p class="back-desc" style="margin-bottom:0;">
+                                一个轻量级消息路由实验，用规则过滤无效通知，只在设定窗口交付真正需要处理的核心信号。
+                            </p>
+                        </div>
+                        <div class="meta-grid" style="display:flex; flex-wrap:wrap; gap:1rem; text-align:left;">
+                            <div>Status: 可使用</div>
+                            <div>Tech: Python / Webhook</div>
+                            <div>Updated: 2026-05-30</div>
+                            <div>Link: <span class="safe-link">Live &nearr;</span></div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <div class="project-row">
+                
+                <!-- 05: Local Index -->
+                <article class="project-container perspective-1000 p05" role="button" aria-pressed="false" tabindex="0">
+                    <div class="project-surface stack-grid">
+                        <div class="face front">
+                            <div>
+                                <span class="project-num">05</span>
+                                <h2 class="project-name font-serif text-ink">Local Index</h2>
+                                <p class="project-desc text-body">离线整理散落在设备中的个人文本线索。</p>
+                            </div>
+                            <div>
+                                <div style="font-family:var(--font-mono); font-size:0.625rem; color:var(--muted); margin-top:2rem;">
+                                    暂停 &middot; 2026-04-18
+                                </div>
+                                <div class="code-fragment" style="margin-top:0.75rem;">
+                                    <div>sys.watch('./documents')</div>
+                                    <div style="padding-left:1rem;">index.build(graph)</div>
+                                    <div>serve.local(port: 8080)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="face back">
+                            <div>
+                                <h2 class="back-name font-serif">Local Index</h2>
+                                <p class="back-desc">
+                                    一个 Local-first 文本索引实验，通过文件系统监听，让本地笔记与随笔成为即时可检索的线索。
+                                </p>
+                                <div class="meta-grid" style="display:flex; flex-direction:column; gap:0.5rem;">
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Status</span>暂停</div>
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Tech</span>Rust / SQLite / Local-first</div>
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Updated</span>2026-04-18</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 06: Signal Cabinet -->
+                <article class="project-container perspective-1000 p06" role="button" aria-pressed="false" tabindex="0">
+                    <div class="project-surface stack-grid">
+                        <div class="face front">
+                            <div>
+                                <span class="project-num">06</span>
+                                <h2 class="project-name font-serif text-ink">Signal Cabinet</h2>
+                                <p class="project-desc text-body">保存小型技术实验与失败记录。</p>
+                            </div>
+                            <div style="border-top:1px solid var(--border-subtle); padding-top:1rem; font-family:var(--font-mono); font-size:0.625rem; color:var(--muted); display:flex; justify-content:space-between; margin-top:2rem;">
+                                <span>TYPE: ARCHIVE</span>
+                                <span>已完成 &middot; 2026-03-02</span>
+                            </div>
+                        </div>
+                        <div class="face back">
+                            <div>
+                                <h2 class="back-name font-serif">Signal Cabinet</h2>
+                                <p class="back-desc">
+                                    一个微型数字陈列柜，封存未发展成完整项目、但仍值得保留的交互实验、失败记录和实现碎片。
+                                </p>
+                                <div class="meta-grid" style="display:flex; flex-direction:column; gap:0.5rem;">
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Status</span>已完成</div>
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Tech</span>HTML / CSS</div>
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Updated</span>2026-03-02</div>
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Link</span> 
+                                        <span class="safe-link" style="margin-right:0.5rem;">Live &nearr;</span>
+                                        <span class="safe-link">GitHub &nearr;</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <footer class="site-footer">
+            <p class="footer-text">
+                Build slowly. Leave meaningful traces.
+            </p>
+        </footer>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

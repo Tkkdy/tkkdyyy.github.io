@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDVXDV</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500&family=Noto+Serif+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        /* 温暖、沉稳、高级的基础色板 (C版本基调) */
+                        canvas: '#F6F4EE',        /* 暖象牙白 Warm Ivory */
+                        'surface-sand': '#EBE7DE', /* 燕麦砂岩 Oatmeal Sandstone */
+                        'surface-taupe': '#E5E0D8',/* 灰褐 Taupe */
+                        'surface-charcoal': '#33302B', /* 暖炭褐 Warm Charcoal (替代纯黑) */
+                        ink: '#1C1B1A',           /* 略带暖意的深墨 */
+                        'ink-soft': '#4A4844',
+                        'ink-muted': '#7A766F',
+                        'ink-inverse': '#F8F6F0',
+                        border: 'rgba(28, 27, 26, 0.12)',
+                        'border-strong': 'rgba(28, 27, 26, 0.28)',
+                        accent: '#7A3F46',        /* 克制酒红 Restrained Wine */
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'SF Pro Display', 'system-ui', 'sans-serif'],
+                        serif: ['"Noto Serif SC"', '"Source Han Serif SC"', 'serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    maxWidth: {
+                        'page': '1440px',
+                        'content': '1120px', /* 略微收紧，增加阅读专注度 */
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: theme('colors.canvas');
+            color: theme('colors.ink');
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* 真正的 Apple Liquid Glass 导航 */
+        .glass-nav {
+            background: rgba(246, 244, 238, 0.65);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 
+                inset 0 1px 1px rgba(255, 255, 255, 0.9),
+                0 8px 32px -4px rgba(28, 27, 26, 0.08),
+                0 4px 12px -4px rgba(28, 27, 26, 0.04);
+        }
+
+        /* 纯 CSS 中性占位系统 (直角/2px微倒角) */
+        .css-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(28, 27, 26, 0.04);
+            border: 1px solid rgba(28, 27, 26, 0.08);
+            color: rgba(28, 27, 26, 0.35);
+            font-family: theme('fontFamily.mono');
+            transition: all 0.5s ease;
+            border-radius: 2px; /* 极轻微边缘，拒绝大圆角 */
+        }
+
+        .css-placeholder span {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .css-placeholder .ratio {
+            font-size: 0.65rem;
+            opacity: 0.6;
+            margin-top: 0.35rem;
+        }
+
+        .group:hover .css-placeholder {
+            background-color: rgba(28, 27, 26, 0.06);
+            border-color: rgba(28, 27, 26, 0.15);
+            color: rgba(28, 27, 26, 0.5);
+        }
+
+        /* 深色区 (Projects) 占位覆盖 */
+        .dark-section .css-placeholder {
+            background-color: rgba(248, 246, 240, 0.03);
+            border-color: rgba(248, 246, 240, 0.1);
+            color: rgba(248, 246, 240, 0.4);
+        }
+
+        ::selection {
+            background: theme('colors.accent');
+            color: theme('colors.ink-inverse');
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-ink selection:bg-accent selection:text-ink-inverse">
+
+    <header class="fixed top-5 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+        <nav class="glass-nav pointer-events-auto flex items-center gap-6 px-6 py-2.5 rounded-full mx-auto max-w-fit transition-all">
+            <a href="#" class="font-medium tracking-wider text-[13px] hover:text-accent transition-colors">VDVXDV</a>
+            
+            <div class="w-px h-3.5 bg-border hidden md:block"></div>
+            
+            <ul class="hidden md:flex items-center gap-5 text-[12px] tracking-wide font-medium text-ink-soft">
+                <li><a href="#" class="hover:text-ink transition-colors">项目</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">随笔</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">文章</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">碎片</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">影像</a></li>
+                <li><a href="#" class="hover:text-ink transition-colors">关于</a></li>
+            </ul>
+            
+            <div class="w-px h-3.5 bg-border hidden md:block"></div>
+            
+            <button class="text-[12px] tracking-wide font-medium text-ink hover:text-accent transition-colors" aria-label="Search">
+                搜索
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <section class="max-w-page mx-auto px-6 sm:px-8 pt-32 pb-24 md:pt-48 md:pb-32">
+            <div class="max-w-content mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-start">
+                
+                <!-- Left: Identity & Intro -->
+                <div class="lg:col-span-5 flex flex-col justify-start">
+                    <h1 class="text-[2.5rem] md:text-5xl font-serif font-medium leading-[1.15] mb-8 tracking-tight">
+                        个人项目、<br>
+                        写作与影像的<br>
+                        安静记录。
+                    </h1>
+                    <p class="text-ink-soft leading-relaxed text-[15px] max-w-sm mb-12">
+                        探索技术与表达的交叉点。这里是 VDVXDV 的公开个人空间，记录正在进行的构建、长时间的思考以及沿途捕捉的切片。
+                    </p>
+                    <div class="flex items-center gap-6 text-[12px] font-medium tracking-wide text-ink">
+                        <a href="#" class="flex items-center gap-1.5 border-b border-border pb-0.5 hover:border-ink hover:text-accent transition-all uppercase">
+                            查看项目 <span class="text-xs font-mono ml-0.5">→</span>
+                        </a>
+                        <a href="#" class="flex items-center gap-1.5 border-b border-border pb-0.5 hover:border-ink hover:text-accent transition-all uppercase">
+                            阅读文章 <span class="text-xs font-mono ml-0.5">→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right: Featured Article (Straight edges, minimal border) -->
+                <div class="lg:col-span-7 mt-8 lg:mt-0">
+                    <div class="mb-5 border-t border-border pt-3 flex justify-between items-start text-[10px] font-mono tracking-widest text-ink-muted uppercase">
+                        <span>Featured Article</span>
+                        <span>精选文章</span>
+                    </div>
+
+                    <a href="#" class="group block cursor-pointer">
+                        <!-- Straight edges, no large rounded cards -->
+                        <div class="w-full aspect-[16/9] md:aspect-[4/3] bg-surface-sand relative mb-6">
+                            <div class="css-placeholder">
+                                <span>Article Visual</span>
+                                <span class="ratio">4:3</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-center gap-3">
+                                <span class="text-[11px] text-ink-muted font-mono tracking-wider">2026-08-05</span>
+                                <span class="text-[10px] font-mono text-ink-muted uppercase border border-border px-1.5 py-[1px]">Tech_Thought</span>
+                            </div>
+                            <h2 class="text-2xl md:text-[28px] font-serif font-medium group-hover:text-accent transition-colors leading-snug">
+                                上下文正在成为个人 AI 的真正界面
+                            </h2>
+                            <p class="text-ink-soft text-[14.5px] leading-[1.7] max-w-xl">
+                                当模型长期理解一个人的项目、文件、偏好和决定时，它才开始跨越工具的属性，成为真正的能力延伸。模型会更新，但积累的上下文可以复用。
+                            </p>
+                            <div class="mt-3 text-[12px] font-medium tracking-wide text-ink group-hover:text-accent transition-colors uppercase">
+                                开始阅读 <span class="font-mono text-xs group-hover:translate-x-1 inline-block transition-transform ml-1">→</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="bg-surface-charcoal text-ink-inverse py-24 md:py-32 dark-section">
+            <div class="max-w-content mx-auto px-6 sm:px-8">
+                
+                <!-- Section Header -->
+                <div class="mb-12 border-t border-ink-inverse/10 pt-3 flex justify-between items-start text-[10px] font-mono tracking-widest text-ink-inverse/50 uppercase">
+                    <span>Active Projects & Experiments</span>
+                    <span>项目与实验</span>
+                </div>
+
+                <!-- C-Style Vertical List -->
+                <div class="flex flex-col">
+                    
+                    <!-- Item 1: Real Project (Morning Radar) -->
+                    <div class="group border-b border-ink-inverse/10 py-10 md:py-12 flex flex-col md:flex-row gap-6 md:gap-12 items-start">
+                        <!-- ID/Badge -->
+                        <div class="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 border border-ink-inverse/20 flex items-center justify-center text-ink-inverse/80 font-mono text-sm bg-ink-inverse/5">
+                            M
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="flex-grow flex flex-col justify-center">
+                            <div class="flex items-center gap-3 mb-2">
+                                <h3 class="text-2xl md:text-[26px] font-medium font-sans tracking-tight">Morning Radar</h3>
+                                <span class="text-[9px] font-mono text-ink-inverse/40 uppercase border border-ink-inverse/10 px-1.5 py-[1px] bg-ink-inverse/5">Dev</span>
+                            </div>
+                            <p class="text-ink-inverse/70 text-[14.5px] leading-relaxed max-w-xl mb-6">
+                                为个人筛选每天真正值得关注的变化。一个自动收集、筛选和整理过去二十四小时重要信息的个人晨报系统。
+                            </p>
+                            <div class="flex gap-5 text-[12px] font-mono text-ink-inverse/60 uppercase">
+                                <a href="#" class="hover:text-ink-inverse transition-colors flex items-center gap-1">在线体验 <span>↗</span></a>
+                                <a href="#" class="hover:text-ink-inverse transition-colors flex items-center gap-1">GitHub <span>↗</span></a>
+                            </div>
+                        </div>
+
+                        <!-- Meta / Tech Stack -->
+                        <div class="hidden lg:flex flex-col items-end gap-1.5 text-[11px] font-mono text-ink-inverse/40 uppercase mt-2">
+                            <span>Python</span>
+                            <span>DeepSeek</span>
+                        </div>
+                    </div>
+
+                    <!-- Item 2: Structural Placeholder -->
+                    <div class="border-b border-ink-inverse/10 py-10 md:py-12 flex flex-col md:flex-row gap-6 md:gap-12 items-start opacity-40 pointer-events-none">
+                        <div class="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 border border-ink-inverse/20 flex items-center justify-center text-ink-inverse/40 font-mono text-sm">
+                            P
+                        </div>
+                        <div class="flex-grow flex flex-col justify-center">
+                            <div class="text-[10px] font-mono text-ink-inverse/40 uppercase tracking-widest mb-4">
+                                Project Slot Pending
+                            </div>
+                            <div class="flex flex-col gap-3 max-w-sm">
+                                <div class="h-2 bg-ink-inverse/10 w-3/4"></div>
+                                <div class="h-1.5 bg-ink-inverse/10 w-full mt-2"></div>
+                                <div class="h-1.5 bg-ink-inverse/10 w-5/6"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 3: Structural Placeholder -->
+                    <div class="border-b border-ink-inverse/10 py-10 md:py-12 flex flex-col md:flex-row gap-6 md:gap-12 items-start opacity-20 pointer-events-none">
+                        <div class="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 border border-ink-inverse/20 flex items-center justify-center text-ink-inverse/40 font-mono text-sm">
+                            S
+                        </div>
+                        <div class="flex-grow flex flex-col justify-center">
+                            <div class="text-[10px] font-mono text-ink-inverse/40 uppercase tracking-widest mb-4">
+                                Project Slot Pending
+                            </div>
+                            <div class="flex flex-col gap-3 max-w-[240px]">
+                                <div class="h-2 bg-ink-inverse/10 w-2/3"></div>
+                                <div class="h-1.5 bg-ink-inverse/10 w-full mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-surface-taupe py-24 md:py-32">
+            <div class="max-w-content mx-auto px-6 sm:px-8">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12 items-start">
+                    
+                    <!-- Left: Essays (Straight edges) -->
+                    <div class="lg:col-span-6 xl:col-span-5">
+                        <div class="mb-10 border-t border-border pt-3 flex justify-between items-start text-[10px] font-mono tracking-widest text-ink-muted uppercase">
+                            <span>Essays</span>
+                            <span>随笔</span>
+                        </div>
+
+                        <a href="#" class="group block">
+                            <div class="flex flex-col gap-6">
+                                <div class="w-full aspect-[4/3] bg-surface-sand relative">
+                                    <div class="css-placeholder">
+                                        <span>Atmosphere Photo</span>
+                                        <span class="ratio">4:3</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-3 pr-4">
+                                    <h3 class="text-[22px] font-serif font-medium group-hover:text-accent transition-colors leading-snug">初中时，我只是想看 YouTube</h3>
+                                    <p class="text-ink-soft text-[14.5px] leading-relaxed">
+                                        我最初只是想看一些游戏实况，后来却莫名其妙地搭建起了自己的整个互联网世界。那是一段缺乏指引，但充满纯粹好奇心的野蛮生长期。
+                                    </p>
+                                    <div class="text-[11px] text-ink-muted font-mono mt-2 tracking-wider">2026-08-01</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Right: Fragments (Vertical Editorial Stack with structural offsets) -->
+                    <div class="lg:col-span-6 lg:col-start-7 xl:col-span-5 xl:col-start-8 lg:border-l lg:border-border/40 lg:pl-10 lg:mt-24">
+                        <div class="mb-10 border-t border-border pt-3 flex justify-between items-start text-[10px] font-mono tracking-widest text-ink-muted uppercase">
+                            <span>Fragments</span>
+                            <span>碎片</span>
+                        </div>
+
+                        <div class="flex flex-col">
+                            
+                            <!-- 1. Real Published Fragment -->
+                            <article class="border-l border-ink/20 pl-5 md:pl-6 py-1 mb-12">
+                                <div class="text-[10px] text-ink-muted font-mono tracking-widest uppercase mb-3">
+                                    Aug 05, 2026
+                                </div>
+                                <p class="text-[14.5px] text-ink-soft leading-[1.7] max-w-sm">
+                                    上下文也许是这个时代最容易被低估的个人资产。模型会更新，工具会消失，但积累过的判断和经历仍然可以继续复用。
+                                </p>
+                            </article>
+                            
+                            <!-- 2. Structural Placeholder (Offset level 1) -->
+                            <article class="border-l border-border/60 pl-5 md:pl-6 py-1 mb-12 ml-6 md:ml-10 opacity-50 pointer-events-none">
+                                <div class="text-[9px] text-ink-muted/70 font-mono tracking-widest uppercase mb-3">
+                                    Slot Pending
+                                </div>
+                                <div class="flex flex-col gap-2.5 max-w-[200px] mt-3">
+                                    <div class="h-1 bg-ink-muted/20 w-full"></div>
+                                    <div class="h-1 bg-ink-muted/20 w-5/6"></div>
+                                    <div class="h-1 bg-ink-muted/20 w-4/5"></div>
+                                </div>
+                            </article>
+
+                            <!-- 3. Structural Placeholder (Offset level 2) -->
+                            <article class="border-l border-border/40 pl-5 md:pl-6 py-1 ml-2 md:ml-4 opacity-30 pointer-events-none">
+                                <div class="text-[9px] text-ink-muted/60 font-mono tracking-widest uppercase mb-3">
+                                    Slot Pending
+                                </div>
+                                <div class="flex flex-col gap-2.5 max-w-[160px] mt-3">
+                                    <div class="h-1 bg-ink-muted/20 w-11/12"></div>
+                                    <div class="h-1 bg-ink-muted/20 w-2/3"></div>
+                                </div>
+                            </article>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <section class="max-w-page mx-auto mt-16 md:mt-24 mb-24 md:mb-32 px-4 sm:px-6 lg:px-8">
+            <!-- 唯一允许的大圆角容器 -->
+            <div class="bg-surface-sand rounded-2xl p-8 md:p-16 lg:p-24 overflow-hidden">
+                
+                <div class="max-w-content mx-auto mb-16 border-t border-border pt-3 flex justify-between items-start text-[10px] font-mono tracking-widest text-ink-muted uppercase">
+                    <span>Visual Flow</span>
+                    <span>影像</span>
+                </div>
+
+                <!-- C-Style Asymmetric Visual Flow Layout -->
+                <div class="max-w-content mx-auto flex flex-col relative w-full">
+                    
+                    <!-- Main Large Visual (Offset Left) -->
+                    <div class="w-full md:w-[75%] lg:w-[65%] mb-8 md:mb-0">
+                        <a href="#" class="group block w-full aspect-[4/3] bg-canvas relative cursor-pointer">
+                            <div class="css-placeholder">
+                                <span>Main Visual</span>
+                                <span class="ratio">4:3</span>
+                            </div>
+                        </a>
+                        <div class="mt-3 text-[10px] font-mono text-ink-muted uppercase tracking-widest flex justify-between pr-4">
+                            <span>Photo 1</span>
+                            <span>Landscape</span>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Vertical Visual (Offset Right & Up/Down via margins) -->
+                    <div class="w-[85%] sm:w-[60%] md:w-[45%] lg:w-[35%] self-end md:-mt-32 lg:-mt-48 relative z-10 mb-12 md:mb-0">
+                        <a href="#" class="group block w-full aspect-[3/4] bg-canvas relative cursor-pointer shadow-[0_12px_40px_-12px_rgba(28,27,26,0.1)]">
+                            <div class="css-placeholder">
+                                <span>Vertical Flow</span>
+                                <span class="ratio">3:4</span>
+                            </div>
+                        </a>
+                        <div class="mt-3 text-[10px] font-mono text-ink-muted uppercase tracking-widest text-right">
+                            <span>Portrait</span>
+                        </div>
+                    </div>
+
+                    <!-- Small Square Visual (Offset Center-Left) -->
+                    <div class="w-[50%] sm:w-[40%] md:w-[30%] lg:w-[22%] ml-[10%] lg:ml-[20%] mt-4 md:-mt-12 lg:-mt-20 relative z-20">
+                        <a href="#" class="group block w-full aspect-square bg-canvas relative cursor-pointer">
+                            <div class="css-placeholder">
+                                <span>Square Fragment</span>
+                                <span class="ratio">1:1</span>
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-border">
+        <div class="max-w-content mx-auto px-6 sm:px-8 py-16 flex flex-col md:flex-row justify-between items-start gap-12">
+            <div class="max-w-sm">
+                <a href="#" class="font-medium tracking-wider text-[14px] text-ink uppercase">VDVXDV</a>
+                <p class="text-[13px] text-ink-muted mt-4 leading-relaxed">这是一个属于技术创作者的个人网站。用来安放长文、项目与一闪而过的念头。</p>
+                <p class="text-[11px] font-mono text-ink-muted/60 mt-6 uppercase tracking-widest">© 2026. All rights reserved.</p>
+            </div>
+            
+            <div class="flex flex-col gap-4 text-[11px] font-mono tracking-widest uppercase">
+                <span class="text-ink-muted/50 mb-2">Connect</span>
+                <a href="#" class="text-ink hover:text-accent transition-colors pb-1 border-b border-border hover:border-accent">GitHub</a>
+                <a href="#" class="text-ink hover:text-accent transition-colors pb-1 border-b border-border hover:border-accent">Mail</a>
+                <a href="#" class="text-ink hover:text-accent transition-colors pb-1 border-b border-border hover:border-accent">RSS</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

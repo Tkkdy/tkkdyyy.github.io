@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="VDVXDV Projects — a structured archive of real project evidence." />
+    <title>Projects — VDVXDV</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23171a19'/%3E%3Cpath d='M7 9h4l5 13 5-13h4l-7 16h-4z' fill='%23f5f6f4'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#projects">跳到项目内容</a>
+
+    <header class="site-header" aria-label="站点导航">
+      <nav class="nav-shell">
+        <a class="brand" href="#top" aria-label="VDVXDV 首页">VDVXDV</a>
+        <span class="nav-rule" aria-hidden="true"></span>
+        <div class="nav-links" aria-label="主要导航">
+          <a class="is-current" href="#projects" aria-current="page">项目</a>
+          <a href="#">随笔</a>
+          <a href="#">文章</a>
+          <a href="#">碎片</a>
+          <a href="#">影像</a>
+          <a href="#">关于</a>
+        </div>
+        <button class="search-trigger" type="button" aria-label="搜索（原型中未连接）">搜索</button>
+        <span class="mobile-location">项目 / 06</span>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="masthead page-grid" aria-labelledby="page-title">
+        <div class="masthead-kicker mono">PROJECTS / SIGNAL ARCHIVE / 2026</div>
+        <div class="masthead-copy">
+          <h1 id="page-title">Work in progress.</h1>
+          <p>把真实输出、调试痕迹与未完成的边界放在同一张工作台上。每一行，按项目自己的证据生长。</p>
+        </div>
+        <p class="masthead-thesis mono">ONE ROW IS A STAGE.<br />EACH PROJECT DECIDES<br />WHAT HAPPENS THERE.</p>
+        <div class="intro-signal" aria-hidden="true">
+          <svg viewBox="0 0 480 210" role="presentation">
+            <g class="signal-grid">
+              <path d="M16 28H464M16 76H464M16 124H464M16 172H464" />
+              <path d="M64 12V198M160 12V198M256 12V198M352 12V198M448 12V198" />
+            </g>
+            <g class="signal-path">
+              <path d="M18 168C74 164 91 79 150 89S230 153 284 111 369 33 458 61" />
+              <path d="M18 182C87 180 111 129 164 135S250 177 306 146 380 90 458 104" />
+            </g>
+            <g class="signal-nodes">
+              <circle cx="18" cy="168" r="3" /><circle cx="150" cy="89" r="4" />
+              <circle cx="284" cy="111" r="3" /><circle cx="458" cy="61" r="5" />
+              <circle cx="164" cy="135" r="2" /><circle cx="306" cy="146" r="3" />
+            </g>
+          </svg>
+          <span class="mono">SIGNAL FIELD / LIVE WORK / UNRESOLVED</span>
+        </div>
+      </section>
+
+      <div id="projects" class="archive" aria-label="项目档案">
+        <article class="project-stage radar-stage page-grid" aria-labelledby="radar-title">
+          <div class="stage-index mono" aria-hidden="true">01 / CURRENT WORK</div>
+          <header class="stage-meta">
+            <p class="status mono"><span class="status-mark"></span>DEVELOPING</p>
+            <h2 id="radar-title">Morning<br />Radar</h2>
+            <p class="stage-lede">让每日信号成为可以追溯、阅读和继续判断的晨报。</p>
+            <p class="stack mono">PYTHON · LLM<br />GITHUB ACTIONS</p>
+            <ol class="pipeline mono" aria-label="真实处理流程">
+              <li>collect</li>
+              <li>dedupe</li>
+              <li>score</li>
+              <li>brief</li>
+              <li>static publish</li>
+            </ol>
+          </header>
+          <figure class="radar-visual evidence-frame">
+            <div class="frame-label mono">
+              <span>REAL OUTPUT / 2026-08-15</span>
+              <span>CAPTURED</span>
+            </div>
+            <img src="assets/morning-radar-2026-08-15.png" alt="Morning Radar 2026 年 8 月 15 日真实晨报首屏" />
+            <figcaption>当日晨报是主视觉；流程只作为来源轨迹，而不是指标面板。</figcaption>
+          </figure>
+        </article>
+
+        <article class="project-stage pet-stage page-grid" aria-labelledby="pet-title">
+          <div class="stage-index mono" aria-hidden="true">02 / INTERACTIVE ENTITY</div>
+          <header class="stage-meta pet-meta">
+            <p class="status mono">USABLE MVP</p>
+            <h2 id="pet-title">Girlfriend<br />Desktop Pet</h2>
+            <p class="stage-lede">透明无边框 Windows 桌宠。拖动、眨眼与轻拍反馈构成它的状态语言。</p>
+            <p class="stack mono">PYSIDE6 · PILLOW<br />WINDOWS LOCAL APP</p>
+          </header>
+
+          <div class="pet-workbench" aria-label="桌宠状态工作台">
+            <div class="pet-toolbar">
+              <span class="mono">STATE RESPONSE</span>
+              <div class="segmented" role="group" aria-label="选择桌宠状态">
+                <button type="button" class="is-active" data-pet-state="idle" aria-pressed="true">Idle</button>
+                <button type="button" data-pet-state="blink" aria-pressed="false">Blink</button>
+                <button type="button" data-pet-state="pat" aria-pressed="false">Pat</button>
+              </div>
+            </div>
+            <div class="pet-canvas" tabindex="0" role="button" aria-label="切换桌宠状态；当前 Idle">
+              <img class="pet-base is-visible" data-pet-image="idle" src="assets/desktop-pet-idle.png" alt="桌宠 Idle 真实状态" />
+              <img class="pet-base" data-pet-image="blink" src="assets/desktop-pet-blink-closed.png" alt="桌宠闭眼真实状态" />
+              <div class="pet-pat-state" data-pet-image="pat" aria-hidden="true">
+                <img class="pat-character" src="assets/desktop-pet-idle.png" alt="" />
+                <img class="pat-overlay pat-hand" src="assets/desktop-pet-pat-hand.png" alt="" />
+                <img class="pat-overlay pat-heart" src="assets/desktop-pet-pat-heart.png" alt="" />
+              </div>
+              <span class="state-readout mono">STATE / <strong>IDLE</strong></span>
+            </div>
+          </div>
+
+          <aside class="related-artifact" aria-labelledby="mini-her-title">
+            <div class="artifact-heading mono">
+              <span>RELATED ARTIFACT</span>
+              <span>REAL / QA PASS</span>
+            </div>
+            <h3 id="mini-her-title">Mini Her</h3>
+            <p>九种 Agent 状态，57 帧经过校验。它是相邻的 sprite package，不是桌宠应用本身。</p>
+            <figure>
+              <img src="assets/mini-her-contact-sheet.png" alt="Mini Her 九状态 57 帧真实 contact sheet" />
+              <figcaption class="mono">9 STATES / 57 VERIFIED FRAMES</figcaption>
+            </figure>
+          </aside>
+        </article>
+
+        <article class="project-stage website-stage page-grid" aria-labelledby="website-title">
+          <div class="stage-index mono" aria-hidden="true">03 / PUBLISHING SYSTEM</div>
+          <header class="stage-meta website-meta">
+            <p class="status mono">USABLE LOCALLY / DEPLOYMENT PENDING</p>
+            <h2 id="website-title">VDVXDV<br />Personal Website</h2>
+            <p class="stage-lede">从内容模型到界面、搜索、RSS 与 QA 的个人出版系统。</p>
+            <p class="stack mono">ASTRO 7 · COLLECTIONS<br />SEARCH · RSS · SEO</p>
+            <div class="viewport-tabs" role="group" aria-label="切换网站截图视口">
+              <button type="button" class="is-active" data-view="desktop" aria-pressed="true">Desktop</button>
+              <button type="button" data-view="mobile" aria-pressed="false">Mobile</button>
+            </div>
+          </header>
+          <div class="viewport-stage" data-active-view="desktop">
+            <div class="viewport-caption mono">
+              <span>LOCAL CAPTURE / PROCESS EVIDENCE</span>
+              <span class="view-readout">1440 × 900</span>
+            </div>
+            <figure class="desktop-capture is-active" data-capture="desktop">
+              <img src="assets/vdvxdv-home-desktop.png" alt="VDVXDV 网站桌面端本地截图" />
+            </figure>
+            <figure class="mobile-capture" data-capture="mobile">
+              <img src="assets/vdvxdv-home-mobile.png" alt="VDVXDV 网站移动端本地截图" />
+            </figure>
+            <div class="process-rail mono" aria-label="项目过程阶段">
+              <span>PRODUCT</span><i></i><span>CONTENT MODEL</span><i></i><span>VISUAL QA</span><i></i><span>LOCAL BUILD</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-stage codex-stage page-grid" aria-labelledby="codex-title">
+          <div class="stage-index mono" aria-hidden="true">04 / SAFETY NOTE</div>
+          <header class="stage-meta">
+            <p class="status mono">USABLE v0.1 / UNOFFICIAL</p>
+            <h2 id="codex-title">Codex Reconnect<br />Proxy Fix</h2>
+            <p class="stage-lede">一个强调权限边界、预览和回滚的诊断提示词与文档工具包。</p>
+            <p class="stack mono">VERSION-DEPENDENT<br />PROMPT / DOCUMENTATION</p>
+          </header>
+          <div class="flip-shell" id="codex-flip" tabindex="0" role="button" aria-pressed="false" aria-label="翻转查看脱敏诊断路径">
+            <div class="flip-inner">
+              <section class="flip-face flip-front" aria-label="诊断路径正面">
+                <span class="flip-instruction mono">FLIP / ENTER / SPACE</span>
+                <ol class="decision-line mono">
+                  <li>READ-ONLY INSPECT</li>
+                  <li>BOUNDED PROPOSAL</li>
+                  <li>USER APPROVAL</li>
+                  <li>SCOPED CHANGE</li>
+                  <li>RECONNECT VERIFY</li>
+                </ol>
+                <p>写入成功不等于修复成功。只有用户完成重启并验证新对话后，结果才成立。</p>
+              </section>
+              <section class="flip-face flip-back mono" aria-label="脱敏诊断路径反面">
+                <span class="trace-title">SANITIZED DECISION TRACE / VALUES HIDDEN</span>
+                <ol>
+                  <li><b>CHECK</b> relevant configuration — values withheld</li>
+                  <li><b>PREVIEW</b> exact, scoped proposal and rollback</li>
+                  <li><b>WAIT</b> for explicit user approval</li>
+                  <li><b>APPLY</b> only the approved change</li>
+                  <li><b>VERIFY</b> restart and reconnect in a new conversation</li>
+                  <li><b>ROLLBACK</b> if verification fails</li>
+                </ol>
+              </section>
+            </div>
+          </div>
+        </article>
+
+        <section class="small-projects page-grid" aria-labelledby="small-title">
+          <div class="stage-index mono" aria-hidden="true">05–06 / SMALL WORKS</div>
+          <header class="small-heading">
+            <p class="status mono">FOUNDATIONS / LEARNING OUTPUTS</p>
+            <h2 id="small-title">Smaller work,<br />different evidence.</h2>
+          </header>
+
+          <article class="console-project" aria-labelledby="console-title">
+            <div class="console-copy">
+              <p class="mono overline">C CONSOLE GAMES / COMPLETED OUTPUTS</p>
+              <h3 id="console-title">Tetris leads the series.</h3>
+              <p>七种方块、10×20 场地、预览、分数、等级、落点投影与简易 wall kick。Snake、2048、井字棋和猜数字归在同一组学习输出里。</p>
+              <p class="mono game-list">TETRIS · SNAKE · 2048 · TIC-TAC-TOE · GUESS NUMBER</p>
+            </div>
+            <div class="terminal-reconstruction" aria-label="根据已验证功能重构的 Tetris 终端示意，不是真实运行截图">
+              <span class="prototype-flag mono">PROTOTYPE-ONLY / RECONSTRUCTED</span>
+              <pre aria-hidden="true">TETRIS.C / WINDOWS CONSOLE
+
+SCORE  012400     LEVEL  04
+LINES  0032       NEXT   T
+
+┌────────────────────┐
+│                    │
+│        ▒▒          │
+│      ▒▒▒▒          │
+│        ░░          │
+│  ██  ░░░░    ████  │
+│██████████  ████████│
+└────────────────────┘
+
+← → MOVE   ↑ ROTATE   SPACE DROP</pre>
+            </div>
+          </article>
+
+          <article class="esp-trace" aria-labelledby="esp-title">
+            <div class="esp-label">
+              <p class="mono overline">HARDWARE TRACE / NO PHOTO</p>
+              <h3 id="esp-title">ESP32 LED Experiments</h3>
+              <p>只记录源文件中确实存在的三个行为。</p>
+            </div>
+            <ol class="signal-strip mono">
+              <li><span>GPIO</span><b>25 / OUTPUT</b></li>
+              <li><span>DIGITAL</span><b>HIGH ↔ LOW / 1000ms</b></li>
+              <li><span>SERIAL</span><b>115200 / ON · OFF STATUS</b></li>
+              <li><span>BREATH</span><b>analogWrite / 0…255…0 / 15ms</b></li>
+            </ol>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <footer class="cli-ending mono" aria-label="项目索引结束命令">
+      <span class="cli-path">~/vdvxdv/projects</span>
+      <span class="cli-prompt">&gt;</span>
+      <span class="cli-command">build --continue</span>
+      <i class="quiet-cursor" aria-hidden="true"></i>
+    </footer>
+  </body>
+</html>

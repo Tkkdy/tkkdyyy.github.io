@@ -1,0 +1,59 @@
+---
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import {
+  formatArticleDate,
+  formatPublishNumber,
+  getPublishedArticles,
+} from '../../lib/content/articles';
+
+const articles = await getPublishedArticles();
+---
+
+<ArticleLayout title="Articles — VDVXDV" bodyClass="articles-list-body">
+  <section class="articles-page" aria-labelledby="articles-title">
+    <header class="articles-page-header">
+      <h1 id="articles-title" class="articles-page-title">Articles.</h1>
+      <div class="articles-page-rule" aria-hidden="true"></div>
+    </header>
+
+    <div class="article-list">
+      {
+        articles.map((article) => (
+          <article class="article-row">
+            <time
+              class="article-row-date"
+              datetime={article.data.publishedAt.toISOString().slice(0, 10)}
+            >
+              {formatArticleDate(article.data.publishedAt)}
+            </time>
+
+            <h2 class="article-row-title">
+              <a href={`/articles/${article.data.slug}/`}>{article.data.title}</a>
+            </h2>
+
+            <p class="article-row-desc">{article.data.description}</p>
+
+            <div class="article-row-meta">
+              <div class="article-row-trace">
+                <span class="article-row-number">
+                  {formatPublishNumber(article.data.publishNumber!)}
+                </span>
+                {article.data.category && (
+                  <span class="article-row-domain">{article.data.category}</span>
+                )}
+              </div>
+
+              {article.data.tags && article.data.tags.length > 0 && (
+                <ul class="article-row-tags" aria-label="标签">
+                  {article.data.tags.map((tag) => (
+                    <li>{tag}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</ArticleLayout>

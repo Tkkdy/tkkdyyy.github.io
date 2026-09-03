@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Essays Visual Exploration — VDVXDV</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../shared.css">
+  <style>
+    .comparison { max-width: 1180px; margin: 0 auto; padding: 150px 28px 120px; }
+    .comparison header { display: grid; grid-template-columns: 0.75fr 1.25fr; gap: 60px; align-items: end; margin: 34px 0 78px; }
+    .comparison h1 { font-family: var(--serif); font-size: clamp(48px, 7vw, 86px); font-weight: 400; line-height: 1.04; letter-spacing: -0.04em; }
+    .comparison header p { max-width: 560px; color: var(--ink-soft); font-family: var(--serif); font-size: 17px; line-height: 1.9; }
+    .directions { border-top: 1px solid var(--rule); }
+    .direction { display: grid; grid-template-columns: 100px 1fr 1.15fr; gap: 34px; padding: 48px 0; border-bottom: 1px solid var(--rule); }
+    .direction-id { font-family: var(--serif); font-size: 56px; line-height: 1; }
+    .direction h2 { margin-bottom: 10px; font-family: var(--serif); font-size: 30px; font-weight: 500; }
+    .thesis { color: var(--ink-soft); font-size: 14px; line-height: 1.8; }
+    .direction-details { display: grid; gap: 22px; }
+    .direction-details p { color: var(--ink-soft); font-size: 13px; line-height: 1.75; }
+    .links { display: flex; flex-wrap: wrap; gap: 10px; }
+    .links a { padding: 9px 13px; border: 1px solid var(--rule); font-family: var(--mono); font-size: 10px; letter-spacing: .04em; transition: background 150ms ease, color 150ms ease; }
+    .links a:hover, .links a:focus-visible { background: var(--ink); color: var(--paper); }
+    .guide { margin-top: 72px; padding: 30px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+    .guide h2 { margin-bottom: 20px; font-family: var(--serif); font-size: 25px; font-weight: 500; }
+    .guide ul { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; list-style: none; }
+    .guide li { color: var(--ink-soft); font-size: 13px; line-height: 1.75; }
+    .guide strong { display: block; margin-bottom: 5px; color: var(--ink); font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+    @media (max-width: 760px) {
+      .comparison { padding: 128px 22px 90px; }
+      .comparison header { grid-template-columns: 1fr; gap: 28px; margin-bottom: 56px; }
+      .comparison h1 { font-size: 52px; }
+      .direction { grid-template-columns: 54px 1fr; gap: 20px; }
+      .direction-details { grid-column: 2; }
+      .direction-id { font-size: 42px; }
+      .guide ul { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header"><a class="wordmark" href="index.html">VDVXDV</a><nav aria-label="原型导航"><a href="../direction-a/index.html">A</a><a href="../direction-b/index.html">B</a><a href="../direction-c/index.html">C</a></nav></header>
+  <main class="comparison">
+    <div class="eyebrow"><span>Essays Visual Exploration</span><span>Phase 1–3 · Prototype only</span></div>
+    <header><h1>Three ways<br>to slow down.</h1><p>三套方向都把随笔视为“生活和思考留下来的东西”，但分别让影像、文字与错位关系承担主要节奏。这里不做排名，也不宣布 Final。</p></header>
+    <section class="directions" aria-label="三个视觉方向">
+      <article class="direction"><div class="direction-id">A</div><div><h2>Editorial Gallery</h2><p class="thesis">用编辑式比例把一篇代表性随笔变成强入口，再让文字条目与 Archive 逐渐降低音量。</p></div><div class="direction-details"><p><strong>Index：</strong>精选主叙事 + 无封面大字构图 + 轻 Archive。<br><strong>Detail：</strong>宽幅开篇、中心阅读秩序、电影式媒体停顿。</p><div class="links"><a href="../direction-a/index.html">Index</a><a href="../direction-a/detail.html">Detail · Images</a><a href="../direction-a/detail-text-only.html">Detail · Text only</a></div></div></article>
+      <article class="direction"><div class="direction-id">B</div><div><h2>Quiet Journal</h2><p class="thesis">把无封面文字视为默认状态，日期退到左侧，图片只作为安静、私人的插入。</p></div><div class="direction-details"><p><strong>Index：</strong>单列时间秩序，媒体缩小为情绪切片。<br><strong>Detail：</strong>最亲密的阅读列、最少的视觉仪式。</p><div class="links"><a href="../direction-b/index.html">Index</a><a href="../direction-b/detail.html">Detail · Images</a><a href="../direction-b/detail-text-only.html">Detail · Text only</a></div></div></article>
+      <article class="direction"><div class="direction-id">C</div><div><h2>Staggered Canvas</h2><p class="thesis">文字与照片作为平等元素进入显式十二栏画布，错位由内容状态驱动，而不是随机 Masonry。</p></div><div class="direction-details"><p><strong>Index：</strong>内容驱动的跨栏、开放式无封面构图。<br><strong>Detail：</strong>分栏 Header、早期双图、图文各自偏移。</p><div class="links"><a href="../direction-c/index.html">Index</a><a href="../direction-c/detail.html">Detail · Images</a><a href="../direction-c/detail-text-only.html">Detail · Text only</a></div></div></article>
+    </section>
+    <section class="guide"><h2>建议比较什么</h2><ul><li><strong>Cover removed</strong>隐藏图片后，标题、日期和留白是否仍然形成清楚的节奏。</li><li><strong>Reading duration</strong>进入 Detail 后，图片是否参与表达但不破坏长时间阅读。</li><li><strong>Mobile recomposition</strong>在 430px / 390px 下，不对称减少后是否仍然保留每套方向的性格。</li></ul></section>
+  </main>
+  <footer class="site-footer"><div class="footer-inner"><div><strong>VDVXDV</strong><p>Essays Visual Exploration · not production.</p></div><div class="footer-links"><a href="../README.md">README</a></div></div></footer>
+</body>
+</html>

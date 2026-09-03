@@ -1,0 +1,57 @@
+---
+// 随笔列表页 /essays
+// 只显示 status = published 的随笔，按 publishedAt 倒序。
+// 比文章列表更轻、留白更多（DESIGN §3）；无 cover 时纯排版。
+import EssayLayout from '../../layouts/EssayLayout.astro';
+import { getPublishedEssays } from '../../lib/content/essays';
+import { formatDate } from '../../lib/content/homepage';
+import EssaysUniverseMap from '../../components/EssaysUniverseMap.astro';
+
+const essays = await getPublishedEssays();
+const themes = [...new Set(essays.flatMap((essay) => essay.data.tags ?? []))].slice(0, 8);
+
+const dateParts = (date: Date) => ({
+  iso: formatDate(date),
+  year: String(date.getFullYear()),
+  monthDay: `${String(date.getMonth() + 1).padStart(2, '0')}·${String(date.getDate()).padStart(2, '0')}`,
+});
+---
+
+<EssayLayout title="随笔 — VDVXDV">
+  <section class="essays-page essays-universe-page">
+    <EssaysUniverseMap essays={essays} themes={themes} />
+
+    <section class="essay-archive-section" aria-labelledby="archive-title">
+      <header class="essay-archive-heading">
+        <p id="archive-title">ESSAY ARCHIVE</p>
+        <p>{String(essays.length).padStart(2, '0')} {essays.length === 1 ? 'ENTRY' : 'ENTRIES'}</p>
+      </header>
+      {
+        essays.length === 0 ? <p class="essay-empty">公开随笔正在慢慢出现。</p> : essays.map((essay) => (
+          <a class="essay-row" id={`essay-${essay.data.slug}`} href={`/essays/${essay.data.slug}/`}>
+            <time class="essay-row-date" datetime={dateParts(essay.data.publishedAt).iso}>
+              <span>{dateParts(essay.data.publishedAt).year}</span>
+              <b>{dateParts(essay.data.publishedAt).monthDay}</b>
+            </time>
+
+            <div class="essay-row-copy">
+              <h2 class="essay-row-title"><span>{essay.data.title}</span></h2>
+              {essay.data.summary && <p class="essay-row-summary">{essay.data.summary}</p>}
+              {essay.data.tags && essay.data.tags.length > 0 && (
+                <ul class="essay-row-tags" aria-label="标签">
+                  {essay.data.tags.map((tag) => <li>{tag}</li>)}
+                </ul>
+              )}
+            </div>
+
+            <div class:list={['essay-row-visual', !essay.data.cover && 'is-empty']} aria-hidden={!essay.data.cover}>
+              {essay.data.cover && (
+                <img src={essay.data.cover} alt={essay.data.coverAlt ?? ''} loading="lazy" />
+              )}
+            </div>
+          </a>
+        ))
+      }
+    </section>
+  </section>
+</EssayLayout>

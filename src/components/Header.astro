@@ -1,0 +1,217 @@
+---
+// 全局顶部导航：紧凑 Liquid Glass 胶囊（全站唯一玻璃元素）。
+// 默认状态与 v0.2.6 一致；点击"搜索"原地进入 Search Mode（不跳页），
+// Pagefind 按需加载（首次搜索时才请求）；无 JS 时"搜索"仍是 /search/ 链接（渐进增强）。
+// 全部七个栏目已接通真实路由（项目/随笔/文章/碎片/影像/关于/搜索）。
+const currentPath = Astro.url.pathname;
+const isCurrentSection = (href: string) => currentPath === href || currentPath.startsWith(href);
+---
+<header class="site-header" data-pagefind-ignore>
+  <nav class="glass-nav" aria-label="主导航">
+    <!-- 默认状态 -->
+    <div class="nav-default" data-nav-default>
+      <a class="nav-wordmark" href="/">VDVXDV</a>
+
+      <div class="nav-divider" aria-hidden="true"></div>
+
+      <ul class="nav-links">
+        <li><a href="/projects/" aria-current={isCurrentSection('/projects/') ? 'page' : undefined}>项目</a></li>
+        <li><a href="/essays/" aria-current={isCurrentSection('/essays/') ? 'page' : undefined}>随笔</a></li>
+        <li><a href="/articles/" aria-current={isCurrentSection('/articles/') ? 'page' : undefined}>文章</a></li>
+        <li><a href="/fragments/" aria-current={isCurrentSection('/fragments/') ? 'page' : undefined}>碎片</a></li>
+        <li><a href="/images/" aria-current={isCurrentSection('/images/') ? 'page' : undefined}>影像</a></li>
+        <li><a href="/about/" aria-current={isCurrentSection('/about/') ? 'page' : undefined}>关于</a></li>
+      </ul>
+
+      <div class="nav-divider" aria-hidden="true"></div>
+
+      <a
+        class="nav-search"
+        href="/search/"
+        data-search-trigger
+        aria-haspopup="true"
+        aria-expanded="false"
+        >搜索</a
+      >
+    </div>
+
+    <!-- Search Mode（原地转换） -->
+    <div class="nav-search-mode" data-search-mode hidden>
+      <button type="button" class="nav-search-exit" data-search-exit aria-label="退出搜索">←</button>
+      <input
+        type="search"
+        class="nav-search-input"
+        data-search-input
+        placeholder="搜索文章、项目、随笔、碎片与影像…"
+        aria-label="搜索关键词"
+        autocomplete="off"
+      />
+      <button type="button" class="nav-search-clear" data-search-clear aria-label="清空关键词">×</button>
+    </div>
+  </nav>
+
+  <!-- 搜索结果浮层（轻量，不遮满屏幕） -->
+  <div class="nav-search-panel" data-search-panel hidden role="region" aria-label="搜索结果">
+    <p class="nav-search-panel-status" data-search-panel-status aria-live="polite"></p>
+    <div class="nav-search-panel-results" data-search-panel-results></div>
+    <a class="nav-search-panel-all" data-search-panel-all href="/search/" hidden
+      >查看全部结果 →</a
+    >
+  </div>
+</header>
+
+<script>
+  // 顶部导航 Search Mode：极小交互 JS（全站页面共享 Header）。
+  // Pagefind 不随页面加载——只在用户第一次输入时经共享模块按需加载。
+  import { search as pagefindSearch } from '../lib/search/pagefind';
+
+  const trigger = document.querySelector('[data-search-trigger]') as HTMLAnchorElement;
+  const navDefault = document.querySelector('[data-nav-default]') as HTMLElement;
+  const searchMode = document.querySelector('[data-search-mode]') as HTMLElement;
+  const searchInput = document.querySelector('[data-search-input]') as HTMLInputElement;
+  const searchExit = document.querySelector('[data-search-exit]') as HTMLButtonElement;
+  const searchClear = document.querySelector('[data-search-clear]') as HTMLButtonElement;
+  const panel = document.querySelector('[data-search-panel]') as HTMLElement;
+  const panelStatus = document.querySelector('[data-search-panel-status]') as HTMLElement;
+  const panelResults = document.querySelector('[data-search-panel-results]') as HTMLElement;
+  const panelAll = document.querySelector('[data-search-panel-all]') as HTMLAnchorElement;
+
+  let timer: ReturnType<typeof setTimeout> | null = null;
+
+  function openSearchMode() {
+    navDefault.hidden = true;
+    searchMode.hidden = false;
+    panel.hidden = true;
+    trigger.setAttribute('aria-expanded', 'true');
+    searchInput.focus();
+  }
+
+  function closeSearchMode() {
+    navDefault.hidden = false;
+    searchMode.hidden = true;
+    panel.hidden = true;
+    searchInput.value = '';
+    panelStatus.textContent = '';
+    panelResults.innerHTML = '';
+    panelAll.hidden = true;
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.focus();
+  }
+
+  trigger.addEventListener('click', (e) => {
+    // 渐进增强：无 JS 时保持 /search/ 链接行为
+    e.preventDefault();
+    openSearchMode();
+  });
+
+  searchExit.addEventListener('click', closeSearchMode);
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    panel.hidden = true;
+    panelStatus.textContent = '';
+    panelResults.innerHTML = '';
+    panelAll.hidden = true;
+    searchInput.focus();
+  });
+
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closeSearchMode();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !searchMode.hidden) {
+      closeSearchMode();
+    }
+  });
+
+  // Click Outside：只绑定一次，Search 是否开启由状态判断。
+  // 点击 Search UI（Header 胶囊与结果 Panel）之外任意位置 → 退出 Search Mode。
+  // 用 pointerdown 而非 input blur，避免点击结果时 panel 先消失导致链接无法点击。
+  document.addEventListener('pointerdown', (event) => {
+    if (searchMode.hidden) return;
+    const target = event.target as Node;
+    const header = document.querySelector('.site-header') as HTMLElement;
+    if (header.contains(target) || panel.contains(target)) return;
+    closeSearchMode();
+  });
+
+  searchInput.addEventListener('input', () => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(runSearch, 150);
+  });
+
+  interface SearchResultData {
+    url: string;
+    title?: string;
+    meta?: { title?: string; type?: string };
+    excerpt?: string;
+  }
+
+  function renderResults(query: string, results: SearchResultData[]) {
+    panelStatus.textContent = `${results.length} 条结果`;
+    panelResults.innerHTML = '';
+
+    for (const result of results) {
+      const item = document.createElement('a');
+      item.className = 'nav-search-result';
+      item.href = result.url;
+
+      const title = document.createElement('span');
+      title.className = 'nav-search-result-title';
+      title.textContent = result.meta?.title || result.title || '';
+
+      const meta = document.createElement('span');
+      meta.className = 'nav-search-result-meta';
+      meta.textContent = [result.meta?.type, result.url].filter(Boolean).join(' · ');
+
+      item.appendChild(title);
+      item.appendChild(meta);
+
+      if (result.excerpt) {
+        const excerpt = document.createElement('span');
+        excerpt.className = 'nav-search-result-excerpt';
+        // Pagefind 生成的摘要 HTML（含 <mark> 高亮），来源为本站静态内容
+        excerpt.innerHTML = result.excerpt;
+        item.appendChild(excerpt);
+      }
+
+      panelResults.appendChild(item);
+    }
+
+    panelAll.hidden = false;
+    panelAll.href = `/search/?q=${encodeURIComponent(query)}`;
+  }
+
+  async function runSearch() {
+    const query = searchInput.value.trim();
+    if (!query) {
+      panel.hidden = true;
+      panelStatus.textContent = '';
+      panelResults.innerHTML = '';
+      panelAll.hidden = true;
+      return;
+    }
+    panel.hidden = false;
+    try {
+      const search = await pagefindSearch(query);
+      if (!search.results || search.results.length === 0) {
+        panelStatus.textContent = `没有找到与「${query}」相关的内容`;
+        panelResults.innerHTML = '';
+        panelAll.hidden = true;
+        return;
+      }
+      const results = await Promise.all(
+        search.results.slice(0, 6).map((r: any) => r.data()),
+      );
+      renderResults(query, results);
+    } catch (err) {
+      console.error('[search] Pagefind 搜索失败:', err);
+      panelStatus.textContent = '搜索加载失败，请刷新页面重试。';
+      panelResults.innerHTML = '';
+      panelAll.hidden = true;
+    }
+  }
+</script>

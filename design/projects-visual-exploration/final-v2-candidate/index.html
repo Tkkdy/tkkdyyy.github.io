@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
+  <title>VDVXDV — Digital Artifacts</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="nav-wrapper">
+    <nav class="nav-pill" aria-label="主导航">
+      <a href="#" class="nav-logo">VDVXDV</a>
+      <div class="nav-links">
+        <a href="#projects" class="active" aria-current="page">项目</a>
+        <a href="#">随笔</a><a href="#">文章</a><a href="#">碎片</a><a href="#">影像</a><a href="#">关于</a>
+      </div>
+      <a href="#" class="nav-search">搜索</a>
+    </nav>
+  </div>
+
+  <div class="container">
+    <header class="page-header">
+      <h1><span class="intro-marker" aria-hidden="true">▲</span> Digital artifacts.</h1>
+      <p>一些被制作出来的数字物件、系统与长期实验。</p>
+    </header>
+
+    <main class="artifacts-grid" id="projects">
+      <article class="art-radar">
+        <div class="meta-col">
+          <span class="index mono text-weak">01</span>
+          <div class="tech-list small-caps text-weak">Python, LLM</div>
+        </div>
+        <div class="title-col">
+          <h2>Morning Radar</h2>
+          <p class="tagline">为个人筛选每天真正值得关注的变化。</p>
+        </div>
+        <div class="desc-col">
+          <p class="art-desc">一个自动收集、筛选和整理过去二十四小时重要信息的个人晨报系统。将碎片化的信息流转化为高质量、可阅读的结构化上下文。</p>
+          <div class="status-bar">
+            <span class="small-caps text-weak">UPDATED 2026-08-05</span>
+            <span class="small-caps"><i class="lifecycle-dot dev"></i> Developing · 开发中</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="art-atlas">
+        <div class="header-row"><span class="tag-mark">Prototype Only</span><span class="link-badge">GitHub only</span></div>
+        <h3>Repository Atlas</h3>
+        <p class="tagline">让陌生代码库更快形成可验证的理解。</p>
+        <p class="art-desc">基于 AST 解析的实验性代码库导航工具。帮助在未见过的复杂工程中快速建立模块间的上下文依赖网络。</p>
+        <div class="atlas-micro-graph" aria-hidden="true">
+          <span class="atlas-node"></span><span class="atlas-edge"></span><span class="atlas-node"></span><span class="atlas-edge short"></span><span class="atlas-node"></span>
+        </div>
+        <div class="art-meta-row small-caps text-weak">
+          <span><i class="lifecycle-dot"></i> 维护中</span><span>TypeScript / AST / Search</span><span>2026-07-28</span>
+        </div>
+      </article>
+
+      <article class="art-context">
+        <span class="tag-mark">Prototype Only</span>
+        <h3>一套面向长期个人知识工作的上下文编排实验</h3>
+        <p class="tagline">让资料、决定与行动保持连续。</p>
+        <p class="art-desc">针对长期项目的认知损耗问题，探索如何将研究材料、思考快照与具体的执行步骤缝合在同一语境下。</p>
+        <div class="art-meta-row small-caps text-weak">
+          <span><i class="lifecycle-dot outline"></i> 构思中</span><span>无 Tech</span><span>2026-06-12</span>
+        </div>
+      </article>
+
+      <article class="art-relay">
+        <div class="relay-visual" aria-hidden="true"><span class="relay-dot"></span></div>
+        <div class="relay-content">
+          <span class="tag-mark">Prototype Only</span>
+          <h3>Quiet Relay</h3>
+          <p class="tagline">在低干扰条件下转发真正需要处理的变化。</p>
+          <p class="art-desc">一个轻量级服务端中间件，用于拦截、聚合和静音非紧急通知，仅在预设窗口期交付核心信号。</p>
+          <div class="art-meta-row small-caps text-weak">
+            <span><i class="lifecycle-dot live"></i> 可使用</span><span>Python / Webhook</span><span>2026-05-30</span><span class="link-badge">Live only</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="art-local flip-module" tabindex="0" role="button" aria-pressed="false" aria-label="翻看 Local Index 详情">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div><span class="tag-mark">Prototype Only</span></div>
+            <h3>Local Index</h3>
+            <p class="tagline">离线整理散落在设备中的个人文本线索。</p>
+            <div class="local-code-vis" aria-hidden="true">
+              <span>sys.watch('./documents')</span><span>index.build(graph)</span><span>serve.local(port: 8080)</span>
+            </div>
+          </div>
+          <div class="flip-back" aria-hidden="true">
+            <h4>Local Index</h4>
+            <p>运行于本机的超快速文本索引服务，通过文件系统监听，将本地笔记与随笔转化为即时可检索的图谱。</p>
+            <div class="flip-back-meta">
+              <div><span>STATUS</span><span>暂停</span></div>
+              <div><span>STACK</span><span>Rust / SQLite</span></div>
+              <div><span>LOGGED</span><span>2026-04-18</span></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="art-cabinet">
+        <div class="cabinet-header"><span class="tag-mark">Prototype Only</span><span class="link-badge">Live + GitHub</span></div>
+        <h3>Signal Cabinet</h3>
+        <p class="tagline">保存小型技术实验与失败记录。</p>
+        <p class="art-desc cabinet-desc">一个无样板代码的微型前端容器集合，用于安全地封存和展示探索性质的 UI 交互与视觉实现废案。</p>
+        <div class="cabinet-ledger">
+          <div class="ledger-row"><span>STATUS</span><span><i class="lifecycle-dot done"></i> 已完成</span></div>
+          <div class="ledger-row"><span>STACK</span><span>HTML / CSS</span></div>
+          <div class="ledger-row"><span>LOGGED</span><span>2026-03-02</span></div>
+        </div>
+      </article>
+    </main>
+
+    <footer class="page-footer">
+      <h2 class="ending-quote">Build slowly. Leave meaningful traces.</h2>
+      <div class="footer-meta">&copy; 2026 VDVXDV<br>Collection — Dir. C Final v2</div>
+    </footer>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

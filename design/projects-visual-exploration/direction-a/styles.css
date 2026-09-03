@@ -1,0 +1,418 @@
+:root {
+    /* 品牌家族基因颜色 */
+    --bg-color: #F6F4EE;
+    --ink-main: #1C1B1A;
+    --ink-body: #4A4844;
+    --ink-muted: #7A766F;
+    --accent-ruby: #7A3F46;
+    --line-thin: rgba(28, 27, 26, 0.12);
+    --line-hover: rgba(28, 27, 26, 0.3);
+
+    /* 字体角色：系统 Fallback，无外部依赖 */
+    --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    
+    /* 圆角基准 */
+    --radius-base: 2px;
+}
+
+/* 基础重置与排版 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--ink-main);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden; /* 防止横向溢出 */
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+/* 增加清晰的 keyboard focus-visible */
+a:focus-visible, 
+button:focus-visible {
+    outline: 2px solid var(--accent-ruby);
+    outline-offset: 4px;
+    border-radius: var(--radius-base);
+    /* 对于特别定制的下划线样式，防止 outline 冲突，这里保持基础轮廓 */
+}
+
+/* Header：Floating Glass Pill 模拟 */
+.header-wrapper {
+    position: fixed;
+    top: 1.5rem;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 100;
+    padding: 0 1.25rem;
+    pointer-events: none; /* 让点击穿透 wrapper 的空白区域 */
+}
+
+.glass-pill {
+    pointer-events: auto; /* 恢复 pill 本身的交互 */
+    display: inline-flex;
+    align-items: center;
+    background-color: rgba(246, 244, 238, 0.85); /* 暖象牙白的半透明色 */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--line-thin);
+    border-radius: 100px; /* 胶囊圆角 */
+    padding: 0.6rem 1.5rem;
+    gap: 2.5rem;
+    font-size: 0.875rem;
+    box-shadow: 0 4px 24px rgba(28, 27, 26, 0.04);
+    max-width: 100%;
+}
+
+.pill-brand {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+.pill-links {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    font-weight: 400;
+}
+
+.pill-links a {
+    color: var(--ink-muted);
+    white-space: nowrap;
+}
+
+.pill-links a.active {
+    color: var(--ink-main);
+}
+
+.pill-links a:hover,
+.pill-brand:hover {
+    color: var(--accent-ruby);
+}
+
+.pill-search {
+    color: var(--ink-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.pill-search:hover {
+    color: var(--accent-ruby);
+}
+
+/* Header 特殊焦点样式：配合圆角 */
+.glass-pill a:focus-visible {
+    outline-offset: 2px;
+    border-radius: 4px; /* 略大于元素本身的边界 */
+}
+
+@media (max-width: 767px) {
+    .header-wrapper {
+        padding: 0 1rem;
+        top: 1rem;
+    }
+    .glass-pill {
+        width: 100%; 
+        max-width: 400px;
+        justify-content: space-between;
+        gap: 0;
+        padding: 0.75rem 1.5rem;
+    }
+    .pill-links {
+        display: none; /* 移动端隐藏中间链接 */
+    }
+}
+
+/* 主体布局 */
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 8rem 1.5rem 4rem; /* 增加 top padding 为 floating header 留空 */
+}
+
+/* Projects Section Intro */
+.section-intro {
+    max-width: 600px;
+    margin-bottom: 5rem;
+}
+
+.section-intro h1 {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: normal;
+    color: var(--ink-main);
+    margin-bottom: 1rem;
+    letter-spacing: 0.01em;
+}
+
+.section-intro p {
+    color: var(--ink-muted);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+}
+
+/* 项目列表容器 */
+.project-archive {
+    border-top: 1px solid var(--line-thin);
+}
+
+/* 单个项目卡片（行） */
+.project-item {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 3.5rem 0;
+    border-bottom: 1px solid var(--line-thin);
+    position: relative;
+}
+
+/* 响应式网格 (Tablet/Desktop) */
+@media (min-width: 768px) {
+    .project-item {
+        grid-template-columns: 180px 1fr;
+        gap: 3rem;
+        padding: 4.5rem 0;
+    }
+}
+
+@media (min-width: 1024px) {
+    .project-item {
+        grid-template-columns: 220px 1fr;
+        gap: 4rem;
+    }
+    .page-container {
+        padding-top: 10rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+/* 左侧元数据：档案感 */
+.project-meta {
+    font-family: var(--font-mono);
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap; /* 移动端防止溢出 */
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .project-meta {
+        flex-direction: column;
+        gap: 0.75rem;
+        flex-wrap: nowrap;
+    }
+}
+
+.project-id {
+    font-size: 1.25rem;
+    color: var(--ink-main);
+    letter-spacing: -0.03em;
+}
+
+.project-date {
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+}
+
+/* PROTOTYPE ONLY 标签 */
+.prototype-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    color: var(--accent-ruby);
+    border: 1px solid rgba(122, 63, 70, 0.2);
+    padding: 0.15rem 0.4rem;
+    border-radius: var(--radius-base);
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+    .prototype-badge {
+        /* 移动端保证不撑破宽度，跟随在日期后或换行 */
+        margin-left: auto;
+    }
+}
+
+/* 右侧正文区域 */
+.project-content {
+    max-width: 720px; /* 控制行宽，提升人文阅读感 */
+    min-width: 0; /* 防止长文本撑破 Grid */
+}
+
+.project-header {
+    margin-bottom: 1.25rem;
+}
+
+.project-name {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    font-weight: normal;
+    color: var(--ink-main);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+    /* 处理极长文本 */
+    word-break: break-word; 
+    overflow-wrap: break-word;
+}
+
+/* 交互：链接 Hover */
+.project-name a {
+    position: relative;
+    display: inline-block;
+}
+
+.project-name a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--accent-ruby);
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-item:hover .project-name a {
+    color: var(--accent-ruby);
+}
+
+.project-item:hover .project-name a::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+.project-tagline {
+    font-size: 1.125rem;
+    color: var(--ink-main);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    word-break: break-word; 
+}
+
+.project-desc {
+    font-size: 0.9375rem;
+    color: var(--ink-body);
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+    word-break: break-word; 
+}
+
+/* 第三层信息：生命周期与技术痕迹 */
+.technical-trace {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.technical-trace::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background-color: var(--line-hover);
+    margin-right: 0.5rem;
+}
+
+.trace-item {
+    display: flex;
+    align-items: center;
+    white-space: nowrap; /* 保持词组完整 */
+}
+
+.trace-dot {
+    margin: 0 0.5rem;
+    color: var(--line-thin);
+}
+
+/* 动作链接 */
+.project-actions {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.action-link {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ink-main);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-bottom: 1px solid var(--line-thin);
+    padding-bottom: 0.15rem;
+}
+
+.action-link svg {
+    width: 12px;
+    height: 12px;
+    transition: transform 0.2s ease;
+    opacity: 0.6;
+}
+
+.action-link:hover,
+.action-link:focus-visible {
+    color: var(--accent-ruby);
+    border-bottom-color: var(--accent-ruby);
+}
+
+.action-link:hover svg,
+.action-link:focus-visible svg {
+    transform: translate(2px, -2px);
+    opacity: 1;
+}
+
+/* Footer */
+.site-footer {
+    padding: 4rem 1.5rem 6rem;
+    text-align: center;
+    border-top: 1px solid var(--line-thin);
+    margin-top: 4rem;
+}
+
+#detail-deferred {
+    font-family: var(--font-serif);
+    font-size: 0.9375rem;
+    color: var(--ink-muted);
+    font-style: italic;
+    transition: color 0.3s ease;
+    /* 保证目标跳转时不会被 floating header 遮挡 */
+    scroll-margin-top: 10rem;
+}
+
+#detail-deferred:target {
+    color: var(--accent-ruby);
+    animation: highlight 2s ease;
+}
+
+@keyframes highlight {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+

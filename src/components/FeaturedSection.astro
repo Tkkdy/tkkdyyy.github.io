@@ -1,0 +1,62 @@
+---
+// 首屏：左侧身份介绍 + 右侧精选文章（v0.2.6 已批准 5/7 列布局）。
+// 具体文章内容来自 Content Collections（articles），由 index.astro 传入。
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/content/homepage';
+
+interface Props {
+  article: CollectionEntry<'articles'>;
+}
+
+const { article } = Astro.props;
+const { data } = article;
+---
+<section class="hero">
+  <div class="hero-grid">
+    <!-- 左：身份与介绍（固定 UI，继续硬编码） -->
+    <div class="hero-intro">
+      <h1 class="hero-title">
+        个人项目、<br />
+        写作与影像的安静记录。
+      </h1>
+      <p class="hero-copy">
+        探索技术与表达的交叉点。这里是 VDVXDV
+        的公开个人空间，记录正在进行的构建、长时间的思考以及沿途捕捉的切片。
+      </p>
+      <div class="hero-links">
+        <a class="link-underline" href="/projects/">
+          查看项目 <span class="arrow">→</span>
+        </a>
+        <a class="link-underline" href="/articles/">
+          阅读文章 <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 右：精选文章（直角、极简边框） -->
+    <div class="featured">
+      <div class="section-header featured-header">
+        <span>Featured Article</span>
+        <span>精选文章</span>
+      </div>
+
+      <a class="featured-card group" href={`/articles/${article.data.slug}/`}>
+        <div class="featured-media">
+          <div class="css-placeholder scale-inner scale-transition">
+            <span>Article Visual</span>
+            <span class="ratio">4:3</span>
+          </div>
+        </div>
+        <div class="featured-body">
+          <div class="featured-meta">
+            <span class="featured-date">{formatDate(data.publishedAt)}</span>
+            {data.category && <span class="featured-category">{data.category}</span>}
+          </div>
+          <h2 class="featured-title">{data.title}</h2>
+          <p class="featured-summary">{data.description}</p>
+          <span class="featured-cta">开始阅读 <span class="arrow">→</span></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>

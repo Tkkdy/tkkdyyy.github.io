@@ -1,0 +1,102 @@
+---
+// 碎片时间流 /fragments
+// 碎片是短内容（CONTENT_MODEL §6）：没有详情页，时间流直接展示正文。
+// 只显示 status = published，按 publishedAt 倒序。
+// 不制造标题；link / image / tags 有真实数据才显示。
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import SeoHead from '../../components/SeoHead.astro';
+import { getPublishedFragments } from '../../lib/content/fragments';
+import { imageFileExists } from '../../lib/content/images';
+import { formatDate } from '../../lib/content/homepage';
+
+import '../../styles/tokens.css';
+import '../../styles/global.css';
+import '../../styles/fragments.css';
+
+const fragments = await getPublishedFragments();
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <SeoHead title="碎片 — VDVXDV" />
+
+    <!--
+      字体：与 v0.2.6 原型一致，临时沿用 Google Fonts 在线加载。
+      未下载或提交任何字体文件；后续如需自托管再另行决策。
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500&family=Noto+Serif+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <section class="fragments-page">
+        <header class="fragments-page-header">
+          <div class="section-header">
+            <span>Fragments</span>
+            <span>碎片</span>
+          </div>
+          <h1 class="fragments-page-title">碎片</h1>
+        </header>
+
+        <div class="fragment-flow">
+          {
+            fragments.map((fragment) => {
+              const { data } = fragment;
+              const hasImage = data.image ? imageFileExists(data.image) : false;
+              return (
+                // 每条碎片是独立搜索记录；id 使结果 URL 带 /fragments/#<slug> 锚点
+                <article
+                  class="fragment-entry"
+                  id={data.slug}
+                  data-pagefind-body
+                >
+                  <meta
+                    name="pagefind-meta"
+                    data-pagefind-meta={`title: ${formatDate(data.publishedAt)}, type: 碎片`}
+                  />
+                  <time class="fragment-entry-date" datetime={formatDate(data.publishedAt)}>
+                    {formatDate(data.publishedAt)}
+                  </time>
+
+                  {hasImage && data.image && (
+                    <div class="fragment-entry-image">
+                      <img src={data.image} alt={data.imageAlt ?? ''} />
+                    </div>
+                  )}
+
+                  <div class="fragment-entry-body" set:html={fragment.body} />
+
+                  {(data.link || data.tags) && (
+                    <div class="fragment-entry-links">
+                      {data.link && (
+                        <a
+                          class="fragment-entry-link"
+                          href={data.link.toString()}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {data.linkTitle ?? data.link.toString()} ↗
+                        </a>
+                      )}
+                      {data.tags?.map((tag) => <span class="fragment-tag">{tag}</span>)}
+                    </div>
+                  )}
+                </article>
+              );
+            })
+          }
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>

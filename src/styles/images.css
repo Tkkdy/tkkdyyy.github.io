@@ -1,0 +1,481 @@
+/*
+ * VDVXDV Images — Gallery, Viewing Room, Viewer
+ *
+ * 只作用于影像栏目。不覆盖 Articles / Essays / Projects / Homepage 的字体或布局。
+ * 原则：图片优先、保留原比例、安静的档案感，而不是瀑布流或社交卡片。
+ */
+
+.images-page-body,
+.image-detail-body {
+  background-color: var(--color-canvas);
+}
+
+.images-page,
+.image-detail {
+  width: min(100% - 40px, 1120px);
+  margin-inline: auto;
+  padding: 128px 0 112px;
+}
+
+@media (min-width: 768px) {
+  .images-page,
+  .image-detail {
+    width: min(100% - 64px, 1180px);
+    padding: 168px 0 136px;
+  }
+}
+
+.images-page-header,
+.image-detail-header {
+  max-width: 38rem;
+}
+
+.images-kicker,
+.image-detail-back,
+.image-entry-meta,
+.image-detail-meta,
+.image-nav-link span,
+.image-open-hint,
+.image-viewer-toolbar,
+.images-empty {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.images-kicker {
+  margin-bottom: 18px;
+}
+
+.images-page-title,
+.image-detail-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--color-ink);
+}
+
+.images-page-title {
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 1.05;
+}
+
+.images-page-lead,
+.image-detail-caption,
+.image-entry-caption {
+  font-family: var(--font-serif);
+  color: var(--color-ink-soft);
+}
+
+.images-page-lead {
+  margin-top: 18px;
+  max-width: 28rem;
+  font-size: 1.02rem;
+  line-height: 1.7;
+}
+
+.images-empty {
+  margin-top: 64px;
+}
+
+.image-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+  margin-top: 72px;
+}
+
+@media (min-width: 900px) {
+  .image-flow {
+    gap: 96px;
+    margin-top: 96px;
+  }
+}
+
+.image-entry {
+  width: min(100%, 760px);
+}
+
+.image-entry.is-landscape {
+  width: min(100%, 920px);
+}
+
+.image-entry.is-portrait {
+  width: min(100%, 430px);
+  margin-left: auto;
+}
+
+.image-entry.is-square {
+  width: min(100%, 540px);
+  margin-left: 8%;
+}
+
+.image-entry:nth-child(3n) {
+  margin-left: 0;
+}
+
+.image-entry:nth-child(3n + 2).is-landscape {
+  margin-left: auto;
+}
+
+.image-entry-link,
+.image-open-viewer {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: zoom-in;
+}
+
+.image-entry-link:focus-visible,
+.image-open-viewer:focus-visible,
+.image-detail-back:focus-visible,
+.image-nav-link:focus-visible,
+.image-viewer-close:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
+.image-entry-link img,
+.image-open-viewer img,
+.image-viewer-stage img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-media);
+}
+
+.image-frame-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background:
+    linear-gradient(180deg, rgba(28, 27, 26, 0.035), rgba(28, 27, 26, 0.07)),
+    repeating-linear-gradient(
+      135deg,
+      transparent,
+      transparent 11px,
+      rgba(28, 27, 26, 0.03) 11px,
+      rgba(28, 27, 26, 0.03) 12px
+    );
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-media);
+  color: rgba(28, 27, 26, 0.42);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.image-frame-placeholder.is-landscape {
+  aspect-ratio: 4 / 3;
+}
+
+.image-frame-placeholder.is-portrait {
+  aspect-ratio: 3 / 4;
+}
+
+.image-frame-placeholder.is-square {
+  aspect-ratio: 1 / 1;
+}
+
+.image-frame-ratio {
+  opacity: 0.72;
+}
+
+.image-entry-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 28rem;
+  margin-top: 14px;
+}
+
+.image-entry-caption {
+  font-size: 0.98rem;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+.image-entry-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.image-detail-back {
+  display: inline-flex;
+  margin-bottom: 48px;
+  transition: color 160ms ease;
+}
+
+.image-detail-back:hover {
+  color: var(--color-accent);
+}
+
+.image-detail-stage {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.image-detail.is-landscape .image-detail-stage,
+.image-detail.is-landscape .image-open-viewer {
+  width: min(100%, 960px);
+}
+
+.image-detail.is-portrait .image-detail-stage {
+  justify-content: center;
+}
+
+.image-detail.is-portrait .image-open-viewer {
+  width: min(100%, 420px);
+}
+
+.image-detail.is-square .image-detail-stage {
+  justify-content: center;
+}
+
+.image-detail.is-square .image-open-viewer {
+  width: min(100%, 560px);
+}
+
+.image-open-viewer {
+  position: relative;
+}
+
+.image-open-hint {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  padding: 5px 8px;
+  background: rgba(246, 244, 238, 0.86);
+  color: var(--color-ink-muted);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.image-open-viewer:hover .image-open-hint,
+.image-open-viewer:focus-visible .image-open-hint {
+  opacity: 1;
+}
+
+.image-detail-record {
+  width: min(100%, 34rem);
+  margin-top: 36px;
+}
+
+.image-detail-title {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.2;
+}
+
+.image-detail-caption {
+  margin-top: 14px;
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.image-detail-meta {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+.image-detail-meta div {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: 16px;
+  align-items: baseline;
+}
+
+.image-detail-meta dt {
+  color: rgba(122, 118, 111, 0.82);
+}
+
+.image-detail-meta dd {
+  font-family: var(--font-serif);
+  font-size: 0.98rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-ink-soft);
+}
+
+.image-detail-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 72px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+}
+
+.image-nav-link {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--color-ink);
+}
+
+.image-nav-link.is-next {
+  text-align: right;
+}
+
+.image-nav-link strong {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.image-nav-link:hover strong {
+  color: var(--color-accent);
+}
+
+.image-nav-link.is-disabled {
+  visibility: hidden;
+}
+
+.image-viewer {
+  width: min(100vw - 24px, 1280px);
+  max-height: calc(100vh - 24px);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: #11110f;
+  color: var(--color-ink-inverse);
+}
+
+.image-viewer::backdrop {
+  background: rgba(17, 17, 15, 0.88);
+}
+
+.image-viewer-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+}
+
+.image-viewer-toolbar p {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.image-viewer-close {
+  min-height: 44px;
+  padding: 0 8px;
+  color: var(--color-ink-inverse);
+}
+
+.image-viewer-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: min(78vh, 820px);
+  padding: 0 16px 24px;
+}
+
+.image-viewer-stage img,
+.image-viewer-stage .image-frame-placeholder {
+  width: auto;
+  max-width: min(100%, 1120px);
+  max-height: min(78vh, 820px);
+  object-fit: contain;
+}
+
+.image-viewer-stage .image-frame-placeholder {
+  width: min(100%, 720px);
+}
+
+.image-viewer .image-frame-placeholder {
+  background:
+    linear-gradient(180deg, rgba(248, 246, 240, 0.08), rgba(248, 246, 240, 0.14)),
+    repeating-linear-gradient(
+      135deg,
+      transparent,
+      transparent 11px,
+      rgba(248, 246, 240, 0.05) 11px,
+      rgba(248, 246, 240, 0.05) 12px
+    );
+  border-color: rgba(248, 246, 240, 0.16);
+  color: rgba(248, 246, 240, 0.62);
+}
+
+@media (max-width: 767px) {
+  .images-page,
+  .image-detail {
+    width: min(100% - 32px, 1120px);
+    padding: 112px 0 88px;
+  }
+
+  .image-flow {
+    gap: 48px;
+    margin-top: 48px;
+  }
+
+  .image-entry,
+  .image-entry.is-landscape,
+  .image-entry.is-portrait,
+  .image-entry.is-square,
+  .image-detail.is-landscape .image-open-viewer,
+  .image-detail.is-portrait .image-open-viewer,
+  .image-detail.is-square .image-open-viewer {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .image-detail-meta div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .image-detail-nav {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .image-nav-link.is-next {
+    text-align: left;
+  }
+
+  .image-open-hint {
+    opacity: 1;
+  }
+
+  .image-viewer {
+    width: 100vw;
+    max-height: 100vh;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .image-viewer-toolbar {
+    padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
+  }
+
+  .image-viewer-stage {
+    min-height: calc(100vh - 72px);
+    padding: 0 12px calc(20px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-detail-back,
+  .image-open-hint,
+  .image-nav-link strong {
+    transition: none;
+  }
+}

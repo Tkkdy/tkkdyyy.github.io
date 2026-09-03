@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>In Progress — VDVXDV</title>
+    <style>
+        :root {
+            /* Brand Colors */
+            --c-bg: #F6F4EE;         /* 暖象牙白 */
+            --c-ink: #1C1B1A;        /* 主墨 */
+            --c-body: #4A4844;       /* 正文 */
+            --c-weak: #7A766F;       /* 弱文字 */
+            --c-ruby: #7A3F46;       /* Ruby */
+            --c-charcoal: #1C1B19;   /* 暖炭黑 */
+            --c-line: rgba(28, 27, 26, 0.12); /* 细线 */
+            --c-glass: rgba(246, 244, 238, 0.75);
+
+            /* Typography */
+            --f-sans: 'Inter', -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            --f-serif: "Iowan Old Style", "Apple Garamond", "Baskerville", "Times New Roman", "Source Han Serif SC", "Noto Serif CJK SC", serif;
+            --f-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+
+            /* Metrics */
+            --radius: 2px;
+            --nav-height: 44px;
+            --space-base: 1rem;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--c-bg);
+            color: var(--c-body);
+            font-family: var(--f-sans);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Focus States */
+        a:focus-visible, button:focus-visible {
+            outline: 2px solid var(--c-ruby);
+            outline-offset: 2px;
+            border-radius: 1px;
+        }
+
+        ul, ol {
+            list-style: none;
+        }
+
+        /* Floating Glass Pill Nav */
+        .nav-wrapper {
+            position: fixed;
+            top: 24px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 100;
+            padding: 0 16px;
+            pointer-events: none;
+        }
+
+        .nav-pill {
+            display: flex;
+            align-items: center;
+            height: var(--nav-height);
+            background-color: var(--c-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--c-line);
+            border-radius: 40px;
+            padding: 0 20px;
+            gap: 24px;
+            pointer-events: auto;
+            box-shadow: 0 4px 24px rgba(28, 27, 26, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .nav-brand {
+            font-family: var(--f-serif);
+            font-weight: 600;
+            color: var(--c-ink);
+            letter-spacing: 0.02em;
+            font-size: 0.95rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            font-size: 0.85rem;
+            color: var(--c-weak);
+        }
+
+        .nav-links a {
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--c-ink);
+        }
+
+        .nav-search {
+            font-size: 0.85rem;
+            color: var(--c-weak);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-family: inherit;
+            transition: color 0.2s ease;
+        }
+
+        .nav-search:hover {
+            color: var(--c-ink);
+        }
+
+        /* Base Layout */
+        .container {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 140px 24px 80px;
+        }
+
+        .page-header {
+            margin-bottom: 80px;
+            border-bottom: 1px solid var(--c-line);
+            padding-bottom: 24px;
+            max-width: 48em;
+        }
+
+        .page-title {
+            font-family: var(--f-serif);
+            font-size: 1.25rem;
+            color: var(--c-ink);
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            margin-bottom: 8px;
+        }
+
+        .page-intro {
+            font-size: 0.95rem;
+            color: var(--c-weak);
+            line-height: 1.6;
+        }
+
+        /* Sub-navigation inside page context */
+        .section-label {
+            font-family: var(--f-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--c-weak);
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .workshop-active {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 48px;
+            margin-bottom: 120px;
+            position: relative;
+        }
+
+        /* Marginalia / Process Meta */
+        .active-meta {
+            position: relative;
+            padding-top: 8px;
+            border-top: 1px solid var(--c-ink);
+        }
+
+        /* Technical geometry trace for the active project */
+        .active-meta::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            background-image: 
+                linear-gradient(var(--c-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--c-line) 1px, transparent 1px);
+            background-size: 16px 16px;
+            opacity: 0.4;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--f-mono);
+            font-size: 0.8rem;
+            color: var(--c-ink);
+            margin-bottom: 24px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--c-ruby);
+            border-radius: 50%;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .meta-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-family: var(--f-mono);
+            font-size: 0.75rem;
+            color: var(--c-weak);
+        }
+
+        .meta-list dt {
+            color: var(--c-body);
+            margin-bottom: 2px;
+        }
+
+        .meta-list dd {
+            margin-bottom: 8px;
+            word-wrap: break-word;
+        }
+
+        /* Active Project Content */
+        .active-content {
+            padding-top: 8px;
+        }
+
+        .active-title {
+            font-family: var(--f-serif);
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: var(--c-charcoal);
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .active-title a {
+            display: inline-block;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        .active-title a:hover {
+            color: var(--c-ruby);
+            transform: translateX(2px);
+        }
+
+        .active-tagline {
+            font-size: 1.25rem;
+            color: var(--c-ink);
+            margin-bottom: 24px;
+            max-width: 36em;
+            line-height: 1.5;
+        }
+
+        .active-desc {
+            font-size: 1rem;
+            color: var(--c-body);
+            max-width: 42em;
+            line-height: 1.7;
+        }
+
+        /* Editorial Process Notes (Replaces Database Grid) */
+        .process-notes {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 60px 24px;
+            position: relative;
+            padding-bottom: 40px;
+        }
+
+        .note-block {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            border-top: 1px solid var(--c-line);
+            padding-top: 16px;
+        }
+
+        /* Staggered Positions for Editorial Rhythm */
+        .note-pos-1 { grid-column: 1 / 8; }
+        .note-pos-2 { grid-column: 5 / 13; margin-top: 40px; }
+        .note-pos-3 { grid-column: 2 / 9; margin-top: 20px; }
+        .note-pos-4 { grid-column: 6 / 12; margin-top: 60px; }
+        .note-pos-5 { grid-column: 1 / 7; margin-top: 20px; }
+
+        .note-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+            font-family: var(--f-mono);
+            font-size: 0.7rem;
+            color: var(--c-weak);
+            margin-bottom: 4px;
+        }
+
+        .proto-badge {
+            color: var(--c-body);
+            border: 1px solid var(--c-line);
+            padding: 2px 6px;
+            border-radius: var(--radius);
+            letter-spacing: 0.05em;
+        }
+
+        .note-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: var(--c-weak);
+        }
+        .status-dot.active { background-color: var(--c-ruby); }
+        .status-dot.pause { background-color: transparent; border: 1px solid var(--c-weak); }
+        .status-dot.done { background-color: var(--c-ink); }
+
+        .note-body {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .note-title {
+            font-family: var(--f-serif);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--c-charcoal);
+            line-height: 1.3;
+        }
+
+        .note-title a {
+            text-decoration: underline;
+            text-decoration-color: transparent;
+            text-underline-offset: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .note-block:hover .note-title a {
+            text-decoration-color: var(--c-line);
+        }
+        
+        .note-title a:hover {
+            color: var(--c-ruby);
+            text-decoration-color: var(--c-ruby);
+        }
+
+        .note-tagline {
+            font-size: 1rem;
+            color: var(--c-ink);
+            line-height: 1.5;
+            max-width: 32em;
+        }
+
+        .note-desc {
+            font-size: 0.9rem;
+            color: var(--c-body);
+            max-width: 36em;
+            line-height: 1.6;
+        }
+
+        .note-footer {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+            margin-top: 4px;
+            font-family: var(--f-mono);
+            font-size: 0.75rem;
+            color: var(--c-weak);
+        }
+
+        .note-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .note-links a, .note-links span {
+            color: var(--c-body);
+            text-decoration: underline;
+            text-decoration-color: var(--c-line);
+            text-underline-offset: 3px;
+            transition: color 0.2s ease, text-decoration-color 0.2s ease;
+        }
+
+        .note-links a:hover {
+            color: var(--c-ink);
+            text-decoration-color: var(--c-ink);
+        }
+
+        .site-footer {
+            margin-top: 120px;
+            padding-top: 32px;
+            border-top: 1px solid var(--c-line);
+            text-align: center;
+            font-family: var(--f-mono);
+            font-size: 0.75rem;
+            color: var(--c-weak);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .workshop-active {
+                grid-template-columns: 220px 1fr;
+                gap: 32px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links.desktop-only {
+                display: none;
+            }
+            
+            .nav-pill {
+                padding: 0 16px;
+                gap: 16px;
+                width: 100%;
+                justify-content: space-between;
+                max-width: 320px;
+            }
+
+            .container {
+                padding-top: 100px;
+            }
+
+            .workshop-active {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                margin-bottom: 80px;
+            }
+
+            .active-meta::before {
+                display: none;
+            }
+
+            .active-meta {
+                border-top: none;
+                border-left: 1px solid var(--c-ink);
+                padding-top: 0;
+                padding-left: 16px;
+                order: 2;
+            }
+
+            .active-content {
+                order: 1;
+            }
+
+            .active-title {
+                font-size: 2rem;
+            }
+
+            /* Flatten staggered notes for mobile */
+            .process-notes {
+                display: flex;
+                flex-direction: column;
+                gap: 48px;
+            }
+
+            .note-pos-1, .note-pos-2, .note-pos-3, .note-pos-4, .note-pos-5 {
+                grid-column: auto;
+                margin-top: 0;
+            }
+
+            .note-title {
+                font-size: 1.35rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-wrapper">
+        <nav class="nav-pill">
+            <a href="#" class="nav-brand">VDVXDV</a>
+            <div class="nav-links desktop-only">
+                <a href="#" class="active">项目</a>
+                <a href="#">随笔</a>
+                <a href="#">文章</a>
+                <a href="#">碎片</a>
+                <a href="#">影像</a>
+                <a href="#">关于</a>
+            </div>
+            <button class="nav-search">搜索</button>
+        </nav>
+    </div>
+
+    <main class="container">
+        <header class="page-header">
+            <h1 class="page-title">Work in progress.</h1>
+            <p class="page-intro">记录正在生长的想法、原型与实验，以及它们在时间中的演变。</p>
+        </header>
+
+        <span class="section-label">Current Workshop</span>
+        <section class="workshop-active">
+            <aside class="active-meta">
+                <div class="status-indicator">
+                    <span class="dot"></span> Developing · 开发中
+                </div>
+                <dl class="meta-list">
+                    <div>
+                        <dt>Tech</dt>
+                        <dd>Python, LLM</dd>
+                    </div>
+                    <div>
+                        <dt>Updated</dt>
+                        <dd>2026-08-05</dd>
+                    </div>
+                </dl>
+            </aside>
+            <div class="active-content">
+                <h2 class="active-title"><a href="#detail-deferred">Morning Radar</a></h2>
+                <p class="active-tagline">为个人筛选每天真正值得关注的变化。</p>
+                <p class="active-desc">一个自动收集、筛选和整理过去二十四小时重要信息的个人晨报系统。将碎片化的信息流转化为高质量、可阅读的结构化上下文。</p>
+            </div>
+        </section>
+
+        <span class="section-label">Notes & Archives</span>
+        <section class="process-notes">
+            
+            <!-- Item 1 -->
+            <article class="note-block note-pos-1">
+                <header class="note-header">
+                    <span class="proto-badge">PROTOTYPE ONLY</span>
+                    <span class="note-date">2026-07-28</span>
+                    <span class="note-status"><span class="status-dot active"></span> 维护中</span>
+                </header>
+                <div class="note-body">
+                    <h3 class="note-title"><a href="#detail-deferred">Repository Atlas</a></h3>
+                    <p class="note-tagline">让陌生代码库更快形成可验证的理解。</p>
+                    <p class="note-desc">通过本地语法树分析与轻量级搜索引擎构建项目拓扑，辅助心智模型的快速建立与校验。</p>
+                </div>
+                <footer class="note-footer">
+                    <span class="note-tech">TypeScript / AST / Search</span>
+                    <div class="note-links"><a href="#detail-deferred">GitHub only</a></div>
+                </footer>
+            </article>
+
+            <!-- Item 2 -->
+            <article class="note-block note-pos-2">
+                <header class="note-header">
+                    <span class="proto-badge">PROTOTYPE ONLY</span>
+                    <span class="note-date">2026-06-12</span>
+                    <span class="note-status"><span class="status-dot"></span> 构思中</span>
+                </header>
+                <div class="note-body">
+                    <h3 class="note-title"><a href="#detail-deferred">一套面向长期个人知识工作的上下文编排实验</a></h3>
+                    <p class="note-tagline">让资料、决定与行动保持连续。</p>
+                    <p class="note-desc">探索在长期研究中，如何通过隐式关联与时间戳记录，将散落的笔记与网页快照重新组织为动态上下文。</p>
+                </div>
+                <footer class="note-footer">
+                    <span class="note-tech">无 tech</span>
+                    <div class="note-links"><span>无外链</span></div>
+                </footer>
+            </article>
+
+            <!-- Item 3 -->
+            <article class="note-block note-pos-3">
+                <header class="note-header">
+                    <span class="proto-badge">PROTOTYPE ONLY</span>
+                    <span class="note-date">2026-05-30</span>
+                    <span class="note-status"><span class="status-dot active"></span> 可使用</span>
+                </header>
+                <div class="note-body">
+                    <h3 class="note-title"><a href="#detail-deferred">Quiet Relay</a></h3>
+                    <p class="note-tagline">在低干扰条件下转发真正需要处理的变化。</p>
+                    <p class="note-desc">使用无服务器函数构建的个人消息网关，基于自定义规则集进行信息降噪与异步定时投递。</p>
+                </div>
+                <footer class="note-footer">
+                    <span class="note-tech">Python / Webhook</span>
+                    <div class="note-links"><a href="#detail-deferred">Live only</a></div>
+                </footer>
+            </article>
+
+            <!-- Item 4 -->
+            <article class="note-block note-pos-4">
+                <header class="note-header">
+                    <span class="proto-badge">PROTOTYPE ONLY</span>
+                    <span class="note-date">2026-04-18</span>
+                    <span class="note-status"><span class="status-dot pause"></span> 暂停</span>
+                </header>
+                <div class="note-body">
+                    <h3 class="note-title"><a href="#detail-deferred">Local Index</a></h3>
+                    <p class="note-tagline">离线整理散落在设备中的个人文本线索。</p>
+                    <p class="note-desc">基于全文本搜索引擎的本地归档守护进程，试图建立独立于特定云服务或应用的数据图谱。</p>
+                </div>
+                <footer class="note-footer">
+                    <span class="note-tech">Rust / SQLite / Local-first</span>
+                    <div class="note-links"><span>无外链</span></div>
+                </footer>
+            </article>
+
+            <!-- Item 5 -->
+            <article class="note-block note-pos-5">
+                <header class="note-header">
+                    <span class="proto-badge">PROTOTYPE ONLY</span>
+                    <span class="note-date">2026-03-02</span>
+                    <span class="note-status"><span class="status-dot done"></span> 已完成</span>
+                </header>
+                <div class="note-body">
+                    <h3 class="note-title"><a href="#detail-deferred">Signal Cabinet</a></h3>
+                    <p class="note-tagline">保存小型技术实验与失败记录。</p>
+                    <p class="note-desc">一组松散的 HTML/CSS 切片集合，用于封存未能演化为完整项目、但值得保留的早期界面与交互实验。</p>
+                </div>
+                <footer class="note-footer">
+                    <span class="note-tech">HTML / CSS</span>
+                    <div class="note-links">
+                        <a href="#detail-deferred">Live</a>
+                        <span>, </span>
+                        <a href="#detail-deferred">GitHub</a>
+                    </div>
+                </footer>
+            </article>
+
+        </section>
+
+        <footer class="site-footer">
+            <p id="detail-deferred">Project detail is deferred to a later exploration.</p>
+        </footer>
+    </main>
+
+</body>
+</html>

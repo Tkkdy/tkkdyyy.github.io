@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDVXDV - Projects Archive</title>
+    <style>
+        :root {
+            /* 品牌家族基因颜色 */
+            --bg-color: #F6F4EE;
+            --ink-main: #1C1B1A;
+            --ink-body: #4A4844;
+            --ink-muted: #7A766F;
+            --accent-ruby: #7A3F46;
+            --line-thin: rgba(28, 27, 26, 0.12);
+            --line-hover: rgba(28, 27, 26, 0.3);
+
+            /* 字体角色：系统 Fallback，无外部依赖 */
+            --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            
+            /* 圆角基准 */
+            --radius-base: 2px;
+        }
+
+        /* 基础重置与排版 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--ink-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden; /* 防止横向溢出 */
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+
+        /* 增加清晰的 keyboard focus-visible */
+        a:focus-visible, 
+        button:focus-visible {
+            outline: 2px solid var(--accent-ruby);
+            outline-offset: 4px;
+            border-radius: var(--radius-base);
+            /* 对于特别定制的下划线样式，防止 outline 冲突，这里保持基础轮廓 */
+        }
+
+        /* Header：Floating Glass Pill 模拟 */
+        .header-wrapper {
+            position: fixed;
+            top: 1.5rem;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 100;
+            padding: 0 1.25rem;
+            pointer-events: none; /* 让点击穿透 wrapper 的空白区域 */
+        }
+
+        .glass-pill {
+            pointer-events: auto; /* 恢复 pill 本身的交互 */
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(246, 244, 238, 0.85); /* 暖象牙白的半透明色 */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--line-thin);
+            border-radius: 100px; /* 胶囊圆角 */
+            padding: 0.6rem 1.5rem;
+            gap: 2.5rem;
+            font-size: 0.875rem;
+            box-shadow: 0 4px 24px rgba(28, 27, 26, 0.04);
+            max-width: 100%;
+        }
+
+        .pill-brand {
+            font-family: var(--font-serif);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            flex-shrink: 0;
+        }
+
+        .pill-links {
+            display: flex;
+            gap: 1.25rem;
+            align-items: center;
+            font-weight: 400;
+        }
+
+        .pill-links a {
+            color: var(--ink-muted);
+            white-space: nowrap;
+        }
+
+        .pill-links a.active {
+            color: var(--ink-main);
+        }
+
+        .pill-links a:hover,
+        .pill-brand:hover {
+            color: var(--accent-ruby);
+        }
+
+        .pill-search {
+            color: var(--ink-muted);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .pill-search:hover {
+            color: var(--accent-ruby);
+        }
+
+        /* Header 特殊焦点样式：配合圆角 */
+        .glass-pill a:focus-visible {
+            outline-offset: 2px;
+            border-radius: 4px; /* 略大于元素本身的边界 */
+        }
+
+        @media (max-width: 767px) {
+            .header-wrapper {
+                padding: 0 1rem;
+                top: 1rem;
+            }
+            .glass-pill {
+                width: 100%; 
+                max-width: 400px;
+                justify-content: space-between;
+                gap: 0;
+                padding: 0.75rem 1.5rem;
+            }
+            .pill-links {
+                display: none; /* 移动端隐藏中间链接 */
+            }
+        }
+
+        /* 主体布局 */
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 8rem 1.5rem 4rem; /* 增加 top padding 为 floating header 留空 */
+        }
+
+        /* Projects Section Intro */
+        .section-intro {
+            max-width: 600px;
+            margin-bottom: 5rem;
+        }
+
+        .section-intro h1 {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: normal;
+            color: var(--ink-main);
+            margin-bottom: 1rem;
+            letter-spacing: 0.01em;
+        }
+
+        .section-intro p {
+            color: var(--ink-muted);
+            font-size: 0.9375rem;
+            line-height: 1.7;
+        }
+
+        /* 项目列表容器 */
+        .project-archive {
+            border-top: 1px solid var(--line-thin);
+        }
+
+        /* 单个项目卡片（行） */
+        .project-item {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            padding: 3.5rem 0;
+            border-bottom: 1px solid var(--line-thin);
+            position: relative;
+        }
+
+        /* 响应式网格 (Tablet/Desktop) */
+        @media (min-width: 768px) {
+            .project-item {
+                grid-template-columns: 180px 1fr;
+                gap: 3rem;
+                padding: 4.5rem 0;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .project-item {
+                grid-template-columns: 220px 1fr;
+                gap: 4rem;
+            }
+            .page-container {
+                padding-top: 10rem;
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+        }
+
+        /* 左侧元数据：档案感 */
+        .project-meta {
+            font-family: var(--font-mono);
+            display: flex;
+            flex-direction: row;
+            align-items: baseline;
+            flex-wrap: wrap; /* 移动端防止溢出 */
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .project-meta {
+                flex-direction: column;
+                gap: 0.75rem;
+                flex-wrap: nowrap;
+            }
+        }
+
+        .project-id {
+            font-size: 1.25rem;
+            color: var(--ink-main);
+            letter-spacing: -0.03em;
+        }
+
+        .project-date {
+            font-size: 0.8125rem;
+            color: var(--ink-muted);
+        }
+
+        /* PROTOTYPE ONLY 标签 */
+        .prototype-badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.05em;
+            color: var(--accent-ruby);
+            border: 1px solid rgba(122, 63, 70, 0.2);
+            padding: 0.15rem 0.4rem;
+            border-radius: var(--radius-base);
+            opacity: 0.8;
+            white-space: nowrap;
+        }
+        
+        @media (max-width: 767px) {
+            .prototype-badge {
+                /* 移动端保证不撑破宽度，跟随在日期后或换行 */
+                margin-left: auto;
+            }
+        }
+
+        /* 右侧正文区域 */
+        .project-content {
+            max-width: 720px; /* 控制行宽，提升人文阅读感 */
+            min-width: 0; /* 防止长文本撑破 Grid */
+        }
+
+        .project-header {
+            margin-bottom: 1.25rem;
+        }
+
+        .project-name {
+            font-family: var(--font-serif);
+            font-size: 1.75rem;
+            font-weight: normal;
+            color: var(--ink-main);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+            /* 处理极长文本 */
+            word-break: break-word; 
+            overflow-wrap: break-word;
+        }
+
+        /* 交互：链接 Hover */
+        .project-name a {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .project-name a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--accent-ruby);
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .project-item:hover .project-name a {
+            color: var(--accent-ruby);
+        }
+
+        .project-item:hover .project-name a::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        .project-tagline {
+            font-size: 1.125rem;
+            color: var(--ink-main);
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            word-break: break-word; 
+        }
+
+        .project-desc {
+            font-size: 0.9375rem;
+            color: var(--ink-body);
+            line-height: 1.75;
+            margin-bottom: 2.5rem;
+            word-break: break-word; 
+        }
+
+        /* 第三层信息：生命周期与技术痕迹 */
+        .technical-trace {
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            color: var(--ink-muted);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .technical-trace::before {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 1px;
+            background-color: var(--line-hover);
+            margin-right: 0.5rem;
+        }
+
+        .trace-item {
+            display: flex;
+            align-items: center;
+            white-space: nowrap; /* 保持词组完整 */
+        }
+
+        .trace-dot {
+            margin: 0 0.5rem;
+            color: var(--line-thin);
+        }
+
+        /* 动作链接 */
+        .project-actions {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-link {
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--ink-main);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            border-bottom: 1px solid var(--line-thin);
+            padding-bottom: 0.15rem;
+        }
+
+        .action-link svg {
+            width: 12px;
+            height: 12px;
+            transition: transform 0.2s ease;
+            opacity: 0.6;
+        }
+
+        .action-link:hover,
+        .action-link:focus-visible {
+            color: var(--accent-ruby);
+            border-bottom-color: var(--accent-ruby);
+        }
+
+        .action-link:hover svg,
+        .action-link:focus-visible svg {
+            transform: translate(2px, -2px);
+            opacity: 1;
+        }
+
+        /* Footer */
+        .site-footer {
+            padding: 4rem 1.5rem 6rem;
+            text-align: center;
+            border-top: 1px solid var(--line-thin);
+            margin-top: 4rem;
+        }
+
+        #detail-deferred {
+            font-family: var(--font-serif);
+            font-size: 0.9375rem;
+            color: var(--ink-muted);
+            font-style: italic;
+            transition: color 0.3s ease;
+            /* 保证目标跳转时不会被 floating header 遮挡 */
+            scroll-margin-top: 10rem;
+        }
+        
+        #detail-deferred:target {
+            color: var(--accent-ruby);
+            animation: highlight 2s ease;
+        }
+
+        @keyframes highlight {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header：Floating Glass Pill (模拟) -->
+    <header class="header-wrapper">
+        <nav class="glass-pill" aria-label="Main Navigation">
+            <a href="#" class="pill-brand">VDVXDV</a>
+            <div class="pill-links">
+                <a href="#" class="active">项目</a>
+                <a href="#">随笔</a>
+                <a href="#">文章</a>
+                <a href="#">碎片</a>
+                <a href="#">影像</a>
+                <a href="#">关于</a>
+            </div>
+            <a href="#" class="pill-search">搜索</a>
+        </nav>
+    </header>
+
+    <main class="page-container">
+        
+        <!-- Projects Section Intro -->
+        <section class="section-intro">
+            <h1>Projects.</h1>
+            <p>这里是一个持续增加的个人项目档案册。记录着长期知识工作中的技术系统、结构化实验与工具碎片。它们是发展中的思考载体，以时间为序在此索引。</p>
+        </section>
+
+        <div class="project-archive">
+
+            <!-- Item 01: Morning Radar (Real Production Data - NO PROTOTYPE TAG) -->
+            <article class="project-item">
+                <div class="project-meta">
+                    <span class="project-id">01</span>
+                    <span class="project-date">2026.08.05</span>
+                </div>
+                <div class="project-content">
+                    <header class="project-header">
+                        <h2 class="project-name"><a href="#detail-deferred">Morning Radar</a></h2>
+                        <div class="project-tagline">为个人筛选每天真正值得关注的变化。</div>
+                    </header>
+                    <p class="project-desc">一个自动收集、筛选和整理过去二十四小时重要信息的个人晨报系统。将碎片化的信息流转化为高质量、可阅读的结构化上下文。</p>
+                    
+                    <div class="technical-trace">
+                        <span class="trace-item">Developing · 开发中</span>
+                        <span class="trace-dot">/</span>
+                        <span class="trace-item">Python, LLM</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Item 02: Repository Atlas -->
+            <article class="project-item">
+                <div class="project-meta">
+                    <span class="project-id">02</span>
+                    <span class="project-date">2026.07.28</span>
+                    <span class="prototype-badge" aria-label="Prototype Only">PROTOTYPE ONLY</span>
+                </div>
+                <div class="project-content">
+                    <header class="project-header">
+                        <h2 class="project-name"><a href="#detail-deferred">Repository Atlas</a></h2>
+                        <div class="project-tagline">让陌生代码库更快形成可验证的理解。</div>
+                    </header>
+                    <p class="project-desc">通过静态分析与符号索引，为复杂的开源仓库生成一份结构化的阅读地图，帮助个人在不熟悉的技术栈中快速建立上下文。</p>
+                    
+                    <div class="technical-trace">
+                        <span class="trace-item">维护中</span>
+                        <span class="trace-dot">/</span>
+                        <span class="trace-item">TypeScript, AST, Search</span>
+                    </div>
+
+                    <div class="project-actions">
+                        <a href="#detail-deferred" class="action-link">
+                            GitHub only 
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Item 03: 长期个人知识工作... -->
+            <article class="project-item">
+                <div class="project-meta">
+                    <span class="project-id">03</span>
+                    <span class="project-date">2026.06.12</span>
+                    <span class="prototype-badge" aria-label="Prototype Only">PROTOTYPE ONLY</span>
+                </div>
+                <div class="project-content">
+                    <header class="project-header">
+                        <h2 class="project-name"><a href="#detail-deferred">一套面向长期个人知识工作的上下文编排实验</a></h2>
+                        <div class="project-tagline">让资料、决定与行动保持连续。</div>
+                    </header>
+                    <p class="project-desc">纯粹的结构学探讨，不依赖任何特定软件工具。试图回答在长达数年的时间跨度内，如何不丢失最初的问题意识，并使每天的微小积累具备累加效应。</p>
+                    
+                    <div class="technical-trace">
+                        <span class="trace-item">构思中</span>
+                        <span class="trace-dot">/</span>
+                        <span class="trace-item">无 Tech 依赖</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Item 04: Quiet Relay -->
+            <article class="project-item">
+                <div class="project-meta">
+                    <span class="project-id">04</span>
+                    <span class="project-date">2026.05.30</span>
+                    <span class="prototype-badge" aria-label="Prototype Only">PROTOTYPE ONLY</span>
+                </div>
+                <div class="project-content">
+                    <header class="project-header">
+                        <h2 class="project-name"><a href="#detail-deferred">Quiet Relay</a></h2>
+                        <div class="project-tagline">在低干扰条件下转发真正需要处理的变化。</div>
+                    </header>
+                    <p class="project-desc">极简的 Webhook 路由引擎，过滤掉 90% 的无效通知噪音，仅在设定的时间窗口内，将最高优先级的状态变更静默投递到个人信箱。</p>
+                    
+                    <div class="technical-trace">
+                        <span class="trace-item">可使用</span>
+                        <span class="trace-dot">/</span>
+                        <span class="trace-item">Python, Webhook</span>
+                    </div>
+
+                    <div class="project-actions">
+                        <a href="#detail-deferred" class="action-link">
+                            Live only
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Item 05: Local Index -->
+            <article class="project-item">
+                <div class="project-meta">
+                    <span class="project-id">05</span>
+                    <span class="project-date">2026.04.18</span>
+                    <span class="prototype-badge" aria-label="Prototype Only">PROTOTYPE ONLY</span>
+                </div>
+                <div class="project-content">
+                    <header class="project-header">
+                        <h2 class="project-name"><a href="#detail-deferred">Local Index</a></h2>
+                        <div class="project-tagline">离线整理散落在设备中的个人文本线索。</div>
+                    </header>
+                    <p class="project-desc">一个完全 Local-first 的桌面级全文检索服务，避免将敏感思考数据交予云端，实现百毫秒级的本地跨文件夹笔记索引。</p>
+                    
+                    <div class="technical-trace">
+                        <span class="trace-item">暂停</span>
+                        <span class="trace-dot">/</span>
+                        <span class="trace-item">Rust, SQLite, Local-first</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Item 06: Signal Cabinet -->
+            <article class="project-item">
+                <div class="project-meta">
+                    <span class="project-id">06</span>
+                    <span class="project-date">2026.03.02</span>
+                    <span class="prototype-badge" aria-label="Prototype Only">PROTOTYPE ONLY</span>
+                </div>
+                <div class="project-content">
+                    <header class="project-header">
+                        <h2 class="project-name"><a href="#detail-deferred">Signal Cabinet</a></h2>
+                        <div class="project-tagline">保存小型技术实验与失败记录。</div>
+                    </header>
+                    <p class="project-desc">一个简单的数字陈列柜。记录了由于技术限制、精力耗尽或概念破绽而未能完成的原型代码，将其作为知识废料妥善封存。</p>
+                    
+                    <div class="technical-trace">
+                        <span class="trace-item">已完成</span>
+                        <span class="trace-dot">/</span>
+                        <span class="trace-item">HTML, CSS</span>
+                    </div>
+
+                    <div class="project-actions">
+                        <a href="#detail-deferred" class="action-link">
+                            Live 
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                        </a>
+                        <a href="#detail-deferred" class="action-link">
+                            GitHub 
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p id="detail-deferred" tabindex="-1">Project detail is deferred to a later exploration.</p>
+    </footer>
+
+</body>
+</html>

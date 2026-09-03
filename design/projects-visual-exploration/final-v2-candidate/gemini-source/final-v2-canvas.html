@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDVXDV — Digital Artifacts</title>
+    <style>
+        :root {
+            /* Palette Shift: Humane neutral off-white with cool paper light */
+            --bg: #F7F7F6; 
+            --surface-alt: rgba(28, 27, 26, 0.035);
+            --ink: #1C1B1A;
+            --ink-back: #161618;
+            --body: #4A4844;
+            --weak: #7A766F;
+            --ruby: #7A3F46;
+            --charcoal: #1C1B19;
+            --line: rgba(28, 27, 26, 0.12);
+            --line-hover: rgba(28, 27, 26, 0.35);
+            
+            /* Structural Variables */
+            --radius-project: 2px;
+            --radius-pill: 99px;
+            --nav-z: 100;
+            
+            /* Typography Native Stacks */
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-serif: "Newsreader", "Iowan Old Style", "Apple Garamond", "Baskerville", "Times New Roman", serif;
+            --font-mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg);
+            color: var(--ink);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            font-size: 14px;
+        }
+        a { text-decoration: none; color: inherit; }
+        ul, ol { list-style: none; }
+        
+        .mono { font-family: var(--font-mono); }
+        .serif { font-family: var(--font-serif); }
+        .text-weak { color: var(--weak); }
+        .text-body { color: var(--body); }
+        .uppercase { text-transform: uppercase; letter-spacing: 0.06em; }
+        .small-caps { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .nav-wrapper {
+            position: fixed;
+            top: 24px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: var(--nav-z);
+            pointer-events: none;
+        }
+        .nav-pill {
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            background-color: rgba(247, 247, 246, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-pill);
+            padding: 8px 20px;
+            font-size: 13px;
+            box-shadow: 0 4px 24px rgba(28, 27, 26, 0.04);
+            gap: 28px;
+        }
+        .nav-logo { font-weight: 500; letter-spacing: 0.02em; }
+        .nav-links { display: flex; gap: 20px; color: var(--weak); }
+        .nav-links a:hover { color: var(--ink); }
+        .nav-links a.active { color: var(--ink); pointer-events: none; }
+        .nav-search { color: var(--weak); transition: color 0.2s ease; }
+        .nav-search:hover { color: var(--ink); }
+
+        .page-header {
+            padding-top: 180px;
+            padding-bottom: 100px;
+        }
+        .intro-marker {
+            font-size: 10px;
+            color: var(--ink);
+            display: inline-block;
+            transform: translateY(-2px);
+            margin-right: 12px;
+        }
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+        .page-header p {
+            font-size: 14px;
+            color: var(--body);
+        }
+
+        .artifacts-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 140px 40px; 
+            padding-bottom: 160px;
+            align-items: start;
+        }
+
+        .lifecycle-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--weak);
+            margin-right: 6px;
+            vertical-align: middle;
+            position: relative;
+            top: -1px;
+        }
+        .lifecycle-dot.dev { background-color: #E28C41; }
+        .lifecycle-dot.live { background-color: #5C8862; }
+        .lifecycle-dot.done { background-color: var(--ink); }
+        .lifecycle-dot.outline { background: transparent; border: 1px solid var(--weak); }
+
+        .tag-mark {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--weak);
+            border: 1px solid var(--line);
+            padding: 2px 6px;
+            border-radius: var(--radius-project);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            vertical-align: middle;
+        }
+        
+        .link-badge {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--ink);
+            border-bottom: 1px dashed var(--line-hover);
+            padding-bottom: 1px;
+            text-transform: uppercase;
+        }
+
+        .art-radar {
+            grid-column: 1 / 13;
+            border-top: 1px solid var(--ink);
+            padding-top: 32px;
+            display: grid;
+            grid-template-columns: 2fr 6fr 4fr;
+            gap: 40px;
+            outline: none;
+            position: relative;
+        }
+        .art-radar .meta-col { display: flex; flex-direction: column; justify-content: space-between; }
+        .art-radar .index { font-size: 20px; font-weight: 300; }
+        .art-radar .tech-list { margin-top: auto; padding-top: 40px; }
+        .art-radar .title-col h2 {
+            font-family: var(--font-serif);
+            font-size: clamp(48px, 6vw, 72px);
+            font-weight: 400;
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+        }
+        .art-radar .tagline { font-size: 18px; color: var(--ink); }
+        .art-radar .desc-col { 
+            display: flex; flex-direction: column; justify-content: space-between; 
+            border-left: 1px solid var(--line); padding-left: 40px; 
+        }
+        .art-radar .art-desc { font-size: 14px; color: var(--body); line-height: 1.6; max-width: 320px; }
+        .art-radar .status-bar { 
+            margin-top: auto; padding-top: 40px; 
+            display: flex; justify-content: space-between; align-items: flex-end; 
+        }
+
+        .art-atlas {
+            grid-column: 1 / 8;
+            background-color: var(--surface-alt);
+            border-top: 2px solid var(--ink);
+            padding: 32px;
+            border-radius: var(--radius-project);
+        }
+        .art-atlas .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
+        .art-atlas h3 { font-size: 20px; font-weight: 500; margin-bottom: 12px; }
+        .art-atlas .art-desc { font-size: 14px; color: var(--body); max-width: 440px; margin-top: 12px; }
+        
+        .atlas-micro-graph {
+            margin: 24px 0; display: flex; align-items: center; gap: 4px; opacity: 0.7;
+        }
+        .atlas-node { width: 4px; height: 4px; background: var(--weak); border-radius: 50%; }
+        .atlas-edge { width: 24px; height: 1px; background: var(--line-hover); }
+
+        .art-context {
+            grid-column: 9 / 13;
+            border-left: 1px solid var(--line);
+            padding-left: 40px;
+            padding-top: 32px;
+        }
+        .art-context h3 {
+            font-family: var(--font-serif);
+            font-size: 24px;
+            font-weight: 400;
+            line-height: 1.4;
+            margin-bottom: 16px;
+            margin-top: 32px;
+        }
+        .art-context .art-desc { font-size: 14px; color: var(--body); margin-top: 12px; }
+        .art-meta-row { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; margin-top: 32px; }
+
+        .art-relay {
+            grid-column: 1 / 13;
+            display: grid;
+            grid-template-columns: 5fr 7fr;
+            gap: 64px;
+            align-items: center;
+            border-top: 1px solid var(--line);
+            padding-top: 40px;
+        }
+        .relay-visual {
+            background-color: var(--charcoal);
+            border-radius: var(--radius-project);
+            height: 280px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .relay-dot { width: 4px; height: 4px; background-color: var(--ruby); }
+        .relay-content h3 { font-size: 24px; font-weight: 400; margin: 24px 0 12px; }
+        .relay-content .art-desc { color: var(--body); max-width: 480px; margin-top: 12px; }
+
+        .flip-module {
+            perspective: 1200px;
+            cursor: pointer;
+            outline: none;
+        }
+        .flip-inner {
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--radius-project);
+        }
+        .flip-front, .flip-back {
+            grid-area: 1 / 1;
+            backface-visibility: hidden;
+            border-radius: inherit;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .flip-front {
+            background-color: var(--bg);
+            border: 1px solid var(--line);
+            z-index: 2;
+        }
+        .flip-back {
+            background-color: var(--ink-back);
+            color: #fff;
+            transform: rotateY(180deg);
+            border: 1px solid var(--ink-back);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .flip-module:hover .flip-inner { transform: rotateY(180deg); }
+        }
+        .flip-module:focus-visible .flip-inner,
+        .flip-module.is-flipped .flip-inner { transform: rotateY(180deg); }
+        .flip-module:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 2px; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .flip-inner { transition: none; transform: none !important; }
+            .flip-front, .flip-back { transition: opacity 0.3s ease; }
+            .flip-back { transform: none; opacity: 0; z-index: -1; }
+            .flip-front { opacity: 1; z-index: 2; }
+            .flip-module:hover .flip-front,
+            .flip-module:focus-visible .flip-front,
+            .flip-module.is-flipped .flip-front { opacity: 0; z-index: -1; }
+            .flip-module:hover .flip-back,
+            .flip-module:focus-visible .flip-back,
+            .flip-module.is-flipped .flip-back { opacity: 1; z-index: 2; }
+        }
+
+        .art-local { 
+            grid-column: 1 / 6; 
+            aspect-ratio: 1.15 / 1; 
+            min-height: 320px;
+        }
+        .art-local .flip-front h3 { font-family: var(--font-sans); font-size: 18px; margin: 24px 0 12px; }
+        .art-local .flip-front .tagline { color: var(--body); }
+        .local-code-vis { 
+            margin-top: auto; padding-top: 32px;
+            font-family: var(--font-mono); font-size: 11px; color: var(--weak); 
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .local-code-vis span::before { content: '>'; margin-right: 8px; opacity: 0.5; }
+        
+        .flip-back h4 { font-size: 16px; font-weight: 500; margin-bottom: 16px; color: rgba(255,255,255,0.9); }
+        .flip-back p { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 24px; }
+        .flip-back-meta { margin-top: auto; font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.5); display: flex; flex-direction: column; gap: 8px; }
+        .flip-back-meta div { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; }
+
+        .art-cabinet { 
+            grid-column: 7 / 13; 
+            display: flex;
+            flex-direction: column;
+            padding-top: 32px;
+        }
+        .art-cabinet h3 { font-size: 18px; margin: 24px 0 12px; }
+        .art-cabinet .tagline { color: var(--body); }
+        .cabinet-ledger { margin-top: auto; padding-top: 48px; border-top: 1px solid var(--line); }
+        .ledger-row {
+            display: flex; justify-content: space-between; padding: 16px 0;
+            border-bottom: 1px solid var(--line);
+            font-family: var(--font-mono); font-size: 11px;
+        }
+        .ledger-row span:first-child { color: var(--weak); }
+
+        .page-footer {
+            padding: 80px 0 120px;
+            text-align: center;
+            border-top: 1px solid var(--line);
+        }
+        .ending-quote {
+            font-family: var(--font-serif);
+            font-size: clamp(24px, 4vw, 32px);
+            font-weight: 400;
+            color: var(--ink);
+            margin-bottom: 32px;
+        }
+        .footer-meta {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--weak);
+        }
+
+        @media (max-width: 1024px) {
+            .container { padding: 0 32px; }
+            .artifacts-grid { grid-template-columns: repeat(8, 1fr); gap: 100px 32px; }
+            
+            .art-radar { grid-column: 1 / 9; grid-template-columns: 1fr; gap: 32px; }
+            .art-radar .desc-col { border-left: none; padding-left: 0; border-top: 1px solid var(--line); padding-top: 24px; flex-direction: row; gap: 32px; }
+            
+            .art-atlas { grid-column: 1 / 9; }
+            .art-context { grid-column: 1 / 9; border-left: none; padding-left: 0; border-top: 1px solid var(--line); padding-top: 32px; margin-top: -40px; }
+            
+            .art-relay { grid-column: 1 / 9; grid-template-columns: 1fr; }
+            .relay-visual { height: 200px; }
+            
+            .art-local { grid-column: 1 / 5; aspect-ratio: auto; min-height: 340px; }
+            .art-cabinet { grid-column: 5 / 9; padding-top: 0; }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 0 20px; }
+            .nav-links { display: none; }
+            .page-header { padding-top: 120px; }
+            
+            .artifacts-grid { display: flex; flex-direction: column; gap: 80px; }
+            .art-radar .desc-col { flex-direction: column; align-items: flex-start; }
+            .art-radar .art-desc { max-width: 100%; margin-bottom: 24px; }
+            
+            .art-atlas, .art-context, .art-relay, .art-local, .art-cabinet { width: 100%; }
+            .art-local { min-height: 280px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-wrapper">
+        <nav class="nav-pill">
+            <a href="#" class="nav-logo">VDVXDV</a>
+            <div class="nav-links">
+                <a href="#" class="active">项目</a>
+                <a href="#">随笔</a>
+                <a href="#">文章</a>
+                <a href="#">碎片</a>
+                <a href="#">影像</a>
+                <a href="#">关于</a>
+            </div>
+            <a href="#" class="nav-search">搜索</a>
+        </nav>
+    </div>
+
+    <div class="container">
+        <header class="page-header">
+            <h1><span class="intro-marker">▲</span> Digital artifacts.</h1>
+            <p>一些被制作出来的数字物件、系统与长期实验。</p>
+        </header>
+
+        <main class="artifacts-grid">
+            
+            <div class="art-radar" tabindex="0">
+                <div class="meta-col">
+                    <span class="index mono text-weak">01</span>
+                    <div class="tech-list small-caps text-weak">Python, LLM</div>
+                </div>
+                <div class="title-col">
+                    <h2>Morning Radar</h2>
+                    <p class="tagline">为个人筛选每天真正值得关注的变化。</p>
+                </div>
+                <div class="desc-col">
+                    <p class="art-desc">一个自动收集、筛选和整理过去二十四小时重要信息的个人晨报系统。将碎片化的信息流转化为高质量、可阅读的结构化上下文。</p>
+                    <div class="status-bar">
+                        <span class="small-caps text-weak">UPDATED 2026-08-05</span>
+                        <span class="small-caps"><i class="lifecycle-dot dev"></i> Developing · 开发中</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="art-atlas" tabindex="0">
+                <div class="header-row">
+                    <span class="tag-mark">Prototype Only</span>
+                    <span class="link-badge">GitHub only</span>
+                </div>
+                <h3>Repository Atlas</h3>
+                <p class="tagline">让陌生代码库更快形成可验证的理解。</p>
+                <p class="art-desc">基于 AST 解析的实验性代码库导航工具。帮助在未见过的复杂工程中快速建立模块间的上下文依赖网络。</p>
+                
+                <div class="atlas-micro-graph">
+                    <div class="atlas-node"></div>
+                    <div class="atlas-edge"></div>
+                    <div class="atlas-node"></div>
+                    <div class="atlas-edge" style="width: 12px;"></div>
+                    <div class="atlas-node"></div>
+                </div>
+                
+                <div class="art-meta-row small-caps text-weak">
+                    <span><i class="lifecycle-dot pause"></i> 维护中</span>
+                    <span>TypeScript / AST / Search</span>
+                    <span>2026-07-28</span>
+                </div>
+            </div>
+
+            <div class="art-context" tabindex="0">
+                <div>
+                    <span class="tag-mark">Prototype Only</span>
+                </div>
+                <h3>一套面向长期个人知识工作的上下文编排实验</h3>
+                <p class="tagline">让资料、决定与行动保持连续。</p>
+                <p class="art-desc">针对长期项目的认知损耗问题，探索如何将研究材料、思考快照与具体的执行步骤缝合在同一语境下。</p>
+                
+                <div class="art-meta-row small-caps text-weak">
+                    <span><i class="lifecycle-dot outline"></i> 构思中</span>
+                    <span>无 Tech</span>
+                    <span>2026-06-12</span>
+                </div>
+            </div>
+
+            <div class="art-relay" tabindex="0">
+                <div class="relay-visual">
+                    <div class="relay-dot"></div>
+                </div>
+                <div class="relay-content">
+                    <div style="margin-bottom: 16px;">
+                        <span class="tag-mark">Prototype Only</span>
+                    </div>
+                    <h3>Quiet Relay</h3>
+                    <p class="tagline">在低干扰条件下转发真正需要处理的变化。</p>
+                    <p class="art-desc">一个轻量级服务端中间件，用于拦截、聚合和静音非紧急通知，仅在预设窗口期交付核心信号。</p>
+                    
+                    <div class="art-meta-row small-caps text-weak">
+                        <span><i class="lifecycle-dot live"></i> 可使用</span>
+                        <span>Python / Webhook</span>
+                        <span>2026-05-30</span>
+                        <span class="link-badge">Live only</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="art-local flip-module" tabindex="0" role="button" aria-pressed="false" aria-label="Toggle details for Local Index">
+                <div class="flip-inner">
+                    <!-- Front -->
+                    <div class="flip-front">
+                        <div><span class="tag-mark">Prototype Only</span></div>
+                        <h3>Local Index</h3>
+                        <p class="tagline">离线整理散落在设备中的个人文本线索。</p>
+                        <div class="local-code-vis">
+                            <span>sys.watch('./documents')</span>
+                            <span>index.build(graph)</span>
+                            <span>serve.local(port: 8080)</span>
+                        </div>
+                    </div>
+                    <!-- Back -->
+                    <div class="flip-back">
+                        <h4>Local Index</h4>
+                        <p>运行于本机的超快速文本索引服务，通过文件系统监听，将本地笔记与随笔转化为即时可检索的图谱。</p>
+                        <div class="flip-back-meta">
+                            <div><span>STATUS</span> <span>暂停</span></div>
+                            <div><span>STACK</span> <span>Rust / SQLite</span></div>
+                            <div><span>LOGGED</span> <span>2026-04-18</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="art-cabinet" tabindex="0">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                    <span class="tag-mark">Prototype Only</span>
+                    <span class="link-badge">Live + GitHub</span>
+                </div>
+                <h3>Signal Cabinet</h3>
+                <p class="tagline">保存小型技术实验与失败记录。</p>
+                <p class="art-desc" style="margin-top: 12px;">一个无样板代码的微型前端容器集合，用于安全地封存和展示探索性质的 UI 交互与视觉实现废案。</p>
+                
+                <div class="cabinet-ledger">
+                    <div class="ledger-row">
+                        <span>STATUS</span>
+                        <span><i class="lifecycle-dot done"></i> 已完成</span>
+                    </div>
+                    <div class="ledger-row">
+                        <span>STACK</span>
+                        <span>HTML / CSS</span>
+                    </div>
+                    <div class="ledger-row">
+                        <span>LOGGED</span>
+                        <span>2026-03-02</span>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="page-footer">
+            <h2 class="ending-quote">Build slowly. Leave meaningful traces.</h2>
+            <div class="footer-meta">
+                &copy; 2026 VDVXDV<br>
+                Collection — Dir. C Final v2
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const flipModules = document.querySelectorAll('.flip-module');
+            
+            flipModules.forEach(module => {
+                module.addEventListener('click', function() {
+                    const isFlipped = this.classList.contains('is-flipped');
+                    if (!isFlipped) {
+                        this.classList.add('is-flipped');
+                        this.setAttribute('aria-pressed', 'true');
+                    } else {
+                        this.classList.remove('is-flipped');
+                        this.setAttribute('aria-pressed', 'false');
+                    }
+                });
+
+                module.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.flip-module')) {
+                    flipModules.forEach(m => {
+                        m.classList.remove('is-flipped');
+                        m.setAttribute('aria-pressed', 'false');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

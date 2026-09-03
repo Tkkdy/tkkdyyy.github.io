@@ -1,0 +1,81 @@
+---
+// 项目区：全宽深色带（#1C1B19）。
+// 主导项目来自 Content Collections（projects）；两个待定槽位是无虚构内容的结构占位，保持硬编码。
+// 状态文案与查询共用 src/lib/content/projects.ts；githubUrl 存在才显示 GitHub 入口。
+import type { CollectionEntry } from 'astro:content';
+import { PROJECT_STATUS_LABELS } from '../lib/content/projects';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+
+const { projects } = Astro.props;
+// 取排序后的第一个项目作为主导项目（当前首页只有一个）
+const [mainProject] = projects;
+---
+<section class="projects dark-section">
+  <div class="projects-inner">
+    <div class="section-header projects-header">
+      <span>Active Projects &amp; Experiments</span>
+      <span>项目与实验</span>
+    </div>
+
+    <!-- 主导项目 -->
+    <div class="project-main">
+      <div class="project-visual-col">
+        <a class="project-visual-link group" href={`/projects/${mainProject.data.slug}/`}>
+          <div class="css-placeholder scale-inner scale-transition project-visual">
+            <span>Project Interface</span>
+            <span class="ratio">1:1</span>
+
+            <!-- 占位图内嵌技术标签 -->
+            <div class="project-tags">
+              {mainProject.data.techStack?.map((tech) => <span class="tech-tag">{tech}</span>)}
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="project-info">
+        <div class="project-status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="project-status-label">{PROJECT_STATUS_LABELS[mainProject.data.projectStatus]}</span>
+        </div>
+
+        <h3 class="project-title">{mainProject.data.name}</h3>
+
+        <p class="project-desc">{mainProject.data.description}</p>
+
+        <div class="project-actions">
+          <a class="btn-outline-inverse" href={`/projects/${mainProject.data.slug}/`}>查看项目详情</a>
+          {mainProject.data.githubUrl && (
+            <a
+              class="btn-link-inverse"
+              href={mainProject.data.githubUrl.toString()}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub <span class="external">↗</span>
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <!-- 待定槽位（结构占位，无虚构内容） -->
+    <div class="project-slots">
+      <div class="project-slot" aria-hidden="true">
+        <div class="slot-label">Project Slot Pending</div>
+        <div class="skeleton-lines">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="project-slot" aria-hidden="true">
+        <div class="slot-label">Project Slot Pending</div>
+        <div class="skeleton-lines short">
+          <span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

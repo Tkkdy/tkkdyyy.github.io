@@ -1,0 +1,214 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  essays: CollectionEntry<'essays'>[];
+  themes: string[];
+}
+
+const { essays, themes } = Astro.props;
+
+const approvedPositions = [
+  { x: 348, y: 244 },
+  { x: 281, y: 176 },
+  { x: 475, y: 162 },
+  { x: 449, y: 326 },
+  { x: 567, y: 267 },
+  { x: 138, y: 310 },
+  { x: 579, y: 381 },
+];
+
+const positionFor = (index: number) => {
+  if (approvedPositions[index]) return approvedPositions[index];
+  const angle = (index * 137.5 * Math.PI) / 180;
+  const radius = 92 + (index % 4) * 36;
+  return {
+    x: Math.round(348 + Math.cos(angle) * radius),
+    y: Math.round(244 + Math.sin(angle) * radius),
+  };
+};
+
+const themeItems = themes.map((label, index) => ({ label, key: `theme-${index + 1}` }));
+const themeKeyByLabel = new Map(themeItems.map(({ label, key }) => [label, key]));
+const stageItems = [...new Set(essays.map((essay) => essay.data.publishedAt.getFullYear()))]
+  .sort((a, b) => b - a)
+  .map((year, index) => ({ key: String(year), label: String(year), note: index === 0 ? '现在' : '记录' }));
+
+const nodes = essays.map((essay, index) => ({
+  essay,
+  ...positionFor(index),
+  stage: String(essay.data.publishedAt.getFullYear()),
+  themeKeys: (essay.data.tags ?? []).map((tag) => themeKeyByLabel.get(tag)).filter(Boolean) as string[],
+}));
+
+const connections = nodes.flatMap((from, fromIndex) =>
+  nodes.slice(fromIndex + 1).flatMap((to) => {
+    const sharedThemes = from.themeKeys.filter((theme) => to.themeKeys.includes(theme));
+    const sharedStage = from.stage === to.stage ? [from.stage] : [];
+    if (sharedThemes.length === 0 && sharedStage.length === 0) return [];
+    return [{ from, to, themes: sharedThemes, stages: sharedStage }];
+  }),
+);
+---
+
+<section class="universe-overview" aria-labelledby="essays-title" data-essays-universe>
+  <header class="universe-intro">
+    <p class="essay-kicker">ESSAYS</p>
+    <h1 id="essays-title">随笔</h1>
+    <p class="universe-intro-copy">在时间的版图上，观察一个人的内心宇宙。</p>
+    <p class="universe-intro-note">记录 · 思考 · 观察</p>
+  </header>
+
+  <section class="star-field" aria-label="真实随笔坐标图">
+    <p class="sr-only">每个坐标节点都对应一篇真实公开随笔，可使用 Tab 聚焦并跳转到对应归档条目。</p>
+    <svg class="universe-map" viewBox="0 0 720 470" role="group" aria-labelledby="map-title map-description">
+      <title id="map-title">随笔坐标图</title>
+      <desc id="map-description">一张由真实公开随笔形成的轻量坐标图。当前节点数量与公开内容数量一致。</desc>
+      <g class="map-geometry" aria-hidden="true">
+        <circle cx="348" cy="244" r="55"></circle>
+        <circle cx="348" cy="244" r="120"></circle>
+        <circle cx="348" cy="244" r="192"></circle>
+        <path d="M72 241H650M348 38V442M176 95C278 211 407 299 589 397M106 391C260 293 438 180 590 90"></path>
+        {connections.map(({ from, to, themes: connectionThemes, stages }) => (
+          <line
+            class="connection"
+            x1={from.x}
+            y1={from.y}
+            x2={to.x}
+            y2={to.y}
+            data-themes={connectionThemes.join(',')}
+            data-stages={stages.join(',')}
+          ></line>
+        ))}
+        <path class="map-margin" d="M622 83h36M640 65v36M630 73l20 20M650 73l-20 20"></path>
+        <text x="632" y="53">north / a private coordinate</text>
+      </g>
+      <g class="map-nodes">
+        {nodes.map(({ essay, x, y, stage, themeKeys }, index) => (
+          <a
+            class="star-node"
+            href={`#essay-${essay.data.slug}`}
+            data-stage={stage}
+            data-themes={themeKeys.join(',')}
+            aria-label={`${essay.data.title}，${essay.data.publishedAt.toLocaleDateString('zh-CN')}`}
+          >
+            <circle cx={x} cy={y} r={index === 0 ? 6 : 4} class:list={[index === 0 && 'warm-core']}></circle>
+            <circle cx={x} cy={y} r={index === 0 ? 14 : 12} class="focus-ring"></circle>
+            <text x={x + 14} y={y - 9}>{essay.data.title}</text>
+            <text class="node-date" x={x + 14} y={y + 8}>
+              {essay.data.publishedAt.toISOString().slice(0, 10).replaceAll('-', '.')}
+            </text>
+          </a>
+        ))}
+      </g>
+    </svg>
+  </section>
+
+  <aside class="marginal-indexes" aria-label="随笔时间与主题索引">
+    {stageItems.length > 0 && (
+      <section class="life-index" aria-labelledby="life-stage-title">
+        <header class="index-head">
+          <p class="index-heading" id="life-stage-title">LIFE STAGE</p>
+          <svg class="index-mark compass-mark" viewBox="0 0 20 20" aria-hidden="true">
+            <circle cx="10" cy="10" r="7"></circle>
+            <path d="M10 1v3M10 16v3M1 10h3M16 10h3M6.5 13.5l7-7-2.4 4.6z"></path>
+          </svg>
+        </header>
+        <div class="stage-list" role="group" aria-label="按真实写作年份查看随笔节点">
+          {stageItems.map(({ key, label, note }) => (
+            <button type="button" data-stage-control={key} aria-pressed="false">
+              <span class="stage-mark" aria-hidden="true"></span><span>{label}</span><small>{note}</small>
+            </button>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {themeItems.length > 0 && (
+      <section class="theme-index" aria-labelledby="theme-index-title">
+        <header class="index-head">
+          <p class="index-heading" id="theme-index-title">THEME INDEX</p>
+          <svg class="index-mark archive-mark" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M5 3.5h10v13H5zM8 7h4M8 10h4M8 13h2M3 6V2h10"></path>
+          </svg>
+        </header>
+        <div class="theme-list">
+          {themeItems.map(({ label, key }, index) => (
+            <button type="button" data-theme-control={key} aria-pressed="false">
+              <i>{String(index + 1).padStart(2, '0')}</i><span>{label}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+    )}
+  </aside>
+</section>
+
+<script>
+  document.querySelectorAll('[data-essays-universe]').forEach((universe) => {
+    const field = universe.querySelector('.star-field');
+    const controls = [...universe.querySelectorAll('[data-theme-control], [data-stage-control]')];
+    const nodes = [...universe.querySelectorAll('.star-node')];
+    const connections = [...universe.querySelectorAll('.connection')];
+    let active: { kind: 'theme' | 'stage'; value: string } | null = null;
+
+    const controlData = (control: Element) => {
+      if (control instanceof HTMLElement && control.dataset.themeControl) {
+        return { kind: 'theme' as const, value: control.dataset.themeControl };
+      }
+      if (control instanceof HTMLElement && control.dataset.stageControl) {
+        return { kind: 'stage' as const, value: control.dataset.stageControl };
+      }
+      return null;
+    };
+
+    const matches = (item: Element, kind: 'theme' | 'stage', value: string) => {
+      if (!(item instanceof HTMLElement || item instanceof SVGElement)) return false;
+      const values = kind === 'theme' ? item.dataset.themes : item.dataset.stage ?? item.dataset.stages;
+      return values?.split(',').filter(Boolean).includes(value) ?? false;
+    };
+
+    const clearMap = () => {
+      nodes.forEach((node) => node.classList.remove('is-muted'));
+      connections.forEach((connection) => connection.classList.remove('is-muted', 'is-active'));
+      field?.removeAttribute('data-filtered');
+    };
+
+    const apply = (kind: 'theme' | 'stage', value: string) => {
+      clearMap();
+      field?.setAttribute('data-filtered', kind);
+      nodes.forEach((node) => node.classList.toggle('is-muted', !matches(node, kind, value)));
+      connections.forEach((connection) => {
+        const related = matches(connection, kind, value);
+        connection.classList.toggle('is-muted', !related);
+        connection.classList.toggle('is-active', related);
+      });
+    };
+
+    const restore = () => {
+      clearMap();
+      if (active) apply(active.kind, active.value);
+    };
+
+    controls.forEach((control) => {
+      const data = controlData(control);
+      if (!data) return;
+      control.addEventListener('mouseenter', () => apply(data.kind, data.value));
+      control.addEventListener('mouseleave', restore);
+      control.addEventListener('focus', () => apply(data.kind, data.value));
+      control.addEventListener('blur', restore);
+      control.addEventListener('click', () => {
+        const isSame = active?.kind === data.kind && active.value === data.value;
+        controls.forEach((item) => item.setAttribute('aria-pressed', 'false'));
+        if (isSame) {
+          active = null;
+          clearMap();
+          return;
+        }
+        active = data;
+        control.setAttribute('aria-pressed', 'true');
+        apply(data.kind, data.value);
+      });
+    });
+  });
+</script>

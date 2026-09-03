@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Morning Radar 项目技术档案页静态视觉原型。"
+    />
+    <title>Morning Radar — Project Archive v1.1</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2311151b'/%3E%3Cpath d='M8 8h3l5 15 5-15h3l-7 19h-2z' fill='%23fff'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#project-detail">跳至项目内容</a>
+
+    <header class="site-header" data-pagefind-ignore>
+      <nav class="glass-nav" aria-label="主导航">
+        <a class="nav-wordmark" href="../../projects-visual-exploration/final-homepage-v1.3/index.html">VDVXDV</a>
+        <span class="nav-divider" aria-hidden="true"></span>
+        <ul class="nav-links">
+          <li><a class="is-current" href="../../projects-visual-exploration/final-homepage-v1.3/index.html#projects">项目</a></li>
+          <li><a href="#" aria-disabled="true">随笔</a></li>
+          <li><a href="#" aria-disabled="true">文章</a></li>
+          <li><a href="#" aria-disabled="true">碎片</a></li>
+          <li><a href="#" aria-disabled="true">影像</a></li>
+          <li><a href="#" aria-disabled="true">关于</a></li>
+        </ul>
+        <span class="nav-divider" aria-hidden="true"></span>
+        <span class="nav-search" aria-hidden="true">搜索</span>
+      </nav>
+    </header>
+
+    <main id="project-detail" class="project-shell">
+      <a class="back-link" href="../../projects-visual-exploration/final-homepage-v1.3/index.html#projects">
+        <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M10.5 3.5 6 8l4.5 4.5M6.5 8H14" /></svg>
+        ALL PROJECTS
+      </a>
+
+      <section class="identity" aria-labelledby="project-title">
+        <div class="identity-copy">
+          <h1 id="project-title">Morning Radar</h1>
+          <p class="identity-tagline">让每日信号成为可以追溯、阅读和继续判断的晨报。</p>
+          <p class="identity-descriptor">A traceable personal AI, market, and developer ecosystem morning brief.</p>
+          <p class="identity-description">
+            Morning Radar 自动采集 AI 科技、重点公司市场数据、GitHub 项目动态和开发者社区信号，
+            去重合并后生成可追溯的中文晨报、静态网站与微信摘要。
+          </p>
+        </div>
+
+        <div class="identity-side">
+          <div class="identity-classification">
+            <span>PERSONAL INTELLIGENCE</span>
+            <span>v0.1.0</span>
+          </div>
+          <dl class="metadata-panel">
+            <div>
+              <dt>STATUS</dt>
+              <dd><span class="status-dot" aria-hidden="true"></span>DEVELOPING</dd>
+            </div>
+            <div>
+              <dt>UPDATED</dt>
+              <dd><time datetime="2026-08-17">2026-08-17</time></dd>
+            </div>
+            <div>
+              <dt>LINKS</dt>
+              <dd>
+                <a href="https://github.com/Tkkdy/Morning-Radar" target="_blank" rel="noreferrer">
+                  GITHUB
+                  <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M5 11 11 5M6 5h5v5" /></svg>
+                </a>
+              </dd>
+            </div>
+            <div>
+              <dt>TYPE</dt>
+              <dd>PERSONAL INTELLIGENCE BRIEF</dd>
+            </div>
+            <div>
+              <dt>VERSION</dt>
+              <dd>0.1.0</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="module-field" aria-label="Morning Radar 项目档案模块">
+        <article class="module evidence-module" aria-labelledby="module-output">
+          <header class="module-header">
+            <h2 id="module-output"><span>01</span> / DAILY BRIEF OUTPUT</h2>
+            <span class="module-note">REAL OUTPUT · 2026-08-15</span>
+          </header>
+          <button class="evidence-open" type="button" data-open-evidence aria-label="打开真实晨报截图">
+            <img
+              src="assets/morning-radar-2026-08-15.png"
+              alt="Morning Radar 2026 年 8 月 15 日真实晨报首屏"
+            />
+            <span class="evidence-action">
+              OPEN CAPTURE
+              <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M3 6V3h3M10 3h3v3M13 10v3h-3M6 13H3v-3" /></svg>
+            </span>
+          </button>
+          <footer class="evidence-caption">
+            <span>STATIC DAILY PAGE</span>
+            <span>ASIA / SINGAPORE</span>
+            <span>SOURCE LINKS PRESERVED</span>
+          </footer>
+        </article>
+
+        <article class="module insight-module" aria-labelledby="module-insight">
+          <header class="module-header">
+            <h2 id="module-insight"><span>02</span> / INSIGHT NOTE</h2>
+          </header>
+          <div class="insight-content">
+            <p class="insight-lead">不是把标题堆在一起，<br />而是把信号还原成证据。</p>
+            <p>
+              同一事件只展示一次；事实、分析和不确定性明确分开。
+              没有足够证据时，趋势栏目可以为空。
+            </p>
+          </div>
+        </article>
+
+        <article class="module architecture-module" aria-labelledby="module-architecture">
+          <header class="module-header">
+            <h2 id="module-architecture"><span>03</span> / SYSTEM ARCHITECTURE</h2>
+            <span class="module-note">MODULAR MONOLITH</span>
+          </header>
+          <div class="architecture-flow" role="img" aria-label="真实系统结构：公开来源进入采集与处理流水线，经验证后写入 JSON 历史，并发布静态站点与微信摘要">
+            <div class="architecture-node">
+              <strong>SOURCES</strong>
+              <span>RSS / ATOM</span>
+              <span>GITHUB / HN</span>
+              <span>MARKET</span>
+            </div>
+            <svg class="architecture-arrow" aria-hidden="true" viewBox="0 0 48 12"><path d="M1 6h43M39 2l5 4-5 4" /></svg>
+            <div class="architecture-node architecture-node-primary">
+              <strong>PIPELINE</strong>
+              <span>COLLECT + NORMALIZE</span>
+              <span>DEDUPE + SCORE</span>
+              <span>TRENDS + BRIEF</span>
+            </div>
+            <svg class="architecture-arrow" aria-hidden="true" viewBox="0 0 48 12"><path d="M1 6h43M39 2l5 4-5 4" /></svg>
+            <div class="architecture-node">
+              <strong>DELIVERY</strong>
+              <span>STATIC SITE</span>
+              <span>GITHUB PAGES</span>
+              <span>WXPUSHER</span>
+            </div>
+          </div>
+          <div class="architecture-foundation">
+            <div><span>CONFIG</span><strong>YAML</strong></div>
+            <div><span>STORAGE</span><strong>ATOMIC JSON</strong></div>
+            <div><span>AI GATE</span><strong>PYDANTIC VALIDATION</strong></div>
+          </div>
+        </article>
+
+        <aside class="module stack-module" aria-labelledby="module-stack">
+          <header class="module-header">
+            <h2 id="module-stack"><span>04</span> / TECH STACK</h2>
+          </header>
+          <ul class="stack-list">
+            <li><span>PY</span><strong>Python 3.12</strong></li>
+            <li><span>PD</span><strong>Pydantic</strong></li>
+            <li><span>J2</span><strong>Jinja2</strong></li>
+            <li><span>DS</span><strong>DeepSeek Provider</strong></li>
+            <li><span>HX</span><strong>HTTPX / feedparser</strong></li>
+            <li><span>GA</span><strong>GitHub Actions</strong></li>
+            <li><span>GP</span><strong>GitHub Pages</strong></li>
+            <li><span>PT</span><strong>pytest / Ruff</strong></li>
+            <li><span>JS</span><strong>JSON / YAML</strong></li>
+          </ul>
+        </aside>
+
+        <article class="module pipeline-module" aria-labelledby="module-pipeline">
+          <header class="module-header">
+            <h2 id="module-pipeline"><span>05</span> / SYSTEM PIPELINE</h2>
+            <span class="module-note">SEQUENTIAL · FAILURE ISOLATED</span>
+          </header>
+          <ol class="pipeline-list">
+            <li>
+              <span class="pipeline-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM7 9h10M7 13h6" /></svg></span>
+              <strong>COLLECT</strong>
+              <small>采集公开来源元数据</small>
+            </li>
+            <li>
+              <span class="pipeline-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14M9 5v4M15 10v4M11 15v4" /></svg></span>
+              <strong>NORMALIZE</strong>
+              <small>清洗时间、标题与链接</small>
+            </li>
+            <li>
+              <span class="pipeline-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 5v5c0 2 2 3 6 3s6 1 6 3v3M18 5v5c0 2-2 3-6 3s-6 1-6 3v3" /></svg></span>
+              <strong>DEDUPE</strong>
+              <small>聚类并合并同一事件</small>
+            </li>
+            <li>
+              <span class="pipeline-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 18V11M10 18V7M15 18V13M20 18V4" /></svg></span>
+              <strong>SCORE</strong>
+              <small>评估相关性与重要性</small>
+            </li>
+            <li>
+              <span class="pipeline-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6zM9 10h6M9 14h6M9 18h4" /></svg></span>
+              <strong>BRIEF</strong>
+              <small>组织可追溯中文晨报</small>
+            </li>
+            <li>
+              <span class="pipeline-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 16V4M8 8l4-4 4 4M5 14v6h14v-6" /></svg></span>
+              <strong>PUBLISH</strong>
+              <small>发布静态站点与摘要</small>
+            </li>
+          </ol>
+        </article>
+
+        <article class="module status-module" aria-labelledby="module-status">
+          <header class="module-header">
+            <h2 id="module-status"><span>06</span> / CURRENT STATUS</h2>
+          </header>
+          <ul class="status-list">
+            <li><span aria-hidden="true">✓</span>定时与手动 GitHub Actions 已接通</li>
+            <li><span aria-hidden="true">✓</span>可生成首页、归档页和单日页</li>
+            <li><span aria-hidden="true">✓</span>Pages 成功后再发送微信摘要</li>
+            <li class="is-active"><span aria-hidden="true">○</span>继续收紧 Radar 范围与倾向形成规则</li>
+          </ul>
+        </article>
+
+        <article class="module signal-module" aria-labelledby="module-signal">
+          <header class="module-header">
+            <h2 id="module-signal"><span>07</span> / SIGNAL FIELD</h2>
+            <span class="module-note">DECORATIVE</span>
+          </header>
+          <svg class="signal-visual" aria-hidden="true" viewBox="0 0 520 170" preserveAspectRatio="none">
+            <defs>
+              <pattern id="signal-dots" width="8" height="8" patternUnits="userSpaceOnUse">
+                <circle cx="1.5" cy="1.5" r="1.05" fill="currentColor" />
+              </pattern>
+              <mask id="signal-mask">
+                <path d="M0 88C58 22 112 142 170 83S281 17 342 93s120 54 178-13" fill="none" stroke="white" stroke-width="58" />
+              </mask>
+            </defs>
+            <rect width="520" height="170" fill="url(#signal-dots)" mask="url(#signal-mask)" />
+            <path d="M0 88C58 22 112 142 170 83S281 17 342 93s120 54 178-13" fill="none" stroke="currentColor" stroke-width="1" opacity=".35" />
+          </svg>
+        </article>
+
+        <article class="module principles-module" aria-labelledby="module-principles">
+          <header class="module-header">
+            <h2 id="module-principles"><span>08</span> / OPERATING PRINCIPLES</h2>
+          </header>
+          <ul class="principles-list">
+            <li>少而重要，热度不等于重要性。</li>
+            <li>同一事件只展示一次，多来源合并为证据。</li>
+            <li>事实、分析、观点和不确定性明确分开。</li>
+            <li>证据不足时，不生成趋势或方向判断。</li>
+          </ul>
+        </article>
+
+        <article class="module notes-module" aria-labelledby="module-notes">
+          <header class="module-header">
+            <h2 id="module-notes"><span>09</span> / RELATED NOTES</h2>
+          </header>
+          <ul class="notes-list">
+            <li><span>PRODUCT</span><code>docs/PRODUCT.md</code></li>
+            <li><span>ARCHITECTURE</span><code>docs/ARCHITECTURE.md</code></li>
+            <li><span>SOURCES</span><code>docs/SOURCE_GUIDE.md</code></li>
+            <li><span>REGISTRY</span><code>config/sources.yaml</code></li>
+          </ul>
+        </article>
+
+        <article class="module activity-module" aria-labelledby="module-activity">
+          <header class="module-header">
+            <h2 id="module-activity"><span>10</span> / RECENT ACTIVITY</h2>
+            <a href="https://github.com/Tkkdy/Morning-Radar/commits" target="_blank" rel="noreferrer">
+              VIEW LOG
+              <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" /></svg>
+            </a>
+          </header>
+          <ol class="activity-list">
+            <li>
+              <time datetime="2026-08-17">2026-08-17</time>
+              <p>收紧 Radar 范围与 tendency formation 规则。</p>
+              <code>7e9137c</code>
+            </li>
+            <li>
+              <time datetime="2026-08-16">2026-08-16</time>
+              <p>加入 practitioner signals 与 tendency intelligence。</p>
+              <code>5515253</code>
+            </li>
+            <li>
+              <time datetime="2026-08-15">2026-08-15</time>
+              <p>生成当日 Morning Radar，并记录通知幂等状态。</p>
+              <code>7bdcb47</code>
+            </li>
+          </ol>
+        </article>
+      </section>
+
+      <nav class="project-pagination" aria-label="项目导航">
+        <span class="project-disabled"><span>PREV PROJECT</span><strong>—</strong></span>
+        <a href="../../projects-visual-exploration/final-homepage-v1.3/index.html#projects" class="grid-link">
+          <svg aria-hidden="true" viewBox="0 0 18 18"><rect x="2" y="2" width="5" height="5"/><rect x="11" y="2" width="5" height="5"/><rect x="2" y="11" width="5" height="5"/><rect x="11" y="11" width="5" height="5"/></svg>
+          ALL PROJECTS
+        </a>
+        <a href="../../projects-visual-exploration/final-homepage-v1.3/index.html#pet-title" class="next-link">
+          <span>NEXT PROJECT</span><strong>Girlfriend Desktop Pet</strong>
+          <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" /></svg>
+        </a>
+      </nav>
+    </main>
+
+    <dialog class="evidence-dialog" data-evidence-dialog aria-labelledby="evidence-dialog-title">
+      <div class="dialog-toolbar">
+        <div>
+          <strong id="evidence-dialog-title">DAILY BRIEF OUTPUT</strong>
+          <span>REAL CAPTURE · 2026-08-15</span>
+        </div>
+        <button type="button" data-close-evidence aria-label="关闭截图">CLOSE ×</button>
+      </div>
+      <img src="assets/morning-radar-2026-08-15.png" alt="Morning Radar 真实晨报完整截图" />
+    </dialog>
+  </body>
+</html>

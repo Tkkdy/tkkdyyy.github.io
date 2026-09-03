@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VDVXDV Articles 视觉原型：B Detail — Rational Personal Archive">
+    <link rel="icon" href="data:,">
+    <title>B Detail — Rational Personal Archive · VDVXDV</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav class="glass-header" aria-label="主导航">
+    <a href="#" class="brand">VDVXDV</a>
+    <a href="#">项目</a><a href="#">随笔</a><a href="#" class="active">文章</a>
+    <a href="#">碎片</a><a href="#">影像</a><a href="#">关于</a>
+    <a href="#" style="margin-left:auto;">搜索</a>
+</nav>
+<a class="exploration-back" href="../index.html">← Comparison Hub</a>
+<div id="view-b-detail" class="view-container dir-b">
+        <div class="container dir-b-detail">
+            
+            <div class="doc-header">
+                <h1 class="doc-title">上下文正在成为个人 AI 的真正界面</h1>
+                <table class="doc-meta-table">
+                    <tr>
+                        <td>ID / Slug</td>
+                        <td>context-as-the-true-interface</td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td>当模型长期理解一个人的项目、文件、偏好和决定时，它才开始跨越工具的属性，成为真正的能力延伸。模型会更新，但积累的上下文可以复用。</td>
+                    </tr>
+                    <tr>
+                        <td>Timestamps</td>
+                        <td>Published: 2026-08-05 &nbsp;&nbsp;|&nbsp;&nbsp; Updated: 2026-08-06</td>
+                    </tr>
+                    <tr>
+                        <td>Metadata</td>
+                        <td>Category: Tech_Thought &nbsp;&nbsp;|&nbsp;&nbsp; Tags: AI, 上下文, 个人助理 &nbsp;&nbsp;|&nbsp;&nbsp; Read Time: 12m</td>
+                    </tr>
+                </table>
+            </div>
+
+            <article class="prose">
+                <p>这是一个排版测试段落。在探讨个人与计算设备的交互历史时，我们通常将目光聚焦于图形用户界面（GUI）的演进。从早期的命令行，到视窗系统，再到触控时代，界面的核心目标始终是降低人机沟通的门槛。</p>
+                
+                <h2>1. 语境的持久化</h2>
+                <p>然而，大语言模型的出现正在改变这一范式。真正的智能并不完全来自于模型参数的绝对规模，而在于模型能够调用的<strong>上下文质量（Context Quality）</strong>。当你每天需要重新解释你的项目背景时，AI 只是一个高级打字机；但当它能够无缝读取你过去三个月的工作文档、代码库和思维碎片时，它才开始成为个人的数字分身。</p>
+
+                <blockquote>
+                    The true interface is not the chat window, but the shared memory space. <br>
+                    真正的界面不是对话框，而是共享的记忆空间。
+                </blockquote>
+
+                <h3>1.1 记忆的层次结构</h3>
+                <p>构建一个有效的个人上下文系统，通常需要以下几个层次的抽象：</p>
+                <ul>
+                    <li><strong>短期记忆 (Short-term context)</strong>: 当前正在编辑的文件、剪贴板内容、当前会话状态。</li>
+                    <li><strong>中期记忆 (Project context)</strong>: 正在进行的特定项目文档、需求列表、近期的讨论记录。</li>
+                    <li><strong>长期记忆 (Personal ontology)</strong>: 个人的写作风格、代码规范、价值观偏好、历史归档数据。</li>
+                </ul>
+
+                <p>要在系统中实现这种记忆的持久化，我们往往需要通过向量数据库或本地知识图谱来管理。以下是一段用于结构化存储 <code>Context</code> 接口的 TypeScript 示例：</p>
+
+                <pre><code>interface ContextBlock {
+  id: string;
+  content: string;
+  sourceUri: string;
+  timestamp: number;
+  embedding?: number[];
+  tags: string[];
+}
+
+class ContextManager {
+  private storage: LocalVectorDB;
+
+  async retrieveRelevant(query: string, limit: number = 5): Promise&lt;ContextBlock[]&gt; {
+    const queryVector = await embed(query);
+    return this.storage.search(queryVector, limit);
+  }
+}</code></pre>
+
+                <h2>2. 工具与助理的边界</h2>
+                <p>我们可以通过一张表格来清晰对比“传统 AI 工具”与“拥有上下文的个人助理”之间的本质区别：</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>特性</th>
+                            <th>传统 AI 工具</th>
+                            <th>上下文感知助理</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>交互起点</td>
+                            <td>每次都是“白板 (Blank slate)”</td>
+                            <td>基于历史状态的延续</td>
+                        </tr>
+                        <tr>
+                            <td>输入成本</td>
+                            <td>高 (需要编写大量 prompt)</td>
+                            <td>低 (仅需指令，背景已就绪)</td>
+                        </tr>
+                        <tr>
+                            <td>输出质量</td>
+                            <td>通用、标准化</td>
+                            <td>高度个性化、符合特定规范</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="media-placeholder">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                </div>
+                <p class="media-caption">Fig. 1 — Data Flow in Context Retrieval Architecture</p>
+
+                <p>最终，系统设计的美学应当退居幕后，让内容和智能的流动成为主体。这也是为什么我们在这个原型设计中，试图寻找一种既克制又精确的视觉语言。<em>让技术感来自秩序，让人文感来自痕迹。</em></p>
+
+                <hr>
+                <p style="font-family: var(--font-mono); text-align: center; font-size: 13px;">
+                    <a href="index.html">[ Return to Index ]</a>
+                </p>
+            </article>
+        </div>
+        <footer class="site-footer">EOF</footer>
+    </div>
+
+
+    <!-- ==========================================================================
+         DIRECTION C: Quiet Reading Room
+         ========================================================================== -->
+</body>
+</html>

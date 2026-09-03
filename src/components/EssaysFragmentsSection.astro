@@ -1,0 +1,74 @@
+---
+// 随笔与碎片：浅灰褐色块（#E5E0D8）。
+// 随笔与碎片内容来自 Content Collections（essays / fragments）；
+// 碎片区的两个待定槽位是无虚构内容的结构占位，保持硬编码。
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/content/homepage';
+
+interface Props {
+  essays: CollectionEntry<'essays'>[];
+  fragments: CollectionEntry<'fragments'>[];
+}
+
+const { essays, fragments } = Astro.props;
+// 各取排序后的第一条（当前首页各只有一条）
+const [essay] = essays;
+const [fragment] = fragments;
+---
+<section class="essays-fragments">
+  <div class="essays-fragments-inner">
+    <div class="essays-fragments-grid">
+      <!-- 左：随笔 -->
+      <div class="essays-col">
+        <div class="section-header essays-header">
+          <span>Essays</span>
+          <span>随笔</span>
+        </div>
+
+        <a class="essay-card group" href={`/essays/${essay.data.slug}/`}>
+          <div class="essay-media tilt-left tilt-transition">
+            <div class="css-placeholder scale-inner scale-transition">
+              <span>Atmosphere Photo</span>
+              <span class="ratio">4:3</span>
+            </div>
+          </div>
+          <h3 class="essay-title">{essay.data.title}</h3>
+          <p class="essay-summary">{essay.data.summary}</p>
+          <div class="essay-date">{formatDate(essay.data.publishedAt)}</div>
+        </a>
+      </div>
+
+      <!-- 右：碎片堆叠 -->
+      <div class="fragments-col">
+        <div class="section-header fragments-header">
+          <span>Fragments</span>
+          <span>碎片</span>
+        </div>
+
+        <div class="fragment-stack">
+          <!-- 真实碎片（body 为 Markdown 渲染内容；链接到碎片时间流） -->
+          <a class="fragment-item" href="/fragments/">
+            <div class="fragment-date">{formatDate(fragment.data.publishedAt)}</div>
+            <div class="fragment-text" set:html={fragment.body} />
+          </a>
+
+          <!-- 待定槽位 1 -->
+          <div class="fragment-slot" aria-hidden="true">
+            <div class="fragment-slot-label">Slot Pending</div>
+            <div class="fragment-skeleton">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <!-- 待定槽位 2（更弱一级） -->
+          <div class="fragment-slot deeper" aria-hidden="true">
+            <div class="fragment-slot-label">Slot Pending</div>
+            <div class="fragment-skeleton">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

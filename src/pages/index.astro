@@ -1,0 +1,55 @@
+---
+// VDVXDV 首页 — v0.2.6 工程化迁移（Stage 1）+ 内容数据化（Stage 2）
+// 布局与视觉以 v0.2.6 最终原型为 Source of Truth，不做重新设计。
+// 首页具体内容来自 Content Collections（Markdown），经 homepage.ts 查询层获取。
+// body.home 提供首页专属近白背景（v0.2.1 canvas #F7F5EF），不影响子页面。
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SeoHead from '../components/SeoHead.astro';
+import FeaturedSection from '../components/FeaturedSection.astro';
+import ProjectsSection from '../components/ProjectsSection.astro';
+import EssaysFragmentsSection from '../components/EssaysFragmentsSection.astro';
+import PhotographySection from '../components/PhotographySection.astro';
+
+import { getHomepageContent } from '../lib/content/homepage';
+
+import '../styles/tokens.css';
+import '../styles/global.css';
+import '../styles/home.css';
+
+const { articles, essays, fragments, images, projects } = await getHomepageContent();
+---
+
+<!doctype html>
+<html lang="zh-CN" data-pagefind-ignore>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <SeoHead title="VDVXDV" />
+
+    <!--
+      字体：与 v0.2.6 原型一致，临时沿用 Google Fonts 在线加载。
+      未下载或提交任何字体文件；后续如需自托管再另行决策。
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500&family=Noto+Serif+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="home">
+    <Header />
+    <main>
+      <!-- 空状态保护（CONTENT_MODEL §12）：对应 Collection 没有首页内容时隐藏区块而不是崩溃。
+           当前内容齐全时渲染结果与 v0.2.6 完全一致。 -->
+      {articles[0] && <FeaturedSection article={articles[0]} />}
+      {projects[0] && <ProjectsSection projects={projects} />}
+      {essays[0] && fragments[0] && (
+        <EssaysFragmentsSection essays={essays} fragments={fragments} />
+      )}
+      {images.length >= 3 && <PhotographySection images={images} />}
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,124 @@
+---
+// 404 页面 /404.html
+// 简洁：说明页面不存在、返回首页、少量主要栏目入口。零客户端 JS。
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SeoHead from '../components/SeoHead.astro';
+
+import '../styles/tokens.css';
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="zh-CN" data-pagefind-ignore>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <SeoHead title="404 — VDVXDV" noindex />
+
+    <!--
+      字体：与 v0.2.6 原型一致，临时沿用 Google Fonts 在线加载。
+      未下载或提交任何字体文件；后续如需自托管再另行决策。
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500&family=Noto+Serif+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <section class="notfound">
+        <div class="section-header notfound-header">
+          <span>404</span>
+          <span>页面不存在</span>
+        </div>
+
+        <p class="notfound-code" aria-hidden="true">404</p>
+        <p class="notfound-text">这个页面不存在，或者已经被移动。</p>
+
+        <a class="btn-outline notfound-home" href="/">返回首页</a>
+
+        <nav class="notfound-links" aria-label="主要栏目">
+          <a href="/projects/">项目</a>
+          <a href="/articles/">文章</a>
+          <a href="/images/">影像</a>
+        </nav>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  /* 404 页面专属样式（页面级 scoped style，保持最小） */
+  .notfound {
+    max-width: var(--max-width-content);
+    margin-inline: auto;
+    padding: 128px 24px 96px;
+  }
+
+  @media (min-width: 768px) {
+    .notfound {
+      padding: 192px 32px 128px;
+    }
+  }
+
+  .notfound-header {
+    max-width: 42rem;
+    margin-inline: auto;
+  }
+
+  .notfound-code {
+    max-width: 42rem;
+    margin: 48px auto 8px;
+    font-family: var(--font-serif);
+    font-size: 4rem;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+
+  .notfound-text {
+    max-width: 42rem;
+    margin: 0 auto 32px;
+    font-size: 15.5px;
+    line-height: 1.8;
+    color: var(--color-ink-soft);
+  }
+
+  .notfound-home {
+    max-width: 42rem;
+    margin-inline: auto;
+    display: inline-flex;
+  }
+
+  .notfound-links {
+    max-width: 42rem;
+    margin: 40px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .notfound-links a {
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 2px;
+    transition: color 150ms ease, border-color 150ms ease;
+  }
+
+  .notfound-links a:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+</style>

@@ -1,0 +1,175 @@
+---
+// 单张影像详情页 /images/[slug]
+// Viewing Room：主图是视觉中心，文字只提供安静记录；点击主图进入 lightbox。
+import ImageLayout from '../../layouts/ImageLayout.astro';
+import ImageFrame from '../../components/images/ImageFrame.astro';
+import {
+  getAdjacentImages,
+  getImageDisplayTitle,
+  getImageOrientation,
+  getPublishedImages,
+  imageFileExists,
+} from '../../lib/content/images';
+import { formatDate } from '../../lib/content/homepage';
+
+export async function getStaticPaths() {
+  const images = await getPublishedImages();
+  return images.map((image) => {
+    const { previous, next } = getAdjacentImages(images, image.data.slug);
+    return {
+      params: { slug: image.data.slug },
+      props: { image, previous, next },
+    };
+  });
+}
+
+const { image, previous, next } = Astro.props;
+const { data } = image;
+const orientation = getImageOrientation(data);
+const hasFile = imageFileExists(data.image);
+const displayTitle = getImageDisplayTitle(data);
+const pageDescription = data.caption ?? data.title ?? undefined;
+---
+
+<ImageLayout
+  title={`${displayTitle} — VDVXDV`}
+  description={pageDescription}
+  ogType="article"
+  bodyClass={`image-detail-body is-${orientation}`}
+>
+  <article class:list={['image-detail', `is-${orientation}`]}>
+    <a class="image-detail-back" href="/images/">← Images</a>
+
+    <div class="image-detail-stage">
+      <button
+        type="button"
+        class="image-open-viewer"
+        data-open-viewer
+        aria-haspopup="dialog"
+        aria-controls="image-viewer"
+        aria-label={`查看 ${displayTitle}`}
+      >
+        <ImageFrame
+          src={data.image}
+          alt={data.alt}
+          title={data.title}
+          orientation={orientation}
+          hasFile={hasFile}
+          loading="eager"
+          sizes="(min-width: 1100px) 920px, 94vw"
+        />
+        <span class="image-open-hint">View</span>
+      </button>
+    </div>
+
+    <div class="image-detail-record">
+      <header class="image-detail-header">
+        <h1 class="image-detail-title">{displayTitle}</h1>
+        {data.caption && data.caption !== data.title && (
+          <p class="image-detail-caption">{data.caption}</p>
+        )}
+      </header>
+
+      <dl class="image-detail-meta">
+        <div>
+          <dt>Published</dt>
+          <dd>
+            <time datetime={formatDate(data.publishedAt)}>{formatDate(data.publishedAt)}</time>
+          </dd>
+        </div>
+        {data.capturedAt && (
+          <div>
+            <dt>Captured</dt>
+            <dd>
+              <time datetime={formatDate(data.capturedAt)}>{formatDate(data.capturedAt)}</time>
+            </dd>
+          </div>
+        )}
+        {data.location && (
+          <div>
+            <dt>Location</dt>
+            <dd>{data.location}</dd>
+          </div>
+        )}
+        {data.series && (
+          <div>
+            <dt>Series</dt>
+            <dd>{data.series}</dd>
+          </div>
+        )}
+      </dl>
+    </div>
+
+    {(previous || next) && (
+      <nav class="image-detail-nav" aria-label="相邻影像">
+        {previous ? (
+          <a class="image-nav-link is-prev" href={`/images/${previous.data.slug}/`} >
+            <span>Previous</span>
+            <strong>{getImageDisplayTitle(previous.data)}</strong>
+          </a>
+        ) : (
+          <span class="image-nav-link is-prev is-disabled" aria-hidden="true"></span>
+        )}
+        {next ? (
+          <a class="image-nav-link is-next" href={`/images/${next.data.slug}/`} >
+            <span>Next</span>
+            <strong>{getImageDisplayTitle(next.data)}</strong>
+          </a>
+        ) : (
+          <span class="image-nav-link is-next is-disabled" aria-hidden="true"></span>
+        )}
+      </nav>
+    )}
+  </article>
+
+  <dialog class="image-viewer" id="image-viewer" data-image-viewer aria-labelledby="image-viewer-title">
+    <div class="image-viewer-toolbar">
+      <p id="image-viewer-title">{displayTitle}</p>
+      <button type="button" class="image-viewer-close" data-close-viewer aria-label="关闭查看">Close</button>
+    </div>
+    <div class="image-viewer-stage">
+      <ImageFrame
+        src={data.image}
+        alt={data.alt}
+        title={data.title}
+        orientation={orientation}
+        hasFile={hasFile}
+        loading="eager"
+        sizes="100vw"
+      />
+    </div>
+  </dialog>
+</ImageLayout>
+
+<script>
+  const openButton = document.querySelector('[data-open-viewer]');
+  const dialog = document.querySelector('[data-image-viewer]');
+  const closeButton = document.querySelector('[data-close-viewer]');
+
+  if (dialog instanceof HTMLDialogElement && openButton instanceof HTMLButtonElement) {
+    const closeViewer = () => dialog.close();
+
+    openButton.addEventListener('click', () => {
+      dialog.showModal();
+      document.body.style.overflow = 'hidden';
+    });
+
+    closeButton?.addEventListener('click', closeViewer);
+
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) closeViewer();
+    });
+
+    dialog.addEventListener('close', () => {
+      document.body.style.overflow = '';
+      openButton.focus();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && dialog.open) {
+        event.preventDefault();
+        closeViewer();
+      }
+    });
+  }
+</script>

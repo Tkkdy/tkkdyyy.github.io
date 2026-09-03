@@ -1,0 +1,43 @@
+---
+// 影像画框：真实文件按原比例显示；缺失时使用中性 placeholder，不生成 broken <img>。
+interface Props {
+  src: string;
+  alt: string;
+  title?: string;
+  orientation: 'landscape' | 'portrait' | 'square';
+  hasFile: boolean;
+  loading?: 'lazy' | 'eager';
+  sizes?: string;
+}
+
+const {
+  src,
+  alt,
+  title,
+  orientation,
+  hasFile,
+  loading = 'lazy',
+  sizes,
+} = Astro.props;
+
+const ratioLabel =
+  orientation === 'portrait' ? '3:4' : orientation === 'square' ? '1:1' : '4:3';
+---
+
+{
+  hasFile ? (
+    <img
+      src={src}
+      alt={alt}
+      loading={loading}
+      decoding="async"
+      sizes={sizes}
+    />
+  ) : (
+    <div class:list={['image-frame-placeholder', `is-${orientation}`]} aria-hidden="true">
+      <span>{title ?? 'Image'}</span>
+      <span class="image-frame-ratio">{ratioLabel}</span>
+    </div>
+  )
+}
+

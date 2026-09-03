@@ -1,0 +1,213 @@
+---
+// 搜索页 /search
+// Pagefind 静态搜索：索引来自 production build（astro build → pagefind index dist/）。
+// 本页面是网站第一个客户端 JS 功能；Pagefind JS 只在此页加载。
+// dev 模式无索引时优雅提示（用 npm run build && npm run preview 进行正式搜索 QA）。
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SeoHead from '../components/SeoHead.astro';
+
+import '../styles/tokens.css';
+import '../styles/global.css';
+import '../styles/search.css';
+---
+
+<!doctype html>
+<html lang="zh-CN" data-pagefind-ignore>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <SeoHead title="搜索 — VDVXDV" noindex />
+
+    <!--
+      字体：与 v0.2.6 原型一致，临时沿用 Google Fonts 在线加载。
+      未下载或提交任何字体文件；后续如需自托管再另行决策。
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500&family=Noto+Serif+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <section class="search-page">
+        <header class="search-page-header">
+          <div class="section-header">
+            <span>Search</span>
+            <span>搜索</span>
+          </div>
+          <h1 class="search-page-title">搜索</h1>
+        </header>
+
+        <form class="search-form" role="search" onsubmit="return false">
+          <label class="search-label" for="search-input">输入关键词</label>
+          <input
+            id="search-input"
+            class="search-input"
+            type="search"
+            placeholder="搜索文章、项目、随笔、碎片与影像…"
+            autocomplete="off"
+          />
+        </form>
+
+        <!-- aria-live：结果数量与状态变化对辅助技术播报 -->
+        <p id="search-status" class="search-status" aria-live="polite"></p>
+
+        <div id="search-results" class="search-results"></div>
+      </section>
+    </main>
+    <Footer />
+
+    <script>
+      // 仅本页面加载的 Pagefind 搜索逻辑（零第三方 UI 组件）。
+      // loader/search 与顶部导航 Search Mode 共用 src/lib/search/pagefind.ts。
+      import { search as pagefindSearch } from '../lib/search/pagefind';
+
+      const base = import.meta.env.BASE_URL;
+      const input = document.getElementById('search-input') as HTMLInputElement;
+      const statusEl = document.getElementById('search-status') as HTMLElement;
+      const resultsEl = document.getElementById('search-results') as HTMLElement;
+
+      let timer: ReturnType<typeof setTimeout> | null = null;
+
+      interface SearchResultData {
+        url: string;
+        title?: string;
+        meta?: { title?: string; type?: string };
+        excerpt?: string;
+      }
+
+      function renderInitial() {
+        statusEl.textContent = '';
+        resultsEl.innerHTML = '';
+        const hint = document.createElement('p');
+        hint.className = 'search-hint';
+        hint.textContent = '输入关键词开始搜索。可以搜索文章、项目、随笔、碎片与影像的文字信息。';
+        resultsEl.appendChild(hint);
+      }
+
+      function renderNoIndex() {
+        statusEl.textContent = '';
+        resultsEl.innerHTML = '';
+        const empty = document.createElement('div');
+        empty.className = 'search-empty';
+        empty.textContent =
+          '搜索索引尚未生成。请运行 npm run build 后使用 npm run preview 访问本页面。';
+        resultsEl.appendChild(empty);
+      }
+
+      function renderLoadError() {
+        statusEl.textContent = '';
+        resultsEl.innerHTML = '';
+        const empty = document.createElement('div');
+        empty.className = 'search-empty';
+        empty.textContent = '搜索加载失败，请刷新页面重试。';
+        resultsEl.appendChild(empty);
+      }
+
+      function renderEmpty(query: string) {
+        statusEl.textContent = `没有找到与「${query}」相关的内容`;
+        resultsEl.innerHTML = '';
+        const empty = document.createElement('div');
+        empty.className = 'search-empty';
+        empty.innerHTML = `没有找到与 <strong>「${query}」</strong> 相关的内容，试试其他关键词。`;
+        resultsEl.appendChild(empty);
+      }
+
+      function renderResults(query: string, results: SearchResultData[]) {
+        statusEl.textContent = `找到 ${results.length} 条与「${query}」相关的结果`;
+        resultsEl.innerHTML = '';
+
+        for (const result of results) {
+          const item = document.createElement('article');
+          item.className = 'search-result';
+
+          const title = document.createElement('a');
+          title.className = 'search-result-title';
+          title.href = result.url;
+          title.textContent = result.meta?.title || result.title || '';
+
+          const meta = document.createElement('div');
+          meta.className = 'search-result-meta';
+
+          if (result.meta?.type) {
+            const type = document.createElement('span');
+            type.className = 'search-result-type';
+            type.textContent = result.meta.type;
+            meta.appendChild(type);
+          }
+
+          const url = document.createElement('span');
+          url.className = 'search-result-url';
+          url.textContent = result.url;
+          meta.appendChild(url);
+
+          item.appendChild(title);
+          item.appendChild(meta);
+
+          if (result.excerpt) {
+            const excerpt = document.createElement('p');
+            excerpt.className = 'search-result-excerpt';
+            // Pagefind 生成的摘要 HTML（含 <mark> 高亮），来源为本站静态内容
+            excerpt.innerHTML = result.excerpt;
+            item.appendChild(excerpt);
+          }
+
+          resultsEl.appendChild(item);
+        }
+      }
+
+      async function runSearch() {
+        const query = input.value.trim();
+        if (!query) {
+          renderInitial();
+          return;
+        }
+        try {
+          const search = await pagefindSearch(query);
+          if (!search.results || search.results.length === 0) {
+            renderEmpty(query);
+            return;
+          }
+          const results = await Promise.all(
+            search.results.slice(0, 20).map((r: any) => r.data()),
+          );
+          renderResults(query, results);
+        } catch (err) {
+          // 区分真实原因：索引文件不存在（dev / 未 build）vs 加载或初始化失败。
+          console.error('[search] Pagefind 搜索失败:', err);
+          let hasIndex = false;
+          try {
+            const res = await fetch(`${base}pagefind/pagefind-entry.json`);
+            hasIndex = res.ok;
+          } catch {
+            hasIndex = false;
+          }
+          if (hasIndex) {
+            renderLoadError();
+          } else {
+            renderNoIndex();
+          }
+        }
+      }
+
+      input.addEventListener('input', () => {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(runSearch, 150);
+      });
+
+      // 支持 ?q= 直达搜索（导航 Search Mode 的"查看全部结果"链接用）
+      const params = new URLSearchParams(window.location.search);
+      const initialQuery = params.get('q');
+      if (initialQuery) {
+        input.value = initialQuery;
+        runSearch();
+      } else {
+        renderInitial();
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+---
+// 项目相关页面（列表 / 详情）的共享框架。
+// 模式与 ArticleLayout 一致：head（字体加载）+ Header + Footer。
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SeoHead from '../components/SeoHead.astro';
+
+import '../styles/tokens.css';
+import '../styles/global.css';
+import '../styles/projects.css';
+import '../styles/prose.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogType?: string;
+  bodyClass?: string;
+  showFooter?: boolean;
+}
+
+const { title, description, ogType, bodyClass, showFooter = true } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <SeoHead title={title} description={description} ogType={ogType} />
+
+    <!--
+      字体：与 v0.2.6 原型一致，临时沿用 Google Fonts 在线加载。
+      未下载或提交任何字体文件；后续如需自托管再另行决策。
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;450;500&family=Noto+Serif+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class={bodyClass}>
+    <Header />
+    <main data-pagefind-body>
+      <!-- Pagefind metadata：干净标题与内容类型 -->
+      <meta
+        name="pagefind-meta"
+        data-pagefind-meta={`title: ${title.replace(' — VDVXDV', '')}, type: 项目`}
+      />
+      <slot />
+    </main>
+    {showFooter && <Footer />}
+  </body>
+</html>

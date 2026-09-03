@@ -1,0 +1,99 @@
+- iframe [ref=f14e2087] [box=711,85,1150,811]:
+  - generic [ref=f22e1] [box=0,140,1135,2259]:
+    - navigation [ref=f22e2] [box=245,24,645,47]:
+      - link "VDVXDV" [ref=f22e3] [cursor=pointer] [box=270,37,60,21]:
+        - /url: "#"
+      - link "Projects" [ref=f22e4] [cursor=pointer] [box=362,37,55,21]:
+        - /url: "#"
+      - link "Essays" [ref=f22e5] [cursor=pointer] [box=440,37,47,21]:
+        - /url: "#"
+      - link "Articles" [ref=f22e6] [cursor=pointer] [box=511,37,51,21]:
+        - /url: "#"
+      - link "Fragments" [ref=f22e7] [cursor=pointer] [box=586,37,71,21]:
+        - /url: "#"
+      - link "Visuals" [ref=f22e8] [cursor=pointer] [box=681,37,48,21]:
+        - /url: "#"
+      - link "About" [ref=f22e9] [cursor=pointer] [box=754,37,40,21]:
+        - /url: "#"
+      - link "Search" [ref=f22e10] [cursor=pointer] [box=818,37,47,21]:
+        - /url: "#"
+    - generic [ref=f22e11] [box=900,742,211,45]:
+      - button "Articles List" [ref=f22e12] [cursor=pointer] [box=909,751,91,27]
+      - button "Article Detail" [ref=f22e13] [cursor=pointer] [box=1005,751,97,27]
+    - main [ref=f22e14] [box=18,140,1100,1961]:
+      - heading "Articles." [level=1] [ref=f22e15] [box=58,140,1020,66]
+      - separator [ref=f22e16] [box=58,230,1020,1]
+      - generic [ref=f22e17] [box=58,311,1020,1790]:
+        - generic [ref=f22e18] [cursor=pointer] [box=298,311,540,182]:
+          - generic [ref=f22e19] [box=518,311,98,21]: August 5, 2026
+          - heading "上下文正在成为个人 AI 的真正界面" [level=2] [ref=f22e20] [box=362,344,411,36]
+          - paragraph [ref=f22e21] [box=298,392,540,54]: 当模型长期理解一个人的项目、文件、偏好和决定时，它才开始跨越工具的属性，成为真正的能力延伸。模型会更新，但积累的上下文可以复用。
+          - generic [ref=f22e22] [box=428,470,278,23]:
+            - generic [ref=f22e23] [box=428,473,50,17]: NO. 042
+            - generic [ref=f22e24] [box=495,473,48,18]: 前沿科技
+            - generic [ref=f22e25] [box=559,470,148,23]:
+              - generic [ref=f22e26] [box=559,470,29,23]: AI
+              - generic [ref=f22e27] [box=593,470,59,23]: Context
+              - generic [ref=f22e28] [box=658,470,49,23]: Agent
+        - generic [ref=f22e29] [cursor=pointer] [box=208,573,720,218]:
+          - generic [ref=f22e30] [box=526,573,84,21]: July 12, 2026
+          - 'heading "Layout Sample: 探讨现代 Web 渲染架构与边缘计算的融合边界" [level=2] [ref=f22e31] [box=208,606,720,73]'
+          - paragraph [ref=f22e32] [box=298,691,540,54]: 解析从 SSR 到 Edge Rendering 的演进路径，以及在极致性能要求下，内容交付网络如何改变应用架构设计。无配图条件下的纯文本排列测试。
+          - generic [ref=f22e33] [box=383,769,370,23]:
+            - generic [ref=f22e34] [box=383,772,50,17]: NO. 041
+            - generic [ref=f22e35] [box=449,771,69,18]: Engineering
+            - generic [ref=f22e36] [box=533,769,219,23]:
+              - generic [ref=f22e37] [box=533,769,108,23]: Web Architecture
+              - generic [ref=f22e38] [box=648,769,105,23]: Edge Computing
+        - generic [ref=f22e39] [cursor=pointer] [box=238,871,659,182]:
+          - generic [ref=f22e40] [box=523,871,90,21]: June 28, 2026
+          - heading "A Brief History of Typography in Digital Interfaces" [level=2] [ref=f22e41] [box=238,904,659,36]
+          - paragraph [ref=f22e42] [box=297,953,540,54]: From pixel fonts to variable typefaces. How screen resolution shaped the way we read on digital devices over three decades of computing history.
+          - generic [ref=f22e43] [box=413,1031,309,23]:
+            - generic [ref=f22e44] [box=413,1034,50,17]: NO. 040
+            - generic [ref=f22e45] [box=479,1033,86,18]: Design_Theory
+            - generic [ref=f22e46] [box=581,1031,142,23]:
+              - generic [ref=f22e47] [box=581,1031,80,23]: Typography
+              - generic [ref=f22e48] [box=667,1031,55,23]: History
+        - generic [ref=f22e49] [cursor=pointer] [box=298,1133,540,182]:
+          - generic [ref=f22e50] [box=524,1133,86,21]: May 15, 2026
+          - heading "关于近期摄影与视觉碎片的阶段性整理" [level=2] [ref=f22e51] [box=344,1166,446,36]
+          - paragraph [ref=f22e52] [box=298,1214,540,54]: 不依赖算法推荐，建立个人的视觉索引系统。2026 上半年的街头观察与色彩记录，探讨在 AI 生成泛滥时代真实影像的物理质感。
+          - generic [ref=f22e53] [box=432,1292,272,23]:
+            - generic [ref=f22e54] [box=432,1295,50,17]: NO. 039
+            - generic [ref=f22e55] [box=498,1295,42,18]: Visuals
+            - generic [ref=f22e56] [box=555,1292,148,23]:
+              - generic [ref=f22e57] [box=555,1292,85,23]: Photography
+              - generic [ref=f22e58] [box=646,1292,57,23]: Archive
+        - generic [ref=f22e59] [cursor=pointer] [box=298,1395,540,182]:
+          - generic [ref=f22e60] [box=525,1395,85,21]: April 2, 2026
+          - heading "为什么我们需要更慢的阅读？" [level=2] [ref=f22e61] [box=397,1428,341,36]
+          - paragraph [ref=f22e62] [box=298,1476,540,54]: 在信息极度充裕的时代，刻意制造阅读的阻力，重建理解的深度。这不仅是信息获取策略，也是一种抵抗消解的心理防御机制。
+          - generic [ref=f22e63] [box=436,1554,264,23]:
+            - generic [ref=f22e64] [box=436,1557,50,17]: NO. 038
+            - generic [ref=f22e65] [box=502,1557,40,18]: Essays
+            - generic [ref=f22e66] [box=558,1554,141,23]:
+              - generic [ref=f22e67] [box=558,1554,60,23]: Reading
+              - generic [ref=f22e68] [box=624,1554,75,23]: Philosophy
+        - generic [ref=f22e69] [cursor=pointer] [box=298,1657,540,182]:
+          - generic [ref=f22e70] [box=508,1657,120,21]: February 18, 2026
+          - heading "The Architecture of Digital Gardens" [level=2] [ref=f22e71] [box=335,1690,465,36]
+          - paragraph [ref=f22e72] [box=298,1738,540,54]: Beyond blogs and streams. Building interconnected knowledge spaces that grow organically over time, prioritizing long-term retrieval over chronological sorting.
+          - generic [ref=f22e73] [box=429,1816,278,23]:
+            - generic [ref=f22e74] [box=429,1819,50,17]: NO. 037
+            - generic [ref=f22e75] [box=495,1818,81,18]: Tech_Thought
+            - generic [ref=f22e76] [box=592,1816,114,23]:
+              - generic [ref=f22e77] [box=592,1816,42,23]: PKM
+              - generic [ref=f22e78] [box=640,1816,66,23]: Structure
+        - generic [ref=f22e79] [cursor=pointer] [box=298,1919,540,182]:
+          - generic [ref=f22e80] [box=515,1919,104,21]: January 5, 2026
+          - heading "笔记系统的重构与长期记忆外包" [level=2] [ref=f22e81] [box=384,1952,368,36]
+          - paragraph [ref=f22e82] [box=298,2000,540,54]: 一次彻底的工具迁移记录：从严格的层级目录到无向标签图谱，再到如今依赖 AI 辅助的模糊语义检索。我们在多大程度上可以放弃组织，而相信搜索？
+          - generic [ref=f22e83] [box=441,2078,253,23]:
+            - generic [ref=f22e84] [box=441,2081,50,17]: NO. 036
+            - generic [ref=f22e85] [box=507,2080,31,18]: Tools
+            - generic [ref=f22e86] [box=554,2078,140,23]:
+              - generic [ref=f22e87] [box=554,2078,67,23]: Workflow
+              - generic [ref=f22e88] [box=627,2078,67,23]: Migration
+    - text: · ·
+    - contentinfo [ref=f22e89] [box=0,2261,1135,138]: © 2026 VDVXDV. Crafted with precise whitespace.

@@ -1,0 +1,48 @@
+---
+// 统一 SEO Head 组件（全站 <head> 内的 SEO metadata）。
+// 职责：title / description / canonical / Open Graph / Twitter Card / robots。
+// 不建立大型 SEO 框架；无 OG 图片素材时不出 og:image（部署前补）。
+
+import { SITE } from '../config';
+
+interface Props {
+  /** 页面标题（各页面自带，如 "文章 — VDVXDV"） */
+  title: string;
+  /** 页面描述；缺省用站点默认描述 */
+  description?: string;
+  /** noindex（搜索页 / 404 必须） */
+  noindex?: boolean;
+  /** Open Graph type；内容详情页可用 article */
+  ogType?: string;
+}
+
+const { title, description = SITE.description, noindex = false, ogType = 'website' } = Astro.props;
+
+// canonical：统一使用站点配置域名 + 当前路径（部署后只改 config.ts 一处）
+const canonical = new URL(Astro.url.pathname, SITE.url).toString();
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+<!-- RSS Discovery -->
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={SITE.name}
+  href="/rss.xml"
+/>
+
+<!-- Open Graph -->
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content={SITE.name} />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary" />
+
+{noindex && <meta name="robots" content="noindex" />}

@@ -1,0 +1,312 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { PROJECT_STATUS_LABELS } from '../../lib/content/projects';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+
+const { projects } = Astro.props;
+const projectBySlug = new Map(projects.map((project) => [project.data.slug, project]));
+
+const radar = projectBySlug.get('morning-radar');
+const pet = projectBySlug.get('girlfriend-desktop-pet');
+const website = projectBySlug.get('vdvxdv-personal-website');
+const codex = projectBySlug.get('codex-reconnect-proxy-fix');
+const consoleGames = projectBySlug.get('c-console-games');
+const esp32 = projectBySlug.get('esp32-led-experiments');
+
+const lifecycle = (project: CollectionEntry<'projects'>) =>
+  project.data.statusNote ?? PROJECT_STATUS_LABELS[project.data.projectStatus];
+
+const splitTitle = (name: string, marker: string) => {
+  const index = name.indexOf(marker);
+  return index < 0 ? [name, ''] : [name.slice(0, index), name.slice(index + 1)];
+};
+
+const radarTitle = radar ? splitTitle(radar.data.name, ' Radar') : ['', ''];
+const petTitle = pet ? splitTitle(pet.data.name, ' Desktop') : ['', ''];
+const websiteTitle = website ? splitTitle(website.data.name, ' Personal') : ['', ''];
+const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
+---
+
+<div class="projects-archive">
+  <section class="projects-masthead projects-page-grid" aria-labelledby="projects-page-title">
+    <div class="projects-masthead-kicker projects-mono">PROJECTS / SIGNAL ARCHIVE / 2026</div>
+    <div class="projects-masthead-copy">
+      <h1 id="projects-page-title">Work in progress.</h1>
+      <p>把真实输出、调试痕迹与未完成的边界放在同一张工作台上。每一行，按项目自己的证据生长。</p>
+    </div>
+    <p class="projects-masthead-thesis projects-mono" aria-hidden="true">
+      ONE ROW IS A STAGE.<br />EACH PROJECT DECIDES<br />WHAT HAPPENS THERE.
+    </p>
+    <div class="projects-intro-signal" aria-hidden="true">
+      <svg viewBox="0 0 480 210" role="presentation">
+        <g class="projects-signal-grid">
+          <path d="M16 28H464M16 76H464M16 124H464M16 172H464"></path>
+          <path d="M64 12V198M160 12V198M256 12V198M352 12V198M448 12V198"></path>
+        </g>
+        <g class="projects-signal-path">
+          <path d="M18 168C74 164 91 79 150 89S230 153 284 111 369 33 458 61"></path>
+          <path d="M18 182C87 180 111 129 164 135S250 177 306 146 380 90 458 104"></path>
+        </g>
+        <g class="projects-signal-nodes">
+          <circle cx="18" cy="168" r="3"></circle><circle cx="150" cy="89" r="4"></circle>
+          <circle cx="284" cy="111" r="3"></circle><circle cx="458" cy="61" r="5"></circle>
+          <circle cx="164" cy="135" r="2"></circle><circle cx="306" cy="146" r="3"></circle>
+        </g>
+      </svg>
+      <span class="projects-mono">SIGNAL FIELD / LIVE WORK / UNRESOLVED</span>
+    </div>
+  </section>
+
+  <div class="projects-stages" aria-label="项目档案">
+    {radar && (
+      <article class="projects-stage projects-radar-stage projects-page-grid" aria-labelledby="radar-title">
+        <div class="projects-stage-index projects-mono" aria-hidden="true">01 / CURRENT WORK</div>
+        <header class="projects-stage-meta">
+          <p class="projects-status projects-mono"><span class="projects-status-mark"></span>{lifecycle(radar)}</p>
+          <h2 id="radar-title"><a href={`/projects/${radar.data.slug}/`}>{radarTitle[0]}<br />{radarTitle[1]}</a></h2>
+          <p class="projects-stage-lede">{radar.data.tagline}</p>
+          {radar.data.highlights && (
+            <ul class="projects-supporting-points">
+              {radar.data.highlights.map((highlight) => <li>{highlight}</li>)}
+            </ul>
+          )}
+          {radar.data.techStack && <p class="projects-stack projects-mono">{radar.data.techStack.join(' · ')}</p>}
+          <ol class="projects-pipeline projects-mono" aria-label="真实处理流程">
+            <li>collect</li><li>dedupe</li><li>score</li><li>brief</li><li>static publish</li>
+          </ol>
+        </header>
+        <figure class="projects-radar-visual projects-evidence-frame">
+          <div class="projects-frame-label projects-mono"><span>REAL OUTPUT / 2026-08-15</span><span>CAPTURED</span></div>
+          <img src="/projects/morning-radar-2026-08-15.png" alt="Morning Radar 2026 年 8 月 15 日真实晨报首屏" width="1440" height="1000" />
+          <figcaption>当日晨报是主视觉；流程只作为来源轨迹，而不是指标面板。</figcaption>
+        </figure>
+      </article>
+    )}
+
+    {pet && (
+      <article class="projects-stage projects-pet-stage projects-page-grid" aria-labelledby="pet-title">
+        <div class="projects-stage-index projects-mono" aria-hidden="true">02 / INTERACTIVE ENTITY</div>
+        <header class="projects-stage-meta projects-pet-meta">
+          <p class="projects-status projects-mono">{lifecycle(pet)}</p>
+          <h2 id="pet-title"><a href={`/projects/${pet.data.slug}/`}>{petTitle[0]}<br />{petTitle[1]}</a></h2>
+          <p class="projects-stage-lede">{pet.data.tagline}</p>
+          {pet.data.highlights && <ul class="projects-supporting-points">{pet.data.highlights.map((highlight) => <li>{highlight}</li>)}</ul>}
+          {pet.data.techStack && <p class="projects-stack projects-mono">{pet.data.techStack.join(' · ')}</p>}
+        </header>
+
+        <div class="projects-pet-workbench" aria-label="桌宠状态工作台">
+          <div class="projects-pet-toolbar">
+            <span class="projects-mono">STATE RESPONSE</span>
+            <div class="projects-segmented" role="group" aria-label="选择桌宠状态">
+              <button type="button" class="is-active" data-pet-state="idle" aria-pressed="true">Idle</button>
+              <button type="button" data-pet-state="blink" aria-pressed="false">Blink</button>
+              <button type="button" data-pet-state="pat" aria-pressed="false">Pat</button>
+            </div>
+          </div>
+          <div class="projects-pet-canvas" tabindex="0" role="button" aria-label="切换桌宠状态；当前 Idle">
+            <img class="projects-pet-base is-visible" data-pet-image="idle" src="/projects/desktop-pet-idle.png" alt="桌宠 Idle 真实状态" width="1024" height="1536" />
+            <img class="projects-pet-base" data-pet-image="blink" src="/projects/desktop-pet-blink-closed.png" alt="桌宠闭眼真实状态" width="1024" height="1536" aria-hidden="true" />
+            <div class="projects-pet-pat-state" data-pet-image="pat" aria-hidden="true">
+              <img class="projects-pat-character" src="/projects/desktop-pet-idle.png" alt="" width="1024" height="1536" />
+              <img class="projects-pat-overlay projects-pat-hand" src="/projects/desktop-pet-pat-hand.png" alt="" width="1536" height="1024" />
+              <img class="projects-pat-overlay projects-pat-heart" src="/projects/desktop-pet-pat-heart.png" alt="" width="1536" height="1024" />
+            </div>
+            <span class="projects-state-readout projects-mono">STATE / <strong>IDLE</strong></span>
+          </div>
+        </div>
+
+        <aside class="projects-related-artifact" aria-labelledby="mini-her-title">
+          <div class="projects-artifact-heading projects-mono"><span>RELATED ARTIFACT</span><span>REAL / QA PASS</span></div>
+          <h3 id="mini-her-title">Mini Her</h3>
+          <p>九种 Agent 状态，57 帧经过校验。它是相邻的 sprite package，不是桌宠应用本身。</p>
+          <figure>
+            <img src="/projects/mini-her-contact-sheet.png" alt="Mini Her 九状态 57 帧真实 contact sheet" width="768" height="1134" loading="lazy" />
+            <figcaption class="projects-mono">9 STATES / 57 VERIFIED FRAMES</figcaption>
+          </figure>
+        </aside>
+      </article>
+    )}
+
+    {website && (
+      <article class="projects-stage projects-website-stage projects-page-grid" aria-labelledby="website-title">
+        <div class="projects-stage-index projects-mono" aria-hidden="true">03 / PUBLISHING SYSTEM</div>
+        <header class="projects-stage-meta projects-website-meta">
+          <p class="projects-status projects-mono">{lifecycle(website)}</p>
+          <h2 id="website-title"><a href={`/projects/${website.data.slug}/`}>{websiteTitle[0]}<br />{websiteTitle[1]}</a></h2>
+          <p class="projects-stage-lede">{website.data.tagline}</p>
+          {website.data.highlights && <ul class="projects-supporting-points">{website.data.highlights.map((highlight) => <li>{highlight}</li>)}</ul>}
+          {website.data.techStack && <p class="projects-stack projects-mono">{website.data.techStack.join(' · ')}</p>}
+          <div class="projects-viewport-tabs" role="group" aria-label="切换网站截图视口">
+            <button type="button" class="is-active" data-view="desktop" aria-pressed="true">Desktop</button>
+            <button type="button" data-view="mobile" aria-pressed="false">Mobile</button>
+          </div>
+        </header>
+        <div class="projects-viewport-stage" data-active-view="desktop">
+          <div class="projects-viewport-caption projects-mono"><span>LOCAL CAPTURE / PROCESS EVIDENCE</span><span class="projects-view-readout">1440 × 900</span></div>
+          <figure class="projects-desktop-capture is-active" data-capture="desktop"><img src="/projects/vdvxdv-home-desktop.png" alt="VDVXDV 网站桌面端本地截图" width="1440" height="900" loading="lazy" /></figure>
+          <figure class="projects-mobile-capture" data-capture="mobile"><img src="/projects/vdvxdv-home-mobile.png" alt="VDVXDV 网站移动端本地截图" width="390" height="844" loading="lazy" /></figure>
+          <div class="projects-process-rail projects-mono" aria-label="项目过程阶段"><span>PRODUCT</span><i></i><span>CONTENT MODEL</span><i></i><span>VISUAL QA</span><i></i><span>LOCAL BUILD</span></div>
+        </div>
+      </article>
+    )}
+
+    {codex && (
+      <article class="projects-stage projects-codex-stage projects-page-grid" aria-labelledby="codex-title">
+        <div class="projects-stage-index projects-mono" aria-hidden="true">04 / SAFETY NOTE</div>
+        <header class="projects-stage-meta">
+          <p class="projects-status projects-mono">{lifecycle(codex)}</p>
+          <h2 id="codex-title"><a href={`/projects/${codex.data.slug}/`}>{codexTitle[0]}<br />{codexTitle[1]}</a></h2>
+          <p class="projects-stage-lede">{codex.data.tagline}</p>
+          {codex.data.highlights && <ul class="projects-supporting-points">{codex.data.highlights.map((highlight) => <li>{highlight}</li>)}</ul>}
+          {codex.data.techStack && <p class="projects-stack projects-mono">{codex.data.techStack.join(' · ')}</p>}
+        </header>
+        <div class="projects-flip-shell" id="codex-flip" tabindex="0" role="button" aria-pressed="false" aria-label="翻转查看脱敏诊断路径">
+          <div class="projects-flip-inner">
+            <section class="projects-flip-face projects-flip-front" aria-label="诊断路径正面">
+              <span class="projects-flip-instruction projects-mono">FLIP / ENTER / SPACE</span>
+              <ol class="projects-decision-line projects-mono"><li>READ-ONLY INSPECT</li><li>BOUNDED PROPOSAL</li><li>USER APPROVAL</li><li>SCOPED CHANGE</li><li>RECONNECT VERIFY</li></ol>
+              <p>写入成功不等于修复成功。只有用户完成重启并验证新对话后，结果才成立。</p>
+            </section>
+            <section class="projects-flip-face projects-flip-back projects-mono" aria-label="脱敏诊断路径反面">
+              <span class="projects-trace-title">SANITIZED DECISION TRACE / VALUES HIDDEN</span>
+              <ol>
+                <li><b>CHECK</b> relevant configuration — values withheld</li>
+                <li><b>PREVIEW</b> exact, scoped proposal and rollback</li>
+                <li><b>WAIT</b> for explicit user approval</li>
+                <li><b>APPLY</b> only the approved change</li>
+                <li><b>VERIFY</b> restart and reconnect in a new conversation</li>
+                <li><b>ROLLBACK</b> if verification fails</li>
+              </ol>
+            </section>
+          </div>
+        </div>
+      </article>
+    )}
+
+    {(consoleGames || esp32) && (
+      <section class="projects-small-works projects-page-grid" aria-labelledby="small-title">
+        <div class="projects-stage-index projects-mono" aria-hidden="true">05–06 / SMALL WORKS</div>
+        <header class="projects-small-heading">
+          <p class="projects-status projects-mono">FOUNDATIONS / LEARNING OUTPUTS</p>
+          <h2 id="small-title">Smaller work,<br />different evidence.</h2>
+        </header>
+        {consoleGames && (
+          <article class="projects-console-project" aria-labelledby="console-title">
+            <div class="projects-console-copy">
+              <p class="projects-overline projects-mono">C CONSOLE GAMES / COMPLETED OUTPUTS</p>
+              <h3 id="console-title"><a href={`/projects/${consoleGames.data.slug}/`}>Tetris leads the series.</a></h3>
+              <p>{consoleGames.data.description}</p>
+              <p class="projects-game-list projects-mono">TETRIS · SNAKE · 2048 · TIC-TAC-TOE · GUESS NUMBER</p>
+            </div>
+            <div class="projects-terminal-reconstruction" aria-label="根据已验证功能重构的 Tetris 终端示意，不是真实运行截图">
+              <span class="projects-prototype-flag projects-mono">PROTOTYPE-ONLY / RECONSTRUCTED</span>
+              <pre aria-hidden="true">TETRIS.C / WINDOWS CONSOLE
+
+SCORE  012400     LEVEL  04
+LINES  0032       NEXT   T
+
+┌────────────────────┐
+│                    │
+│        ▒▒          │
+│      ▒▒▒▒          │
+│        ░░          │
+│  ██  ░░░░    ████  │
+│██████████  ████████│
+└────────────────────┘
+
+← → MOVE   ↑ ROTATE   SPACE DROP</pre>
+            </div>
+          </article>
+        )}
+        {esp32 && (
+          <article class="projects-esp-trace" aria-labelledby="esp-title">
+            <div class="projects-esp-label">
+              <p class="projects-overline projects-mono">HARDWARE TRACE / NO PHOTO</p>
+              <h3 id="esp-title"><a href={`/projects/${esp32.data.slug}/`}>{esp32.data.name}</a></h3>
+              <p>只记录源文件中确实存在的三个行为。</p>
+            </div>
+            <ol class="projects-signal-strip projects-mono">
+              <li><span>GPIO</span><b>25 / OUTPUT</b></li><li><span>DIGITAL</span><b>HIGH ↔ LOW / 1000ms</b></li><li><span>SERIAL</span><b>115200 / ON · OFF STATUS</b></li><li><span>BREATH</span><b>analogWrite / 0…255…0 / 15ms</b></li>
+            </ol>
+          </article>
+        )}
+      </section>
+    )}
+  </div>
+
+  <footer class="projects-cli-ending projects-mono" aria-label="项目索引结束命令">
+    <span class="projects-cli-path">~/vdvxdv/projects</span><span class="projects-cli-prompt">&gt;</span><span class="projects-cli-command">build --continue</span><i class="projects-quiet-cursor" aria-hidden="true"></i>
+  </footer>
+</div>
+
+<script>
+  const archive = document.querySelector('.projects-archive');
+  if (archive) {
+    const petStates = ['idle', 'blink', 'pat'];
+    let petIndex = 0;
+    const petCanvas = archive.querySelector<HTMLElement>('.projects-pet-canvas');
+    const petButtons = [...archive.querySelectorAll<HTMLButtonElement>('[data-pet-state]')];
+    const petImages = [...archive.querySelectorAll<HTMLElement>('[data-pet-image]')];
+    const petReadout = archive.querySelector<HTMLElement>('.projects-state-readout strong');
+    function setPetState(state: string) {
+      petIndex = petStates.indexOf(state);
+      petButtons.forEach((button) => {
+        const active = button.dataset.petState === state;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+      petImages.forEach((image) => {
+        const active = image.dataset.petImage === state;
+        image.classList.toggle('is-visible', active);
+        image.setAttribute('aria-hidden', String(!active));
+      });
+      if (petReadout) petReadout.textContent = state.toUpperCase();
+      petCanvas?.setAttribute('aria-label', `切换桌宠状态；当前 ${state}`);
+    }
+    petButtons.forEach((button) => button.addEventListener('click', () => setPetState(button.dataset.petState ?? 'idle')));
+    petCanvas?.addEventListener('click', () => setPetState(petStates[(petIndex + 1) % petStates.length]));
+    petCanvas?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        setPetState(petStates[(petIndex + 1) % petStates.length]);
+      }
+    });
+
+    const viewportStage = archive.querySelector<HTMLElement>('.projects-viewport-stage');
+    const viewportButtons = [...archive.querySelectorAll<HTMLButtonElement>('[data-view]')];
+    const viewReadout = archive.querySelector<HTMLElement>('.projects-view-readout');
+    viewportButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const view = button.dataset.view ?? 'desktop';
+        if (viewportStage) viewportStage.dataset.activeView = view;
+        viewportButtons.forEach((item) => {
+          const active = item === button;
+          item.classList.toggle('is-active', active);
+          item.setAttribute('aria-pressed', String(active));
+        });
+        if (viewReadout) viewReadout.textContent = view === 'desktop' ? '1440 × 900' : '390 × 844';
+      });
+    });
+
+    const flip = archive.querySelector<HTMLElement>('#codex-flip');
+    function toggleFlip() {
+      if (!flip) return;
+      const flipped = flip.classList.toggle('is-flipped');
+      flip.setAttribute('aria-pressed', String(flipped));
+    }
+    flip?.addEventListener('click', toggleFlip);
+    flip?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        toggleFlip();
+      }
+    });
+    flip?.addEventListener('pointerenter', (event) => {
+      if (event.pointerType !== 'touch') flip.classList.add('is-hovered');
+    });
+    flip?.addEventListener('pointerleave', () => flip.classList.remove('is-hovered'));
+  }
+</script>

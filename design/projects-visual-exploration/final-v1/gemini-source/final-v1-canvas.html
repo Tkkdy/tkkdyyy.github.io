@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDVXDV Projects Archive</title>
+    <style>
+        /* Base Variables & Theme */
+        :root {
+            --bg: #F8F9F9;
+            --ink: #191918;
+            --body: #4A4A47;
+            --muted: #74746F;
+            --ruby: #7A3F46;
+            --charcoal: #1C1C1B;
+            --warm-white: #F4F4F2;
+            
+            /* Distinct subtle surface tones */
+            --surface-1: #F1F3F4;
+            --surface-2: #F3F2F4;
+            --surface-3: #F9F8F6;
+            --surface-4: #F0F3F1;
+            --surface-5: #FCFCFB;
+            --surface-6: #F2F2F2;
+            
+            --border-subtle: #E8E8E6;
+            
+            /* Typography */
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        /* Global Reset */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--ink);
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.6;
+            padding-bottom: 8rem;
+            min-height: 100vh;
+        }
+
+        ::selection {
+            background-color: var(--ruby);
+            color: #FFF;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul, li { list-style: none; }
+        
+        /* Typography Utilities */
+        .font-serif { font-family: var(--font-serif); }
+        .font-mono { font-family: var(--font-mono); }
+        .text-ink { color: var(--ink); }
+        .text-body { color: var(--body); }
+        .text-muted { color: var(--muted); }
+        
+        /* Header Navigation */
+        .site-header {
+            position: fixed;
+            top: 1.5rem;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: center;
+            padding: 0 1rem;
+            pointer-events: none;
+        }
+        
+        .nav-pill {
+            pointer-events: auto;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: -0.025em;
+            padding: 0.625rem 1.25rem;
+            border-radius: 9999px; /* Only notably rounded object */
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-brand { font-weight: 600; color: var(--ink); }
+        .nav-divider { width: 1px; height: 0.75rem; background-color: #D1D5DB; }
+        .nav-link { color: var(--muted); transition: color 0.2s; }
+        .nav-link:hover { color: var(--ink); }
+        .nav-link.active { color: var(--ink); }
+        
+        /* Mobile Nav Hide */
+        .nav-link.desktop-only { display: none; }
+        @media (min-width: 640px) {
+            .nav-pill { gap: 1.5rem; }
+            .nav-link.desktop-only { display: inline; }
+        }
+
+        /* Layout Structure */
+        .main-container {
+            max-width: 64rem;
+            margin: 0 auto;
+            padding: 8rem 1.25rem 0;
+        }
+        @media (min-width: 640px) { .main-container { padding: 12rem 2rem 0; } }
+
+        /* Intro Section */
+        .intro-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 3rem;
+            margin-bottom: 6rem;
+        }
+        @media (min-width: 768px) {
+            .intro-section {
+                flex-direction: row;
+                align-items: center;
+                margin-bottom: 8rem;
+            }
+        }
+        
+        .intro-content { max-width: 28rem; }
+        .intro-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        .intro-title {
+            font-size: 1.875rem;
+            letter-spacing: -0.025em;
+            margin-bottom: 1rem;
+        }
+        @media (min-width: 640px) { .intro-title { font-size: 2.25rem; } }
+        
+        .intro-visual-container {
+            display: none;
+            flex-shrink: 0;
+            position: relative;
+            width: 12rem;
+            height: 12rem;
+        }
+        @media (min-width: 640px) { .intro-visual-container { display: flex; } }
+        
+        /* Projects Archive Grid - Controlled Irregularity */
+        .projects-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 4rem;
+            position: relative;
+        }
+        @media (min-width: 768px) { .projects-layout { gap: 5rem; } }
+
+        .project-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4rem;
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .project-row {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 2rem;
+            }
+        }
+
+        /* 3D Flip System */
+        .perspective-1000 { perspective: 1000px; }
+        
+        .project-container {
+            cursor: pointer;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .project-container:focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 4px;
+        }
+
+        .project-surface {
+            width: 100%;
+            transition: transform 540ms cubic-bezier(0.4, 0.0, 0.2, 1);
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        
+        /* Subtle hover preview hint */
+        @media (hover: hover) and (pointer: fine) {
+            .project-container:hover:not(.flipped) .project-surface {
+                transform: rotateY(180deg);
+            }
+        }
+
+        .project-container.flipped .project-surface { transform: rotateY(180deg); }
+
+        /* Grid stacking strategy */
+        .stack-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr;
+        }
+        .stack-grid > * {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+        }
+
+        .face {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 2px; /* Rectangular-first rule */
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        @media (min-width: 640px) { .face { padding: 2rem; } }
+
+        .face.front { border: 1px solid var(--border-subtle); position: relative; overflow: hidden; }
+        .face.back {
+            transform: rotateY(180deg);
+            background-color: var(--charcoal);
+            color: var(--warm-white);
+        }
+
+        /* Typography & Layout inside faces */
+        .project-num {
+            display: block;
+            font-size: 0.625rem;
+            font-family: var(--font-mono);
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+        .back .project-num { color: #70706C; margin-bottom: 1rem; }
+        
+        .project-name { font-size: 1.25rem; margin-bottom: 0.5rem; line-height: 1.3; }
+        @media (min-width: 640px) { .project-name { font-size: 1.5rem; } }
+        
+        .project-desc { font-size: 0.875rem; max-width: 20rem; }
+        
+        .back-name { font-size: 1.125rem; margin-bottom: 1rem; }
+        .back-desc { font-size: 0.75rem; color: #D4D4D2; margin-bottom: 2rem; max-width: 28rem; }
+        
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            font-size: 0.625rem;
+            font-family: var(--font-mono);
+            color: #A8A8A2;
+        }
+        .meta-label { display: block; color: #70706C; margin-bottom: 0.25rem; }
+        .safe-link { color: var(--warm-white); border-bottom: 1px solid #70706C; padding-bottom: 1px; }
+
+        /* Project-Specific Asymmetry & Anatomy (Direction C) */
+        
+        /* P01: Large Featured */
+        .p01 { width: 100%; }
+        .p01 .front { background-color: var(--surface-1); border-top: 2px solid #6B8594; min-height: 300px; }
+        @media (min-width: 768px) { .p01 { width: 85%; align-self: flex-start; } }
+        
+        /* P02: Mid-size offset */
+        .p02 { width: 100%; z-index: 10; }
+        .p02 .front { background-color: var(--surface-2); border-left: 3px solid #8B8598; min-height: 260px; }
+        @media (min-width: 768px) { .p02 { width: 65%; align-self: flex-end; margin-top: -6rem; } }
+        
+        /* P03: Typography Heavy */
+        .p03 { width: 100%; }
+        .p03 .front { background-color: var(--surface-3); border-bottom: 4px solid #C9B9A5; min-height: 340px; }
+        .p03 .project-name { font-size: 1.5rem; margin-bottom: 1.5rem; max-width: 90%; }
+        @media (min-width: 640px) { .p03 .project-name { font-size: 1.75rem; } }
+        @media (min-width: 768px) { .p03 { width: 70%; align-self: flex-start; margin-left: 3rem; } }
+
+        /* P04: Horizontal Surface */
+        .p04 { width: 100%; }
+        .p04 .face { min-height: 160px; flex-direction: column; gap: 1.5rem; }
+        .p04 .front { background-color: var(--surface-4); border-top: 2px solid #8B9891; }
+        @media (min-width: 640px) {
+            .p04 .face { flex-direction: row; align-items: center; justify-content: space-between; }
+            .p04 .project-num { margin-bottom: 0.75rem; }
+        }
+
+        /* P05: Half-width Code Focus */
+        .p05 { width: 100%; }
+        .p05 .front { background-color: var(--surface-5); min-height: 280px; }
+        .code-fragment {
+            margin-top: 2rem;
+            background: #F4F4F2;
+            border: 1px solid #E5E5E3;
+            padding: 1rem;
+            border-radius: 2px;
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            color: var(--muted);
+        }
+        @media (min-width: 640px) { .code-fragment { font-size: 0.75rem; } }
+        @media (min-width: 768px) { .p05 { width: 48%; } }
+
+        /* P06: Half-width Offset */
+        .p06 { width: 100%; }
+        .p06 .front { background-color: var(--surface-6); border-left: 3px solid #A5A5A5; min-height: 280px; }
+        @media (min-width: 768px) { .p06 { width: 45%; margin-top: 6rem; } }
+
+        /* Reduced Motion Fallback */
+        @media (prefers-reduced-motion: reduce) {
+            .project-surface { transition: opacity 0.3s ease; transform: none !important; }
+            .project-container .project-surface > .back { opacity: 0; transform: none; z-index: -1; }
+            .project-container.flipped .project-surface > .front { opacity: 0; pointer-events: none; }
+            .project-container.flipped .project-surface > .back { opacity: 1; z-index: 10; pointer-events: auto; }
+        }
+
+        /* Footer */
+        .site-footer {
+            margin-top: 10rem;
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+        .footer-text {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            color: var(--ink);
+            letter-spacing: -0.025em;
+        }
+        @media (min-width: 640px) { .footer-text { font-size: 1.5rem; } }
+        
+        /* SVG Utility Classes */
+        .svg-faint { opacity: 0.15; stroke: var(--muted); fill: none; }
+        .svg-ruby { fill: var(--ruby); opacity: 0.7; }
+        .signal-arc { position: absolute; bottom: 0; right: 0; width: 60%; height: 100%; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <nav class="nav-pill">
+            <span class="nav-brand">VDVXDV</span>
+            <span class="nav-divider"></span>
+            <a href="#" class="nav-link active">项目</a>
+            <a href="#" class="nav-link">随笔</a>
+            <a href="#" class="nav-link desktop-only">文章</a>
+            <a href="#" class="nav-link desktop-only">碎片</a>
+            <a href="#" class="nav-link desktop-only">影像</a>
+            <a href="#" class="nav-link desktop-only">关于</a>
+            <a href="#" class="nav-link">搜索</a>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        
+        <section class="intro-section">
+            <div class="intro-content">
+                <div class="intro-label">
+                    <svg width="8" height="8" viewBox="0 0 10 10" style="fill:var(--ink);"><polygon points="5,0 10,10 0,10"/></svg>
+                    PROJECTS ARCHIVE
+                </div>
+                <h1 class="intro-title font-serif text-ink">Digital artifacts.</h1>
+                <p class="text-body">
+                    这里记录我正在做、做过，以及持续变化中的系统、实验与数字物件。
+                </p>
+            </div>
+            
+            <div class="intro-visual-container" aria-hidden="true">
+                <!-- Restrained technical visual: faint grid, circle, point -->
+                <svg viewBox="0 0 200 200" width="100%" height="100%">
+                    <defs>
+                        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <circle cx="2" cy="2" r="1" style="fill:var(--muted); opacity:0.15;"/>
+                        </pattern>
+                    </defs>
+                    <rect width="200" height="200" fill="url(#grid)" />
+                    <circle cx="100" cy="100" r="60" class="svg-faint" stroke-width="0.75" />
+                    <circle cx="142" cy="58" r="3.5" class="svg-ruby" />
+                    <line x1="100" y1="40" x2="100" y2="160" class="svg-faint" stroke-width="0.75" stroke-dasharray="3 4" />
+                </svg>
+            </div>
+        </section>
+
+        <div class="projects-layout">
+            
+            <!-- 01: Morning Radar -->
+            <article class="project-container perspective-1000 p01" role="button" aria-pressed="false" tabindex="0">
+                <div class="project-surface stack-grid">
+                    <div class="face front">
+                        <div class="signal-arc">
+                            <!-- Extremely restrained tech density: one single hairline arc -->
+                            <svg viewBox="0 0 100 100" preserveAspectRatio="none" width="100%" height="100%">
+                                <path d="M100,100 Q40,50 -10,110" stroke="var(--muted)" stroke-width="0.3" fill="none" opacity="0.4"/>
+                            </svg>
+                        </div>
+                        <div style="position:relative; z-index:10;">
+                            <span class="project-num">01 &mdash; CURRENT WORK</span>
+                            <h2 class="project-name font-serif text-ink">Morning Radar</h2>
+                            <p class="project-desc text-body">为个人筛选每天真正值得关注的变化。</p>
+                        </div>
+                        <div style="position:relative; z-index:10; margin-top:4rem; font-family:var(--font-mono); font-size:0.625rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">
+                            Status: Developing
+                        </div>
+                    </div>
+                    <div class="face back">
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <h2 class="back-name font-serif">Morning Radar</h2>
+                                <span class="project-num" style="margin:0;">01</span>
+                            </div>
+                            <p class="back-desc">
+                                一个自动收集、筛选和整理过去二十四小时重要信息的个人晨报系统。将碎片化的信息流转化为高质量、可阅读的结构化上下文。
+                            </p>
+                            <div class="meta-grid">
+                                <div>
+                                    <span class="meta-label">Status</span>
+                                    <span>Developing &middot; 开发中</span>
+                                </div>
+                                <div>
+                                    <span class="meta-label">Tech</span>
+                                    <span>Python / LLM</span>
+                                </div>
+                                <div>
+                                    <span class="meta-label">Updated</span>
+                                    <span>2026-08-05</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 02: Repository Atlas -->
+            <article class="project-container perspective-1000 p02" role="button" aria-pressed="false" tabindex="0">
+                <div class="project-surface stack-grid">
+                    <div class="face front">
+                        <div>
+                            <span class="project-num">02</span>
+                            <h2 class="project-name font-serif text-ink">Repository Atlas</h2>
+                            <p class="project-desc text-body">让陌生代码库更快形成可验证的理解。</p>
+                        </div>
+                        <div style="font-family:var(--font-mono); font-size:0.625rem; color:var(--muted); margin-top:2rem;">
+                            维护中 &middot; 2026-07-28
+                        </div>
+                        <!-- Minimal punctuation -->
+                        <div style="position:absolute; bottom:1.5rem; right:1.5rem; opacity:0.2; pointer-events:none;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="1">
+                                <circle cx="12" cy="6" r="1.5"/><circle cx="6" cy="18" r="1.5"/><circle cx="18" cy="18" r="1.5"/>
+                                <path d="M12 7.5 L6 16.5 M12 7.5 L18 16.5" stroke-dasharray="2 2"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="face back">
+                        <div>
+                            <h2 class="back-name font-serif">Repository Atlas</h2>
+                            <p class="back-desc">
+                                通过静态分析与符号索引，为复杂的开源仓库生成一份结构化阅读地图，帮助个人在陌生技术栈中快速建立可验证的上下文。
+                            </p>
+                            <div class="meta-grid" style="display:flex; flex-direction:column; gap:0.5rem;">
+                                <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Status</span>维护中</div>
+                                <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Tech</span>TypeScript / AST / Search</div>
+                                <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Updated</span>2026-07-28</div>
+                                <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Link</span><span class="safe-link">GitHub &nearr;</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 03: 上下文编排实验 -->
+            <article class="project-container perspective-1000 p03" role="button" aria-pressed="false" tabindex="0">
+                <div class="project-surface stack-grid">
+                    <div class="face front">
+                        <div>
+                            <span class="project-num">03</span>
+                            <h2 class="project-name font-serif text-ink">一套面向长期个人知识工作的上下文编排实验</h2>
+                            <p class="project-desc text-body">让资料、决定与行动保持连续。</p>
+                        </div>
+                        <div style="font-family:var(--font-mono); font-size:0.625rem; color:var(--muted); text-align:right; margin-top:1.5rem;">
+                            构思中 &middot; 2026-06-12
+                        </div>
+                    </div>
+                    <div class="face back">
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <h2 class="back-name font-serif" style="font-size:1.05rem; line-height:1.4;">一套面向长期个人知识工作的上下文编排实验</h2>
+                                <span class="project-num" style="margin:0; flex-shrink:0; margin-left:1rem;">03</span>
+                            </div>
+                            <p class="back-desc" style="max-width:32rem; margin-top:1rem;">
+                                探索在长期研究中，如何把材料、思考快照和执行步骤缝合在同一语境中，减少时间跨度带来的认知损耗。
+                            </p>
+                            <div class="meta-grid">
+                                <div><span class="meta-label">Status</span>构思中</div>
+                                <div><span class="meta-label">Tech</span>无 Tech 依赖</div>
+                                <div><span class="meta-label">Updated</span>2026-06-12</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 04: Quiet Relay -->
+            <article class="project-container perspective-1000 p04" role="button" aria-pressed="false" tabindex="0">
+                <div class="project-surface stack-grid">
+                    <div class="face front">
+                        <div>
+                            <span class="project-num">04</span>
+                            <h2 class="project-name font-serif text-ink" style="font-size:1.25rem;">Quiet Relay</h2>
+                            <p class="project-desc text-body">在低干扰条件下转发真正需要处理的变化。</p>
+                        </div>
+                        <div style="display:flex; flex-direction:column; align-items:flex-start; gap:0.75rem;">
+                            <div style="display:flex; gap:0.25rem; opacity:0.3;">
+                                <span style="width:4px; height:4px; border-radius:50%; background:var(--ink);"></span>
+                                <span style="width:4px; height:4px; border-radius:50%; border:1px solid var(--ink);"></span>
+                                <span style="width:4px; height:4px; border-radius:50%; border:1px solid var(--ink);"></span>
+                            </div>
+                            <div style="font-family:var(--font-mono); font-size:0.625rem; color:var(--muted);">
+                                可使用 &middot; 2026-05-30
+                            </div>
+                        </div>
+                    </div>
+                    <div class="face back">
+                        <div style="max-width:24rem;">
+                            <h2 class="back-name font-serif" style="margin-bottom:0.5rem;">Quiet Relay</h2>
+                            <p class="back-desc" style="margin-bottom:0;">
+                                一个轻量级消息路由实验，用规则过滤无效通知，只在设定窗口交付真正需要处理的核心信号。
+                            </p>
+                        </div>
+                        <div class="meta-grid" style="display:flex; flex-wrap:wrap; gap:1rem; text-align:left;">
+                            <div>Status: 可使用</div>
+                            <div>Tech: Python / Webhook</div>
+                            <div>Updated: 2026-05-30</div>
+                            <div>Link: <span class="safe-link">Live &nearr;</span></div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <div class="project-row">
+                
+                <!-- 05: Local Index -->
+                <article class="project-container perspective-1000 p05" role="button" aria-pressed="false" tabindex="0">
+                    <div class="project-surface stack-grid">
+                        <div class="face front">
+                            <div>
+                                <span class="project-num">05</span>
+                                <h2 class="project-name font-serif text-ink">Local Index</h2>
+                                <p class="project-desc text-body">离线整理散落在设备中的个人文本线索。</p>
+                            </div>
+                            <div>
+                                <div style="font-family:var(--font-mono); font-size:0.625rem; color:var(--muted); margin-top:2rem;">
+                                    暂停 &middot; 2026-04-18
+                                </div>
+                                <div class="code-fragment" style="margin-top:0.75rem;">
+                                    <div>sys.watch('./documents')</div>
+                                    <div style="padding-left:1rem;">index.build(graph)</div>
+                                    <div>serve.local(port: 8080)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="face back">
+                            <div>
+                                <h2 class="back-name font-serif">Local Index</h2>
+                                <p class="back-desc">
+                                    一个 Local-first 文本索引实验，通过文件系统监听，让本地笔记与随笔成为即时可检索的线索。
+                                </p>
+                                <div class="meta-grid" style="display:flex; flex-direction:column; gap:0.5rem;">
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Status</span>暂停</div>
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Tech</span>Rust / SQLite / Local-first</div>
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Updated</span>2026-04-18</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 06: Signal Cabinet -->
+                <article class="project-container perspective-1000 p06" role="button" aria-pressed="false" tabindex="0">
+                    <div class="project-surface stack-grid">
+                        <div class="face front">
+                            <div>
+                                <span class="project-num">06</span>
+                                <h2 class="project-name font-serif text-ink">Signal Cabinet</h2>
+                                <p class="project-desc text-body">保存小型技术实验与失败记录。</p>
+                            </div>
+                            <div style="border-top:1px solid var(--border-subtle); padding-top:1rem; font-family:var(--font-mono); font-size:0.625rem; color:var(--muted); display:flex; justify-content:space-between; margin-top:2rem;">
+                                <span>TYPE: ARCHIVE</span>
+                                <span>已完成 &middot; 2026-03-02</span>
+                            </div>
+                        </div>
+                        <div class="face back">
+                            <div>
+                                <h2 class="back-name font-serif">Signal Cabinet</h2>
+                                <p class="back-desc">
+                                    一个微型数字陈列柜，封存未发展成完整项目、但仍值得保留的交互实验、失败记录和实现碎片。
+                                </p>
+                                <div class="meta-grid" style="display:flex; flex-direction:column; gap:0.5rem;">
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Status</span>已完成</div>
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Tech</span>HTML / CSS</div>
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Updated</span>2026-03-02</div>
+                                    <div><span class="meta-label" style="display:inline-block; width:4rem; margin:0;">Link</span> 
+                                        <span class="safe-link" style="margin-right:0.5rem;">Live &nearr;</span>
+                                        <span class="safe-link">GitHub &nearr;</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+
+        <footer class="site-footer">
+            <p class="footer-text">
+                Build slowly. Leave meaningful traces.
+            </p>
+        </footer>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const projects = document.querySelectorAll('.project-container');
+
+            projects.forEach(project => {
+                // Click / Tap Toggle
+                project.addEventListener('click', function(e) {
+                    // Prevent default link actions from triggering flip (if links are simulated)
+                    if (e.target.tagName.toLowerCase() === 'a' || window.getSelection().toString().length > 0) {
+                        return;
+                    }
+                    toggleFlip(this);
+                });
+
+                // Keyboard Accessibility
+                project.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault(); // Prevent scrolling down on space
+                        toggleFlip(this);
+                    }
+                });
+            });
+
+            function toggleFlip(element) {
+                const isFlipped = element.classList.toggle('flipped');
+                element.setAttribute('aria-pressed', isFlipped.toString());
+            }
+        });
+    </script>
+</body>
+</html>
