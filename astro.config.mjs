@@ -2,10 +2,12 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// Stage 4B：site 使用占位域名（正式部署前必须替换为真实域名，与 src/config.ts 同步）。
+// GitHub Pages Project Site：仓库名不是 <username>.github.io，必须保留 base path。
 // sitemap filter 排除：搜索页与 404（无公开 SEO 价值）。
 export default defineConfig({
-  site: 'https://vdvxdv.example.com',
+  site: 'https://tkkdy.github.io',
+  base: '/tkkdyyy.github.io',
+  trailingSlash: 'always',
   output: 'static',
   integrations: [
     sitemap({

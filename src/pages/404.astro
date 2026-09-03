@@ -4,6 +4,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SeoHead from '../components/SeoHead.astro';
+import { withBase } from '../lib/site-url';
 
 import '../styles/tokens.css';
 import '../styles/global.css';
@@ -39,12 +40,12 @@ import '../styles/global.css';
         <p class="notfound-code" aria-hidden="true">404</p>
         <p class="notfound-text">这个页面不存在，或者已经被移动。</p>
 
-        <a class="btn-outline notfound-home" href="/">返回首页</a>
+        <a class="btn-outline notfound-home" href={withBase()}>返回首页</a>
 
         <nav class="notfound-links" aria-label="主要栏目">
-          <a href="/projects/">项目</a>
-          <a href="/articles/">文章</a>
-          <a href="/images/">影像</a>
+          <a href={withBase('projects/')}>项目</a>
+          <a href={withBase('articles/')}>文章</a>
+          <a href={withBase('images/')}>影像</a>
         </nav>
       </section>
     </main>

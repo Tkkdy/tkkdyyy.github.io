@@ -3,6 +3,7 @@
 // 随笔与碎片内容来自 Content Collections（essays / fragments）；
 // 碎片区的两个待定槽位是无虚构内容的结构占位，保持硬编码。
 import type { CollectionEntry } from 'astro:content';
+import { withBase } from '../lib/site-url';
 import { formatDate } from '../lib/content/homepage';
 
 interface Props {
@@ -25,7 +26,7 @@ const [fragment] = fragments;
           <span>随笔</span>
         </div>
 
-        <a class="essay-card group" href={`/essays/${essay.data.slug}/`}>
+        <a class="essay-card group" href={withBase(`essays/${essay.data.slug}/`)}>
           <div class="essay-media tilt-left tilt-transition">
             <div class="css-placeholder scale-inner scale-transition">
               <span>Atmosphere Photo</span>
@@ -47,7 +48,7 @@ const [fragment] = fragments;
 
         <div class="fragment-stack">
           <!-- 真实碎片（body 为 Markdown 渲染内容；链接到碎片时间流） -->
-          <a class="fragment-item" href="/fragments/">
+          <a class="fragment-item" href={withBase('fragments/')}>
             <div class="fragment-date">{formatDate(fragment.data.publishedAt)}</div>
             <div class="fragment-text" set:html={fragment.body} />
           </a>

@@ -4,6 +4,7 @@
 // 不建立大型 SEO 框架；无 OG 图片素材时不出 og:image（部署前补）。
 
 import { SITE } from '../config';
+import { withBase } from '../lib/site-url';
 
 interface Props {
   /** 页面标题（各页面自带，如 "文章 — VDVXDV"） */
@@ -25,14 +26,14 @@ const canonical = new URL(Astro.url.pathname, SITE.url).toString();
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href={withBase('favicon.svg')} type="image/svg+xml" />
 
 <!-- RSS Discovery -->
 <link
   rel="alternate"
   type="application/rss+xml"
   title={SITE.name}
-  href="/rss.xml"
+  href={withBase('rss.xml')}
 />
 
 <!-- Open Graph -->

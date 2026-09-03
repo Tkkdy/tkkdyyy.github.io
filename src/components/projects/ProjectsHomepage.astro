@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { PROJECT_STATUS_LABELS } from '../../lib/content/projects';
+import { withBase } from '../../lib/site-url';
 
 interface Props {
   projects: CollectionEntry<'projects'>[];
@@ -66,7 +67,7 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
         <div class="projects-stage-index projects-mono" aria-hidden="true">01 / CURRENT WORK</div>
         <header class="projects-stage-meta">
           <p class="projects-status projects-mono"><span class="projects-status-mark"></span>{lifecycle(radar)}</p>
-          <h2 id="radar-title"><a href={`/projects/${radar.data.slug}/`}>{radarTitle[0]}<br />{radarTitle[1]}</a></h2>
+          <h2 id="radar-title"><a href={withBase(`projects/${radar.data.slug}/`)}>{radarTitle[0]}<br />{radarTitle[1]}</a></h2>
           <p class="projects-stage-lede">{radar.data.tagline}</p>
           {radar.data.highlights && (
             <ul class="projects-supporting-points">
@@ -80,7 +81,7 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
         </header>
         <figure class="projects-radar-visual projects-evidence-frame">
           <div class="projects-frame-label projects-mono"><span>REAL OUTPUT / 2026-08-15</span><span>CAPTURED</span></div>
-          <img src="/projects/morning-radar-2026-08-15.png" alt="Morning Radar 2026 年 8 月 15 日真实晨报首屏" width="1440" height="1000" />
+          <img src={withBase('projects/morning-radar-2026-08-15.png')} alt="Morning Radar 2026 年 8 月 15 日真实晨报首屏" width="1440" height="1000" />
           <figcaption>当日晨报是主视觉；流程只作为来源轨迹，而不是指标面板。</figcaption>
         </figure>
       </article>
@@ -91,7 +92,7 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
         <div class="projects-stage-index projects-mono" aria-hidden="true">02 / INTERACTIVE ENTITY</div>
         <header class="projects-stage-meta projects-pet-meta">
           <p class="projects-status projects-mono">{lifecycle(pet)}</p>
-          <h2 id="pet-title"><a href={`/projects/${pet.data.slug}/`}>{petTitle[0]}<br />{petTitle[1]}</a></h2>
+          <h2 id="pet-title"><a href={withBase(`projects/${pet.data.slug}/`)}>{petTitle[0]}<br />{petTitle[1]}</a></h2>
           <p class="projects-stage-lede">{pet.data.tagline}</p>
           {pet.data.highlights && <ul class="projects-supporting-points">{pet.data.highlights.map((highlight) => <li>{highlight}</li>)}</ul>}
           {pet.data.techStack && <p class="projects-stack projects-mono">{pet.data.techStack.join(' · ')}</p>}
@@ -107,12 +108,12 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
             </div>
           </div>
           <div class="projects-pet-canvas" tabindex="0" role="button" aria-label="切换桌宠状态；当前 Idle">
-            <img class="projects-pet-base is-visible" data-pet-image="idle" src="/projects/desktop-pet-idle.png" alt="桌宠 Idle 真实状态" width="1024" height="1536" />
-            <img class="projects-pet-base" data-pet-image="blink" src="/projects/desktop-pet-blink-closed.png" alt="桌宠闭眼真实状态" width="1024" height="1536" aria-hidden="true" />
+            <img class="projects-pet-base is-visible" data-pet-image="idle" src={withBase('projects/desktop-pet-idle.png')} alt="桌宠 Idle 真实状态" width="1024" height="1536" />
+            <img class="projects-pet-base" data-pet-image="blink" src={withBase('projects/desktop-pet-blink-closed.png')} alt="桌宠闭眼真实状态" width="1024" height="1536" aria-hidden="true" />
             <div class="projects-pet-pat-state" data-pet-image="pat" aria-hidden="true">
-              <img class="projects-pat-character" src="/projects/desktop-pet-idle.png" alt="" width="1024" height="1536" />
-              <img class="projects-pat-overlay projects-pat-hand" src="/projects/desktop-pet-pat-hand.png" alt="" width="1536" height="1024" />
-              <img class="projects-pat-overlay projects-pat-heart" src="/projects/desktop-pet-pat-heart.png" alt="" width="1536" height="1024" />
+              <img class="projects-pat-character" src={withBase('projects/desktop-pet-idle.png')} alt="" width="1024" height="1536" />
+              <img class="projects-pat-overlay projects-pat-hand" src={withBase('projects/desktop-pet-pat-hand.png')} alt="" width="1536" height="1024" />
+              <img class="projects-pat-overlay projects-pat-heart" src={withBase('projects/desktop-pet-pat-heart.png')} alt="" width="1536" height="1024" />
             </div>
             <span class="projects-state-readout projects-mono">STATE / <strong>IDLE</strong></span>
           </div>
@@ -123,7 +124,7 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
           <h3 id="mini-her-title">Mini Her</h3>
           <p>九种 Agent 状态，57 帧经过校验。它是相邻的 sprite package，不是桌宠应用本身。</p>
           <figure>
-            <img src="/projects/mini-her-contact-sheet.png" alt="Mini Her 九状态 57 帧真实 contact sheet" width="768" height="1134" loading="lazy" />
+            <img src={withBase('projects/mini-her-contact-sheet.png')} alt="Mini Her 九状态 57 帧真实 contact sheet" width="768" height="1134" loading="lazy" />
             <figcaption class="projects-mono">9 STATES / 57 VERIFIED FRAMES</figcaption>
           </figure>
         </aside>
@@ -135,7 +136,7 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
         <div class="projects-stage-index projects-mono" aria-hidden="true">03 / PUBLISHING SYSTEM</div>
         <header class="projects-stage-meta projects-website-meta">
           <p class="projects-status projects-mono">{lifecycle(website)}</p>
-          <h2 id="website-title"><a href={`/projects/${website.data.slug}/`}>{websiteTitle[0]}<br />{websiteTitle[1]}</a></h2>
+          <h2 id="website-title"><a href={withBase(`projects/${website.data.slug}/`)}>{websiteTitle[0]}<br />{websiteTitle[1]}</a></h2>
           <p class="projects-stage-lede">{website.data.tagline}</p>
           {website.data.highlights && <ul class="projects-supporting-points">{website.data.highlights.map((highlight) => <li>{highlight}</li>)}</ul>}
           {website.data.techStack && <p class="projects-stack projects-mono">{website.data.techStack.join(' · ')}</p>}
@@ -146,8 +147,8 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
         </header>
         <div class="projects-viewport-stage" data-active-view="desktop">
           <div class="projects-viewport-caption projects-mono"><span>LOCAL CAPTURE / PROCESS EVIDENCE</span><span class="projects-view-readout">1440 × 900</span></div>
-          <figure class="projects-desktop-capture is-active" data-capture="desktop"><img src="/projects/vdvxdv-home-desktop.png" alt="VDVXDV 网站桌面端本地截图" width="1440" height="900" loading="lazy" /></figure>
-          <figure class="projects-mobile-capture" data-capture="mobile"><img src="/projects/vdvxdv-home-mobile.png" alt="VDVXDV 网站移动端本地截图" width="390" height="844" loading="lazy" /></figure>
+          <figure class="projects-desktop-capture is-active" data-capture="desktop"><img src={withBase('projects/vdvxdv-home-desktop.png')} alt="VDVXDV 网站桌面端本地截图" width="1440" height="900" loading="lazy" /></figure>
+          <figure class="projects-mobile-capture" data-capture="mobile"><img src={withBase('projects/vdvxdv-home-mobile.png')} alt="VDVXDV 网站移动端本地截图" width="390" height="844" loading="lazy" /></figure>
           <div class="projects-process-rail projects-mono" aria-label="项目过程阶段"><span>PRODUCT</span><i></i><span>CONTENT MODEL</span><i></i><span>VISUAL QA</span><i></i><span>LOCAL BUILD</span></div>
         </div>
       </article>
@@ -158,7 +159,7 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
         <div class="projects-stage-index projects-mono" aria-hidden="true">04 / SAFETY NOTE</div>
         <header class="projects-stage-meta">
           <p class="projects-status projects-mono">{lifecycle(codex)}</p>
-          <h2 id="codex-title"><a href={`/projects/${codex.data.slug}/`}>{codexTitle[0]}<br />{codexTitle[1]}</a></h2>
+          <h2 id="codex-title"><a href={withBase(`projects/${codex.data.slug}/`)}>{codexTitle[0]}<br />{codexTitle[1]}</a></h2>
           <p class="projects-stage-lede">{codex.data.tagline}</p>
           {codex.data.highlights && <ul class="projects-supporting-points">{codex.data.highlights.map((highlight) => <li>{highlight}</li>)}</ul>}
           {codex.data.techStack && <p class="projects-stack projects-mono">{codex.data.techStack.join(' · ')}</p>}
@@ -197,7 +198,7 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
           <article class="projects-console-project" aria-labelledby="console-title">
             <div class="projects-console-copy">
               <p class="projects-overline projects-mono">C CONSOLE GAMES / COMPLETED OUTPUTS</p>
-              <h3 id="console-title"><a href={`/projects/${consoleGames.data.slug}/`}>Tetris leads the series.</a></h3>
+              <h3 id="console-title"><a href={withBase(`projects/${consoleGames.data.slug}/`)}>Tetris leads the series.</a></h3>
               <p>{consoleGames.data.description}</p>
               <p class="projects-game-list projects-mono">TETRIS · SNAKE · 2048 · TIC-TAC-TOE · GUESS NUMBER</p>
             </div>
@@ -225,7 +226,7 @@ LINES  0032       NEXT   T
           <article class="projects-esp-trace" aria-labelledby="esp-title">
             <div class="projects-esp-label">
               <p class="projects-overline projects-mono">HARDWARE TRACE / NO PHOTO</p>
-              <h3 id="esp-title"><a href={`/projects/${esp32.data.slug}/`}>{esp32.data.name}</a></h3>
+              <h3 id="esp-title"><a href={withBase(`projects/${esp32.data.slug}/`)}>{esp32.data.name}</a></h3>
               <p>只记录源文件中确实存在的三个行为。</p>
             </div>
             <ol class="projects-signal-strip projects-mono">

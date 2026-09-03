@@ -9,6 +9,7 @@ import SeoHead from '../../components/SeoHead.astro';
 import { getPublishedFragments } from '../../lib/content/fragments';
 import { imageFileExists } from '../../lib/content/images';
 import { formatDate } from '../../lib/content/homepage';
+import { withBase } from '../../lib/site-url';
 
 import '../../styles/tokens.css';
 import '../../styles/global.css';
@@ -69,7 +70,7 @@ const fragments = await getPublishedFragments();
 
                   {hasImage && data.image && (
                     <div class="fragment-entry-image">
-                      <img src={data.image} alt={data.imageAlt ?? ''} />
+                      <img src={withBase(data.image)} alt={data.imageAlt ?? ''} />
                     </div>
                   )}
 

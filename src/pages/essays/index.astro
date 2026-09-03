@@ -6,6 +6,7 @@ import EssayLayout from '../../layouts/EssayLayout.astro';
 import { getPublishedEssays } from '../../lib/content/essays';
 import { formatDate } from '../../lib/content/homepage';
 import EssaysUniverseMap from '../../components/EssaysUniverseMap.astro';
+import { withBase } from '../../lib/site-url';
 
 const essays = await getPublishedEssays();
 const themes = [...new Set(essays.flatMap((essay) => essay.data.tags ?? []))].slice(0, 8);
@@ -28,7 +29,7 @@ const dateParts = (date: Date) => ({
       </header>
       {
         essays.length === 0 ? <p class="essay-empty">公开随笔正在慢慢出现。</p> : essays.map((essay) => (
-          <a class="essay-row" id={`essay-${essay.data.slug}`} href={`/essays/${essay.data.slug}/`}>
+          <a class="essay-row" id={`essay-${essay.data.slug}`} href={withBase(`essays/${essay.data.slug}/`)}>
             <time class="essay-row-date" datetime={dateParts(essay.data.publishedAt).iso}>
               <span>{dateParts(essay.data.publishedAt).year}</span>
               <b>{dateParts(essay.data.publishedAt).monthDay}</b>
@@ -46,7 +47,7 @@ const dateParts = (date: Date) => ({
 
             <div class:list={['essay-row-visual', !essay.data.cover && 'is-empty']} aria-hidden={!essay.data.cover}>
               {essay.data.cover && (
-                <img src={essay.data.cover} alt={essay.data.coverAlt ?? ''} loading="lazy" />
+                <img src={withBase(essay.data.cover)} alt={essay.data.coverAlt ?? ''} loading="lazy" />
               )}
             </div>
           </a>

@@ -2,6 +2,7 @@
 // 随笔详情页 /essays/[slug]
 // 静态生成：只生成 status = published 的随笔。
 import EssayLayout from '../../layouts/EssayLayout.astro';
+import { withBase } from '../../lib/site-url';
 import { getPublishedEssays } from '../../lib/content/essays';
 import { formatDate } from '../../lib/content/homepage';
 import { render } from 'astro:content';
@@ -23,7 +24,7 @@ const hasMedia = Boolean(data.cover);
 <EssayLayout title={`${data.title} — VDVXDV`} description={data.summary ?? undefined}>
   <article class:list={['essay-detail', hasMedia ? 'essay-detail--image' : 'essay-detail--text']} data-essay-detail>
     <nav class="essay-back-row" aria-label="随笔详情导航">
-      <a href="/essays/">← 返回随笔</a>
+      <a href={withBase('essays/')}>← 返回随笔</a>
       <span>{hasMedia ? 'IMAGE-LED ESSAY' : 'TEXT-LED ESSAY'}</span>
     </nav>
 
@@ -38,7 +39,7 @@ const hasMedia = Boolean(data.cover);
 
     {data.cover && (
       <figure class="essay-lead-cover">
-        <img src={data.cover} alt={data.coverAlt ?? ''} />
+        <img src={withBase(data.cover)} alt={data.coverAlt ?? ''} />
         {data.coverAlt && <figcaption>{data.coverAlt}</figcaption>}
       </figure>
     )}
@@ -49,7 +50,7 @@ const hasMedia = Boolean(data.cover);
       </div>
       <footer class="essay-reading-ending">
         <span>VDVXDV · ESSAYS</span>
-        <a href="/essays/">返回随笔归档</a>
+        <a href={withBase('essays/')}>返回随笔归档</a>
       </footer>
     </div>
   </article>

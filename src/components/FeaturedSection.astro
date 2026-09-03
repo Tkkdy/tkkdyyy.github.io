@@ -2,6 +2,7 @@
 // 首屏：左侧身份介绍 + 右侧精选文章（v0.2.6 已批准 5/7 列布局）。
 // 具体文章内容来自 Content Collections（articles），由 index.astro 传入。
 import type { CollectionEntry } from 'astro:content';
+import { withBase } from '../lib/site-url';
 import { formatDate } from '../lib/content/homepage';
 
 interface Props {
@@ -24,10 +25,10 @@ const { data } = article;
         的公开个人空间，记录正在进行的构建、长时间的思考以及沿途捕捉的切片。
       </p>
       <div class="hero-links">
-        <a class="link-underline" href="/projects/">
+        <a class="link-underline" href={withBase('projects/')}>
           查看项目 <span class="arrow">→</span>
         </a>
-        <a class="link-underline" href="/articles/">
+        <a class="link-underline" href={withBase('articles/')}>
           阅读文章 <span class="arrow">→</span>
         </a>
       </div>
@@ -40,7 +41,7 @@ const { data } = article;
         <span>精选文章</span>
       </div>
 
-      <a class="featured-card group" href={`/articles/${article.data.slug}/`}>
+      <a class="featured-card group" href={withBase(`articles/${article.data.slug}/`)}>
         <div class="featured-media">
           <div class="css-placeholder scale-inner scale-transition">
             <span>Article Visual</span>

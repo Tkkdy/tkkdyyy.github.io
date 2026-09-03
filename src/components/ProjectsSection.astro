@@ -4,6 +4,7 @@
 // 状态文案与查询共用 src/lib/content/projects.ts；githubUrl 存在才显示 GitHub 入口。
 import type { CollectionEntry } from 'astro:content';
 import { PROJECT_STATUS_LABELS } from '../lib/content/projects';
+import { withBase } from '../lib/site-url';
 
 interface Props {
   projects: CollectionEntry<'projects'>[];
@@ -23,7 +24,7 @@ const [mainProject] = projects;
     <!-- 主导项目 -->
     <div class="project-main">
       <div class="project-visual-col">
-        <a class="project-visual-link group" href={`/projects/${mainProject.data.slug}/`}>
+        <a class="project-visual-link group" href={withBase(`projects/${mainProject.data.slug}/`)}>
           <div class="css-placeholder scale-inner scale-transition project-visual">
             <span>Project Interface</span>
             <span class="ratio">1:1</span>
@@ -47,7 +48,7 @@ const [mainProject] = projects;
         <p class="project-desc">{mainProject.data.description}</p>
 
         <div class="project-actions">
-          <a class="btn-outline-inverse" href={`/projects/${mainProject.data.slug}/`}>查看项目详情</a>
+          <a class="btn-outline-inverse" href={withBase(`projects/${mainProject.data.slug}/`)}>查看项目详情</a>
           {mainProject.data.githubUrl && (
             <a
               class="btn-link-inverse"
@@ -62,20 +63,5 @@ const [mainProject] = projects;
       </div>
     </div>
 
-    <!-- 待定槽位（结构占位，无虚构内容） -->
-    <div class="project-slots">
-      <div class="project-slot" aria-hidden="true">
-        <div class="slot-label">Project Slot Pending</div>
-        <div class="skeleton-lines">
-          <span></span><span></span><span></span>
-        </div>
-      </div>
-      <div class="project-slot" aria-hidden="true">
-        <div class="slot-label">Project Slot Pending</div>
-        <div class="skeleton-lines short">
-          <span></span><span></span>
-        </div>
-      </div>
-    </div>
   </div>
 </section>

@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { withBase } from '../../lib/site-url';
 import { PROJECT_STATUS_LABELS } from '../../lib/content/projects';
 import { formatDate } from '../../lib/content/homepage';
 import '../../styles/morning-radar-detail.css';
@@ -70,7 +71,7 @@ const activity = [
   class="morning-radar-detail project-shell"
   data-morning-radar-detail
 >
-  <a class="back-link" href="/projects/">
+  <a class="back-link" href={withBase('projects/')}>
     <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M10.5 3.5 6 8l4.5 4.5M6.5 8H14"></path></svg>
     ALL PROJECTS
   </a>
@@ -126,7 +127,7 @@ const activity = [
       </header>
       <button class="evidence-open" type="button" data-open-evidence aria-label="打开真实晨报截图">
         <img
-          src="/projects/morning-radar-2026-08-15.png"
+          src={withBase('projects/morning-radar-2026-08-15.png')}
           alt="Morning Radar 2026 年 8 月 15 日真实晨报首屏"
           width="1440"
           height="1000"
@@ -247,11 +248,11 @@ const activity = [
 
   <nav class="project-pagination" aria-label="项目导航" data-pagefind-ignore>
     <span class="project-disabled"><span>PREV PROJECT</span><strong>—</strong></span>
-    <a href="/projects/" class="grid-link">
+    <a href={withBase('projects/')} class="grid-link">
       <svg aria-hidden="true" viewBox="0 0 18 18"><rect x="2" y="2" width="5" height="5"></rect><rect x="11" y="2" width="5" height="5"></rect><rect x="2" y="11" width="5" height="5"></rect><rect x="11" y="11" width="5" height="5"></rect></svg>
       ALL PROJECTS
     </a>
-    <a href="/projects/girlfriend-desktop-pet/" class="next-link">
+    <a href={withBase('projects/girlfriend-desktop-pet/')} class="next-link">
       <span>NEXT PROJECT</span><strong>Girlfriend Desktop Pet</strong>
       <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"></path></svg>
     </a>
@@ -263,7 +264,7 @@ const activity = [
     <div><strong id="evidence-dialog-title">DAILY BRIEF OUTPUT</strong><span>REAL CAPTURE · 2026-08-15</span></div>
     <button type="button" data-close-evidence aria-label="关闭截图">CLOSE ×</button>
   </div>
-  <img src="/projects/morning-radar-2026-08-15.png" alt="Morning Radar 真实晨报完整截图" width="1440" height="1000" />
+  <img src={withBase('projects/morning-radar-2026-08-15.png')} alt="Morning Radar 真实晨报完整截图" width="1440" height="1000" />
 </dialog>
 
 <script>

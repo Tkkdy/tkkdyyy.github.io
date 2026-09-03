@@ -3,7 +3,7 @@ title: "上下文正在成为个人 AI 的真正界面"
 slug: "context-is-the-new-interface"
 description: "当模型长期理解一个人的项目、文件、偏好和决定时，它才开始跨越工具的属性，成为真正的能力延伸。模型会更新，但积累的上下文可以复用。"
 publishedAt: 2026-08-05
-status: published
+status: draft
 publishNumber: 1
 category: "Tech_Thought"
 tags:

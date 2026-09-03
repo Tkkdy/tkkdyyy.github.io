@@ -1,12 +1,12 @@
 ---
-// 页脚：品牌信息 + 联系方式。
-// RSS 已接通 /rss.xml；GitHub / Mail 无真实公开 URL，保持占位。
+// 页脚：品牌信息 + RSS。没有已确认的公开联系方式时不显示假链接。
 // Footer 样式随组件自带（scoped style），任何页面使用本组件即生效。
+import { withBase } from '../lib/site-url';
 ---
 <footer class="site-footer" data-pagefind-ignore>
   <div class="footer-inner">
     <div class="footer-brand">
-      <a class="footer-wordmark" href="/">VDVXDV</a>
+      <a class="footer-wordmark" href={withBase()}>VDVXDV</a>
       <p class="footer-desc">
         这是一个属于技术创作者的个人网站。用来安放长文、项目与一闪而过的念头。
       </p>
@@ -15,9 +15,7 @@
 
     <nav class="footer-connect" aria-label="联系方式">
       <span class="footer-connect-label">Connect</span>
-      <a href="#">GitHub</a>
-      <a href="#">Mail</a>
-      <a href="/rss.xml">RSS</a>
+      <a href={withBase('rss.xml')}>RSS</a>
     </nav>
   </div>
 </footer>

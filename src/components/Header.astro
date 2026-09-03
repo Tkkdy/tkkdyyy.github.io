@@ -2,32 +2,49 @@
 // 全局顶部导航：紧凑 Liquid Glass 胶囊（全站唯一玻璃元素）。
 // 默认状态与 v0.2.6 一致；点击"搜索"原地进入 Search Mode（不跳页），
 // Pagefind 按需加载（首次搜索时才请求）；无 JS 时"搜索"仍是 /search/ 链接（渐进增强）。
-// 全部七个栏目已接通真实路由（项目/随笔/文章/碎片/影像/关于/搜索）。
+// 可选栏目仅在存在 published 内容时显示；未来 CMS 发布后会在下一次构建自动出现。
+import { getPublishedArticles } from '../lib/content/articles';
+import { getPublishedEssays } from '../lib/content/essays';
+import { getPublishedImages } from '../lib/content/images';
+import { withBase } from '../lib/site-url';
+
 const currentPath = Astro.url.pathname;
 const isCurrentSection = (href: string) => currentPath === href || currentPath.startsWith(href);
+const [articles, essays, images] = await Promise.all([
+  getPublishedArticles(),
+  getPublishedEssays(),
+  getPublishedImages(),
+]);
+const projectsUrl = withBase('projects/');
+const essaysUrl = withBase('essays/');
+const articlesUrl = withBase('articles/');
+const fragmentsUrl = withBase('fragments/');
+const imagesUrl = withBase('images/');
+const aboutUrl = withBase('about/');
+const searchUrl = withBase('search/');
 ---
 <header class="site-header" data-pagefind-ignore>
   <nav class="glass-nav" aria-label="主导航">
     <!-- 默认状态 -->
     <div class="nav-default" data-nav-default>
-      <a class="nav-wordmark" href="/">VDVXDV</a>
+      <a class="nav-wordmark" href={withBase()}>VDVXDV</a>
 
       <div class="nav-divider" aria-hidden="true"></div>
 
       <ul class="nav-links">
-        <li><a href="/projects/" aria-current={isCurrentSection('/projects/') ? 'page' : undefined}>项目</a></li>
-        <li><a href="/essays/" aria-current={isCurrentSection('/essays/') ? 'page' : undefined}>随笔</a></li>
-        <li><a href="/articles/" aria-current={isCurrentSection('/articles/') ? 'page' : undefined}>文章</a></li>
-        <li><a href="/fragments/" aria-current={isCurrentSection('/fragments/') ? 'page' : undefined}>碎片</a></li>
-        <li><a href="/images/" aria-current={isCurrentSection('/images/') ? 'page' : undefined}>影像</a></li>
-        <li><a href="/about/" aria-current={isCurrentSection('/about/') ? 'page' : undefined}>关于</a></li>
+        <li><a href={projectsUrl} aria-current={isCurrentSection(projectsUrl) ? 'page' : undefined}>项目</a></li>
+        {essays.length > 0 && <li><a href={essaysUrl} aria-current={isCurrentSection(essaysUrl) ? 'page' : undefined}>随笔</a></li>}
+        {articles.length > 0 && <li><a href={articlesUrl} aria-current={isCurrentSection(articlesUrl) ? 'page' : undefined}>文章</a></li>}
+        <li><a href={fragmentsUrl} aria-current={isCurrentSection(fragmentsUrl) ? 'page' : undefined}>碎片</a></li>
+        {images.length > 0 && <li><a href={imagesUrl} aria-current={isCurrentSection(imagesUrl) ? 'page' : undefined}>影像</a></li>}
+        <li><a href={aboutUrl} aria-current={isCurrentSection(aboutUrl) ? 'page' : undefined}>关于</a></li>
       </ul>
 
       <div class="nav-divider" aria-hidden="true"></div>
 
       <a
         class="nav-search"
-        href="/search/"
+        href={searchUrl}
         data-search-trigger
         aria-haspopup="true"
         aria-expanded="false"
@@ -54,7 +71,7 @@ const isCurrentSection = (href: string) => currentPath === href || currentPath.s
   <div class="nav-search-panel" data-search-panel hidden role="region" aria-label="搜索结果">
     <p class="nav-search-panel-status" data-search-panel-status aria-live="polite"></p>
     <div class="nav-search-panel-results" data-search-panel-results></div>
-    <a class="nav-search-panel-all" data-search-panel-all href="/search/" hidden
+    <a class="nav-search-panel-all" data-search-panel-all href={searchUrl} hidden
       >查看全部结果 →</a
     >
   </div>
@@ -182,7 +199,7 @@ const isCurrentSection = (href: string) => currentPath === href || currentPath.s
     }
 
     panelAll.hidden = false;
-    panelAll.href = `/search/?q=${encodeURIComponent(query)}`;
+    panelAll.href = `${import.meta.env.BASE_URL}search/?q=${encodeURIComponent(query)}`;
   }
 
   async function runSearch() {

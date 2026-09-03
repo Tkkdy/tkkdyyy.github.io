@@ -4,6 +4,7 @@
 // 每个槽位的影像内容来自 Content Collections（images），当前为 fixture 占位条目。
 // 图片比例（4:3 / 3:4 / 1:1）与方向标注（Landscape / Portrait）属于设计结构，保持硬编码。
 import type { CollectionEntry } from 'astro:content';
+import { withBase } from '../lib/site-url';
 
 interface Props {
   images: CollectionEntry<'images'>[];
@@ -23,7 +24,7 @@ const [mainImage, portraitImage, squareImage] = images;
     <div class="photo-flow">
       <!-- 主横图（向左偏移） -->
       <div class="photo-main">
-        <a class="photo-link photo-link-main group" href={`/images/${mainImage.data.slug}/`}>
+        <a class="photo-link photo-link-main group" href={withBase(`images/${mainImage.data.slug}/`)}>
           <div class="css-placeholder scale-inner scale-transition">
             <span>{mainImage.data.title}</span>
             <span class="ratio">4:3</span>
@@ -37,7 +38,7 @@ const [mainImage, portraitImage, squareImage] = images;
 
       <!-- 竖图（向右上偏移） -->
       <div class="photo-portrait">
-        <a class="photo-link photo-link-portrait group" href={`/images/${portraitImage.data.slug}/`}>
+        <a class="photo-link photo-link-portrait group" href={withBase(`images/${portraitImage.data.slug}/`)}>
           <div class="css-placeholder scale-inner scale-transition">
             <span>{portraitImage.data.title}</span>
             <span class="ratio">3:4</span>
@@ -50,7 +51,7 @@ const [mainImage, portraitImage, squareImage] = images;
 
       <!-- 小方图（居中偏左偏移） -->
       <div class="photo-square">
-        <a class="photo-link photo-link-square group" href={`/images/${squareImage.data.slug}/`}>
+        <a class="photo-link photo-link-square group" href={withBase(`images/${squareImage.data.slug}/`)}>
           <div class="photo-square-inner tilt-right tilt-transition">
             <div class="css-placeholder">
               <span>{squareImage.data.title}</span>

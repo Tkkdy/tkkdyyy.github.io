@@ -7,6 +7,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SeoHead from '../components/SeoHead.astro';
+import { withBase } from '../lib/site-url';
 
 import '../styles/tokens.css';
 import '../styles/global.css';
@@ -64,19 +65,19 @@ import '../styles/about.css';
             <h2>This site</h2>
             <ul class="about-list">
               <li>
-                <a href="/projects/">项目 Projects</a> —— 正在进行与实验中的东西。
+                <a href={withBase('projects/')}>项目 Projects</a> —— 正在进行与实验中的东西。
               </li>
               <li>
-                <a href="/articles/">文章 Articles</a> —— 结构完整的长内容。
+                <a href={withBase('articles/')}>文章 Articles</a> —— 结构完整的长内容。
               </li>
               <li>
-                <a href="/essays/">随笔 Essays</a> —— 较短但相对完整的文字。
+                <a href={withBase('essays/')}>随笔 Essays</a> —— 较短但相对完整的文字。
               </li>
               <li>
-                <a href="/fragments/">碎片 Fragments</a> —— 即时、短小的记录。
+                <a href={withBase('fragments/')}>碎片 Fragments</a> —— 即时、短小的记录。
               </li>
               <li>
-                <a href="/images/">影像 Images</a> —— 单张照片与其信息。
+                <a href={withBase('images/')}>影像 Images</a> —— 单张照片与其信息。
               </li>
             </ul>
           </section>

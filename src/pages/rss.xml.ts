@@ -9,8 +9,9 @@ import type { APIContext } from 'astro';
 import { getPublishedArticles } from '../lib/content/articles';
 import { getPublishedEssays } from '../lib/content/essays';
 import { SITE } from '../config';
+import { withBase } from '../lib/site-url';
 
-export async function GET(context: APIContext) {
+export async function GET(_context: APIContext) {
   const [articles, essays] = await Promise.all([
     getPublishedArticles(),
     getPublishedEssays(),
@@ -20,14 +21,14 @@ export async function GET(context: APIContext) {
     title: article.data.title,
     description: article.data.description,
     pubDate: article.data.publishedAt,
-    link: `/articles/${article.data.slug}/`,
+    link: withBase(`articles/${article.data.slug}/`),
   }));
 
   const essayItems = essays.map((essay) => ({
     title: essay.data.title,
     description: essay.data.summary ?? undefined,
     pubDate: essay.data.publishedAt,
-    link: `/essays/${essay.data.slug}/`,
+    link: withBase(`essays/${essay.data.slug}/`),
   }));
 
   const items = [...articleItems, ...essayItems].sort(
@@ -37,7 +38,7 @@ export async function GET(context: APIContext) {
   return rss({
     title: `${SITE.name} — 文章与随笔`,
     description: SITE.description,
-    site: context.site ?? SITE.url,
+    site: SITE.url,
     items,
     customData: '<language>zh-cn</language>',
   });

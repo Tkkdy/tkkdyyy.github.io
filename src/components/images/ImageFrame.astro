@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../../lib/site-url';
 // 影像画框：真实文件按原比例显示；缺失时使用中性 placeholder，不生成 broken <img>。
 interface Props {
   src: string;
@@ -27,7 +28,7 @@ const ratioLabel =
 {
   hasFile ? (
     <img
-      src={src}
+      src={withBase(src)}
       alt={alt}
       loading={loading}
       decoding="async"
@@ -40,4 +41,3 @@ const ratioLabel =
     </div>
   )
 }
-

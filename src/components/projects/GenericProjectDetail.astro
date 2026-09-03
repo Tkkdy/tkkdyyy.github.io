@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { withBase } from '../../lib/site-url';
 import { render } from 'astro:content';
 import { PROJECT_STATUS_LABELS } from '../../lib/content/projects';
 import { formatDate } from '../../lib/content/homepage';
@@ -14,7 +15,7 @@ const { Content } = await render(project);
 ---
 
 <article class="project-detail">
-  <a class="project-detail-back" href="/projects/">← 返回项目列表</a>
+  <a class="project-detail-back" href={withBase('projects/')}>← 返回项目列表</a>
 
   <header class="project-detail-header">
     <div class="project-detail-status">
@@ -69,7 +70,7 @@ const { Content } = await render(project);
       </div>
       {data.screenshots.map((shot) => (
         <figure class="project-screenshot">
-          <img src={shot.src} alt={shot.alt} />
+          <img src={withBase(shot.src)} alt={shot.alt} />
           {shot.caption && <figcaption>{shot.caption}</figcaption>}
         </figure>
       ))}

@@ -10,6 +10,7 @@ import {
   imageFileExists,
 } from '../../lib/content/images';
 import { formatDate } from '../../lib/content/homepage';
+import { withBase } from '../../lib/site-url';
 
 const images = await getPublishedImages();
 ---
@@ -36,7 +37,7 @@ const images = await getPublishedImages();
             const caption = data.caption ?? data.title;
             return (
               <article class:list={['image-entry', `is-${orientation}`]}>
-                <a class="image-entry-link" href={`/images/${data.slug}/`} aria-label={getImageDisplayTitle(data)}>
+                <a class="image-entry-link" href={withBase(`images/${data.slug}/`)} aria-label={getImageDisplayTitle(data)}>
                   <ImageFrame
                     src={data.image}
                     alt={data.alt}
@@ -63,4 +64,3 @@ const images = await getPublishedImages();
     }
   </section>
 </ImageLayout>
-

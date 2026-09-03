@@ -1,0 +1,166 @@
+backend:
+  name: github
+  repo: Tkkdy/tkkdyyy.github.io
+  branch: main
+  auth_methods: [token]
+
+media_folder: public/uploads
+public_folder: /tkkdyyy.github.io/uploads
+
+collections:
+  - name: articles
+    label: Articles
+    folder: src/content/articles
+    create: true
+    format: yaml-frontmatter
+    slug: "{{slug}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Slug, name: slug, widget: string, hint: "小写英文、数字和连字符；发布后不要修改。" }
+      - { label: Description, name: description, widget: text }
+      - { label: Published At, name: publishedAt, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: Updated At, name: updatedAt, widget: datetime, required: false, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: Status, name: status, widget: select, default: draft, options: [draft, published, archived] }
+      - { label: Publish Number, name: publishNumber, widget: number, required: false, value_type: int, min: 1, hint: "发布或归档前必须填写稳定编号。" }
+      - { label: Tags, name: tags, widget: list, required: false }
+      - { label: Category, name: category, widget: string, required: false }
+      - { label: Cover, name: cover, widget: image, required: false }
+      - { label: Cover Alt, name: coverAlt, widget: string, required: false }
+      - { label: Featured, name: featured, widget: boolean, required: false, default: false }
+      - label: Homepage
+        name: homepage
+        widget: object
+        required: false
+        fields:
+          - { label: Show, name: show, widget: boolean, default: false }
+          - { label: Order, name: order, widget: number, required: false, value_type: int, min: 1 }
+      - { label: Table of Contents, name: toc, widget: boolean, required: false, default: false }
+      - { label: Reading Time, name: readingTime, widget: number, required: false, value_type: float, min: 0 }
+      - { label: Body, name: body, widget: richtext }
+
+  - name: essays
+    label: Essays
+    folder: src/content/essays
+    create: true
+    format: yaml-frontmatter
+    slug: "{{slug}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Slug, name: slug, widget: string }
+      - { label: Summary, name: summary, widget: text, required: false }
+      - { label: Published At, name: publishedAt, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: Status, name: status, widget: select, default: draft, options: [draft, published, archived] }
+      - { label: Tags, name: tags, widget: list, required: false }
+      - { label: Cover, name: cover, widget: image, required: false }
+      - { label: Cover Alt, name: coverAlt, widget: string, required: false }
+      - { label: Reading Time, name: readingTime, widget: number, required: false, value_type: float, min: 0 }
+      - { label: Featured, name: featured, widget: boolean, required: false, default: false }
+      - label: Homepage
+        name: homepage
+        widget: object
+        required: false
+        fields:
+          - { label: Show, name: show, widget: boolean, default: false }
+          - { label: Order, name: order, widget: number, required: false, value_type: int, min: 1 }
+      - { label: Body, name: body, widget: richtext }
+
+  - name: fragments
+    label: Fragments
+    folder: src/content/fragments
+    create: true
+    format: yaml-frontmatter
+    slug: "{{slug}}"
+    fields:
+      - { label: Slug, name: slug, widget: string }
+      - { label: Published At, name: publishedAt, widget: datetime }
+      - { label: Status, name: status, widget: select, default: draft, options: [draft, published, archived] }
+      - { label: Tags, name: tags, widget: list, required: false }
+      - { label: Image, name: image, widget: image, required: false }
+      - { label: Image Alt, name: imageAlt, widget: string, required: false }
+      - { label: Link, name: link, widget: string, required: false }
+      - { label: Link Title, name: linkTitle, widget: string, required: false }
+      - label: Homepage
+        name: homepage
+        widget: object
+        required: false
+        fields:
+          - { label: Show, name: show, widget: boolean, default: false }
+          - { label: Order, name: order, widget: number, required: false, value_type: int, min: 1 }
+      - { label: Body, name: body, widget: richtext }
+
+  - name: projects
+    label: Projects
+    folder: src/content/projects
+    create: false
+    format: yaml-frontmatter
+    slug: "{{slug}}"
+    fields:
+      - { label: Name, name: name, widget: string }
+      - { label: Slug, name: slug, widget: string }
+      - { label: Tagline, name: tagline, widget: string }
+      - { label: Description, name: description, widget: text }
+      - { label: Status, name: status, widget: select, options: [draft, published, archived] }
+      - { label: Project Status, name: projectStatus, widget: select, options: [concept, designing, developing, usable, maintaining, paused, completed, archived] }
+      - { label: Status Note, name: statusNote, widget: string, required: false }
+      - { label: Highlights, name: highlights, widget: list, required: false }
+      - { label: Cover, name: cover, widget: image, required: false }
+      - { label: Cover Alt, name: coverAlt, widget: string, required: false }
+      - { label: Logo, name: logo, widget: image, required: false }
+      - { label: Tech Stack, name: techStack, widget: list, required: false }
+      - { label: Live URL, name: liveUrl, widget: string, required: false }
+      - { label: GitHub URL, name: githubUrl, widget: string, required: false }
+      - { label: Started At, name: startedAt, widget: datetime, required: false, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: Updated At, name: updatedAt, widget: datetime, required: false, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: Featured, name: featured, widget: boolean, required: false, default: false }
+      - label: Homepage
+        name: homepage
+        widget: object
+        required: false
+        fields:
+          - { label: Show, name: show, widget: boolean, default: false }
+          - { label: Order, name: order, widget: number, required: false, value_type: int, min: 1 }
+      - label: Screenshots
+        name: screenshots
+        widget: list
+        required: false
+        fields:
+          - { label: Source, name: src, widget: image }
+          - { label: Alt, name: alt, widget: string }
+          - { label: Caption, name: caption, widget: string, required: false }
+      - label: Changelog
+        name: changelog
+        widget: list
+        required: false
+        fields:
+          - { label: Version, name: version, widget: string }
+          - { label: Date, name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+          - { label: Summary, name: summary, widget: string }
+      - { label: Body, name: body, widget: richtext }
+
+  - name: images
+    label: Images
+    folder: src/content/images
+    create: true
+    format: yaml-frontmatter
+    slug: "{{slug}}"
+    fields:
+      - { label: Slug, name: slug, widget: string }
+      - { label: Image, name: image, widget: image }
+      - { label: Alt, name: alt, widget: string }
+      - { label: Title, name: title, widget: string, required: false }
+      - { label: Caption, name: caption, widget: text, required: false }
+      - { label: Captured At, name: capturedAt, widget: datetime, required: false, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: Published At, name: publishedAt, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: Location, name: location, widget: string, required: false }
+      - { label: Tags, name: tags, widget: list, required: false }
+      - { label: Series, name: series, widget: string, required: false }
+      - { label: Orientation, name: orientation, widget: select, required: false, options: [landscape, portrait, square] }
+      - { label: Featured, name: featured, widget: boolean, required: false, default: false }
+      - label: Homepage
+        name: homepage
+        widget: object
+        required: false
+        fields:
+          - { label: Show, name: show, widget: boolean, default: false }
+          - { label: Order, name: order, widget: number, required: false, value_type: int, min: 1 }
+      - { label: Status, name: status, widget: select, default: draft, options: [draft, published, archived] }
