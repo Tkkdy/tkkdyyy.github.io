@@ -560,20 +560,6 @@
 .projects-radar-visual img { width: 100%; max-height: 330px; margin-top: 12px; border: 1px solid var(--projects-line-soft); object-fit: cover; object-position: top left; }
 .projects-radar-visual figcaption { margin: 13px 2px 0; color: #454c49; font-size: 12px; line-height: 1.65; }
 
-.projects-pet-stage {
-  grid-template-columns: 48px 370px minmax(0, 1fr) 190px;
-  column-gap: 28px;
-  padding-block: 50px 54px;
-}
-
-.projects-pet-meta { grid-column: 2; padding-right: 26px; }
-.projects-pet-meta h2 { max-width: 240px; }
-.projects-pet-meta .projects-stage-lede { max-width: 35ch; }
-.projects-pet-workbench { grid-column: 3; min-width: 0; align-self: start; border-top: 1px solid var(--projects-ink); }
-.projects-pet-toolbar { min-height: 42px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--projects-line); color: #353b38; font-size: 10px; letter-spacing: .04em; }
-.projects-segmented { display: flex; }
-
-.projects-segmented button,
 .projects-viewport-tabs button {
   min-height: 30px;
   padding: 0 12px;
@@ -583,43 +569,7 @@
   font-size: 10px;
 }
 
-.projects-segmented button.is-active,
 .projects-viewport-tabs button.is-active { background: var(--projects-carbon); color: white; }
-
-.projects-pet-canvas {
-  position: relative;
-  min-height: 350px;
-  overflow: hidden;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(90deg, #eceeeb 1px, transparent 1px), linear-gradient(#eceeeb 1px, transparent 1px), #f8f9f7;
-  background-size: 28px 28px;
-  cursor: pointer;
-}
-
-.projects-pet-base,
-.projects-pet-pat-state { position: absolute; width: 65%; height: 84%; object-fit: contain; opacity: 0; visibility: hidden; }
-.projects-pet-canvas .projects-pet-base,
-.projects-pet-canvas .projects-pet-pat-state { height: 84%; }
-.projects-pet-base.is-visible,
-.projects-pet-pat-state.is-visible { opacity: 1; visibility: visible; }
-.projects-pet-pat-state { display: grid; place-items: center; }
-.projects-pat-character,
-.projects-pat-overlay { position: absolute; width: 100%; height: 100%; object-fit: contain; }
-.projects-pet-canvas .projects-pat-character,
-.projects-pet-canvas .projects-pat-overlay { height: 100%; }
-.projects-pat-overlay { mix-blend-mode: multiply; }
-.projects-pat-hand { transform: translateY(-10%); }
-.projects-pat-heart { transform: translate(12%, -15%); }
-.projects-state-readout { position: absolute; left: 12px; bottom: 12px; padding: 5px 7px; border: 1px solid var(--projects-line); background: rgba(251,252,250,.88); font-size: 9px; }
-
-.projects-related-artifact { grid-column: 4; align-self: start; border-top: 1px solid var(--projects-ink); }
-.projects-artifact-heading { padding-inline: 0; background: transparent; }
-.projects-related-artifact h3 { margin: 16px 0 10px; font-family: var(--font-serif); font-size: 25px; font-weight: 400; }
-.projects-related-artifact > p { margin: 0 0 18px; color: #343a37; font-size: 12.5px; line-height: 1.72; }
-.projects-related-artifact figure { margin: 0; padding-top: 10px; border-top: 1px solid var(--projects-line); }
-.projects-related-artifact figure img { width: 100%; max-height: 240px; object-fit: cover; object-position: top; filter: saturate(.78) contrast(1.04); }
-.projects-related-artifact figcaption { margin-top: 9px; color: var(--projects-muted); font-size: 8px; }
 
 .projects-website-stage {
   grid-template-columns: 48px minmax(430px, .9fr) minmax(0, 1.1fr);
@@ -736,14 +686,6 @@
   .projects-masthead-copy p { width: 390px; }
   .projects-intro-signal { padding-left: 24px; }
   .projects-stage-meta .projects-supporting-points { font-size: 13.5px; }
-  .projects-pet-stage { grid-template-columns: 44px 190px minmax(0, 1fr); }
-  .projects-pet-workbench,
-  .projects-related-artifact { grid-column: 3; }
-  .projects-related-artifact { margin-top: 28px; display: grid; grid-template-columns: 1fr 160px; column-gap: 24px; }
-  .projects-related-artifact .projects-artifact-heading,
-  .projects-related-artifact h3,
-  .projects-related-artifact > p { grid-column: 1; }
-  .projects-related-artifact figure { grid-column: 2; grid-row: 1 / 4; }
   .projects-website-stage,
   .projects-codex-stage { grid-template-columns: 44px 230px minmax(0, 1fr); }
   .projects-small-works { grid-template-columns: 44px minmax(0, 3fr) minmax(240px, 2fr); }
@@ -754,7 +696,6 @@
 @media (max-width: 720px) {
   .projects-archive { --projects-page: calc(100% - 28px); padding-top: 76px; }
   .projects-page-grid,
-  .projects-pet-stage,
   .projects-website-stage,
   .projects-codex-stage { grid-template-columns: 24px minmax(0, 1fr); column-gap: 14px; }
 
@@ -775,7 +716,6 @@
   .projects-stage { padding-block: 54px; }
   .projects-stage-index { grid-column: 1; grid-row: 1 / 5; writing-mode: vertical-rl; font-size: 7px; }
   .projects-stage-meta,
-  .projects-pet-meta,
   .projects-website-meta { grid-column: 2; padding-right: 0; }
   .projects-status { margin-bottom: 16px; }
   .projects-stage-meta h2 { max-width: 100%; font-size: 32px; }
@@ -792,29 +732,11 @@
   .projects-pipeline li { font-size: 8.5px; }
   .projects-pipeline li:not(:last-child)::after { margin-left: 6px; }
   .projects-evidence-frame,
-  .projects-pet-workbench,
-  .projects-related-artifact,
   .projects-viewport-stage,
   .projects-flip-shell { grid-column: 2; margin-top: 26px; }
   .projects-radar-visual { padding: 0 8px 8px; }
   .projects-radar-visual .projects-frame-label { margin-inline: -8px; }
   .projects-radar-visual img { min-height: 290px; max-height: 320px; margin-top: 8px; }
-
-  .projects-pet-stage { padding-block: 58px 54px; }
-  .projects-pet-toolbar { align-items: stretch; flex-direction: column; padding-top: 11px; }
-  .projects-segmented { margin-top: 9px; border-top: 1px solid var(--projects-line); }
-  .projects-segmented button { flex: 1; border-left: 0; border-right: 1px solid var(--projects-line); }
-  .projects-pet-canvas { min-height: 390px; }
-  .projects-pet-base,
-  .projects-pet-pat-state { width: 82%; height: 86%; }
-  .projects-pet-canvas .projects-pet-base,
-  .projects-pet-canvas .projects-pet-pat-state { height: 86%; }
-  .projects-related-artifact { display: grid; grid-template-columns: 1fr 118px; column-gap: 14px; }
-  .projects-related-artifact .projects-artifact-heading,
-  .projects-related-artifact h3,
-  .projects-related-artifact > p { grid-column: 1; }
-  .projects-related-artifact figure { grid-column: 2; grid-row: 1 / 4; max-height: 240px; overflow: hidden; }
-  .projects-related-artifact figure img { max-height: 220px; }
 
   .projects-website-stage { padding-block: 54px 58px; }
   .projects-viewport-tabs { margin-top: 26px; }

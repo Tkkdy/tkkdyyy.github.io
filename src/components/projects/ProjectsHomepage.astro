@@ -11,7 +11,6 @@ const { projects } = Astro.props;
 const projectBySlug = new Map(projects.map((project) => [project.data.slug, project]));
 
 const radar = projectBySlug.get('morning-radar');
-const pet = projectBySlug.get('girlfriend-desktop-pet');
 const website = projectBySlug.get('vdvxdv-personal-website');
 const codex = projectBySlug.get('codex-reconnect-proxy-fix');
 const consoleGames = projectBySlug.get('c-console-games');
@@ -26,7 +25,6 @@ const splitTitle = (name: string, marker: string) => {
 };
 
 const radarTitle = radar ? splitTitle(radar.data.name, ' Radar') : ['', ''];
-const petTitle = pet ? splitTitle(pet.data.name, ' Desktop') : ['', ''];
 const websiteTitle = website ? splitTitle(website.data.name, ' Personal') : ['', ''];
 const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
 ---
@@ -87,53 +85,9 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
       </article>
     )}
 
-    {pet && (
-      <article class="projects-stage projects-pet-stage projects-page-grid" aria-labelledby="pet-title">
-        <div class="projects-stage-index projects-mono" aria-hidden="true">02 / INTERACTIVE ENTITY</div>
-        <header class="projects-stage-meta projects-pet-meta">
-          <p class="projects-status projects-mono">{lifecycle(pet)}</p>
-          <h2 id="pet-title"><a href={withBase(`projects/${pet.data.slug}/`)}>{petTitle[0]}<br />{petTitle[1]}</a></h2>
-          <p class="projects-stage-lede">{pet.data.tagline}</p>
-          {pet.data.highlights && <ul class="projects-supporting-points">{pet.data.highlights.map((highlight) => <li>{highlight}</li>)}</ul>}
-          {pet.data.techStack && <p class="projects-stack projects-mono">{pet.data.techStack.join(' · ')}</p>}
-        </header>
-
-        <div class="projects-pet-workbench" aria-label="桌宠状态工作台">
-          <div class="projects-pet-toolbar">
-            <span class="projects-mono">STATE RESPONSE</span>
-            <div class="projects-segmented" role="group" aria-label="选择桌宠状态">
-              <button type="button" class="is-active" data-pet-state="idle" aria-pressed="true">Idle</button>
-              <button type="button" data-pet-state="blink" aria-pressed="false">Blink</button>
-              <button type="button" data-pet-state="pat" aria-pressed="false">Pat</button>
-            </div>
-          </div>
-          <div class="projects-pet-canvas" tabindex="0" role="button" aria-label="切换桌宠状态；当前 Idle">
-            <img class="projects-pet-base is-visible" data-pet-image="idle" src={withBase('projects/desktop-pet-idle.png')} alt="桌宠 Idle 真实状态" width="1024" height="1536" />
-            <img class="projects-pet-base" data-pet-image="blink" src={withBase('projects/desktop-pet-blink-closed.png')} alt="桌宠闭眼真实状态" width="1024" height="1536" aria-hidden="true" />
-            <div class="projects-pet-pat-state" data-pet-image="pat" aria-hidden="true">
-              <img class="projects-pat-character" src={withBase('projects/desktop-pet-idle.png')} alt="" width="1024" height="1536" />
-              <img class="projects-pat-overlay projects-pat-hand" src={withBase('projects/desktop-pet-pat-hand.png')} alt="" width="1536" height="1024" />
-              <img class="projects-pat-overlay projects-pat-heart" src={withBase('projects/desktop-pet-pat-heart.png')} alt="" width="1536" height="1024" />
-            </div>
-            <span class="projects-state-readout projects-mono">STATE / <strong>IDLE</strong></span>
-          </div>
-        </div>
-
-        <aside class="projects-related-artifact" aria-labelledby="mini-her-title">
-          <div class="projects-artifact-heading projects-mono"><span>RELATED ARTIFACT</span><span>REAL / QA PASS</span></div>
-          <h3 id="mini-her-title">Mini Her</h3>
-          <p>九种 Agent 状态，57 帧经过校验。它是相邻的 sprite package，不是桌宠应用本身。</p>
-          <figure>
-            <img src={withBase('projects/mini-her-contact-sheet.png')} alt="Mini Her 九状态 57 帧真实 contact sheet" width="768" height="1134" loading="lazy" />
-            <figcaption class="projects-mono">9 STATES / 57 VERIFIED FRAMES</figcaption>
-          </figure>
-        </aside>
-      </article>
-    )}
-
     {website && (
       <article class="projects-stage projects-website-stage projects-page-grid" aria-labelledby="website-title">
-        <div class="projects-stage-index projects-mono" aria-hidden="true">03 / PUBLISHING SYSTEM</div>
+        <div class="projects-stage-index projects-mono" aria-hidden="true">02 / PUBLISHING SYSTEM</div>
         <header class="projects-stage-meta projects-website-meta">
           <p class="projects-status projects-mono">{lifecycle(website)}</p>
           <h2 id="website-title"><a href={withBase(`projects/${website.data.slug}/`)}>{websiteTitle[0]}<br />{websiteTitle[1]}</a></h2>
@@ -156,7 +110,7 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
 
     {codex && (
       <article class="projects-stage projects-codex-stage projects-page-grid" aria-labelledby="codex-title">
-        <div class="projects-stage-index projects-mono" aria-hidden="true">04 / SAFETY NOTE</div>
+        <div class="projects-stage-index projects-mono" aria-hidden="true">03 / SAFETY NOTE</div>
         <header class="projects-stage-meta">
           <p class="projects-status projects-mono">{lifecycle(codex)}</p>
           <h2 id="codex-title"><a href={withBase(`projects/${codex.data.slug}/`)}>{codexTitle[0]}<br />{codexTitle[1]}</a></h2>
@@ -189,7 +143,7 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
 
     {(consoleGames || esp32) && (
       <section class="projects-small-works projects-page-grid" aria-labelledby="small-title">
-        <div class="projects-stage-index projects-mono" aria-hidden="true">05–06 / SMALL WORKS</div>
+        <div class="projects-stage-index projects-mono" aria-hidden="true">04–05 / SMALL WORKS</div>
         <header class="projects-small-heading">
           <p class="projects-status projects-mono">FOUNDATIONS / LEARNING OUTPUTS</p>
           <h2 id="small-title">Smaller work,<br />different evidence.</h2>
@@ -246,36 +200,6 @@ LINES  0032       NEXT   T
 <script>
   const archive = document.querySelector('.projects-archive');
   if (archive) {
-    const petStates = ['idle', 'blink', 'pat'];
-    let petIndex = 0;
-    const petCanvas = archive.querySelector<HTMLElement>('.projects-pet-canvas');
-    const petButtons = [...archive.querySelectorAll<HTMLButtonElement>('[data-pet-state]')];
-    const petImages = [...archive.querySelectorAll<HTMLElement>('[data-pet-image]')];
-    const petReadout = archive.querySelector<HTMLElement>('.projects-state-readout strong');
-    function setPetState(state: string) {
-      petIndex = petStates.indexOf(state);
-      petButtons.forEach((button) => {
-        const active = button.dataset.petState === state;
-        button.classList.toggle('is-active', active);
-        button.setAttribute('aria-pressed', String(active));
-      });
-      petImages.forEach((image) => {
-        const active = image.dataset.petImage === state;
-        image.classList.toggle('is-visible', active);
-        image.setAttribute('aria-hidden', String(!active));
-      });
-      if (petReadout) petReadout.textContent = state.toUpperCase();
-      petCanvas?.setAttribute('aria-label', `切换桌宠状态；当前 ${state}`);
-    }
-    petButtons.forEach((button) => button.addEventListener('click', () => setPetState(button.dataset.petState ?? 'idle')));
-    petCanvas?.addEventListener('click', () => setPetState(petStates[(petIndex + 1) % petStates.length]));
-    petCanvas?.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        setPetState(petStates[(petIndex + 1) % petStates.length]);
-      }
-    });
-
     const viewportStage = archive.querySelector<HTMLElement>('.projects-viewport-stage');
     const viewportButtons = [...archive.querySelectorAll<HTMLButtonElement>('[data-view]')];
     const viewReadout = archive.querySelector<HTMLElement>('.projects-view-readout');
