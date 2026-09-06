@@ -14,6 +14,10 @@ https://tkkdy.github.io/tkkdyyy.github.io/admin/
 
 需要正式发布时，先填写稳定的 `publishNumber`，再将 `status` 改为 `published` 并保存。
 
+`Categories` 与 `Tags` 都是多值字段：每行填写一项；优先复用已有名称。保存后，公开文章底部会显示可点击的分类与标签，并自动进入对应聚合页。
+
+Essay 使用相同的 `Categories` / `Tags` 字段；不需要额外维护分类或标签数据库。
+
 ## 更新 Project
 
 `Projects` → 选择现有项目 → 编辑 → `Save`。

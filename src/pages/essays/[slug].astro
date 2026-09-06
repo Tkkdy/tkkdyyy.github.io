@@ -6,6 +6,7 @@ import { withBase } from '../../lib/site-url';
 import { getPublishedEssays } from '../../lib/content/essays';
 import { formatDate } from '../../lib/content/homepage';
 import { render } from 'astro:content';
+import ContentTaxonomy from '../../components/ContentTaxonomy.astro';
 
 export async function getStaticPaths() {
   const essays = await getPublishedEssays();
@@ -47,6 +48,7 @@ const hasMedia = Boolean(data.cover);
     <div class="essay-reading-body">
       <div class="essay-reading-prose">
         <Content />
+        <ContentTaxonomy categories={data.categories} tags={data.tags} />
       </div>
       <footer class="essay-reading-ending">
         <span>VDVXDV · ESSAYS</span>

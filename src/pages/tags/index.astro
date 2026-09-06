@@ -1,0 +1,26 @@
+---
+import TaxonomyLayout from '../../layouts/TaxonomyLayout.astro';
+import { getTaxonomyTerms } from '../../lib/content/taxonomy';
+import { withBase } from '../../lib/site-url';
+
+const tags = await getTaxonomyTerms('tags');
+---
+
+<TaxonomyLayout title="Tags — VDVXDV" description="按标签浏览 VDVXDV 的公开内容。">
+  <section class="taxonomy-shell" aria-labelledby="taxonomy-title">
+    <header class="taxonomy-header taxonomy-header--overview">
+      <p>Browse by topic</p>
+      <h1 id="taxonomy-title">Topics</h1>
+      <span>{tags.length} 个标签</span>
+    </header>
+
+    <div class="taxonomy-term-list">
+      {tags.map((tag) => (
+        <a href={withBase(`tags/${encodeURIComponent(tag.slug)}/`)}>
+          <span>{tag.name}</span>
+          <small>{tag.stories.length} 篇</small>
+        </a>
+      ))}
+    </div>
+  </section>
+</TaxonomyLayout>

@@ -3,6 +3,7 @@ import { render } from 'astro:content';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 import { withBase } from '../../lib/site-url';
 import { formatArticleDate, getPublishedArticles } from '../../lib/content/articles';
+import ContentTaxonomy from '../../components/ContentTaxonomy.astro';
 
 export async function getStaticPaths() {
   const articles = await getPublishedArticles();
@@ -32,12 +33,14 @@ const { Content } = await render(article);
           {formatArticleDate(data.publishedAt)}
         </time>
         {data.readingTime !== undefined && <span>{data.readingTime} min read</span>}
-        {data.category && <span>{data.category}</span>}
+        {data.categories && data.categories.length > 0 && <span>{data.categories.join(' / ')}</span>}
       </div>
     </header>
 
     <div class="prose">
       <Content />
+
+      <ContentTaxonomy categories={data.categories} tags={data.tags} />
 
       <div class="article-ending-mark" aria-hidden="true">· · ·</div>
       <nav class="article-ending" aria-label="文章结束" data-pagefind-ignore>

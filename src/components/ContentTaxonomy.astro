@@ -1,0 +1,38 @@
+---
+import { taxonomyHref } from '../lib/content/taxonomy';
+import { withBase } from '../lib/site-url';
+
+interface Props {
+  categories?: string[];
+  tags?: string[];
+}
+
+const { categories = [], tags = [] } = Astro.props;
+const hasTaxonomy = categories.length > 0 || tags.length > 0;
+---
+
+{hasTaxonomy && (
+  <aside class="content-taxonomy" aria-label="内容分类与标签" data-pagefind-ignore>
+    {categories.length > 0 && (
+      <div class="content-taxonomy-row">
+        <h2>分类</h2>
+        <ul>
+          {categories.map((category) => (
+            <li><a href={withBase(taxonomyHref('categories', category))}>{category}</a></li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {tags.length > 0 && (
+      <div class="content-taxonomy-row">
+        <h2>标签</h2>
+        <ul>
+          {tags.map((tag) => (
+            <li><a href={withBase(taxonomyHref('tags', tag))}>{tag}</a></li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </aside>
+)}

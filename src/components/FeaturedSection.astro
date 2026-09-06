@@ -51,7 +51,9 @@ const { data } = article;
         <div class="featured-body">
           <div class="featured-meta">
             <span class="featured-date">{formatDate(data.publishedAt)}</span>
-            {data.category && <span class="featured-category">{data.category}</span>}
+            {data.categories && data.categories.length > 0 && (
+              <span class="featured-category">{data.categories.join(' / ')}</span>
+            )}
           </div>
           <h2 class="featured-title">{data.title}</h2>
           <p class="featured-summary">{data.description}</p>
