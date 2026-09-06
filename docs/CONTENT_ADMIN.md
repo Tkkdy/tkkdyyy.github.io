@@ -8,6 +8,12 @@ https://tkkdy.github.io/tkkdyyy.github.io/
 
 https://tkkdy.github.io/tkkdyyy.github.io/admin/
 
+Phase 2 的 Editorial Studio 位于上述地址。现有 Sveltia 后台在新发布流程接通前保留为备用入口：
+
+https://tkkdy.github.io/tkkdyyy.github.io/admin/sveltia.html
+
+Editorial Studio 当前只在浏览器本地保存界面草稿；Preview 与 Publish 是 Phase 2 的界面占位，不会写入仓库。正式保存与发布仍使用 Sveltia。
+
 ## 发布 Article
 
 `Articles` → `New` → 填写内容 → 保持 `status: draft` → `Save`。

@@ -1,0 +1,11 @@
+---
+import StoryList from '../../../components/admin/StoryList.astro';
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { getEditorialStories } from '../../../lib/admin/stories';
+
+const stories = await getEditorialStories();
+---
+
+<AdminLayout title="Stories" stories={stories}>
+  <StoryList stories={stories} />
+</AdminLayout>
