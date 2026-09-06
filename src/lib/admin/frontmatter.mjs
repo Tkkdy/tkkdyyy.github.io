@@ -1,0 +1,47 @@
+import { parseDocument } from 'yaml';
+
+const STUDIO_FIELDS = {
+  Article: new Set([
+    'title', 'slug', 'description', 'publishedAt', 'updatedAt', 'status', 'publishNumber',
+    'tags', 'categories', 'cover', 'coverAlt', 'featured', 'homepage',
+  ]),
+  Essay: new Set([
+    'title', 'slug', 'summary', 'publishedAt', 'status', 'tags', 'categories', 'cover',
+    'coverAlt', 'featured', 'homepage',
+  ]),
+  Fragment: new Set([
+    'slug', 'publishedAt', 'status', 'tags', 'image', 'imageAlt', 'homepage',
+  ]),
+};
+
+export function splitContentFile(source) {
+  const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)([\s\S]*)$/);
+  if (!match) return { frontmatter: '', body: source };
+  return { frontmatter: match[1], body: match[2].replace(/^\r?\n/, '') };
+}
+
+export function mergeStudioFrontmatter(existingSource, storyType, studioFields, nextBody) {
+  const ownedFields = STUDIO_FIELDS[storyType];
+  if (!ownedFields) throw new Error(`Unsupported story type: ${storyType}`);
+
+  const { frontmatter, body } = splitContentFile(existingSource);
+  const document = parseDocument(frontmatter || '{}');
+  if (document.errors.length) throw document.errors[0];
+
+  for (const [key, value] of Object.entries(studioFields)) {
+    if (!ownedFields.has(key)) continue;
+    if (value === undefined || value === '' || value === false && ['featured'].includes(key)) {
+      document.delete(key);
+    } else {
+      document.set(key, value);
+    }
+  }
+
+  const yaml = document.toString({ lineWidth: 0 }).trimEnd();
+  const resolvedBody = nextBody === undefined ? body : nextBody;
+  return `---\n${yaml}\n---\n\n${resolvedBody.replace(/^\s+/, '')}`;
+}
+
+export function studioOwnedFields(storyType) {
+  return [...(STUDIO_FIELDS[storyType] ?? [])];
+}

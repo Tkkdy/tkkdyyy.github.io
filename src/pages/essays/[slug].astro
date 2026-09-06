@@ -5,8 +5,8 @@ import EssayLayout from '../../layouts/EssayLayout.astro';
 import { withBase } from '../../lib/site-url';
 import { getPublishedEssays } from '../../lib/content/essays';
 import { formatDate } from '../../lib/content/homepage';
-import { render } from 'astro:content';
 import ContentTaxonomy from '../../components/ContentTaxonomy.astro';
+import StoryBody from '../../components/content/StoryBody.astro';
 
 export async function getStaticPaths() {
   const essays = await getPublishedEssays();
@@ -18,7 +18,6 @@ export async function getStaticPaths() {
 
 const { essay } = Astro.props;
 const { data } = essay;
-const { Content } = await render(essay);
 const hasMedia = Boolean(data.cover);
 ---
 
@@ -46,10 +45,9 @@ const hasMedia = Boolean(data.cover);
     )}
 
     <div class="essay-reading-body">
-      <div class="essay-reading-prose">
-        <Content />
+      <StoryBody variant="essay-reading-prose" markdown={essay.body}>
         <ContentTaxonomy categories={data.categories} tags={data.tags} />
-      </div>
+      </StoryBody>
       <footer class="essay-reading-ending">
         <span>VDVXDV · ESSAYS</span>
         <a href={withBase('essays/')}>返回随笔归档</a>

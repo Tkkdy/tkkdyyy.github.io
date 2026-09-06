@@ -15,6 +15,9 @@ export type EditorialStory = {
   showOnHomepage: boolean;
   featured: boolean;
   cover: string;
+  coverAlt: string;
+  publishNumber?: number;
+  sourcePath: string;
 };
 
 export type EditorialTaxonomy = {
@@ -49,6 +52,9 @@ export async function getEditorialStories(): Promise<EditorialStory[]> {
       showOnHomepage: entry.data.homepage?.show ?? false,
       featured: entry.data.featured ?? false,
       cover: entry.data.cover ?? '',
+      coverAlt: entry.data.coverAlt ?? '',
+      publishNumber: entry.data.publishNumber,
+      sourcePath: `src/content/articles/${entry.id}.md`,
     })),
     ...essays.map((entry) => ({
       id: `essay-${entry.data.slug}`,
@@ -65,6 +71,8 @@ export async function getEditorialStories(): Promise<EditorialStory[]> {
       showOnHomepage: entry.data.homepage?.show ?? false,
       featured: entry.data.featured ?? false,
       cover: entry.data.cover ?? '',
+      coverAlt: entry.data.coverAlt ?? '',
+      sourcePath: `src/content/essays/${entry.id}.md`,
     })),
     ...fragments.map((entry) => ({
       id: `fragment-${entry.data.slug}`,
@@ -81,6 +89,8 @@ export async function getEditorialStories(): Promise<EditorialStory[]> {
       showOnHomepage: entry.data.homepage?.show ?? false,
       featured: false,
       cover: entry.data.image ?? '',
+      coverAlt: entry.data.imageAlt ?? '',
+      sourcePath: `src/content/fragments/${entry.id}.md`,
     })),
   ];
 
@@ -112,5 +122,7 @@ export function emptyEditorialStory(): EditorialStory {
     showOnHomepage: false,
     featured: false,
     cover: '',
+    coverAlt: '',
+    sourcePath: '',
   };
 }
