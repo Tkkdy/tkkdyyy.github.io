@@ -10,6 +10,16 @@ interface Props {
 const { story, taxonomy } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const storyJson = JSON.stringify(story);
+const insertItems = [
+  { type: 'paragraph', icon: '¶', label: 'Paragraph' },
+  { type: 'heading', icon: 'H', label: 'Heading' },
+  { type: 'quote', icon: '“', label: 'Quote' },
+  { type: 'callout', icon: '◇', label: 'Callout' },
+  { type: 'image', icon: '▣', label: 'Image' },
+  { type: 'list', icon: '≡', label: 'List' },
+  { type: 'code', icon: '</>', label: 'Code' },
+  { type: 'divider', icon: '—', label: 'Divider' },
+] as const;
 ---
 
 <div class="editor-workspace" data-story={storyJson} data-base={base}>
@@ -19,13 +29,40 @@ const storyJson = JSON.stringify(story);
       <textarea class="story-deck-input" rows="1" placeholder="Add a deck…" aria-label="Story deck">{story.deck}</textarea>
 
       <div class="editor-rule"></div>
-      <div class="format-toolbar" aria-label="Text formatting">
-        <span>Body</span><i></i>
-        <button type="button" aria-label="Bold" disabled><strong>B</strong></button>
-        <button type="button" aria-label="Italic" disabled><em>I</em></button>
-        <button type="button" aria-label="Add link" disabled>↗</button>
+      <div class="format-toolbar" aria-label="Block editor toolbar">
+        <button class="block-style-trigger" type="button" aria-haspopup="menu" aria-expanded="false">
+          <span data-current-block>Paragraph</span><span class="toolbar-caret" aria-hidden="true"></span>
+        </button>
+        <div class="block-style-menu" role="menu" hidden>
+          {insertItems.filter((item) => ['paragraph', 'heading', 'quote', 'callout', 'code'].includes(item.type)).map((item) => (
+            <button type="button" role="menuitem" data-convert-block={item.type}>{item.label}</button>
+          ))}
+        </div>
+        <i aria-hidden="true"></i>
+        <button type="button" aria-label="Bold" data-format="bold"><strong>B</strong></button>
+        <button type="button" aria-label="Italic" data-format="italic"><em>I</em></button>
+        <button type="button" aria-label="Underline" data-format="underline"><span class="underline-label">U</span></button>
+        <button type="button" aria-label="Add or edit link" data-format="link"><span aria-hidden="true">↗</span></button>
+        <i aria-hidden="true"></i>
+        <button type="button" aria-label="Move block up" data-block-action="up"><span aria-hidden="true">↑</span></button>
+        <button type="button" aria-label="Move block down" data-block-action="down"><span aria-hidden="true">↓</span></button>
+        <button type="button" aria-label="Delete block" data-block-action="delete"><span aria-hidden="true">×</span></button>
+        <button class="image-edit-action" type="button" data-block-action="edit-image" hidden>Edit image</button>
       </div>
-      <textarea class="story-body-input" placeholder="Start writing…" aria-label="Story body">{story.body}</textarea>
+
+      <div class="block-editor-frame"><div class="story-block-editor" aria-label="Story body"></div></div>
+
+      <div class="block-insert">
+        <button class="block-insert-trigger" type="button" aria-label="Insert a block" aria-haspopup="menu" aria-expanded="false"><AdminIcon name="plus" size={17} /></button>
+        <div class="block-insert-menu" role="menu" aria-label="Insert block" hidden>
+          {insertItems.map((item) => (
+            <button type="button" role="menuitem" data-insert-block={item.type}>
+              <span aria-hidden="true">{item.icon}</span><small>{item.label}</small>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div class="editor-word-count"><span>0</span> words</div>
     </div>
   </article>
@@ -33,10 +70,8 @@ const storyJson = JSON.stringify(story);
   <aside class="publishing-panel" aria-labelledby="publishing-title">
     <div class="publishing-card">
       <h2 id="publishing-title">Publishing</h2>
-
       <label class="publishing-field"><span>Status</span><select name="status"><option value="draft">Draft</option><option value="published">Published</option></select></label>
       <label class="publishing-field"><span>Type</span><select name="type"><option>Essay</option><option>Article</option><option>Fragment</option></select></label>
-
       <div class="publishing-field taxonomy-field" data-taxonomy="categories">
         <span>Categories</span>
         <div class="taxonomy-control">
@@ -45,7 +80,6 @@ const storyJson = JSON.stringify(story);
           <datalist id="category-options">{taxonomy.categories.map((item) => <option value={item}></option>)}</datalist>
         </div>
       </div>
-
       <div class="publishing-field taxonomy-field" data-taxonomy="tags">
         <span>Tags</span>
         <div class="taxonomy-control">
@@ -54,17 +88,13 @@ const storyJson = JSON.stringify(story);
           <datalist id="tag-options">{taxonomy.tags.map((item) => <option value={item}></option>)}</datalist>
         </div>
       </div>
-
       <label class="publishing-field"><span>Date</span><span class="input-with-icon"><AdminIcon name="calendar" size={15} /><input type="date" name="publishedAt" value={story.publishedAt} /></span></label>
-
       <div class="publishing-divider"></div>
       <label class="toggle-field"><span>Homepage<small>Show on homepage</small></span><input type="checkbox" name="showOnHomepage" checked={story.showOnHomepage} /><i></i></label>
       <label class="toggle-field"><span>Featured<small>Mark as featured</small></span><input type="checkbox" name="featured" checked={story.featured} /><i></i></label>
-
       <label class="publishing-field"><span>Slug</span><input type="text" name="slug" value={story.slug} placeholder="story-slug" /></label>
       <div class="story-url"><span>URL</span><code></code></div>
     </div>
-
     <div class="publishing-card cover-card">
       <div class="card-heading"><h2>Cover Image</h2><label for="cover-input">Choose</label><input id="cover-input" type="file" accept="image/*" /></div>
       <div class="cover-preview">
@@ -72,156 +102,29 @@ const storyJson = JSON.stringify(story);
       </div>
       <p>Recommended size: 1200 × 630</p>
     </div>
-
     <a class="sveltia-fallback" href={`${base}admin/sveltia.html`}>Open Sveltia fallback <AdminIcon name="external" size={14} /></a>
   </aside>
+
+  <dialog class="image-block-dialog" aria-labelledby="image-dialog-title">
+    <form method="dialog">
+      <div class="image-dialog-heading">
+        <div><h2 id="image-dialog-title">Insert image</h2><p>Add a local image or use a public URL.</p></div>
+        <button type="button" data-image-cancel aria-label="Close image dialog"><AdminIcon name="close" size={17} /></button>
+      </div>
+      <label><span>Image file</span><input type="file" accept="image/*" data-image-file /></label>
+      <div class="image-dialog-or"><span>or</span></div>
+      <label><span>Image URL</span><input type="url" inputmode="url" placeholder="https://example.com/image.jpg" data-image-url /></label>
+      <label><span>Alt text</span><input type="text" placeholder="Describe the image" data-image-alt /></label>
+      <p class="image-dialog-error" role="alert" hidden></p>
+      <div class="image-dialog-actions">
+        <button class="secondary-action" type="button" data-image-cancel>Cancel</button>
+        <button class="primary-action" type="submit" value="save" data-image-save>Insert image</button>
+      </div>
+    </form>
+  </dialog>
 </div>
 
 <script>
-  const workspace = document.querySelector('.editor-workspace');
-  if (workspace instanceof HTMLElement) {
-    const editorRoot = workspace;
-    type TaxonomyKind = 'categories' | 'tags';
-    type EditorState = {
-      id: string;
-      title: string;
-      deck: string;
-      body: string;
-      type: string;
-      status: string;
-      slug: string;
-      categories: string[];
-      tags: string[];
-      publishedAt: string;
-      showOnHomepage: boolean;
-      featured: boolean;
-    };
-    const initial = JSON.parse(editorRoot.dataset.story || '{}') as EditorState;
-    const storageKey = `vdvxdv-editorial:${initial.id}`;
-    const stored = localStorage.getItem(storageKey);
-    const state: EditorState = stored ? { ...initial, ...JSON.parse(stored) } : initial;
-    const title = editorRoot.querySelector('.story-title-input');
-    const deck = editorRoot.querySelector('.story-deck-input');
-    const body = editorRoot.querySelector('.story-body-input');
-    const status = editorRoot.querySelector('[name="status"]');
-    const type = editorRoot.querySelector('[name="type"]');
-    const date = editorRoot.querySelector('[name="publishedAt"]');
-    const slug = editorRoot.querySelector('[name="slug"]');
-    const homepage = editorRoot.querySelector('[name="showOnHomepage"]');
-    const featured = editorRoot.querySelector('[name="featured"]');
-    const saveLabel = document.querySelector('.editor-save-state span');
-    let slugWasEdited = Boolean(state.slug);
-    let saveTimer = 0;
-
-    const valueOf = (element: Element | null) => element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement ? element.value : '';
-    const checkedOf = (element: Element | null) => element instanceof HTMLInputElement && element.checked;
-    const setValue = (element: Element | null, value: string) => { if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement) element.value = value ?? ''; };
-    const setChecked = (element: Element | null, value: boolean) => { if (element instanceof HTMLInputElement) element.checked = Boolean(value); };
-
-    setValue(title, state.title); setValue(deck, state.deck); setValue(body, state.body);
-    setValue(status, state.status); setValue(type, state.type); setValue(date, state.publishedAt); setValue(slug, state.slug);
-    setChecked(homepage, state.showOnHomepage); setChecked(featured, state.featured);
-
-    function slugify(value: string) {
-      const generated = value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      return generated || `story-${valueOf(date) || new Date().toISOString().slice(0, 10)}`;
-    }
-
-    function resizeTextareas() {
-      [title, deck].forEach((element) => {
-        if (!(element instanceof HTMLTextAreaElement)) return;
-        element.style.height = 'auto';
-        element.style.height = `${element.scrollHeight}px`;
-      });
-    }
-
-    function renderTaxonomy(kind: TaxonomyKind) {
-      const field = editorRoot.querySelector(`[data-taxonomy="${kind}"]`);
-      const chips = field?.querySelector('.taxonomy-chips');
-      if (!(chips instanceof HTMLElement)) return;
-      chips.replaceChildren();
-      (state[kind] || []).forEach((value: string) => {
-        const chip = document.createElement('span');
-        chip.className = 'taxonomy-chip';
-        chip.append(document.createTextNode(value));
-        const remove = document.createElement('button');
-        remove.type = 'button'; remove.setAttribute('aria-label', `Remove ${value}`); remove.textContent = '×';
-        remove.addEventListener('click', () => { state[kind] = state[kind].filter((item: string) => item !== value); renderTaxonomy(kind); scheduleSave(); });
-        chip.append(remove); chips.append(chip);
-      });
-    }
-
-    function updateDerived() {
-      const content = valueOf(body).trim();
-      const cjkCount = (content.match(/[\u3400-\u9fff]/g) || []).length;
-      const latinCount = (content.replace(/[\u3400-\u9fff]/g, ' ').match(/[A-Za-z0-9]+(?:['’-][A-Za-z0-9]+)*/g) || []).length;
-      const words = cjkCount + latinCount;
-      const count = editorRoot.querySelector('.editor-word-count span');
-      if (count) count.textContent = String(words);
-      const route = valueOf(type).toLowerCase() === 'fragment' ? 'fragments' : `${valueOf(type).toLowerCase()}s`;
-      const url = editorRoot.querySelector('.story-url code');
-      if (url) url.textContent = `/${route}/${valueOf(slug) || 'untitled'}/`;
-      resizeTextareas();
-    }
-
-    function snapshot() {
-      return { ...state, title: valueOf(title), deck: valueOf(deck), body: valueOf(body), status: valueOf(status), type: valueOf(type), publishedAt: valueOf(date), slug: valueOf(slug), showOnHomepage: checkedOf(homepage), featured: checkedOf(featured) };
-    }
-
-    function scheduleSave() {
-      if (saveLabel) saveLabel.textContent = 'Saving…';
-      window.clearTimeout(saveTimer);
-      saveTimer = window.setTimeout(() => {
-        localStorage.setItem(storageKey, JSON.stringify(snapshot()));
-        if (saveLabel) saveLabel.textContent = 'Saved locally';
-      }, 450);
-      updateDerived();
-    }
-
-    [title, deck, body, status, type, date, homepage, featured].forEach((element) => element?.addEventListener('input', () => {
-      if (element === title && !slugWasEdited) setValue(slug, slugify(valueOf(title)));
-      scheduleSave();
-    }));
-    slug?.addEventListener('input', () => { slugWasEdited = true; scheduleSave(); });
-
-    ['categories', 'tags'].forEach((kind) => {
-      const taxonomyKind = kind as TaxonomyKind;
-      const input = editorRoot.querySelector(`[data-taxonomy="${taxonomyKind}"] input`);
-      input?.addEventListener('keydown', (event) => {
-        if (!(event instanceof KeyboardEvent) || event.key !== 'Enter' || !(input instanceof HTMLInputElement)) return;
-        event.preventDefault();
-        const value = input.value.trim();
-        if (value && !state[taxonomyKind].includes(value)) state[taxonomyKind].push(value);
-        input.value = ''; renderTaxonomy(taxonomyKind); scheduleSave();
-      });
-      input?.addEventListener('change', () => {
-        if (!(input instanceof HTMLInputElement)) return;
-        const value = input.value.trim();
-        if (value && !state[taxonomyKind].includes(value)) state[taxonomyKind].push(value);
-        input.value = ''; renderTaxonomy(taxonomyKind); scheduleSave();
-      });
-      renderTaxonomy(taxonomyKind);
-    });
-
-    document.querySelectorAll('[data-phase-action]').forEach((button) => button.addEventListener('click', () => {
-      const toast = document.querySelector('.admin-toast');
-      if (!(toast instanceof HTMLElement)) return;
-      toast.textContent = `${button.getAttribute('data-phase-action')} is ready for Phase 4 integration. Your draft is saved locally.`;
-      toast.hidden = false; window.setTimeout(() => { toast.hidden = true; }, 3200);
-    }));
-
-    const coverInput = editorRoot.querySelector('#cover-input');
-    coverInput?.addEventListener('change', () => {
-      if (!(coverInput instanceof HTMLInputElement) || !coverInput.files?.[0]) return;
-      const preview = editorRoot.querySelector('.cover-preview');
-      if (!(preview instanceof HTMLElement)) return;
-      const image = document.createElement('img');
-      image.alt = 'Selected story cover';
-      image.src = URL.createObjectURL(coverInput.files[0]);
-      preview.replaceChildren(image);
-      scheduleSave();
-    });
-
-    updateDerived();
-  }
+  import { initializeStoryEditors } from '../../lib/admin/story-editor-client';
+  initializeStoryEditors();
 </script>
