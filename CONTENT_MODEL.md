@@ -150,7 +150,27 @@ YYYY-MM-DDTHH:mm:ss+08:00
 2026-08-05T02:30:00+08:00
 ```
 
-### 3.4 标签
+### 3.4 分类
+
+分类用于较大的内容组织，Article 与 Essay 均可属于多个分类。分类和标签是独立字段。
+
+规则：
+
+- 使用 `categories` 字符串数组；
+- 一篇内容可以属于一个或多个分类；
+- 每一项会自动去除首尾空格；空白项不允许保存；
+- 分类名称保持稳定、简短；
+- 分类页 slug 由名称在构建时统一生成。
+
+示例：
+
+```yaml
+categories:
+  - 随笔
+  - 思考
+```
+
+### 3.5 标签
 
 标签用于内容归类和搜索。
 
@@ -158,6 +178,7 @@ YYYY-MM-DDTHH:mm:ss+08:00
 
 - 标签不是栏目；
 - 标签数量应克制；
+- 每一项会自动去除首尾空格；完全重复的项只保留一次；
 - 同一概念不要同时使用多个近义标签；
 - 中文标签优先保持简短；
 - 后续可以增加标签别名，不影响原有内容。
@@ -171,7 +192,7 @@ tags:
   - 技术思考
 ```
 
-### 3.5 首页展示信息
+### 3.6 首页展示信息
 
 可被首页选中的内容统一使用：
 
@@ -199,7 +220,7 @@ homepage:
 
 这些覆盖字段都是可选的，用于首页需要不同标题、摘要或图片时使用。
 
-### 3.6 栏目精选和首页展示互相独立
+### 3.7 栏目精选和首页展示互相独立
 
 `featured` 表示是否在所属栏目中精选。
 
@@ -217,7 +238,7 @@ homepage:
 
 这表示它会在“随笔”栏目中进入精选区，但不会出现在首页。
 
-### 3.7 系统自动生成的信息
+### 3.8 系统自动生成的信息
 
 以下信息原则上由系统自动生成，不要求用户手动填写：
 
@@ -259,7 +280,7 @@ homepage:
 | `updatedAt` | date | 否 | 有实质更新时填写 |
 | `status` | enum | 是 | `draft` / `published` / `archived` |
 | `tags` | string[] | 否 | 内容标签 |
-| `category` | string | 否 | 如“技术”“观察”“项目复盘” |
+| `categories` | string[] | 否 | 可属于多个分类，如“技术”“观察”“项目复盘” |
 | `cover` | image path | 否 | 封面图或插画 |
 | `coverAlt` | string | 条件必填 | 有封面时填写图片说明 |
 | `featured` | boolean | 否 | 是否在文章栏目精选 |
@@ -281,7 +302,8 @@ tags:
   - AI
   - 上下文
   - 个人助理
-category: 技术思考
+categories:
+  - 技术思考
 cover: "/images/articles/context-interface-cover.jpg"
 coverAlt: "抽象的信息层与个人空间"
 featured: true
@@ -327,6 +349,7 @@ toc: true
 | `publishedAt` | date | 是 | 发布日期 |
 | `status` | enum | 是 | `draft` / `published` / `archived` |
 | `tags` | string[] | 否 | 内容标签 |
+| `categories` | string[] | 否 | 可属于多个分类 |
 | `cover` | image path | 否 | 列表或首页使用的封面/插画 |
 | `coverAlt` | string | 条件必填 | 有封面时填写 |
 | `readingTime` | number | 否 | 默认自动计算，可不显示 |
@@ -342,6 +365,8 @@ title: "初中时，我只是想看 YouTube"
 slug: "i-only-wanted-to-watch-youtube"
 publishedAt: 2026-08-01
 status: published
+categories:
+  - 随笔
 tags:
   - 互联网
   - 回忆

@@ -22,8 +22,8 @@ collections:
       - { label: Updated At, name: updatedAt, widget: datetime, required: false, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
       - { label: Status, name: status, widget: select, default: draft, options: [draft, published, archived] }
       - { label: Publish Number, name: publishNumber, widget: number, required: false, value_type: int, min: 1, hint: "发布或归档前必须填写稳定编号。" }
-      - { label: Tags, name: tags, widget: list, required: false }
-      - { label: Category, name: category, widget: string, required: false }
+      - { label: Categories, name: categories, widget: list, required: false, label_singular: Category, hint: "每行一个分类；可添加多个。优先复用已有名称，避免近义重复。" }
+      - { label: Tags, name: tags, widget: list, required: false, label_singular: Tag, hint: "每行一个标签；可添加多个。优先复用已有名称，避免近义重复。" }
       - { label: Cover, name: cover, widget: image, required: false }
       - { label: Cover Alt, name: coverAlt, widget: string, required: false }
       - { label: Featured, name: featured, widget: boolean, required: false, default: false }
@@ -50,7 +50,8 @@ collections:
       - { label: Summary, name: summary, widget: text, required: false }
       - { label: Published At, name: publishedAt, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
       - { label: Status, name: status, widget: select, default: draft, options: [draft, published, archived] }
-      - { label: Tags, name: tags, widget: list, required: false }
+      - { label: Categories, name: categories, widget: list, required: false, label_singular: Category, hint: "每行一个分类；可添加多个。优先复用已有名称，避免近义重复。" }
+      - { label: Tags, name: tags, widget: list, required: false, label_singular: Tag, hint: "每行一个标签；可添加多个。优先复用已有名称，避免近义重复。" }
       - { label: Cover, name: cover, widget: image, required: false }
       - { label: Cover Alt, name: coverAlt, widget: string, required: false }
       - { label: Reading Time, name: readingTime, widget: number, required: false, value_type: float, min: 0 }

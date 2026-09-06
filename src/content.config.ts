@@ -13,6 +13,12 @@ import { glob } from 'astro/loaders';
 /** 内容发布状态（CONTENT_MODEL §3.2） */
 const statusSchema = z.enum(['draft', 'published', 'archived']);
 
+/** Taxonomy values are human-facing names; trim whitespace, reject blanks, and remove exact duplicates. */
+const taxonomyListSchema = z
+  .array(z.string().trim().min(1, '分类和标签不能是空字符串'))
+  .transform((values) => [...new Set(values)])
+  .optional();
+
 /** 首页策展设置（CONTENT_MODEL §9）：show 是否上首页，order 仅控制同类型内部顺序 */
 const homepageSchema = z.object({
   show: z.boolean(),
@@ -45,8 +51,8 @@ const articles = defineCollection({
       updatedAt: z.coerce.date().optional(),
       status: statusSchema,
       publishNumber: z.number().int().positive().optional(),
-      tags: z.array(z.string()).optional(),
-      category: z.string().optional(),
+      tags: taxonomyListSchema,
+      categories: taxonomyListSchema,
       cover: z.string().optional(),
       coverAlt: z.string().optional(),
       featured: z.boolean().optional(),
@@ -80,7 +86,8 @@ const essays = defineCollection({
       summary: z.string().optional(),
       publishedAt: z.coerce.date(),
       status: statusSchema,
-      tags: z.array(z.string()).optional(),
+      tags: taxonomyListSchema,
+      categories: taxonomyListSchema,
       cover: z.string().optional(),
       coverAlt: z.string().optional(),
       readingTime: z.number().optional(),
@@ -100,7 +107,7 @@ const fragments = defineCollection({
       slug: z.string(),
       publishedAt: z.coerce.date(),
       status: statusSchema,
-      tags: z.array(z.string()).optional(),
+      tags: taxonomyListSchema,
       image: z.string().optional(),
       imageAlt: z.string().optional(),
       link: z.url().optional(),

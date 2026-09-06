@@ -39,8 +39,8 @@ const articles = await getPublishedArticles();
                 <span class="article-row-number">
                   {formatPublishNumber(article.data.publishNumber!)}
                 </span>
-                {article.data.category && (
-                  <span class="article-row-domain">{article.data.category}</span>
+                {article.data.categories && article.data.categories.length > 0 && (
+                  <span class="article-row-domain">{article.data.categories.join(' / ')}</span>
                 )}
               </div>
 

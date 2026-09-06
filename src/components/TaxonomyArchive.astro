@@ -1,0 +1,40 @@
+---
+import type { TaxonomyStory } from '../lib/content/taxonomy';
+import { withBase } from '../lib/site-url';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  stories: TaxonomyStory[];
+}
+
+const { eyebrow, title, stories } = Astro.props;
+const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  timeZone: 'UTC',
+});
+---
+
+<section class="taxonomy-shell" aria-labelledby="taxonomy-title">
+  <header class="taxonomy-header">
+    <p>{eyebrow}</p>
+    <h1 id="taxonomy-title">{title}</h1>
+    <span>{stories.length} 篇</span>
+  </header>
+
+  <div class="taxonomy-story-list">
+    {stories.map((story) => (
+      <article class="taxonomy-story-row">
+        <div>
+          <span class="taxonomy-story-type">{story.type}</span>
+          <h2><a href={withBase(story.href)}>{story.title}</a></h2>
+        </div>
+        <time datetime={story.publishedAt.toISOString().slice(0, 10)}>
+          {dateFormatter.format(story.publishedAt)}
+        </time>
+      </article>
+    ))}
+  </div>
+</section>

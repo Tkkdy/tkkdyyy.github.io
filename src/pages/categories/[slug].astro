@@ -1,0 +1,22 @@
+---
+import TaxonomyArchive from '../../components/TaxonomyArchive.astro';
+import TaxonomyLayout from '../../layouts/TaxonomyLayout.astro';
+import { getTaxonomyTerms, type TaxonomyTerm } from '../../lib/content/taxonomy';
+
+export async function getStaticPaths() {
+  const categories = await getTaxonomyTerms('categories');
+  return categories.map((category) => ({
+    params: { slug: category.slug },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props as { category: TaxonomyTerm };
+---
+
+<TaxonomyLayout
+  title={`${category.name} — Categories — VDVXDV`}
+  description={`浏览分类“${category.name}”下的公开内容。`}
+>
+  <TaxonomyArchive eyebrow="Category" title={category.name} stories={category.stories} />
+</TaxonomyLayout>
