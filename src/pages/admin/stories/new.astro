@@ -1,0 +1,13 @@
+---
+import StoryEditor from '../../../components/admin/StoryEditor.astro';
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { emptyEditorialStory, getEditorialStories, getEditorialTaxonomy } from '../../../lib/admin/stories';
+
+const stories = await getEditorialStories();
+const story = emptyEditorialStory();
+const taxonomy = getEditorialTaxonomy(stories);
+---
+
+<AdminLayout title="New Story" section="Stories" stories={stories} layout="editor">
+  <StoryEditor story={story} taxonomy={taxonomy} />
+</AdminLayout>

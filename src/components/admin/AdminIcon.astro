@@ -1,0 +1,58 @@
+---
+type IconName =
+  | 'menu'
+  | 'plus'
+  | 'stories'
+  | 'media'
+  | 'projects'
+  | 'home'
+  | 'tag'
+  | 'globe'
+  | 'settings'
+  | 'search'
+  | 'more'
+  | 'check'
+  | 'external'
+  | 'close'
+  | 'calendar'
+  | 'image'
+  | 'chevron';
+
+interface Props {
+  name: IconName;
+  size?: number;
+  strokeWidth?: number;
+}
+
+const { name, size = 18, strokeWidth = 1.8 } = Astro.props;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={strokeWidth}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+>
+  {name === 'menu' && <><path d="M4 6h16M4 12h16M4 18h16" /></>}
+  {name === 'plus' && <><path d="M12 5v14M5 12h14" /></>}
+  {name === 'stories' && <><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 8h6M9 12h6M9 16h4" /></>}
+  {name === 'media' && <><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9" r="1.5" /><path d="m3 17 5-5 4 4 3-3 6 6" /></>}
+  {name === 'projects' && <><path d="M9 6V4h6v2M4 8h16v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" /><path d="M4 12h16M10 12v2h4v-2" /></>}
+  {name === 'home' && <><path d="m3 11 9-8 9 8" /><path d="M5 10v10h14V10M9 20v-6h6v6" /></>}
+  {name === 'tag' && <><path d="M20 13 13 20l-9-9V4h7Z" /><circle cx="8.5" cy="8.5" r="1" /></>}
+  {name === 'globe' && <><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" /></>}
+  {name === 'settings' && <><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.1A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3v-4h.1A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.1A1.7 1.7 0 0 0 15.4 4a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.1.38.3.72.6 1 .3.25.68.4 1.1.4h.1v4h-.1a1.7 1.7 0 0 0-1.7.6Z" /></>}
+  {name === 'search' && <><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></>}
+  {name === 'more' && <><circle cx="5" cy="12" r="1" fill="currentColor" stroke="none" /><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" /><circle cx="19" cy="12" r="1" fill="currentColor" stroke="none" /></>}
+  {name === 'check' && <><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></>}
+  {name === 'external' && <><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6" /></>}
+  {name === 'close' && <><path d="m6 6 12 12M18 6 6 18" /></>}
+  {name === 'calendar' && <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18" /></>}
+  {name === 'image' && <><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9" r="1.5" /><path d="m3 17 5-5 4 4 3-3 6 6" /></>}
+  {name === 'chevron' && <><path d="m9 18 6-6-6-6" /></>}
+</svg>

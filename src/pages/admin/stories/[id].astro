@@ -1,0 +1,23 @@
+---
+import StoryEditor from '../../../components/admin/StoryEditor.astro';
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { getEditorialStories, getEditorialTaxonomy, type EditorialStory } from '../../../lib/admin/stories';
+
+export async function getStaticPaths() {
+  const stories = await getEditorialStories();
+  const taxonomy = getEditorialTaxonomy(stories);
+  return stories.map((story) => ({ params: { id: story.id }, props: { story, stories, taxonomy } }));
+}
+
+interface Props {
+  story: EditorialStory;
+  stories: EditorialStory[];
+  taxonomy: ReturnType<typeof getEditorialTaxonomy>;
+}
+
+const { story, stories, taxonomy } = Astro.props;
+---
+
+<AdminLayout title={story.title} section="Stories" stories={stories} layout="editor">
+  <StoryEditor story={story} taxonomy={taxonomy} />
+</AdminLayout>

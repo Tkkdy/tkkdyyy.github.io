@@ -1,0 +1,76 @@
+---
+import '../styles/admin.css';
+import AdminIcon from '../components/admin/AdminIcon.astro';
+import AdminSidebar from '../components/admin/AdminSidebar.astro';
+import type { EditorialStory } from '../lib/admin/stories';
+
+interface Props {
+  title: string;
+  section?: string;
+  active?: 'stories' | 'media' | 'projects' | 'homepage' | 'taxonomy' | 'site' | 'settings';
+  stories: EditorialStory[];
+  layout?: 'editor' | 'list';
+}
+
+const { title, section = 'Stories', active = 'stories', stories, layout = 'list' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#f4f3ef" />
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+    <title>{title} · VDVXDV Editorial</title>
+  </head>
+  <body class:list={['admin-body', `admin-${layout}`]}>
+    <div class="admin-shell">
+      <AdminSidebar active={active} stories={stories} />
+      <main class="admin-main">
+        <header class="admin-topbar">
+          <button class="sidebar-toggle" type="button" aria-controls="admin-sidebar" aria-expanded="false" aria-label="Open navigation">
+            <AdminIcon name="menu" size={18} />
+          </button>
+          <div class="admin-breadcrumb">
+            <span>{section}</span>
+            {title !== section && <><AdminIcon name="chevron" size={14} /><strong>{title}</strong></>}
+          </div>
+          {layout === 'editor' && (
+            <>
+              <div class="editor-save-state"><AdminIcon name="check" size={15} /><span>Saved locally</span></div>
+              <div class="editor-actions">
+                <button class="secondary-action" type="button" data-phase-action="Preview">Preview</button>
+                <button class="primary-action" type="button" data-phase-action="Publish">Publish</button>
+                <button class="icon-action" type="button" aria-label="More actions"><AdminIcon name="more" size={18} /></button>
+              </div>
+            </>
+          )}
+        </header>
+        <slot />
+      </main>
+    </div>
+
+    <div class="admin-toast" role="status" aria-live="polite" hidden></div>
+
+    <script>
+      const toggle = document.querySelector('.sidebar-toggle');
+      const toast = document.querySelector('.admin-toast');
+
+      toggle?.addEventListener('click', () => {
+        const open = document.body.classList.toggle('sidebar-open');
+        toggle.setAttribute('aria-expanded', String(open));
+      });
+
+      document.querySelectorAll('[data-coming-soon]').forEach((item) => {
+        item.addEventListener('click', () => {
+          if (!(toast instanceof HTMLElement)) return;
+          toast.textContent = `${item.getAttribute('data-coming-soon')} is outside the Phase 2 workspace.`;
+          toast.hidden = false;
+          window.setTimeout(() => { toast.hidden = true; }, 2800);
+        });
+      });
+    </script>
+  </body>
+</html>

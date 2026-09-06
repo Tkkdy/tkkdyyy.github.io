@@ -1,0 +1,81 @@
+---
+import AdminIcon from './AdminIcon.astro';
+import type { EditorialStory } from '../../lib/admin/stories';
+
+interface Props { stories: EditorialStory[] }
+const { stories } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<section class="stories-view" aria-labelledby="stories-title">
+  <header class="stories-heading">
+    <div>
+      <h1 id="stories-title">Stories</h1>
+      <p>{stories.length} pieces across articles, essays, and fragments.</p>
+    </div>
+    <a class="primary-action" href={`${base}admin/stories/new/`}><AdminIcon name="plus" size={16} />New Story</a>
+  </header>
+
+  <div class="story-controls">
+    <div class="story-tabs" role="tablist" aria-label="Story status">
+      <button class="active" type="button" role="tab" aria-selected="true" data-status="all">All <span>{stories.length}</span></button>
+      <button type="button" role="tab" aria-selected="false" data-status="draft">Draft</button>
+      <button type="button" role="tab" aria-selected="false" data-status="published">Published</button>
+    </div>
+    <label class="story-search">
+      <AdminIcon name="search" size={16} />
+      <span class="sr-only">Search stories</span>
+      <input type="search" placeholder="Search stories" />
+    </label>
+  </div>
+
+  <div class="stories-table" role="table" aria-label="Stories">
+    <div class="story-table-head" role="row">
+      <span role="columnheader">Story</span><span role="columnheader">Type</span><span role="columnheader">Status</span><span role="columnheader">Updated</span><span></span>
+    </div>
+    <div class="story-rows">
+      {stories.map((story) => (
+        <a class="story-row" href={`${base}admin/stories/${story.id}/`} role="row" data-status={story.status} data-search={`${story.title} ${story.type} ${story.categories.join(' ')} ${story.tags.join(' ')}`.toLowerCase()}>
+          <span class="story-title-cell" role="cell"><strong>{story.title}</strong><small>{story.deck || story.slug}</small></span>
+          <span role="cell">{story.type}</span>
+          <span role="cell"><i class:list={['status-indicator', story.status]}></i>{story.status[0].toUpperCase() + story.status.slice(1)}</span>
+          <time role="cell" datetime={story.updatedAt}>{story.updatedAt}</time>
+          <span role="cell"><AdminIcon name="chevron" size={16} /></span>
+        </a>
+      ))}
+      <p class="stories-empty" hidden>No stories match this view.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const tabs = [...document.querySelectorAll('.story-tabs [data-status]')];
+  const rows = [...document.querySelectorAll('.story-row')];
+  const search = document.querySelector('.story-search input');
+  const empty = document.querySelector('.stories-empty');
+  let status = 'all';
+
+  function filterRows() {
+    const query = search instanceof HTMLInputElement ? search.value.trim().toLowerCase() : '';
+    let visible = 0;
+    rows.forEach((row) => {
+      if (!(row instanceof HTMLElement)) return;
+      const matchesStatus = status === 'all' || row.dataset.status === status;
+      const matchesSearch = !query || row.dataset.search?.includes(query);
+      row.hidden = !(matchesStatus && matchesSearch);
+      if (!row.hidden) visible += 1;
+    });
+    if (empty instanceof HTMLElement) empty.hidden = visible !== 0;
+  }
+
+  tabs.forEach((tab) => tab.addEventListener('click', () => {
+    status = tab.getAttribute('data-status') || 'all';
+    tabs.forEach((item) => {
+      const selected = item === tab;
+      item.classList.toggle('active', selected);
+      item.setAttribute('aria-selected', String(selected));
+    });
+    filterRows();
+  }));
+  search?.addEventListener('input', filterRows);
+</script>
