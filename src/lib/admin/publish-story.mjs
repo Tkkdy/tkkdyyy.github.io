@@ -32,7 +32,7 @@ function studioFields(state, cover) {
     publishedAt: state.publishedAt,
     status: state.status,
     tags: state.tags?.length ? state.tags : undefined,
-    homepage: state.showOnHomepage ? { show: true } : undefined,
+    homepage: { show: Boolean(state.showOnHomepage) },
   };
   if (state.type === 'Article') return {
     ...shared, title: state.title, description: state.deck, updatedAt: new Date().toISOString().slice(0, 10),
@@ -46,6 +46,13 @@ function studioFields(state, cover) {
     coverAlt: cover ? state.coverAlt : undefined, featured: state.featured || undefined,
   };
   return { ...shared, image: cover || undefined, imageAlt: cover ? state.coverAlt : undefined };
+}
+
+/** Reject renames that would overwrite an existing destination path. */
+export function assertNoDestinationCollision({ sourcePath, destinationPath, destinationExists }) {
+  if (sourcePath && destinationPath !== sourcePath && destinationExists) {
+    throw new Error(`A content file already exists at ${destinationPath}. Choose a different slug.`);
+  }
 }
 
 /** @param {{ state: Record<string, any>, token: string, onProgress?: (step: string, status: string) => void }} options */
@@ -84,6 +91,14 @@ export async function publishStory({ state, token, onProgress = () => {} }) {
   const existing = sourcePath ? await github.readFile(sourcePath) : await github.readFile(destinationPath);
   if (!sourcePath && existing) throw new Error(`A content file already exists at ${destinationPath}. Open that story to edit it.`);
   if (sourcePath && !existing) throw new Error(`The original content file ${sourcePath} no longer exists on main. Refresh before publishing.`);
+  if (sourcePath && sourcePath !== destinationPath) {
+    const destination = await github.readFile(destinationPath);
+    assertNoDestinationCollision({
+      sourcePath,
+      destinationPath,
+      destinationExists: Boolean(destination),
+    });
+  }
 
   const content = mergeStudioFrontmatter(existing?.content ?? '', state.type, studioFields(state, cover), markdown);
   const commit = await github.commitFiles({

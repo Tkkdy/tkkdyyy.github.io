@@ -7,6 +7,9 @@ export function validateStory(state) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(state.publishedAt ?? '')) errors.push('Choose a publication date.');
   if (!state.body?.trim()) errors.push('Add story body content.');
   if (state.cover && !state.coverAlt?.trim()) errors.push('Add alt text for the cover image.');
+  if (state.type === 'Article' && !state.deck?.trim()) {
+    errors.push('Articles require a deck/description before publishing.');
+  }
   if (state.type === 'Article' && state.status !== 'draft' && (!Number.isInteger(state.publishNumber) || state.publishNumber < 1)) {
     errors.push('Published articles require a positive Article number.');
   }

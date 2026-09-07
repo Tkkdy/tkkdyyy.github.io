@@ -20,6 +20,24 @@ export function splitContentFile(source) {
   return { frontmatter: match[1], body: match[2].replace(/^\r?\n/, '') };
 }
 
+/** Preserve unmanaged homepage keys (e.g. order) while updating show. */
+export function mergeHomepageShow(existingHomepage, show) {
+  const base = existingHomepage && typeof existingHomepage === 'object' && !Array.isArray(existingHomepage)
+    ? existingHomepage
+    : {};
+  return { ...base, show: Boolean(show) };
+}
+
+function readHomepageFromDocument(document) {
+  const node = document.get('homepage');
+  if (!node || typeof node !== 'object') return {};
+  if (typeof node.toJSON === 'function') {
+    const value = node.toJSON();
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  }
+  return { ...node };
+}
+
 export function mergeStudioFrontmatter(existingSource, storyType, studioFields, nextBody) {
   const ownedFields = STUDIO_FIELDS[storyType];
   if (!ownedFields) throw new Error(`Unsupported story type: ${storyType}`);
@@ -30,6 +48,11 @@ export function mergeStudioFrontmatter(existingSource, storyType, studioFields, 
 
   for (const [key, value] of Object.entries(studioFields)) {
     if (!ownedFields.has(key)) continue;
+    if (key === 'homepage') {
+      const show = value && typeof value === 'object' ? value.show : value;
+      document.set(key, mergeHomepageShow(readHomepageFromDocument(document), show));
+      continue;
+    }
     if (value === undefined || value === '' || value === false && ['featured'].includes(key)) {
       document.delete(key);
     } else {
