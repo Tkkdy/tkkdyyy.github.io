@@ -76,7 +76,7 @@ export async function getEditorialStories(): Promise<EditorialStory[]> {
     })),
     ...fragments.map((entry) => ({
       id: `fragment-${entry.data.slug}`,
-      title: entry.body?.trim().split('\n')[0]?.slice(0, 64) || 'Untitled fragment',
+      title: entry.body?.trim().split('\n')[0]?.slice(0, 64) || '无标题碎片',
       deck: '',
       body: entry.body ?? '',
       type: 'Fragment' as const,

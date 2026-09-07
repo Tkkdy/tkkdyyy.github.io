@@ -21,5 +21,5 @@ export function convertedBlockJson(block, targetType) {
     const text = textOnly(content);
     return { type: 'codeBlock', content: text ? [{ type: 'text', text }] : undefined };
   }
-  throw new Error(`Unsupported block conversion target: ${targetType}`);
+  throw new Error(`不支持转换为此区块类型：${targetType}`);
 }

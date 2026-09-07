@@ -12,11 +12,11 @@ interface Props {
   layout?: 'editor' | 'list';
 }
 
-const { title, section = 'Stories', active = 'stories', stories, layout = 'list' } = Astro.props;
+const { title, section = '内容', active = 'stories', stories, layout = 'list' } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -30,7 +30,7 @@ const { title, section = 'Stories', active = 'stories', stories, layout = 'list'
       <AdminSidebar active={active} stories={stories} />
       <main class="admin-main">
         <header class="admin-topbar">
-          <button class="sidebar-toggle" type="button" aria-controls="admin-sidebar" aria-expanded="false" aria-label="Open navigation">
+          <button class="sidebar-toggle" type="button" aria-controls="admin-sidebar" aria-expanded="false" aria-label="打开导航">
             <AdminIcon name="menu" size={18} />
           </button>
           <div class="admin-breadcrumb">
@@ -39,11 +39,11 @@ const { title, section = 'Stories', active = 'stories', stories, layout = 'list'
           </div>
           {layout === 'editor' && (
             <>
-              <div class="editor-save-state"><AdminIcon name="check" size={15} /><span>Saved locally</span></div>
+              <div class="editor-save-state"><AdminIcon name="check" size={15} /><span>已保存到本地</span></div>
               <div class="editor-actions">
-                <button class="secondary-action" type="button" data-phase-action="Preview">Preview</button>
-                <button class="primary-action" type="button" data-phase-action="Publish">Publish</button>
-                <button class="icon-action" type="button" aria-label="More actions"><AdminIcon name="more" size={18} /></button>
+                <button class="secondary-action" type="button" data-phase-action="Preview">预览</button>
+                <button class="primary-action" type="button" data-phase-action="Publish">发布</button>
+                <button class="icon-action" type="button" aria-label="更多操作"><AdminIcon name="more" size={18} /></button>
               </div>
             </>
           )}
@@ -66,7 +66,7 @@ const { title, section = 'Stories', active = 'stories', stories, layout = 'list'
       document.querySelectorAll('[data-coming-soon]').forEach((item) => {
         item.addEventListener('click', () => {
           if (!(toast instanceof HTMLElement)) return;
-          toast.textContent = `${item.getAttribute('data-coming-soon')} is outside the Phase 2 workspace.`;
+          toast.textContent = `${item.getAttribute('data-coming-soon')}模块将在后续版本中提供。`;
           toast.hidden = false;
           window.setTimeout(() => { toast.hidden = true; }, 2800);
         });

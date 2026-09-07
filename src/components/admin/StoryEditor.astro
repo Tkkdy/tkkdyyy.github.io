@@ -11,27 +11,27 @@ const { story, taxonomy } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const storyJson = JSON.stringify(story);
 const insertItems = [
-  { type: 'paragraph', icon: '¶', label: 'Paragraph' },
-  { type: 'heading', icon: 'H', label: 'Heading' },
-  { type: 'quote', icon: '“', label: 'Quote' },
-  { type: 'callout', icon: '◇', label: 'Callout' },
-  { type: 'image', icon: '▣', label: 'Image' },
-  { type: 'list', icon: '≡', label: 'List' },
-  { type: 'code', icon: '</>', label: 'Code' },
-  { type: 'divider', icon: '—', label: 'Divider' },
+  { type: 'paragraph', icon: '¶', label: '正文' },
+  { type: 'heading', icon: 'H', label: '标题' },
+  { type: 'quote', icon: '“', label: '引用' },
+  { type: 'callout', icon: '◇', label: '强调块' },
+  { type: 'image', icon: '▣', label: '图片' },
+  { type: 'list', icon: '≡', label: '列表' },
+  { type: 'code', icon: '</>', label: '代码' },
+  { type: 'divider', icon: '—', label: '分割线' },
 ] as const;
 ---
 
 <div class="editor-workspace" data-story={storyJson} data-base={base}>
   <article class="writing-canvas">
     <div class="writing-inner">
-      <textarea class="story-title-input" rows="1" placeholder="Untitled story" aria-label="Story title">{story.title}</textarea>
-      <textarea class="story-deck-input" rows="1" placeholder="Add a deck…" aria-label="Story deck">{story.deck}</textarea>
+      <textarea class="story-title-input" rows="1" placeholder="无标题内容" aria-label="内容标题">{story.title}</textarea>
+      <textarea class="story-deck-input" rows="1" placeholder="添加副标题 / 导语……" aria-label="副标题或导语">{story.deck}</textarea>
 
       <div class="editor-rule"></div>
-      <div class="format-toolbar" aria-label="Block editor toolbar">
+      <div class="format-toolbar" aria-label="区块编辑工具栏">
         <button class="block-style-trigger" type="button" aria-haspopup="menu" aria-expanded="false">
-          <span data-current-block>Paragraph</span><span class="toolbar-caret" aria-hidden="true"></span>
+          <span data-current-block>正文</span><span class="toolbar-caret" aria-hidden="true"></span>
         </button>
         <div class="block-style-menu" role="menu" hidden>
           {insertItems.filter((item) => ['paragraph', 'heading', 'quote', 'callout', 'code'].includes(item.type)).map((item) => (
@@ -39,22 +39,22 @@ const insertItems = [
           ))}
         </div>
         <i aria-hidden="true"></i>
-        <button type="button" aria-label="Bold" data-format="bold"><strong>B</strong></button>
-        <button type="button" aria-label="Italic" data-format="italic"><em>I</em></button>
-        <button type="button" aria-label="Underline" data-format="underline"><span class="underline-label">U</span></button>
-        <button type="button" aria-label="Add or edit link" data-format="link"><span aria-hidden="true">↗</span></button>
+        <button type="button" aria-label="粗体" data-format="bold"><strong>B</strong></button>
+        <button type="button" aria-label="斜体" data-format="italic"><em>I</em></button>
+        <button type="button" aria-label="下划线" data-format="underline"><span class="underline-label">U</span></button>
+        <button type="button" aria-label="添加或编辑链接" data-format="link"><span aria-hidden="true">↗</span></button>
         <i aria-hidden="true"></i>
-        <button type="button" aria-label="Move block up" data-block-action="up"><span aria-hidden="true">↑</span></button>
-        <button type="button" aria-label="Move block down" data-block-action="down"><span aria-hidden="true">↓</span></button>
-        <button type="button" aria-label="Delete block" data-block-action="delete"><span aria-hidden="true">×</span></button>
-        <button class="image-edit-action" type="button" data-block-action="edit-image" hidden>Edit image</button>
+        <button type="button" aria-label="上移区块" data-block-action="up"><span aria-hidden="true">↑</span></button>
+        <button type="button" aria-label="下移区块" data-block-action="down"><span aria-hidden="true">↓</span></button>
+        <button type="button" aria-label="删除区块" data-block-action="delete"><span aria-hidden="true">×</span></button>
+        <button class="image-edit-action" type="button" data-block-action="edit-image" hidden>编辑图片</button>
       </div>
 
-      <div class="block-editor-frame"><div class="story-block-editor" aria-label="Story body"></div></div>
+      <div class="block-editor-frame"><div class="story-block-editor" aria-label="内容正文"></div></div>
 
       <div class="block-insert">
-        <button class="block-insert-trigger" type="button" aria-label="Insert a block" aria-haspopup="menu" aria-expanded="false"><AdminIcon name="plus" size={17} /></button>
-        <div class="block-insert-menu" role="menu" aria-label="Insert block" hidden>
+        <button class="block-insert-trigger" type="button" aria-label="插入区块" aria-haspopup="menu" aria-expanded="false"><AdminIcon name="plus" size={17} /></button>
+        <div class="block-insert-menu" role="menu" aria-label="插入区块" hidden>
           {insertItems.map((item) => (
             <button type="button" role="menuitem" data-insert-block={item.type}>
               <span aria-hidden="true">{item.icon}</span><small>{item.label}</small>
@@ -63,74 +63,74 @@ const insertItems = [
         </div>
       </div>
 
-      <div class="editor-word-count"><span>0</span> words</div>
+      <div class="editor-word-count"><span>0</span> 字</div>
     </div>
   </article>
 
   <aside class="publishing-panel" aria-labelledby="publishing-title">
     <div class="publishing-card">
-      <h2 id="publishing-title">Publishing</h2>
-      <label class="publishing-field"><span>Status</span><select name="status"><option value="draft">Draft</option><option value="published">Published</option></select></label>
-      <label class="publishing-field"><span>Type</span><select name="type"><option>Essay</option><option>Article</option><option>Fragment</option></select></label>
+      <h2 id="publishing-title">发布设置</h2>
+      <label class="publishing-field"><span>状态</span><select name="status"><option value="draft">草稿</option><option value="published">已发布</option><option value="archived">已归档</option></select></label>
+      <label class="publishing-field"><span>类型</span><select name="type"><option value="Essay">随笔</option><option value="Article">文章</option><option value="Fragment">碎片</option></select></label>
       <div class="publishing-field taxonomy-field" data-taxonomy="categories">
-        <span>Categories</span>
+        <span>分类</span>
         <div class="taxonomy-control">
           <div class="taxonomy-chips"></div>
-          <label class="taxonomy-add"><AdminIcon name="plus" size={13} /><input list="category-options" placeholder="Add category" aria-label="Add category" /></label>
+          <label class="taxonomy-add"><AdminIcon name="plus" size={13} /><input list="category-options" placeholder="添加分类" aria-label="添加分类" /></label>
           <datalist id="category-options">{taxonomy.categories.map((item) => <option value={item}></option>)}</datalist>
         </div>
       </div>
       <div class="publishing-field taxonomy-field" data-taxonomy="tags">
-        <span>Tags</span>
+        <span>标签</span>
         <div class="taxonomy-control">
           <div class="taxonomy-chips"></div>
-          <label class="taxonomy-add"><AdminIcon name="plus" size={13} /><input list="tag-options" placeholder="Add tag" aria-label="Add tag" /></label>
+          <label class="taxonomy-add"><AdminIcon name="plus" size={13} /><input list="tag-options" placeholder="添加标签" aria-label="添加标签" /></label>
           <datalist id="tag-options">{taxonomy.tags.map((item) => <option value={item}></option>)}</datalist>
         </div>
       </div>
-      <label class="publishing-field"><span>Date</span><span class="input-with-icon"><AdminIcon name="calendar" size={15} /><input type="date" name="publishedAt" value={story.publishedAt} /></span></label>
-      <label class="publishing-field"><span>Article no.</span><input type="number" min="1" step="1" name="publishNumber" value={story.publishNumber} placeholder="Required when publishing an article" /></label>
+      <label class="publishing-field"><span>日期</span><span class="input-with-icon"><AdminIcon name="calendar" size={15} /><input type="date" name="publishedAt" value={story.publishedAt} /></span></label>
+      <label class="publishing-field"><span>文章编号</span><input type="number" min="1" step="1" name="publishNumber" value={story.publishNumber} placeholder="发布文章时必填" /></label>
       <div class="publishing-divider"></div>
-      <label class="toggle-field"><span>Homepage<small>Show on homepage</small></span><input type="checkbox" name="showOnHomepage" checked={story.showOnHomepage} /><i></i></label>
-      <label class="toggle-field"><span>Featured<small>Mark as featured</small></span><input type="checkbox" name="featured" checked={story.featured} /><i></i></label>
-      <label class="publishing-field"><span>Slug</span><input type="text" name="slug" value={story.slug} placeholder="story-slug" /></label>
+      <label class="toggle-field"><span>首页展示<small>显示在首页</small></span><input type="checkbox" name="showOnHomepage" checked={story.showOnHomepage} /><i></i></label>
+      <label class="toggle-field"><span>精选内容<small>标记为精选</small></span><input type="checkbox" name="featured" checked={story.featured} /><i></i></label>
+      <label class="publishing-field"><span>URL Slug</span><input type="text" name="slug" value={story.slug} placeholder="story-slug" /></label>
       <div class="story-url"><span>URL</span><code></code></div>
     </div>
     <div class="publishing-card cover-card">
-      <div class="card-heading"><h2>Cover Image</h2><label for="cover-input">Choose</label><input id="cover-input" type="file" accept="image/*" /></div>
+      <div class="card-heading"><h2>封面图片</h2><label for="cover-input">选择图片</label><input id="cover-input" type="file" accept="image/*" /></div>
       <div class="cover-preview">
-        {story.cover ? <img src={story.cover} alt={story.coverAlt || 'Current story cover'} /> : <><AdminIcon name="image" size={24} /><span>No cover selected</span></>}
+        {story.cover ? <img src={story.cover} alt={story.coverAlt || '当前内容封面'} /> : <><AdminIcon name="image" size={24} /><span>暂未选择封面</span></>}
       </div>
-      <label class="publishing-field cover-alt-field"><span>Alt text</span><input type="text" name="coverAlt" value={story.coverAlt} placeholder="Describe the cover image" /></label>
-      <p>Recommended size: 1200 × 630</p>
+      <label class="publishing-field cover-alt-field"><span>Alt 文本</span><input type="text" name="coverAlt" value={story.coverAlt} placeholder="描述封面图片" /></label>
+      <p>建议尺寸：1200 × 630</p>
     </div>
-    <a class="sveltia-fallback" href={`${base}admin/sveltia.html`}>Open Sveltia fallback <AdminIcon name="external" size={14} /></a>
+    <a class="sveltia-fallback" href={`${base}admin/sveltia.html`}>打开 Sveltia 备用后台 <AdminIcon name="external" size={14} /></a>
     <div class="publishing-card publish-progress" data-publish-progress hidden>
-      <h2>Publish progress</h2>
+      <h2>发布进度</h2>
       <ol>
-        <li data-publish-step="validate">Validate</li>
-        <li data-publish-step="save">Save draft</li>
-        <li data-publish-step="git">Write repository</li>
-        <li data-publish-step="deploy">Trigger deploy</li>
+        <li data-publish-step="validate">内容校验</li>
+        <li data-publish-step="save">保存草稿</li>
+        <li data-publish-step="git">写入仓库</li>
+        <li data-publish-step="deploy">部署网站</li>
       </ol>
-      <a data-published-url hidden target="_blank" rel="noopener noreferrer">View story ↗</a>
+      <a data-published-url hidden target="_blank" rel="noopener noreferrer">查看内容 ↗</a>
     </div>
   </aside>
 
   <dialog class="image-block-dialog" aria-labelledby="image-dialog-title">
     <form method="dialog">
       <div class="image-dialog-heading">
-        <div><h2 id="image-dialog-title">Insert image</h2><p>Add a local image or use a public URL.</p></div>
-        <button type="button" data-image-cancel aria-label="Close image dialog"><AdminIcon name="close" size={17} /></button>
+        <div><h2 id="image-dialog-title">插入图片</h2><p>选择本地图片或使用公开 URL。</p></div>
+        <button type="button" data-image-cancel aria-label="关闭图片对话框"><AdminIcon name="close" size={17} /></button>
       </div>
-      <label><span>Image file</span><input type="file" accept="image/*" data-image-file /></label>
-      <div class="image-dialog-or"><span>or</span></div>
-      <label><span>Image URL</span><input type="url" inputmode="url" placeholder="https://example.com/image.jpg" data-image-url /></label>
-      <label><span>Alt text</span><input type="text" placeholder="Describe the image" data-image-alt /></label>
+      <label><span>图片文件</span><input type="file" accept="image/*" data-image-file /></label>
+      <div class="image-dialog-or"><span>或</span></div>
+      <label><span>图片 URL</span><input type="url" inputmode="url" placeholder="https://example.com/image.jpg" data-image-url /></label>
+      <label><span>Alt 文本</span><input type="text" placeholder="描述图片内容" data-image-alt /></label>
       <p class="image-dialog-error" role="alert" hidden></p>
       <div class="image-dialog-actions">
-        <button class="secondary-action" type="button" data-image-cancel>Cancel</button>
-        <button class="primary-action" type="submit" value="save" data-image-save>Insert image</button>
+        <button class="secondary-action" type="button" data-image-cancel>取消</button>
+        <button class="primary-action" type="submit" value="save" data-image-save>插入图片</button>
       </div>
     </form>
   </dialog>

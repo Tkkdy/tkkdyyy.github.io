@@ -5,45 +5,48 @@ import type { EditorialStory } from '../../lib/admin/stories';
 interface Props { stories: EditorialStory[] }
 const { stories } = Astro.props;
 const base = import.meta.env.BASE_URL;
+const typeLabels = { Article: '文章', Essay: '随笔', Fragment: '碎片' } as const;
+const statusLabels = { draft: '草稿', published: '已发布', archived: '已归档' } as const;
 ---
 
 <section class="stories-view" aria-labelledby="stories-title">
   <header class="stories-heading">
     <div>
-      <h1 id="stories-title">Stories</h1>
-      <p>{stories.length} pieces across articles, essays, and fragments.</p>
+      <h1 id="stories-title">内容</h1>
+      <p>共 {stories.length} 篇内容，涵盖文章、随笔与碎片。</p>
     </div>
-    <a class="primary-action" href={`${base}admin/stories/new/`}><AdminIcon name="plus" size={16} />New Story</a>
+    <a class="primary-action" href={`${base}admin/stories/new/`}><AdminIcon name="plus" size={16} />新建内容</a>
   </header>
 
   <div class="story-controls">
-    <div class="story-tabs" role="tablist" aria-label="Story status">
-      <button class="active" type="button" role="tab" aria-selected="true" data-status="all">All <span>{stories.length}</span></button>
-      <button type="button" role="tab" aria-selected="false" data-status="draft">Draft</button>
-      <button type="button" role="tab" aria-selected="false" data-status="published">Published</button>
+    <div class="story-tabs" role="tablist" aria-label="内容状态">
+      <button class="active" type="button" role="tab" aria-selected="true" data-status="all">全部 <span>{stories.length}</span></button>
+      <button type="button" role="tab" aria-selected="false" data-status="draft">草稿</button>
+      <button type="button" role="tab" aria-selected="false" data-status="published">已发布</button>
+      <button type="button" role="tab" aria-selected="false" data-status="archived">已归档</button>
     </div>
     <label class="story-search">
       <AdminIcon name="search" size={16} />
-      <span class="sr-only">Search stories</span>
-      <input type="search" placeholder="Search stories" />
+      <span class="sr-only">搜索内容</span>
+      <input type="search" placeholder="搜索内容" />
     </label>
   </div>
 
-  <div class="stories-table" role="table" aria-label="Stories">
+  <div class="stories-table" role="table" aria-label="内容列表">
     <div class="story-table-head" role="row">
-      <span role="columnheader">Story</span><span role="columnheader">Type</span><span role="columnheader">Status</span><span role="columnheader">Updated</span><span></span>
+      <span role="columnheader">内容</span><span role="columnheader">类型</span><span role="columnheader">状态</span><span role="columnheader">最近更新</span><span></span>
     </div>
     <div class="story-rows">
       {stories.map((story) => (
         <a class="story-row" href={`${base}admin/stories/${story.id}/`} role="row" data-status={story.status} data-search={`${story.title} ${story.type} ${story.categories.join(' ')} ${story.tags.join(' ')}`.toLowerCase()}>
           <span class="story-title-cell" role="cell"><strong>{story.title}</strong><small>{story.deck || story.slug}</small></span>
-          <span role="cell">{story.type}</span>
-          <span role="cell"><i class:list={['status-indicator', story.status]}></i>{story.status[0].toUpperCase() + story.status.slice(1)}</span>
+          <span role="cell">{typeLabels[story.type]}</span>
+          <span role="cell"><i class:list={['status-indicator', story.status]}></i>{statusLabels[story.status]}</span>
           <time role="cell" datetime={story.updatedAt}>{story.updatedAt}</time>
           <span role="cell"><AdminIcon name="chevron" size={16} /></span>
         </a>
       ))}
-      <p class="stories-empty" hidden>No stories match this view.</p>
+      <p class="stories-empty" hidden>没有符合当前筛选条件的内容。</p>
     </div>
   </div>
 </section>

@@ -14,7 +14,7 @@ const MIME_EXTENSIONS = {
 
 async function dataUrlFile(dataUrl, basename) {
   const match = dataUrl.match(/^data:([^;,]+);base64,(.+)$/);
-  if (!match || !MIME_EXTENSIONS[match[1]]) throw new Error('Only base64 PNG, JPEG, GIF, WebP, AVIF, or SVG images can be published.');
+  if (!match || !MIME_EXTENSIONS[match[1]]) throw new Error('只能发布 base64 格式的 PNG、JPEG、GIF、WebP、AVIF 或 SVG 图片。');
   const bytes = Uint8Array.from(atob(match[2]), (character) => character.charCodeAt(0));
   const digest = await crypto.subtle.digest('SHA-256', bytes);
   const shortHash = Array.from(new Uint8Array(digest).slice(0, 6), (byte) => byte.toString(16).padStart(2, '0')).join('');
@@ -51,7 +51,7 @@ function studioFields(state, cover) {
 /** Reject renames that would overwrite an existing destination path. */
 export function assertNoDestinationCollision({ sourcePath, destinationPath, destinationExists }) {
   if (sourcePath && destinationPath !== sourcePath && destinationExists) {
-    throw new Error(`A content file already exists at ${destinationPath}. Choose a different slug.`);
+    throw new Error(`地址 ${destinationPath} 已经存在其他内容，请更换 URL Slug。`);
   }
 }
 
@@ -83,14 +83,14 @@ export async function publishStory({ state, token, onProgress = () => {} }) {
 
   const bodyDocument = rewriteImageSources(state.bodyBlocks, replacements);
   const markdown = serializeTipTap(bodyDocument);
-  if (/data:image\//.test(markdown) || cover.startsWith('data:')) throw new Error('Local images must be uploaded before content is written.');
+  if (/data:image\//.test(markdown) || cover.startsWith('data:')) throw new Error('写入内容前必须先上传本地图片。');
 
   const directory = TYPE_DIRECTORY[state.type];
   const destinationPath = `src/content/${directory}/${state.slug}.md`;
   const sourcePath = state.sourcePath || '';
   const existing = sourcePath ? await github.readFile(sourcePath) : await github.readFile(destinationPath);
-  if (!sourcePath && existing) throw new Error(`A content file already exists at ${destinationPath}. Open that story to edit it.`);
-  if (sourcePath && !existing) throw new Error(`The original content file ${sourcePath} no longer exists on main. Refresh before publishing.`);
+  if (!sourcePath && existing) throw new Error(`地址 ${destinationPath} 已经存在其他内容，请打开该内容进行编辑。`);
+  if (sourcePath && !existing) throw new Error(`原内容文件 ${sourcePath} 已不在 main 分支上，请刷新后再发布。`);
   if (sourcePath && sourcePath !== destinationPath) {
     const destination = await github.readFile(destinationPath);
     assertNoDestinationCollision({
@@ -130,7 +130,7 @@ export async function waitForDeploy(github, commitSha, onProgress = () => {}, ti
         await new Promise((resolve) => setTimeout(resolve, 5000));
         continue;
       }
-      if (run.conclusion !== 'success') throw new Error(`Deploy finished with status: ${run.conclusion}.`);
+      if (run.conclusion !== 'success') throw new Error(`网站部署未成功，状态：${run.conclusion}。`);
       onProgress('deploy', 'success');
       return run;
     }

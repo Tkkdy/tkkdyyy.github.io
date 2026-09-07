@@ -22,14 +22,14 @@ test('publish validation accepts a complete published essay', () => {
 
 test('publish validation blocks draft status and missing cover alt', () => {
   const errors = validateStory({ ...validStory, status: 'draft', cover: 'data:image/png;base64,ZmFrZQ==' });
-  assert.ok(errors.some((error) => error.includes('Published')));
-  assert.ok(errors.some((error) => error.includes('alt text')));
+  assert.ok(errors.some((error) => error.includes('已发布')));
+  assert.ok(errors.some((error) => error.includes('Alt 文本')));
 });
 
 test('published articles require a positive stable publish number', () => {
   const missing = validateStory({ ...validStory, type: 'Article', deck: 'A deck' });
   const accepted = validateStory({ ...validStory, type: 'Article', deck: 'A deck', publishNumber: 7 });
-  assert.ok(missing.some((error) => error.includes('Article number')));
+  assert.ok(missing.some((error) => error.includes('文章编号')));
   assert.deepEqual(accepted, []);
 });
 
@@ -37,14 +37,14 @@ test('published articles require a non-empty deck/description', () => {
   const missing = validateStory({ ...validStory, type: 'Article', publishNumber: 7 });
   const empty = validateStory({ ...validStory, type: 'Article', publishNumber: 7, deck: '   ' });
   const accepted = validateStory({ ...validStory, type: 'Article', publishNumber: 7, deck: 'A deck' });
-  assert.ok(missing.some((error) => error.includes('deck/description')));
-  assert.ok(empty.some((error) => error.includes('deck/description')));
+  assert.ok(missing.some((error) => error.includes('副标题 / 描述')));
+  assert.ok(empty.some((error) => error.includes('副标题 / 描述')));
   assert.deepEqual(accepted, []);
 });
 
 test('an existing story cannot silently change collection type', () => {
   const errors = validateStory({ ...validStory, sourcePath: 'src/content/articles/original.md' });
-  assert.ok(errors.some((error) => error.includes('Changing the type')));
+  assert.ok(errors.some((error) => error.includes('不能更改类型')));
 });
 
 test('homepage merge preserves order when show flips', () => {
@@ -66,7 +66,7 @@ test('slug destination collision rejects rename onto existing path', () => {
       destinationPath: 'src/content/articles/taken-slug.md',
       destinationExists: true,
     }),
-    /already exists/,
+    /已经存在其他内容/,
   );
   assert.doesNotThrow(() => assertNoDestinationCollision({
     sourcePath: 'src/content/articles/old-slug.md',

@@ -29,8 +29,8 @@ export function createGitHubClient({ owner, repo, token }) {
       },
     });
     if (!response.ok) {
-      const detail = await response.json().catch(() => ({}));
-      const error = new Error(detail.message || `GitHub request failed (${response.status}).`);
+      await response.json().catch(() => ({}));
+      const error = new Error(`GitHub 请求失败（${response.status}）。请检查 Token 权限或稍后重试。`);
       error.status = response.status;
       throw error;
     }
@@ -45,7 +45,7 @@ export function createGitHubClient({ owner, repo, token }) {
     async readFile(path, ref = 'main') {
       try {
         const file = await request(`/repos/${owner}/${repo}/contents/${encodeURIComponent(path).replace(/%2F/g, '/')}?ref=${encodeURIComponent(ref)}`);
-        if (file.type !== 'file' || !file.content) throw new Error(`Expected ${path} to be a file.`);
+        if (file.type !== 'file' || !file.content) throw new Error(`无法将 ${path} 读取为内容文件。`);
         return { path, sha: file.sha, content: base64ToText(file.content) };
       } catch (error) {
         if (error.status === 404) return null;

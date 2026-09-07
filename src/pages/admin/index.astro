@@ -6,6 +6,6 @@ import { getEditorialStories } from '../../lib/admin/stories';
 const stories = await getEditorialStories();
 ---
 
-<AdminLayout title="Stories" stories={stories}>
+<AdminLayout title="内容" stories={stories}>
   <StoryList stories={stories} />
 </AdminLayout>

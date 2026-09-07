@@ -65,7 +65,7 @@ function block(node) {
 }
 
 export function serializeTipTap(document) {
-  if (!document || document.type !== 'doc') throw new Error('Expected a TipTap doc');
+  if (!document || document.type !== 'doc') throw new Error('无法读取 TipTap 文档');
   return (document.content ?? []).map(block).filter(Boolean).join('\n\n').trim();
 }
 
