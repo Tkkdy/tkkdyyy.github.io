@@ -1,0 +1,17 @@
+---
+import { renderMarkdownBody } from '../../lib/content/render-body.mjs';
+
+interface Props {
+  markdown?: string;
+  variant: 'prose' | 'essay-reading-prose' | 'fragment-entry-body' | 'fragment-text';
+  preview?: boolean;
+}
+
+const { markdown = '', variant, preview = false } = Astro.props;
+const html = renderMarkdownBody(markdown);
+---
+
+<div class:list={['story-body', variant]} data-story-body={preview ? 'preview' : undefined}>
+  <Fragment set:html={html} />
+  <slot />
+</div>

@@ -5,6 +5,12 @@ import Placeholder from '@tiptap/extension-placeholder';
 import StarterKit from '@tiptap/starter-kit';
 import { TextSelection } from '@tiptap/pm/state';
 import { marked } from 'marked';
+import { convertedBlockJson } from './convert-block.mjs';
+import { draftStorageKey, resolveDraftId } from './draft-storage.mjs';
+import { createPreviewPayload, PREVIEW_STORAGE_KEY } from './preview-data.mjs';
+import { serializeTipTap } from './serialize-tiptap.mjs';
+import { GITHUB_TOKEN_KEY, publishStory, waitForDeploy } from './publish-story.mjs';
+import { validateStory } from './validate-story.mjs';
 
 type TaxonomyKind = 'categories' | 'tags';
 type InsertBlock = 'paragraph' | 'heading' | 'quote' | 'callout' | 'image' | 'list' | 'code' | 'divider';
@@ -24,6 +30,10 @@ type EditorState = {
   publishedAt: string;
   showOnHomepage: boolean;
   featured: boolean;
+  cover: string;
+  coverAlt: string;
+  publishNumber?: number;
+  sourcePath: string;
 };
 
 const Callout = Node.create({
@@ -91,8 +101,11 @@ function fileAsDataUrl(file: File): Promise<string> {
 
 function initializeStoryEditor(editorRoot: HTMLElement) {
   const initial = JSON.parse(editorRoot.dataset.story || '{}') as EditorState;
-  const storageKey = `vdvxdv-editorial:${initial.id}`;
-  const state: EditorState = { ...initial, ...parseStoredState(localStorage.getItem(storageKey)) };
+  const identity = resolveDraftId(initial.id, window.location.href);
+  if (identity.url !== window.location.href) window.history.replaceState(null, '', identity.url);
+  initial.id = identity.id;
+  const storageKey = draftStorageKey(initial.id);
+  const state: EditorState = { ...initial, ...parseStoredState(localStorage.getItem(storageKey)), id: initial.id };
   state.categories = Array.isArray(state.categories) ? state.categories : [];
   state.tags = Array.isArray(state.tags) ? state.tags : [];
 
@@ -104,12 +117,16 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
   const slug = editorRoot.querySelector('[name="slug"]');
   const homepage = editorRoot.querySelector('[name="showOnHomepage"]');
   const featured = editorRoot.querySelector('[name="featured"]');
+  const publishNumber = editorRoot.querySelector('[name="publishNumber"]');
+  const coverAlt = editorRoot.querySelector('[name="coverAlt"]');
   const editorElement = editorRoot.querySelector('.story-block-editor');
   const saveLabel = document.querySelector('.editor-save-state span');
   const wordCount = editorRoot.querySelector('.editor-word-count span');
   const currentBlockLabel = editorRoot.querySelector('[data-current-block]');
   const imageEditAction = editorRoot.querySelector('[data-block-action="edit-image"]');
   const toast = document.querySelector('.admin-toast');
+  const progress = editorRoot.querySelector('[data-publish-progress]');
+  const publishedUrl = editorRoot.querySelector('[data-published-url]');
   let slugWasEdited = Boolean(state.slug);
   let saveTimer = 0;
   let imageDialogMode: 'insert' | 'edit' = 'insert';
@@ -124,6 +141,15 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
   setValue(slug, state.slug);
   setChecked(homepage, state.showOnHomepage);
   setChecked(featured, state.featured);
+  setValue(publishNumber, state.publishNumber === undefined ? '' : String(state.publishNumber));
+  setValue(coverAlt, state.coverAlt);
+  const coverPreview = editorRoot.querySelector('.cover-preview');
+  if (state.cover && coverPreview instanceof HTMLElement) {
+    const image = document.createElement('img');
+    image.alt = state.coverAlt || 'Current story cover';
+    image.src = state.cover;
+    coverPreview.replaceChildren(image);
+  }
 
   const showToast = (message: string) => {
     if (!(toast instanceof HTMLElement)) return;
@@ -242,30 +268,44 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     const route = valueOf(type).toLowerCase() === 'fragment' ? 'fragments' : `${valueOf(type).toLowerCase()}s`;
     const url = editorRoot.querySelector('.story-url code');
     if (url) url.textContent = `/${route}/${valueOf(slug) || 'untitled'}/`;
+    const publishNumberField = publishNumber?.closest('label');
+    if (publishNumberField instanceof HTMLElement) publishNumberField.hidden = valueOf(type) !== 'Article';
     resizeTextareas();
   };
 
-  const snapshot = (): EditorState => ({
-    ...state,
-    editorVersion: 1,
-    title: valueOf(title),
-    deck: valueOf(deck),
-    body: state.body || initial.body || '',
-    bodyBlocks: editor.getJSON(),
-    status: valueOf(status),
-    type: valueOf(type),
-    publishedAt: valueOf(date),
-    slug: valueOf(slug),
-    showOnHomepage: checkedOf(homepage),
-    featured: checkedOf(featured),
-  });
+  const snapshot = (): EditorState => {
+    const bodyBlocks = editor.getJSON();
+    return {
+      ...state,
+      editorVersion: 1,
+      title: valueOf(title),
+      deck: valueOf(deck),
+      body: serializeTipTap(bodyBlocks),
+      bodyBlocks,
+      status: valueOf(status),
+      type: valueOf(type),
+      publishedAt: valueOf(date),
+      slug: valueOf(slug),
+      showOnHomepage: checkedOf(homepage),
+      featured: checkedOf(featured),
+      publishNumber: valueOf(publishNumber) ? Number(valueOf(publishNumber)) : undefined,
+      cover: state.cover,
+      coverAlt: valueOf(coverAlt),
+    };
+  };
+
+  const persistDraft = (nextState = snapshot()) => {
+    localStorage.setItem(storageKey, JSON.stringify(nextState));
+    Object.assign(state, nextState);
+    return nextState;
+  };
 
   function scheduleSave() {
     if (saveLabel) saveLabel.textContent = 'Saving…';
     window.clearTimeout(saveTimer);
     saveTimer = window.setTimeout(() => {
       try {
-        localStorage.setItem(storageKey, JSON.stringify(snapshot()));
+        persistDraft();
         if (saveLabel) saveLabel.textContent = 'Saved locally';
       } catch {
         if (saveLabel) saveLabel.textContent = 'Draft too large';
@@ -322,16 +362,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
   const convertCurrentBlock = (blockType: string) => {
     const block = currentBlock();
     if (!block || !['paragraph', 'heading', 'quote', 'callout', 'code'].includes(blockType)) return;
-    const text = block.node.textContent;
-    const textContent = text ? [{ type: 'text', text }] : undefined;
-    const replacement: Record<string, JSONContent> = {
-      paragraph: { type: 'paragraph', content: textContent },
-      heading: { type: 'heading', attrs: { level: 2 }, content: textContent },
-      quote: { type: 'blockquote', content: [{ type: 'paragraph', content: textContent }] },
-      callout: { type: 'callout', content: textContent },
-      code: { type: 'codeBlock', content: textContent },
-    };
-    const node = editor.schema.nodeFromJSON(replacement[blockType]);
+    const node = editor.schema.nodeFromJSON(convertedBlockJson(block.node.toJSON(), blockType));
     const transaction = editor.state.tr.replaceWith(block.offset, block.offset + block.node.nodeSize, node);
     transaction.setSelection(TextSelection.near(transaction.doc.resolve(Math.min(block.offset + 1, transaction.doc.content.size))));
     editor.view.dispatch(transaction.scrollIntoView());
@@ -466,7 +497,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     if (action === 'edit-image') openImageDialog('edit');
   }));
 
-  [title, deck, status, type, date, homepage, featured].forEach((element) => element?.addEventListener('input', () => {
+  [title, deck, status, type, date, homepage, featured, publishNumber, coverAlt].forEach((element) => element?.addEventListener('input', () => {
     if (element === title && !slugWasEdited) setValue(slug, slugify(valueOf(title)));
     scheduleSave();
   }));
@@ -491,20 +522,95 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     renderTaxonomy(kind);
   });
 
-  document.querySelectorAll('[data-phase-action]').forEach((button) => button.addEventListener('click', () => {
-    showToast(`${button.getAttribute('data-phase-action')} is ready for Phase 4 integration. Your draft is saved locally.`);
+  const updatePublishStep = (step: string, statusValue: string) => {
+    const item = editorRoot.querySelector(`[data-publish-step="${step}"]`);
+    if (!(item instanceof HTMLElement)) return;
+    item.dataset.status = statusValue;
+    const labels: Record<string, string> = { running: '…', success: '✓', failure: '×', triggered: '↗' };
+    item.dataset.marker = labels[statusValue] || '';
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('[data-phase-action]').forEach((button) => button.addEventListener('click', async () => {
+    const action = button.getAttribute('data-phase-action');
+    if (action === 'Preview') try {
+      window.clearTimeout(saveTimer);
+      const nextState = persistDraft();
+      sessionStorage.setItem(PREVIEW_STORAGE_KEY, JSON.stringify(createPreviewPayload(nextState, nextState.body)));
+      const previewUrl = new URL(`${editorRoot.dataset.base || '/'}admin/preview/`, window.location.origin);
+      const previewWindow = window.open(previewUrl, '_blank');
+      if (!previewWindow) showToast('Allow pop-ups to open the story preview.');
+      else {
+        previewWindow.opener = null;
+        if (saveLabel) saveLabel.textContent = 'Saved locally';
+      }
+    } catch {
+      showToast('The preview could not be prepared. Try a smaller local image.');
+      return;
+    }
+    if (action !== 'Publish') return;
+
+    if (progress instanceof HTMLElement) progress.hidden = false;
+    progress?.querySelectorAll<HTMLElement>('[data-publish-step]').forEach((item) => {
+      delete item.dataset.status;
+      delete item.dataset.marker;
+    });
+    if (publishedUrl instanceof HTMLAnchorElement) publishedUrl.hidden = true;
+    button.disabled = true;
+    const originalLabel = button.textContent;
+    button.textContent = 'Publishing…';
+
+    try {
+      window.clearTimeout(saveTimer);
+      updatePublishStep('save', 'running');
+      const nextState = persistDraft();
+      updatePublishStep('save', 'success');
+
+      const validationErrors = validateStory(nextState);
+      if (validationErrors.length) {
+        updatePublishStep('validate', 'failure');
+        throw new Error(validationErrors.join(' '));
+      }
+
+      let token = localStorage.getItem(GITHUB_TOKEN_KEY) || '';
+      if (!token) {
+        token = window.prompt('GitHub personal access token with Contents: write and Actions: read access')?.trim() || '';
+        if (!token) throw new Error('A GitHub token is required to publish.');
+        localStorage.setItem(GITHUB_TOKEN_KEY, token);
+      }
+
+      const result = await publishStory({ state: nextState, token, onProgress: updatePublishStep });
+      if (publishedUrl instanceof HTMLAnchorElement) {
+        publishedUrl.href = result.publicUrl;
+        publishedUrl.hidden = false;
+      }
+      showToast('Repository updated. Deployment has been triggered.');
+      const run = await waitForDeploy(result.github, result.commitSha, updatePublishStep);
+      showToast(run ? `Published successfully: ${result.publicUrl}` : `Repository updated and deploy triggered: ${result.publicUrl}`);
+    } catch (error) {
+      if ((error as { status?: number }).status === 401) localStorage.removeItem(GITHUB_TOKEN_KEY);
+      const running = progress?.querySelector<HTMLElement>('[data-status="running"]');
+      if (running?.dataset.publishStep) updatePublishStep(running.dataset.publishStep, 'failure');
+      showToast(error instanceof Error ? error.message : 'Publish failed.');
+    } finally {
+      button.disabled = false;
+      button.textContent = originalLabel;
+    }
   }));
 
   const coverInput = editorRoot.querySelector('#cover-input');
-  coverInput?.addEventListener('change', () => {
+  coverInput?.addEventListener('change', async () => {
     if (!(coverInput instanceof HTMLInputElement) || !coverInput.files?.[0]) return;
-    const preview = editorRoot.querySelector('.cover-preview');
-    if (!(preview instanceof HTMLElement)) return;
-    const image = document.createElement('img');
-    image.alt = 'Selected story cover';
-    image.src = URL.createObjectURL(coverInput.files[0]);
-    preview.replaceChildren(image);
-    scheduleSave();
+    if (!(coverPreview instanceof HTMLElement)) return;
+    try {
+      state.cover = await fileAsDataUrl(coverInput.files[0]);
+      const image = document.createElement('img');
+      image.alt = valueOf(coverAlt) || 'Selected story cover';
+      image.src = state.cover;
+      coverPreview.replaceChildren(image);
+      scheduleSave();
+    } catch {
+      showToast('The cover image could not be read.');
+    }
   });
 
   updateToolbar();

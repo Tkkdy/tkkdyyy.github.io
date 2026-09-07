@@ -1,0 +1,98 @@
+---
+import Header from '../../components/Header.astro';
+import StoryBody from '../../components/content/StoryBody.astro';
+
+import '../../styles/tokens.css';
+import '../../styles/global.css';
+import '../../styles/articles.css';
+import '../../styles/prose.css';
+import '../../styles/essays.css';
+import '../../styles/fragments.css';
+import '../../styles/story-body.css';
+import '../../styles/admin-preview.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Story Preview · VDVXDV Editorial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500&family=Noto+Serif+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body class="admin-preview-page article-detail-body-page">
+    <Header />
+    <div class="preview-banner" role="status">
+      <strong>Draft preview</strong>
+      <span>Rendered from this tab’s Editorial Studio session</span>
+    </div>
+    <main class="preview-main">
+      <section class="preview-empty" data-preview-empty hidden>
+        <h1>No preview is available</h1>
+        <p>Return to Editorial Studio and choose Preview again.</p>
+      </section>
+
+      <article class="article-detail preview-story" data-preview-story hidden>
+        <header class="article-detail-header preview-story-header">
+          <div class="preview-story-meta">
+            <time data-preview-date></time>
+            <span data-preview-type></span>
+          </div>
+          <h1 class="article-detail-title" data-preview-title></h1>
+          <p class="preview-story-deck" data-preview-deck hidden></p>
+        </header>
+        <figure class="preview-cover" data-preview-cover hidden>
+          <img data-preview-cover-image alt="" />
+          <figcaption data-preview-cover-caption></figcaption>
+        </figure>
+        <StoryBody variant="prose" preview />
+      </article>
+    </main>
+
+    <script>
+      import { parsePreviewPayload, PREVIEW_STORAGE_KEY } from '../../lib/admin/preview-data.mjs';
+      import { renderMarkdownBody } from '../../lib/content/render-body.mjs';
+
+      const payload = parsePreviewPayload(sessionStorage.getItem(PREVIEW_STORAGE_KEY));
+      const empty = document.querySelector('[data-preview-empty]');
+      const storyElement = document.querySelector('[data-preview-story]');
+      const body = document.querySelector('[data-story-body="preview"]');
+
+      if (!payload || !(storyElement instanceof HTMLElement) || !(body instanceof HTMLElement)) {
+        if (empty instanceof HTMLElement) empty.hidden = false;
+      } else {
+        const story = payload.story;
+        const variant = story.type === 'Essay' ? 'essay-reading-prose' : story.type === 'Fragment' ? 'fragment-entry-body' : 'prose';
+        body.className = `story-body ${variant}`;
+        body.innerHTML = renderMarkdownBody(story.markdown);
+        document.body.classList.toggle('essay-page', story.type === 'Essay');
+        storyElement.classList.toggle('preview-story--fragment', story.type === 'Fragment');
+
+        const setText = (selector: string, value: string) => {
+          const target = document.querySelector(selector);
+          if (target) target.textContent = value;
+        };
+        setText('[data-preview-title]', story.title || (story.type === 'Fragment' ? 'Fragment preview' : 'Untitled story'));
+        setText('[data-preview-date]', story.publishedAt || 'Unscheduled');
+        setText('[data-preview-type]', story.type);
+        setText('[data-preview-deck]', story.deck || '');
+        const deck = document.querySelector('[data-preview-deck]');
+        if (deck instanceof HTMLElement) deck.hidden = !story.deck;
+
+        const cover = document.querySelector('[data-preview-cover]');
+        const coverImage = document.querySelector('[data-preview-cover-image]');
+        if (story.cover && cover instanceof HTMLElement && coverImage instanceof HTMLImageElement) {
+          const base = import.meta.env.BASE_URL;
+          coverImage.src = /^(data:|https?:\/\/)/.test(story.cover) || story.cover.startsWith(base) ? story.cover : `${base}${story.cover.replace(/^\/+/, '')}`;
+          coverImage.alt = story.coverAlt || '';
+          setText('[data-preview-cover-caption]', story.coverAlt || '');
+          cover.hidden = false;
+        }
+        storyElement.hidden = false;
+      }
+    </script>
+  </body>
+</html>

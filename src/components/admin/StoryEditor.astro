@@ -89,6 +89,7 @@ const insertItems = [
         </div>
       </div>
       <label class="publishing-field"><span>Date</span><span class="input-with-icon"><AdminIcon name="calendar" size={15} /><input type="date" name="publishedAt" value={story.publishedAt} /></span></label>
+      <label class="publishing-field"><span>Article no.</span><input type="number" min="1" step="1" name="publishNumber" value={story.publishNumber} placeholder="Required when publishing an article" /></label>
       <div class="publishing-divider"></div>
       <label class="toggle-field"><span>Homepage<small>Show on homepage</small></span><input type="checkbox" name="showOnHomepage" checked={story.showOnHomepage} /><i></i></label>
       <label class="toggle-field"><span>Featured<small>Mark as featured</small></span><input type="checkbox" name="featured" checked={story.featured} /><i></i></label>
@@ -98,11 +99,22 @@ const insertItems = [
     <div class="publishing-card cover-card">
       <div class="card-heading"><h2>Cover Image</h2><label for="cover-input">Choose</label><input id="cover-input" type="file" accept="image/*" /></div>
       <div class="cover-preview">
-        {story.cover ? <img src={story.cover} alt="Current story cover" /> : <><AdminIcon name="image" size={24} /><span>No cover selected</span></>}
+        {story.cover ? <img src={story.cover} alt={story.coverAlt || 'Current story cover'} /> : <><AdminIcon name="image" size={24} /><span>No cover selected</span></>}
       </div>
+      <label class="publishing-field cover-alt-field"><span>Alt text</span><input type="text" name="coverAlt" value={story.coverAlt} placeholder="Describe the cover image" /></label>
       <p>Recommended size: 1200 × 630</p>
     </div>
     <a class="sveltia-fallback" href={`${base}admin/sveltia.html`}>Open Sveltia fallback <AdminIcon name="external" size={14} /></a>
+    <div class="publishing-card publish-progress" data-publish-progress hidden>
+      <h2>Publish progress</h2>
+      <ol>
+        <li data-publish-step="validate">Validate</li>
+        <li data-publish-step="save">Save draft</li>
+        <li data-publish-step="git">Write repository</li>
+        <li data-publish-step="deploy">Trigger deploy</li>
+      </ol>
+      <a data-published-url hidden target="_blank" rel="noopener noreferrer">View story ↗</a>
+    </div>
   </aside>
 
   <dialog class="image-block-dialog" aria-labelledby="image-dialog-title">

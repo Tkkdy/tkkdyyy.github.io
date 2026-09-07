@@ -10,10 +10,12 @@ import { getPublishedFragments } from '../../lib/content/fragments';
 import { imageFileExists } from '../../lib/content/images';
 import { formatDate } from '../../lib/content/homepage';
 import { withBase } from '../../lib/site-url';
+import StoryBody from '../../components/content/StoryBody.astro';
 
 import '../../styles/tokens.css';
 import '../../styles/global.css';
 import '../../styles/fragments.css';
+import '../../styles/story-body.css';
 
 const fragments = await getPublishedFragments();
 ---
@@ -74,7 +76,7 @@ const fragments = await getPublishedFragments();
                     </div>
                   )}
 
-                  <div class="fragment-entry-body" set:html={fragment.body} />
+                  <StoryBody variant="fragment-entry-body" markdown={fragment.body} />
 
                   {(data.link || data.tags) && (
                     <div class="fragment-entry-links">

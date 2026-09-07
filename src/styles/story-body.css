@@ -1,0 +1,24 @@
+.story-body aside[data-callout] {
+  position: relative;
+  margin: 2em 0;
+  padding: 17px 20px 17px 54px;
+  border-left: 2px solid #a77a49;
+  border-radius: 0 5px 5px 0;
+  background: #f7f2eb;
+  color: #4e4538;
+  font-style: normal;
+}
+
+.story-body aside[data-callout]::before {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  color: #9a7045;
+  content: '◇';
+  font-family: Inter, sans-serif;
+  font-size: 18px;
+}
+
+.story-body aside[data-callout] p {
+  margin: 0;
+}
