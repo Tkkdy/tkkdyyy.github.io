@@ -13,12 +13,13 @@ import '../../styles/admin-preview.css';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
-    <title>Story Preview · VDVXDV Editorial</title>
+    <title>内容预览 · VDVXDV Editorial</title>
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500&family=Noto+Serif+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -26,13 +27,13 @@ import '../../styles/admin-preview.css';
   <body class="admin-preview-page article-detail-body-page">
     <Header />
     <div class="preview-banner" role="status">
-      <strong>Draft preview</strong>
-      <span>Rendered from this tab’s Editorial Studio session</span>
+      <strong>草稿预览</strong>
+      <span>此页面来自当前 Editorial Studio 编辑会话</span>
     </div>
     <main class="preview-main">
       <section class="preview-empty" data-preview-empty hidden>
-        <h1>No preview is available</h1>
-        <p>Return to Editorial Studio and choose Preview again.</p>
+        <h1>暂无可预览内容</h1>
+        <p>请返回编辑器并重新点击「预览」。</p>
       </section>
 
       <article class="article-detail preview-story" data-preview-story hidden>
@@ -75,9 +76,10 @@ import '../../styles/admin-preview.css';
           const target = document.querySelector(selector);
           if (target) target.textContent = value;
         };
-        setText('[data-preview-title]', story.title || (story.type === 'Fragment' ? 'Fragment preview' : 'Untitled story'));
-        setText('[data-preview-date]', story.publishedAt || 'Unscheduled');
-        setText('[data-preview-type]', story.type);
+        const typeLabels: Record<string, string> = { Article: '文章', Essay: '随笔', Fragment: '碎片' };
+        setText('[data-preview-title]', story.title || (story.type === 'Fragment' ? '碎片预览' : '无标题内容'));
+        setText('[data-preview-date]', story.publishedAt || '未设置发布日期');
+        setText('[data-preview-type]', typeLabels[story.type] || story.type);
         setText('[data-preview-deck]', story.deck || '');
         const deck = document.querySelector('[data-preview-deck]');
         if (deck instanceof HTMLElement) deck.hidden = !story.deck;

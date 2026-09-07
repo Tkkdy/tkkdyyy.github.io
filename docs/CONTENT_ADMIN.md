@@ -8,7 +8,7 @@ https://tkkdy.github.io/tkkdyyy.github.io/
 
 https://tkkdy.github.io/tkkdyyy.github.io/admin/
 
-Phase 3 的 Editorial Studio 位于上述地址。正文使用 TipTap 区块编辑器，支持段落、标题、引用、Callout、图片、列表、代码和分隔线。现有 Sveltia 后台在新发布流程接通前保留为备用入口：
+VDVXDV Editorial Studio 位于上述地址。正文使用 TipTap 区块编辑器，支持段落、标题、引用、强调块、图片、列表、代码和分隔线。现有 Sveltia 后台保留为备用入口：
 
 https://tkkdy.github.io/tkkdyyy.github.io/admin/sveltia.html
 

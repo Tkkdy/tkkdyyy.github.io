@@ -93,8 +93,8 @@ function countWords(text: string): number {
 function fileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.addEventListener('load', () => typeof reader.result === 'string' ? resolve(reader.result) : reject(new Error('Unable to read image.')));
-    reader.addEventListener('error', () => reject(new Error('Unable to read image.')));
+    reader.addEventListener('load', () => typeof reader.result === 'string' ? resolve(reader.result) : reject(new Error('无法读取图片。')));
+    reader.addEventListener('error', () => reject(new Error('无法读取图片。')));
     reader.readAsDataURL(file);
   });
 }
@@ -146,7 +146,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
   const coverPreview = editorRoot.querySelector('.cover-preview');
   if (state.cover && coverPreview instanceof HTMLElement) {
     const image = document.createElement('img');
-    image.alt = state.coverAlt || 'Current story cover';
+    image.alt = state.coverAlt || '当前内容封面';
     image.src = state.cover;
     coverPreview.replaceChildren(image);
   }
@@ -182,7 +182,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       chip.append(document.createTextNode(value));
       const remove = document.createElement('button');
       remove.type = 'button';
-      remove.setAttribute('aria-label', `Remove ${value}`);
+      remove.setAttribute('aria-label', `删除${kind === 'categories' ? '分类' : '标签'}：${value}`);
       remove.textContent = '×';
       remove.addEventListener('click', () => {
         state[kind] = state[kind].filter((item) => item !== value);
@@ -198,7 +198,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
   dragHandle.type = 'button';
   dragHandle.className = 'block-drag-handle';
   dragHandle.hidden = true;
-  dragHandle.setAttribute('aria-label', 'Drag to reorder block');
+  dragHandle.setAttribute('aria-label', '拖动区块以重新排序');
   dragHandle.innerHTML = '<span></span><span></span><span></span><span></span><span></span><span></span>';
 
   const editor = new Editor({
@@ -206,13 +206,13 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     extensions: [
       StarterKit.configure({ heading: { levels: [2, 3] }, link: { openOnClick: false }, trailingNode: false }),
       Image.configure({ allowBase64: true, HTMLAttributes: { class: 'editor-image' } }),
-      Placeholder.configure({ placeholder: 'Start writing…' }),
+      Placeholder.configure({ placeholder: '开始写作……' }),
       Callout,
       DragHandle.configure({ render: () => dragHandle, nested: false }),
     ],
     content: isJsonDocument(state.bodyBlocks) ? state.bodyBlocks : markdownToHtml(state.body || initial.body || ''),
     editorProps: {
-      attributes: { class: 'story-prose', 'aria-label': 'Story blocks' },
+      attributes: { class: 'story-prose', 'aria-label': '正文区块' },
     },
     onUpdate: () => scheduleSave(),
     onSelectionUpdate: () => updateToolbar(),
@@ -250,10 +250,10 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
   const updateToolbar = () => {
     const block = currentBlock();
     const labels: Record<string, string> = {
-      paragraph: 'Paragraph', heading: 'Heading', blockquote: 'Quote', callout: 'Callout',
-      image: 'Image', bulletList: 'List', orderedList: 'List', codeBlock: 'Code', horizontalRule: 'Divider',
+      paragraph: '正文', heading: '标题', blockquote: '引用', callout: '强调块',
+      image: '图片', bulletList: '列表', orderedList: '列表', codeBlock: '代码', horizontalRule: '分割线',
     };
-    if (currentBlockLabel) currentBlockLabel.textContent = block ? labels[block.node.type.name] ?? 'Paragraph' : 'Paragraph';
+    if (currentBlockLabel) currentBlockLabel.textContent = block ? labels[block.node.type.name] ?? '正文' : '正文';
     if (imageEditAction instanceof HTMLButtonElement) imageEditAction.hidden = block?.node.type.name !== 'image';
     editorRoot.querySelectorAll<HTMLButtonElement>('[data-format]').forEach((button) => {
       const format = button.dataset.format;
@@ -267,7 +267,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     if (wordCount) wordCount.textContent = String(countWords(editor.state.doc.textBetween(0, editor.state.doc.content.size, ' ')));
     const route = valueOf(type).toLowerCase() === 'fragment' ? 'fragments' : `${valueOf(type).toLowerCase()}s`;
     const url = editorRoot.querySelector('.story-url code');
-    if (url) url.textContent = `/${route}/${valueOf(slug) || 'untitled'}/`;
+    if (url) url.textContent = `/${route}/${valueOf(slug) || '尚未填写'}/`;
     const publishNumberField = publishNumber?.closest('label');
     if (publishNumberField instanceof HTMLElement) publishNumberField.hidden = valueOf(type) !== 'Article';
     resizeTextareas();
@@ -301,15 +301,15 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
   };
 
   function scheduleSave() {
-    if (saveLabel) saveLabel.textContent = 'Saving…';
+    if (saveLabel) saveLabel.textContent = '正在保存……';
     window.clearTimeout(saveTimer);
     saveTimer = window.setTimeout(() => {
       try {
         persistDraft();
-        if (saveLabel) saveLabel.textContent = 'Saved locally';
+        if (saveLabel) saveLabel.textContent = '已保存到本地';
       } catch {
-        if (saveLabel) saveLabel.textContent = 'Draft too large';
-        showToast('This draft is too large for local storage. Choose a smaller image.');
+        if (saveLabel) saveLabel.textContent = '草稿过大，无法保存';
+        showToast('草稿过大，无法保存到本地。请选择更小的图片。');
       }
     }, 450);
     updateDerived();
@@ -386,8 +386,8 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     const attributes = mode === 'edit' && block?.node.type.name === 'image' ? block.node.attrs : {};
     setValue(imageUrl, typeof attributes.src === 'string' && !attributes.src.startsWith('data:') ? attributes.src : '');
     setValue(imageAlt, typeof attributes.alt === 'string' ? attributes.alt : '');
-    if (imageDialogTitle) imageDialogTitle.textContent = mode === 'edit' ? 'Edit image' : 'Insert image';
-    if (imageSave) imageSave.textContent = mode === 'edit' ? 'Save image' : 'Insert image';
+    if (imageDialogTitle) imageDialogTitle.textContent = mode === 'edit' ? '编辑图片' : '插入图片';
+    if (imageSave) imageSave.textContent = mode === 'edit' ? '保存图片' : '插入图片';
     dialog.showModal();
   };
 
@@ -401,7 +401,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     const file = imageFile.files?.[0];
     if (file && file.size > 900_000) {
       if (imageError instanceof HTMLElement) {
-        imageError.textContent = 'Choose an image smaller than 900 KB for reliable local saving.';
+        imageError.textContent = '请选择小于 900 KB 的图片，以确保草稿可以保存到本地。';
         imageError.hidden = false;
       }
       return;
@@ -410,7 +410,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       const src = file ? await fileAsDataUrl(file) : imageUrl.value.trim();
       if (!src) {
         if (imageError instanceof HTMLElement) {
-          imageError.textContent = 'Choose a file or enter an image URL.';
+          imageError.textContent = '请选择图片文件或填写图片 URL。';
           imageError.hidden = false;
         }
         return;
@@ -426,7 +426,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       closeImageDialog();
     } catch {
       if (imageError instanceof HTMLElement) {
-        imageError.textContent = 'The image could not be read.';
+        imageError.textContent = '无法读取这张图片。';
         imageError.hidden = false;
       }
     }
@@ -482,7 +482,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     if (format === 'underline') editor.chain().focus().toggleUnderline().run();
     if (format === 'link') {
       const previous = editor.getAttributes('link').href as string | undefined;
-      const href = window.prompt('Link URL', previous || 'https://');
+      const href = window.prompt('链接 URL', previous || 'https://');
       if (href === null) return;
       if (!href.trim()) editor.chain().focus().extendMarkRange('link').unsetLink().run();
       else editor.chain().focus().extendMarkRange('link').setLink({ href: href.trim() }).run();
@@ -538,13 +538,13 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       sessionStorage.setItem(PREVIEW_STORAGE_KEY, JSON.stringify(createPreviewPayload(nextState, nextState.body)));
       const previewUrl = new URL(`${editorRoot.dataset.base || '/'}admin/preview/`, window.location.origin);
       const previewWindow = window.open(previewUrl, '_blank');
-      if (!previewWindow) showToast('Allow pop-ups to open the story preview.');
+      if (!previewWindow) showToast('请允许浏览器打开弹窗，以查看内容预览。');
       else {
         previewWindow.opener = null;
-        if (saveLabel) saveLabel.textContent = 'Saved locally';
+        if (saveLabel) saveLabel.textContent = '已保存到本地';
       }
     } catch {
-      showToast('The preview could not be prepared. Try a smaller local image.');
+      showToast('无法生成预览，请尝试使用更小的本地图片。');
       return;
     }
     if (action !== 'Publish') return;
@@ -557,7 +557,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     if (publishedUrl instanceof HTMLAnchorElement) publishedUrl.hidden = true;
     button.disabled = true;
     const originalLabel = button.textContent;
-    button.textContent = 'Publishing…';
+    button.textContent = '正在发布……';
 
     try {
       window.clearTimeout(saveTimer);
@@ -573,8 +573,10 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
 
       let token = localStorage.getItem(GITHUB_TOKEN_KEY) || '';
       if (!token) {
-        token = window.prompt('GitHub personal access token with Contents: write and Actions: read access')?.trim() || '';
-        if (!token) throw new Error('A GitHub token is required to publish.');
+        token = window.prompt(
+          '首次发布需要连接 GitHub。\n\n请输入具有以下权限的 Personal Access Token：\n- Contents: Read and write\n- Actions: Read\n\nToken 只会保存在当前浏览器中，不会写入网站仓库。',
+        )?.trim() || '';
+        if (!token) throw new Error('发布需要 GitHub Token。');
         localStorage.setItem(GITHUB_TOKEN_KEY, token);
       }
 
@@ -583,14 +585,14 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
         publishedUrl.href = result.publicUrl;
         publishedUrl.hidden = false;
       }
-      showToast('Repository updated. Deployment has been triggered.');
+      showToast('内容已写入仓库，网站部署已经开始。');
       const run = await waitForDeploy(result.github, result.commitSha, updatePublishStep);
-      showToast(run ? `Published successfully: ${result.publicUrl}` : `Repository updated and deploy triggered: ${result.publicUrl}`);
+      showToast(run ? `发布成功：${result.publicUrl}` : `内容已写入仓库，网站部署已经开始：${result.publicUrl}`);
     } catch (error) {
       if ((error as { status?: number }).status === 401) localStorage.removeItem(GITHUB_TOKEN_KEY);
       const running = progress?.querySelector<HTMLElement>('[data-status="running"]');
       if (running?.dataset.publishStep) updatePublishStep(running.dataset.publishStep, 'failure');
-      showToast(error instanceof Error ? error.message : 'Publish failed.');
+      showToast(error instanceof Error ? error.message : '发布失败。');
     } finally {
       button.disabled = false;
       button.textContent = originalLabel;
@@ -604,12 +606,12 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     try {
       state.cover = await fileAsDataUrl(coverInput.files[0]);
       const image = document.createElement('img');
-      image.alt = valueOf(coverAlt) || 'Selected story cover';
+      image.alt = valueOf(coverAlt) || '已选择的内容封面';
       image.src = state.cover;
       coverPreview.replaceChildren(image);
       scheduleSave();
     } catch {
-      showToast('The cover image could not be read.');
+      showToast('无法读取封面图片。');
     }
   });
 

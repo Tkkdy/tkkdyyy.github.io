@@ -40,7 +40,7 @@ function readHomepageFromDocument(document) {
 
 export function mergeStudioFrontmatter(existingSource, storyType, studioFields, nextBody) {
   const ownedFields = STUDIO_FIELDS[storyType];
-  if (!ownedFields) throw new Error(`Unsupported story type: ${storyType}`);
+  if (!ownedFields) throw new Error(`不支持的内容类型：${storyType}`);
 
   const { frontmatter, body } = splitContentFile(existingSource);
   const document = parseDocument(frontmatter || '{}');
