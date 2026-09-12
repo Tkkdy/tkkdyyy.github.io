@@ -6,6 +6,7 @@ import {
   getPublishedArticles,
 } from '../../lib/content/articles';
 import { withBase } from '../../lib/site-url';
+import { taxonomyHref } from '../../lib/content/taxonomy';
 
 const articles = await getPublishedArticles();
 ---
@@ -40,14 +41,18 @@ const articles = await getPublishedArticles();
                   {formatPublishNumber(article.data.publishNumber!)}
                 </span>
                 {article.data.categories && article.data.categories.length > 0 && (
-                  <span class="article-row-domain">{article.data.categories.join(' / ')}</span>
+                  <span class="article-row-domain">
+                    {article.data.categories.map((category) => (
+                      <a href={withBase(taxonomyHref('categories', category))}>{category}</a>
+                    ))}
+                  </span>
                 )}
               </div>
 
               {article.data.tags && article.data.tags.length > 0 && (
                 <ul class="article-row-tags" aria-label="标签">
                   {article.data.tags.map((tag) => (
-                    <li>{tag}</li>
+                    <li><a href={withBase(taxonomyHref('tags', tag))}>{tag}</a></li>
                   ))}
                 </ul>
               )}
