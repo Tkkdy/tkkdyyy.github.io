@@ -4,7 +4,7 @@ import { findLocalImageSources, rewriteImageSources, serializeTipTap } from './s
 import { assertValidStory } from './validate-story.mjs';
 
 export const GITHUB_REPOSITORY = { owner: 'Tkkdy', repo: 'tkkdyyy.github.io', branch: 'main' };
-export const GITHUB_TOKEN_KEY = 'vdvxdv-editorial:github-token';
+export const GITHUB_TOKEN_KEY = 'tkkdy-editorial:github-token';
 
 const TYPE_DIRECTORY = { Article: 'articles', Essay: 'essays', Fragment: 'fragments' };
 const MIME_EXTENSIONS = {

@@ -263,7 +263,7 @@ Actions build
 第一版采用：
 
 ```text
-VDVXDV Editorial
+tkkdy Editorial
 
 + New Story
 

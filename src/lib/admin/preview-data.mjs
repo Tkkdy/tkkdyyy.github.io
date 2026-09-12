@@ -1,4 +1,4 @@
-export const PREVIEW_STORAGE_KEY = 'vdvxdv-editorial:preview';
+export const PREVIEW_STORAGE_KEY = 'tkkdy-editorial:preview';
 
 export function createPreviewPayload(state, markdown) {
   return {

@@ -22,5 +22,5 @@ export function resolveDraftId(initialId, currentUrl, cryptoSource = globalThis.
 }
 
 export function draftStorageKey(id) {
-  return `vdvxdv-editorial:${id}`;
+  return `tkkdy-editorial:${id}`;
 }
