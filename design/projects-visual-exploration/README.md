@@ -1,4 +1,4 @@
-# VDVXDV Projects Visual Exploration
+# tkkdy Projects Visual Exploration
 
 本目录只包含 `/projects/` 栏目首页的视觉探索原型。它不是 Production，不修改 Astro、Content Collection、Header、Footer、Homepage 或 Project Detail。
 

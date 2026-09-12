@@ -1,4 +1,4 @@
-# VDVXDV Essays Final v1.1 Polish
+# tkkdy Essays Final v1.1 Polish
 
 This prototype is a constrained polish of `final-v1`. It changes only Index page identity and shared Essay body typography. Layout anatomy, content fixtures, media composition, Header, Footer, and Production remain frozen.
 

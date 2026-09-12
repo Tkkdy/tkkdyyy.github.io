@@ -1,10 +1,10 @@
-# VDVXDV Essays Final v1
+# tkkdy Essays Final v1
 
 Prototype-only synthesis for `/essays/` and two content-driven `/essays/[slug]/` states. This directory is isolated from Production.
 
 ## Final Thesis
 
-Essays are quiet at the archive level and adaptive at the reading level. The Index behaves like a wide, calm journal; individual Essays then let text or photography determine their natural anatomy without changing the VDVXDV identity.
+Essays are quiet at the archive level and adaptive at the reading level. The Index behaves like a wide, calm journal; individual Essays then let text or photography determine their natural anatomy without changing the tkkdy identity.
 
 ## Index — why B
 

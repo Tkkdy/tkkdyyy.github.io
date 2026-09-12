@@ -1,4 +1,4 @@
-# VDVXDV Projects Homepage Final v1
+# tkkdy Projects Homepage Final v1
 
 本目录是 /projects/ 栏目首页的唯一 Final v1 视觉原型。它仍属于设计验收阶段，不是 Production，不包含 Astro Migration，也没有设计 Project Detail。
 
@@ -84,7 +84,7 @@ DOM 保持 project-container → project-surface → front / back 结构。未�
 
 430px 与 390px 使用单列 editorial rhythm：
 
-- Header 只保留 VDVXDV 与搜索。
+- Header 只保留 tkkdy 与搜索。
 - 六个 surface 宽度一致以避免溢出，但保留六种不同高度、局部边界和内容 anatomy。
 - Intro tech visual 在移动端隐藏。
 - 长中文项目名和深色背面都在容器内正常换行。

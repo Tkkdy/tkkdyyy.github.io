@@ -11,7 +11,7 @@ const { projects } = Astro.props;
 const projectBySlug = new Map(projects.map((project) => [project.data.slug, project]));
 
 const radar = projectBySlug.get('morning-radar');
-const website = projectBySlug.get('vdvxdv-personal-website');
+const website = projectBySlug.get('tkkdy-personal-website');
 const codex = projectBySlug.get('codex-reconnect-proxy-fix');
 const consoleGames = projectBySlug.get('c-console-games');
 const esp32 = projectBySlug.get('esp32-led-experiments');
@@ -101,8 +101,8 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
         </header>
         <div class="projects-viewport-stage" data-active-view="desktop">
           <div class="projects-viewport-caption projects-mono"><span>LOCAL CAPTURE / PROCESS EVIDENCE</span><span class="projects-view-readout">1440 × 900</span></div>
-          <figure class="projects-desktop-capture is-active" data-capture="desktop"><img src={withBase('projects/vdvxdv-home-desktop.png')} alt="VDVXDV 网站桌面端本地截图" width="1440" height="900" loading="lazy" /></figure>
-          <figure class="projects-mobile-capture" data-capture="mobile"><img src={withBase('projects/vdvxdv-home-mobile.png')} alt="VDVXDV 网站移动端本地截图" width="390" height="844" loading="lazy" /></figure>
+          <figure class="projects-desktop-capture is-active" data-capture="desktop"><img src={withBase('projects/tkkdy-home-desktop.png')} alt="tkkdy 网站桌面端本地截图" width="1440" height="900" loading="lazy" /></figure>
+          <figure class="projects-mobile-capture" data-capture="mobile"><img src={withBase('projects/tkkdy-home-mobile.png')} alt="tkkdy 网站移动端本地截图" width="390" height="844" loading="lazy" /></figure>
           <div class="projects-process-rail projects-mono" aria-label="项目过程阶段"><span>PRODUCT</span><i></i><span>CONTENT MODEL</span><i></i><span>VISUAL QA</span><i></i><span>LOCAL BUILD</span></div>
         </div>
       </article>
@@ -193,7 +193,7 @@ LINES  0032       NEXT   T
   </div>
 
   <footer class="projects-cli-ending projects-mono" aria-label="项目索引结束命令">
-    <span class="projects-cli-path">~/vdvxdv/projects</span><span class="projects-cli-prompt">&gt;</span><span class="projects-cli-command">build --continue</span><i class="projects-quiet-cursor" aria-hidden="true"></i>
+    <span class="projects-cli-path">~/tkkdy/projects</span><span class="projects-cli-prompt">&gt;</span><span class="projects-cli-command">build --continue</span><i class="projects-quiet-cursor" aria-hidden="true"></i>
   </footer>
 </div>
 

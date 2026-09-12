@@ -21,7 +21,7 @@ const { data } = essay;
 const hasMedia = Boolean(data.cover);
 ---
 
-<EssayLayout title={`${data.title} — VDVXDV`} description={data.summary ?? undefined}>
+<EssayLayout title={`${data.title} — tkkdy`} description={data.summary ?? undefined}>
   <article class:list={['essay-detail', hasMedia ? 'essay-detail--image' : 'essay-detail--text']} data-essay-detail>
     <nav class="essay-back-row" aria-label="随笔详情导航">
       <a href={withBase('essays/')}>← 返回随笔</a>
@@ -49,7 +49,7 @@ const hasMedia = Boolean(data.cover);
         <ContentTaxonomy categories={data.categories} tags={data.tags} />
       </StoryBody>
       <footer class="essay-reading-ending">
-        <span>VDVXDV · ESSAYS</span>
+        <span>tkkdy · ESSAYS</span>
         <a href={withBase('essays/')}>返回随笔归档</a>
       </footer>
     </div>

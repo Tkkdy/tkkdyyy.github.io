@@ -47,7 +47,7 @@
 
 本地拆分 HTML/CSS/JS 后只做了两个明确来自用户要求的响应式修正：
 
-1. 430/390 Header 收敛为 VDVXDV + 搜索。
+1. 430/390 Header 收敛为 tkkdy + 搜索。
 2. Hover 翻面限定在 min-width: 768px，避免窄屏精细指针环境下 Hover 与 second Tap 竞争。
 
 其它视觉、copy、DOM 与 motion 均保持 Canvas 版本。

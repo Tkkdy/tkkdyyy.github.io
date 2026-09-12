@@ -1,8 +1,8 @@
-# VDVXDV Personal Website
+# tkkdy Personal Website
 
 ## Project
 
-这是 VDVXDV 个人网站。
+这是 tkkdy 个人网站。
 
 当前已经完成产品定义、内容模型和前端视觉设计。
 

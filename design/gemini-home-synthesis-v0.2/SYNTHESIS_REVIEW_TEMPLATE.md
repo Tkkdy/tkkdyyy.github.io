@@ -1,4 +1,4 @@
-# VDVXDV Home Synthesis v0.2 — Visual Review
+# tkkdy Home Synthesis v0.2 — Visual Review
 
 ## Overall
 - [ ] feels less AI-generated

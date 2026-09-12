@@ -1,4 +1,4 @@
-# VDVXDV Home Synthesis v0.2 — Prototype Tokens
+# tkkdy Home Synthesis v0.2 — Prototype Tokens
 
 These values are extracted from the downloaded Gemini Canvas. They document the prototype and are not yet a production token contract.
 
@@ -59,7 +59,7 @@ The prototype uses Tailwind's default responsive thresholds: `sm 640px`, `md 768
 | Position | fixed, horizontally centered, `20px` from top |
 | Inner spacing | `20px` horizontal, `10px` vertical |
 
-On mobile, the navigation intentionally collapses to the VDVXDV wordmark and search action so the glass area stays small.
+On mobile, the navigation intentionally collapses to the tkkdy wordmark and search action so the glass area stays small.
 
 ## Surface and image behavior
 

@@ -96,9 +96,9 @@ design/
 
 建议命名：
 
-1. `VDVXDV Home A — Refined Editorial`
-2. `VDVXDV Home B — Warm Technical`
-3. `VDVXDV Home C — Personal Asymmetry`
+1. `tkkdy Home A — Refined Editorial`
+2. `tkkdy Home B — Warm Technical`
+3. `tkkdy Home C — Personal Asymmetry`
 
 三套方案都必须：
 
@@ -144,7 +144,7 @@ design/
 - 减少标准胶囊按钮
 - 减少统一圆角卡片
 - 使用细线、字体、留白和不对称比例建立层级
-- 重新处理 `VDVXDV` 大标题比例，避免通用 AI Hero
+- 重新处理 `tkkdy` 大标题比例，避免通用 AI Hero
 - 提高中文排版品质
 - 强化代表文章的编辑视觉
 - 项目入口清楚但不做 SaaS 功能卡片
@@ -219,7 +219,7 @@ design/
 ## 主要调整
 
 - 首页不使用标准居中 Hero
-- `VDVXDV`、介绍文字和视觉内容可以采用非对称布局
+- `tkkdy`、介绍文字和视觉内容可以采用非对称布局
 - 精选文章、项目、随笔和影像使用不同尺寸与排版方式
 - 不把所有区域关进卡片
 - 使用少量用户摄影占位和自定义图形空间
@@ -252,7 +252,7 @@ design/
 请重新审视：
 
 - 首屏构图
-- VDVXDV 标题比例
+- tkkdy 标题比例
 - 中文字体层级
 - 文章与项目之间的视觉关系
 - 色块和卡片的使用

@@ -76,7 +76,7 @@ const Navigation = () => {
     <header className="fixed top-0 left-0 right-0 z-50 glass-nav">
       <div className="max-w-[1440px] mx-auto px-5 md:px-12 lg:px-16 h-16 flex items-center justify-between">
         <a href="#" className="text-xl font-bold tracking-widest text-[var(--color-ink)] shrink-0">
-          VDVXDV
+          tkkdy
         </a>
 
         {/* 桌面端导航 */}
@@ -126,7 +126,7 @@ const HeroSection = () => {
     <section className="pt-32 pb-16 md:pt-48 md:pb-24 px-5 md:px-12 lg:px-16 max-w-[1440px] mx-auto">
       <div className="max-w-3xl">
         <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] text-[var(--color-ink)] mb-8">
-          VDVXDV
+          tkkdy
         </h1>
         <p className="font-serif text-xl md:text-2xl text-[var(--color-ink-soft)] leading-[1.7] mb-12">
           技术、创造、影像，<br className="hidden md:block"/>以及一些持续形成中的想法。
@@ -344,7 +344,7 @@ const Footer = () => {
         
         <div className="md:col-span-2">
           <div className="text-xl font-bold tracking-widest text-[var(--color-ink)] mb-4">
-            VDVXDV
+            tkkdy
           </div>
           <p className="text-[var(--color-ink-soft)] text-sm max-w-sm leading-relaxed mb-8">
             这是一个属于技术创作者的个人空间。记录正在创造的项目、写下的观点，以及拍摄的影像。

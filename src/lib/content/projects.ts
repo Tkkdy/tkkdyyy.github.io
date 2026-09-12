@@ -1,4 +1,4 @@
-// VDVXDV 项目查询层（列表页、详情页、首页共用）
+// tkkdy 项目查询层（列表页、详情页、首页共用）
 //
 // 职责：
 // - 只返回 status = published 的项目（draft 不公开、archived 暂不进主列表）；

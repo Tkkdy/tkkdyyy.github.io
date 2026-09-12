@@ -1,6 +1,6 @@
 # Gemini 方案 A：Refined Editorial
 
-- 对话名称：`VDVXDV Home A — Refined Editorial`（Canvas 显示为 `VDVXDV 首页 (方案 A)`）
+- 对话名称：`tkkdy Home A — Refined Editorial`（Canvas 显示为 `tkkdy 首页 (方案 A)`）
 - 对话地址：`https://gemini.google.com/app/5da631c5517d1dce`
 - 模型：Gemini Pro，扩展思考模式
 - 上传：`PRODUCT.md`、`CONTENT_MODEL.md`、`DESIGN(1).md` 与 8 张参考截图

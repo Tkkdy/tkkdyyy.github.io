@@ -1,7 +1,7 @@
 - iframe [ref=f14e2087] [box=711,85,1150,811]:
   - generic [ref=f22e1] [box=0,140,1135,2259]:
     - navigation [ref=f22e2] [box=245,24,645,47]:
-      - link "VDVXDV" [ref=f22e3] [cursor=pointer] [box=270,37,60,21]:
+      - link "tkkdy" [ref=f22e3] [cursor=pointer] [box=270,37,60,21]:
         - /url: "#"
       - link "Projects" [ref=f22e4] [cursor=pointer] [box=362,37,55,21]:
         - /url: "#"
@@ -96,4 +96,4 @@
               - generic [ref=f22e87] [box=554,2078,67,23]: Workflow
               - generic [ref=f22e88] [box=627,2078,67,23]: Migration
     - text: · ·
-    - contentinfo [ref=f22e89] [box=0,2261,1135,138]: © 2026 VDVXDV. Crafted with precise whitespace.
+    - contentinfo [ref=f22e89] [box=0,2261,1135,138]: © 2026 tkkdy. Crafted with precise whitespace.

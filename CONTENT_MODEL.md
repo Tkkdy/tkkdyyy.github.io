@@ -1,4 +1,4 @@
-# VDVXDV Personal Website — CONTENT_MODEL.md
+# tkkdy Personal Website — CONTENT_MODEL.md
 
 - Version: v0.1
 - Status: Draft for review

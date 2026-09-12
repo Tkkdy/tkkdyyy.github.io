@@ -1,4 +1,4 @@
-# VDVXDV Projects — Real Project Archetype & Asset Map
+# tkkdy Projects — Real Project Archetype & Asset Map
 
 - Research date: 2026-08-16 (Asia/Shanghai)
 - Mode: read-only fact collection; this report is the only research write
@@ -8,7 +8,7 @@
 
 ## Executive finding
 
-There are six defensible homepage roles if closely related artifacts are grouped, or seven if the Windows desktop pet and the Mini Her Codex sprite package are shown separately. Morning Radar is the only evidence-backed `HERO / CURRENT WORK` candidate. Desktop Pet / Mini Her has the strongest ready-to-use visual material. VDVXDV Personal Website has the strongest process and UI story. Codex Reconnect Proxy Fix and the C Console Games series provide smaller, materially different technical stories. The existing ESP32 work is a real LED learning trace, not the planned display/weather system.
+There are six defensible homepage roles if closely related artifacts are grouped, or seven if the Windows desktop pet and the Mini Her Codex sprite package are shown separately. Morning Radar is the only evidence-backed `HERO / CURRENT WORK` candidate. Desktop Pet / Mini Her has the strongest ready-to-use visual material. tkkdy Personal Website has the strongest process and UI story. Codex Reconnect Proxy Fix and the C Console Games series provide smaller, materially different technical stories. The existing ESP32 work is a real LED learning trace, not the planned display/weather system.
 
 No project can currently be labelled a confirmed failed project with a known stop reason. RepoMind and My Website Revival are the most plausible paused/superseded traces, but the reason for stopping is `UNKNOWN` and must not be invented.
 
@@ -26,7 +26,7 @@ No project can currently be labelled a confirmed failed project with a known sto
 | Morning Radar | AI information pipeline / static publication | `developing`; public repo; automated output through 2026-08-15 observed | Python package, 24 daily brief datasets/pages, archive, responsive static site, workflows, tests, docs, prompts, public GitHub | Strong content/output; no captured screenshot | Mixed, UI-led + pipeline trace | **HERO / CURRENT WORK** | **STRONG**: daily issue/date/output reveal | Clean 1440 screenshot; mobile capture; compact pipeline diagram; verified current Pages URL |
 | Girlfriend Desktop Pet | Windows local app | `usable` MVP | PySide6 app, transparent frameless window logic, idle/half-blink/closed-blink, pat hand/heart, README, debug comparisons | Strong asset identity; no runtime desktop capture | Visual-state-led | **MAJOR** | **STRONG**: idle → blink/pat | Sanitized runtime screenshot; short interaction capture; clearer final app identity/name |
 | Mini Her Codex Pet | Installed sprite package / animation asset | `completed` and QA PASS | 1536×1872 atlas, WebP, 57 frames, nine state GIF previews, contact sheet, validation and QA reports | Very strong and ready | Visual-state-led / artifact-led | **MEDIUM** alone, or part of Desktop Pet Major | **STRONG**: state switching | Decide whether it is a separate project or a chapter of Desktop Pet |
-| VDVXDV Personal Website | Personal publishing website | locally usable; Stage 4C complete; deployment pending | Astro 7 codebase, five content collections, homepage and all main routes, search/SEO/RSS, design iterations, desktop/mobile screenshots, QA records | Strong UI/process; many screenshots are prototypes | Mixed, UI-led + process-led | **MAJOR** | **STRONG**: desktop ↔ mobile / iteration comparison | Clean current Production full-page capture; deployment URL; replace placeholder domain |
+| tkkdy Personal Website | Personal publishing website | locally usable; Stage 4C complete; deployment pending | Astro 7 codebase, five content collections, homepage and all main routes, search/SEO/RSS, design iterations, desktop/mobile screenshots, QA records | Strong UI/process; many screenshots are prototypes | Mixed, UI-led + process-led | **MAJOR** | **STRONG**: desktop ↔ mobile / iteration comparison | Clean current Production full-page capture; deployment URL; replace placeholder domain |
 | Codex Reconnect Proxy Fix | Safety-first prompt/documentation toolkit | `usable v0.1`; local uncommitted repo | README, safety model, Windows/macOS prompts, full diagnosis prompt, sanitized successful case, MIT license | Intellectually distinct; visually weak | Narrative-led + technical trace | **SMALL / MEDIUM** | **POSSIBLE**: symptom → diagnosis → verified result | Public/repository status; clean document/terminal-style visual; current-version validation |
 | C Console Games series | C learning applications | individually completed executables; repositories have no commits | Tetris, Snake, 2048, Tic-tac-toe, Guess Number sources and `.exe`; Tetris/Snake README | Moderate code/output story; no screenshots | Code-led / terminal-output-led | **SMALL** as one series | **STRONG** for one game: source → live terminal output | One clean terminal screenshot; provenance/process note; committed repository |
 | ESP32 LED Experiments | Embedded learning experiments | small completed experiments; wider lifecycle `UNKNOWN` | LED blink and breathing-light Arduino sketches, serial messages, Arduino/ESP32 libraries | Weak without physical evidence | Hardware-led trace | **TRACE** | **POSSIBLE**: LED off → on / brightness change | Hardware photo, wiring, board identity, serial capture, README |
@@ -42,7 +42,7 @@ Legend: `✅` ready, `△` usable with polish, `—` missing, `⚠` sanitize or 
 | Morning Radar | △ real HTML, capture needed | — | — | ✅ | △ architecture docs can support one | ✅ history/workflows/tests | ✅ README/product/architecture |
 | Girlfriend Desktop Pet | △ app exists, runtime capture missing | — | — | ✅ | — | ✅ blink comparisons/debug | ✅ detailed README |
 | Mini Her Codex Pet | ✅ atlas/contact sheet/GIF states | — | — | △ QA/build scripts | — | ✅ staged attempts and QA | ✅ final QA/adoption records |
-| VDVXDV Personal Website | △ existing screenshots are mainly prototype/process evidence | — | — | ✅ | △ content architecture is documented | ✅ many iterations/QA records | ✅ product/content/design docs |
+| tkkdy Personal Website | △ existing screenshots are mainly prototype/process evidence | — | — | ✅ | △ content architecture is documented | ✅ many iterations/QA records | ✅ product/content/design docs |
 | Codex Reconnect Proxy Fix | — | — | — | △ prompts rather than executable code | △ diagnostic flow is expressible from real case | ✅ sanitized case | ✅ strongest asset |
 | C Console Games | — | — | — | ✅ | — | △ source structure and executables | △ Tetris/Snake README only |
 | ESP32 LED Experiments | — | — | — | △ small sketches | — | — | — |
@@ -140,7 +140,7 @@ Legend: `✅` ready, `△` usable with polish, `—` missing, `⚠` sanitize or 
 
 **Risks.** The QA markdown contains local absolute paths, including an installed path under the user's Codex directory. Do not display raw QA text without sanitizing paths. Use the project copy of the atlas, not private application-state paths.
 
-### 4. VDVXDV Personal Website
+### 4. tkkdy Personal Website
 
 **What it is.** An Astro 7 personal publishing site for projects, articles, essays, fragments, images and about information, with static search, RSS, sitemap, robots and SEO support.
 
@@ -238,7 +238,7 @@ Legend: `✅` ready, `△` usable with polish, `—` missing, `⚠` sanitize or 
 
 **Current status.** `REAL` prototype; two commits dated 2026-03-30 and a public GitHub remote (`Tkkdy/My-website`) exist. The working tree contains later local-server/export changes. Why it stopped or whether it was intentionally superseded is `UNKNOWN`.
 
-**Homepage decision.** Do not make it a separate main project unless the user confirms the relationship to VDVXDV. It is better used as an early iteration inside the current website story.
+**Homepage decision.** Do not make it a separate main project unless the user confirms the relationship to tkkdy. It is better used as an early iteration inside the current website story.
 
 **Failure/paused value.** Potentially interesting as “first visual direction → current content-first Astro architecture”, but the stop reason is not evidenced. The prototype uses fixture article/comments/location copy and an external Unsplash image, so it must not be presented as current real content or a rights-cleared owned visual.
 
@@ -253,11 +253,11 @@ Only the most design-relevant items are listed; repeated prototypes and all inte
 | Desktop Pet | `...\debug_blink_preview\comparison_closed.png` | very wide PNG | Three blink-render states | Excellent process asset |
 | Mini Her | `...\qa\final\final-contact-sheet.png` | 768×1134 PNG, portrait | Nine rows / 57 frames | Ready; labels only |
 | Mini Her | `...\final\spritesheet.png` | 1536×1872 PNG | Final sprite atlas | Ready; technical artifact |
-| VDVXDV | `v026-full.png` | 1440×5060 PNG, tall | Approved homepage prototype | Useful as process; placeholders visible |
-| VDVXDV | `standalone-homepage-desktop-final.png` | 1440×900 PNG | Desktop first viewport | Useful with provenance label |
-| VDVXDV | `standalone-homepage-mobile-final.png` | 390×844 PNG | Mobile first viewport | Useful with provenance label |
-| VDVXDV | `design\projects-visual-exploration\final-v1\qa\final-v1-1440-first-viewport.png` | 1440×1000 PNG | Projects prototype | Process only; five projects are fake fixtures |
-| VDVXDV | `v11-local-detail-1440.png` | 1425×7531 PNG, tall | Article-detail prototype | Process only; not current Production proof |
+| tkkdy | `v026-full.png` | 1440×5060 PNG, tall | Approved homepage prototype | Useful as process; placeholders visible |
+| tkkdy | `standalone-homepage-desktop-final.png` | 1440×900 PNG | Desktop first viewport | Useful with provenance label |
+| tkkdy | `standalone-homepage-mobile-final.png` | 390×844 PNG | Mobile first viewport | Useful with provenance label |
+| tkkdy | `design\projects-visual-exploration\final-v1\qa\final-v1-1440-first-viewport.png` | 1440×1000 PNG | Projects prototype | Process only; five projects are fake fixtures |
+| tkkdy | `v11-local-detail-1440.png` | 1425×7531 PNG, tall | Article-detail prototype | Process only; not current Production proof |
 
 ## Recommended final homepage candidate set
 
@@ -266,7 +266,7 @@ Recommended content set: **6 grouped projects**, with an optional seventh split.
 1. **Morning Radar — Hero / Current Work.** Include because it is the most mature ongoing system and has real recurring user-facing output, automation and public code.
 2. **Girlfriend Desktop Pet — Major.** Include because it has a distinct visual identity, real Windows interaction and a strong state/compositing story.
 3. **Mini Her Codex Pet — Medium, or merge into Desktop Pet.** Include separately only if the homepage benefits from distinguishing “desktop application” from “validated custom sprite package”. Otherwise keep it as a rich sub-artifact of Desktop Pet.
-4. **VDVXDV Personal Website — Major.** Include because it demonstrates full product/content/design/engineering delivery and has multiple real process artifacts.
+4. **tkkdy Personal Website — Major.** Include because it demonstrates full product/content/design/engineering delivery and has multiple real process artifacts.
 5. **Codex Reconnect Proxy Fix — Small/Medium.** Include because it adds a safety/agent-workflow story unlike the visual projects, despite weak imagery.
 6. **C Console Games — Small.** Include as one series, led by Tetris or Snake, because the executables are real and the learning value is clear.
 7. **ESP32 LED Experiments — Trace.** Include only in an experiments/remains area and only as the actual LED work; its hierarchy should rise only after a real hardware capture.
@@ -316,10 +316,10 @@ Do not use Mini Her's `failed` animation row as evidence that the project itself
 2. Girlfriend Desktop Pet running on the actual Windows desktop, showing the transparent frameless window in context.
 3. Morning Radar mobile screenshot of the same real issue, to prove responsive publication rather than a static mockup.
 4. ESP32 board + LED + wiring desk-context photo while running the existing real sketch.
-5. Current VDVXDV Production full-page desktop capture, clearly distinguished from v0.2.6/design prototypes.
+5. Current tkkdy Production full-page desktop capture, clearly distinguished from v0.2.6/design prototypes.
 6. Desktop Pet short real capture or state triptych: idle → blink → pat feedback.
 7. One clean Tetris terminal screenshot with board, next piece, score and ghost piece visible.
-8. Current VDVXDV Production mobile capture.
+8. Current tkkdy Production mobile capture.
 9. Codex Reconnect Proxy Fix sanitized document/terminal visual showing only the safe decision flow, never real `.env` values.
 10. If a failed/paused story is desired, capture the old website or RepoMind trace only after the user confirms lifecycle and stop reason.
 
@@ -371,7 +371,7 @@ Do not add these fields until the final design proves they are necessary.
 - ESP32 board model, wiring and whether the breathing sketch ran on hardware are not documented beyond the source files.
 - Authorship/process for the C games is not documented by commits; confirm before strong portfolio language.
 - RepoMind lifecycle and My Website Revival stop/supersession reason are unknown.
-- Current VDVXDV deployment status is pending and the Production domain remains a placeholder.
+- Current tkkdy deployment status is pending and the Production domain remains a placeholder.
 
 ## Production safety verification
 
@@ -384,7 +384,7 @@ The next design task should treat each project as a different evidence object:
 - Morning Radar: real brief UI + pipeline trace
 - Desktop Pet: transparent runtime + blink/pat states
 - Mini Her: sprite atlas + state semantics
-- VDVXDV Website: actual UI + iteration/process
+- tkkdy Website: actual UI + iteration/process
 - Codex Fix: safety narrative + diagnostic trace
 - C Console Games: terminal output + code structure
 - ESP32: real hardware photo + the small existing behavior

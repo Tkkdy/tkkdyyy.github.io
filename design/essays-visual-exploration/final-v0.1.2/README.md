@@ -1,4 +1,4 @@
-# VDVXDV Essays Final v0.1.2 Candidate
+# tkkdy Essays Final v0.1.2 Candidate
 
 This directory is a narrow structural revision of the frozen `final-v1` prototype. It does not reopen visual exploration and does not modify Production.
 

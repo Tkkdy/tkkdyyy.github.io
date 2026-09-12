@@ -1,8 +1,8 @@
-# VDVXDV Personal Website — Project Context
+# tkkdy Personal Website — Project Context
 
 ## 项目是什么
 
-这是 VDVXDV 的个人网站。
+这是 tkkdy 的个人网站。
 
 网站用于承载：
 
@@ -45,7 +45,7 @@
 
 正式 Astro 工程、内容数据层、全部栏目、关于/404、静态搜索与可发现性能力已完成。
 
-⚠️ 正式部署前必须填写：`src/config.ts` 与 `astro.config.mjs` 中的占位域名 `https://vdvxdv.example.com`。
+⚠️ 正式部署前必须填写：`src/config.ts` 与 `astro.config.mjs` 中的占位域名 `https://tkkdy.example.com`。
 
 ---
 

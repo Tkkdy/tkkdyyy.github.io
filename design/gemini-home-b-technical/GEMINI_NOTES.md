@@ -1,6 +1,6 @@
 # Gemini 方案 B：Warm Technical
 
-- 对话名称：`VDVXDV Home B — Warm Technical`（Canvas 显示为 `VDVXDV 个人网站 (方案B)`）
+- 对话名称：`tkkdy Home B — Warm Technical`（Canvas 显示为 `tkkdy 个人网站 (方案B)`）
 - 对话地址：`https://gemini.google.com/app/0090eb03a79f8c84`
 - 模型：Gemini Pro，扩展思考模式
 - 上传：`PRODUCT.md`、`CONTENT_MODEL.md`、`DESIGN(1).md` 与 8 张参考截图

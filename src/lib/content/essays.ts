@@ -1,4 +1,4 @@
-// VDVXDV 随笔查询层（列表页与详情页共用）
+// tkkdy 随笔查询层（列表页与详情页共用）
 
 import { getCollection, type CollectionEntry } from 'astro:content';
 

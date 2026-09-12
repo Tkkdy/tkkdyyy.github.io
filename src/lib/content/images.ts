@@ -1,4 +1,4 @@
-// VDVXDV 影像查询层（栏目页与单张详情页共用）
+// tkkdy 影像查询层（栏目页与单张详情页共用）
 
 import { existsSync } from 'node:fs';
 import { getCollection, type CollectionEntry } from 'astro:content';

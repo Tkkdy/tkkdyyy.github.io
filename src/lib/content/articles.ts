@@ -1,4 +1,4 @@
-// VDVXDV 文章查询层（列表页与详情页共用）
+// tkkdy 文章查询层（列表页与详情页共用）
 //
 // 职责：
 // - 只返回 status = published 的文章（draft 不公开、archived 不进主列表）；

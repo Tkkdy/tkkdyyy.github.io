@@ -1,10 +1,10 @@
-# Codex Task — Dispatch VDVXDV Homepage Synthesis v0.2 to Gemini
+# Codex Task — Dispatch tkkdy Homepage Synthesis v0.2 to Gemini
 
 ## Goal
 
 Create ONE new Gemini Canvas design branch:
 
-`VDVXDV Home — Synthesis v0.2`
+`tkkdy Home — Synthesis v0.2`
 
 Do not modify or overwrite Prototype / A / B / C.
 
@@ -16,7 +16,7 @@ Use the latest available:
 - `PRODUCT.md`
 - `CONTENT_MODEL.md`
 - `DESIGN.md`
-- `VDVXDV_HOMEPAGE_SYNTHESIS_V0.2.md`
+- `tkkdy_HOMEPAGE_SYNTHESIS_V0.2.md`
 - the same original reference screenshots used in previous rounds.
 
 Existing Prototype / A / B / C may be used only as comparison references.
@@ -41,7 +41,7 @@ Then send:
 
 ---
 
-You are creating `VDVXDV Home — Synthesis v0.2`.
+You are creating `tkkdy Home — Synthesis v0.2`.
 
 This is NOT another independent style experiment. The exploration phase is finished.
 
@@ -49,7 +49,7 @@ Read:
 - PRODUCT.md
 - CONTENT_MODEL.md
 - DESIGN.md
-- VDVXDV_HOMEPAGE_SYNTHESIS_V0.2.md
+- tkkdy_HOMEPAGE_SYNTHESIS_V0.2.md
 
 Treat the synthesis brief as the primary visual convergence document for this round.
 
@@ -210,7 +210,7 @@ If an artifact cannot be exported, record that fact instead of fabricating it.
 `SYNTHESIS_REVIEW_TEMPLATE.md`:
 
 ```markdown
-# VDVXDV Home Synthesis v0.2 — Visual Review
+# tkkdy Home Synthesis v0.2 — Visual Review
 
 ## Overall
 - [ ] feels less AI-generated

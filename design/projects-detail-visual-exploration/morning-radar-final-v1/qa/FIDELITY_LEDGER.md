@@ -13,7 +13,7 @@
 | Point | Reference evidence | Render evidence | Resolution |
 | --- | --- | --- | --- |
 | Overall composition | Project identity above a 12-column modular field | Identity, large Evidence, medium Architecture/Insight, narrow Stack and two lower rows preserve the same hierarchy | Matched; page is intentionally taller so real copy remains readable |
-| Header | restrained VDVXDV navigation | current Production capsule Header DNA is retained | Intentional task-required adaptation, not a new navigation system |
+| Header | restrained tkkdy navigation | current Production capsule Header DNA is retained | Intentional task-required adaptation, not a new navigation system |
 | Typography | Serif identity, Sans support, Mono metadata | Noto Serif SC / Inter / IBM Plex Mono roles remain distinct at every viewport | Matched |
 | Palette | cold white, near black, sparse electric blue | `#f7f8fa`, `#11151b`, `#315efb`; warm beige and glow absent | Matched; removed an initial faint background grid as unapproved decoration |
 | Module geometry | precise rectangles, unequal spans, thin borders | zero-radius modules with one-pixel cool borders and content-driven heights | Matched |

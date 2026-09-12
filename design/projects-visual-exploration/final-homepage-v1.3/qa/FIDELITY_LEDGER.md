@@ -17,7 +17,7 @@ Primary supporting copy is now 13–18px with stronger graphite contrast. Status
 
 | Locked point | Final v1 result |
 | --- | --- |
-| Real project set only | Morning Radar, Desktop Pet + Mini Her, VDVXDV Website, Codex Reconnect Proxy Fix, C Console Games, and ESP32 LED experiments remain unchanged. |
+| Real project set only | Morning Radar, Desktop Pet + Mini Her, tkkdy Website, Codex Reconnect Proxy Fix, C Console Games, and ESP32 LED experiments remain unchanged. |
 | Different anatomy | Output frame, state workbench, viewport evidence, one square flip, terminal reconstruction, and source trace remain materially different. |
 | Real assets | All nine placed image requests resolve to non-zero native dimensions. |
 | Interaction budget | Only Pet state, Website viewport, and Codex flip remain interactive. |

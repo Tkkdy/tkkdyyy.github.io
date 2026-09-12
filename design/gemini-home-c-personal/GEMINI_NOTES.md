@@ -1,6 +1,6 @@
 # Gemini 方案 C：Personal Asymmetry
 
-- 对话名称：`VDVXDV Home C — Personal Asymmetry`（Canvas 显示为 `VDVXDV Personal Asymmetry`）
+- 对话名称：`tkkdy Home C — Personal Asymmetry`（Canvas 显示为 `tkkdy Personal Asymmetry`）
 - 对话地址：`https://gemini.google.com/app/bbf6ffd6279fc274`
 - 模型：Gemini Pro，扩展思考模式
 - 上传：`PRODUCT.md`、`CONTENT_MODEL.md`、`DESIGN(1).md` 与 8 张参考截图

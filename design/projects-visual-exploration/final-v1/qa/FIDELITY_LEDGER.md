@@ -60,14 +60,14 @@ Local implementation:
 
 - Concept evidence：single-column editorial rhythm，不要求保留桌面错位，但必须保留不同 anatomy。
 - Render evidence：430 和 390 均无横向溢出；六个 project height 全部不同；长中文标题与背面在 viewport 内；Tap / second Tap 正确切换，不锁滚动。
-- Fix：Canvas 原始 mobile header 仍显示“项目 / 随笔”；本地按明确要求收敛为 VDVXDV + 搜索。Hover media query 增加 min-width: 768px，消除窄屏 fine-pointer 与 Tap 的竞争。
+- Fix：Canvas 原始 mobile header 仍显示“项目 / 随笔”；本地按明确要求收敛为 tkkdy + 搜索。Hover media query 增加 min-width: 768px，消除窄屏 fine-pointer 与 Tap 的竞争。
 - Result：PASS，两个修正均为要求对齐，不是视觉重设计。
 
 ## Above-the-fold copy diff
 
 Allowed and rendered：
 
-- VDVXDV
+- tkkdy
 - 项目 / 随笔 / 文章 / 碎片 / 影像 / 关于 / 搜索
 - PROJECTS ARCHIVE
 - Digital artifacts.

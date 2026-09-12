@@ -1,4 +1,4 @@
-// VDVXDV 共享 Pagefind 加载与搜索（客户端模块）
+// tkkdy 共享 Pagefind 加载与搜索（客户端模块）
 //
 // 仅被客户端 <script> import（search 页与顶部导航 Search Mode 共用），
 // 不作为服务端模块使用。职责只有两个：loadPagefind() / search()。

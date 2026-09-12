@@ -1,4 +1,4 @@
-// VDVXDV 内容模型 — Astro Content Collections 定义
+// tkkdy 内容模型 — Astro Content Collections 定义
 //
 // 依据：CONTENT_MODEL.md（Source of Truth）。
 // 五种内容类型保持独立：articles / essays / fragments / projects / images。

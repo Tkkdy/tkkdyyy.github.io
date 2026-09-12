@@ -1,14 +1,14 @@
-# VDVXDV Homepage — Visual Synthesis v0.2
+# tkkdy Homepage — Visual Synthesis v0.2
 
 - Status: Design convergence brief
-- Purpose: Merge the strongest parts of Prototype / A / B / C into one coherent VDVXDV homepage
+- Purpose: Merge the strongest parts of Prototype / A / B / C into one coherent tkkdy homepage
 - Current phase: Visual convergence only, not production engineering
 
 ## 1. Overall conclusion
 
 The four existing homepage explorations should NOT be treated as four competing final designs.
 
-The goal now is to extract the strongest ideas from each version and synthesize them into one coherent visual language that feels like `VDVXDV`.
+The goal now is to extract the strongest ideas from each version and synthesize them into one coherent visual language that feels like `tkkdy`.
 
 > Use C as the main structural and layout foundation; use B for color-block rhythm, English typography and the preferred Liquid Glass navigation; use the original prototype for editorial divider lines and small section labels; selectively absorb only clearly-liked local ideas from A.
 
@@ -76,7 +76,7 @@ Navigation typography should balance:
 - technical / geek precision;
 - Apple-like warmth and approachability.
 
-Avoid extremely thin or heavy text. A variable-font target around 450–500 is a useful starting point, with `VDVXDV` slightly heavier.
+Avoid extremely thin or heavy text. A variable-font target around 450–500 is a useful starting point, with `tkkdy` slightly heavier.
 
 ## 4. Original prototype as the editorial grammar
 

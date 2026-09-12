@@ -51,7 +51,7 @@ Design system extracted from the accepted reference:
 ## PROTOTYPE-ONLY
 
 - The signal field is explicitly decorative and `aria-hidden`.
-- Static navigation reproduces the current VDVXDV header DNA but does not implement Production Pagefind search.
+- Static navigation reproduces the current tkkdy header DNA but does not implement Production Pagefind search.
 - The screenshot dialog is a prototype-only inspection aid.
 - Disabled header destinations are visual-only; working project navigation never points to a missing detail route.
 

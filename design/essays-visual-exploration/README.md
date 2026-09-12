@@ -1,4 +1,4 @@
-# VDVXDV Essays Visual Exploration
+# tkkdy Essays Visual Exploration
 
 Phase 1–3 visual prototypes for `/essays/` and `/essays/[slug]/`.
 

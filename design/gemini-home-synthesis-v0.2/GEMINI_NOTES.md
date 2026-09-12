@@ -1,13 +1,13 @@
-# VDVXDV Home — Gemini Synthesis v0.2 Notes
+# tkkdy Home — Gemini Synthesis v0.2 Notes
 
 ## Generation record
 
-- Gemini conversation: [VDVXDV Home Synthesis](https://gemini.google.com/app/4c6be3e4797fe373)
+- Gemini conversation: [tkkdy Home Synthesis](https://gemini.google.com/app/4c6be3e4797fe373)
 - Model: Gemini 3.1 Pro
 - Reasoning mode: 扩展思考
-- Canvas: `VDVXDV Home Synthesis v0.2.6`
+- Canvas: `tkkdy Home Synthesis v0.2.6`
 - Generated and archived: 2026-08-07 (Asia/Shanghai)
-- Requested branch name: `VDVXDV Home — Synthesis v0.2`
+- Requested branch name: `tkkdy Home — Synthesis v0.2`
 
 The visual feedback was applied to the same Synthesis conversation and Canvas. No additional visual branch was created.
 
@@ -18,7 +18,7 @@ Documents:
 - `PRODUCT.md`
 - `CONTENT_MODEL.md`
 - `DESIGN(1).md` (the latest DESIGN file confirmed for this round)
-- `VDVXDV_HOMEPAGE_SYNTHESIS_V0.2.md`
+- `tkkdy_HOMEPAGE_SYNTHESIS_V0.2.md`
 
 Original reference screenshots:
 
@@ -38,10 +38,10 @@ Gemini limits a message to ten attachments, so the files were uploaded in two ba
 
 All four earlier Canvas conversations remained accessible before Synthesis v0.2 was created. Their Canvas code and screenshots were not changed.
 
-- Prototype — `VDVXDV 首页原型`: https://gemini.google.com/app/391f07943f7c8489
-- A — `VDVXDV 首页 (方案 A)`: https://gemini.google.com/app/5da631c5517d1dce
-- B — `VDVXDV 个人网站 (方案B)`: https://gemini.google.com/app/0090eb03a79f8c84
-- C — `VDVXDV Personal Asymmetry`: https://gemini.google.com/app/bbf6ffd6279fc274
+- Prototype — `tkkdy 首页原型`: https://gemini.google.com/app/391f07943f7c8489
+- A — `tkkdy 首页 (方案 A)`: https://gemini.google.com/app/5da631c5517d1dce
+- B — `tkkdy 个人网站 (方案B)`: https://gemini.google.com/app/0090eb03a79f8c84
+- C — `tkkdy Personal Asymmetry`: https://gemini.google.com/app/bbf6ffd6279fc274
 
 ## Controlled correction
 
@@ -58,7 +58,7 @@ The archived result contains no real name, account details, location label, exte
 
 Three additional feedback screenshots were supplied after the first archive. The user identified that v0.2.1 did not sufficiently apply color-block section separation, did not reproduce the preferred vertically stacked fragment rhythm, and did not give each section the distinctive identity seen in variant C.
 
-The same Canvas was updated to `VDVXDV Home Synthesis v0.2.2` with:
+The same Canvas was updated to `tkkdy Home Synthesis v0.2.2` with:
 
 - a warm sandstone inset block for Featured Article;
 - a full-width deep-ink block for Projects;
@@ -71,7 +71,7 @@ The same Canvas was updated to `VDVXDV Home Synthesis v0.2.2` with:
 
 ## Final convergence revision
 
-The user then approved the overall direction and requested only a final convergence pass. Three new annotated screenshots were supplied. The same Canvas was updated to `VDVXDV Home Synthesis v0.2.3` with these controlled changes:
+The user then approved the overall direction and requested only a final convergence pass. Three new annotated screenshots were supplied. The same Canvas was updated to `tkkdy Home Synthesis v0.2.3` with these controlled changes:
 
 - restored the v0.2.1 first-viewport composition: intro content on the left and Featured Article on the right;
 - removed the separate oversized rounded Featured block and the empty single-column opening;
@@ -85,7 +85,7 @@ The navigation pill is treated as a functional glass control and is the only pil
 
 ## C-rhythm refinement
 
-After approving v0.2.3, the user requested one upgrade based on the original Gemini C variant: retain v0.2.3 while adding C's orderly but varied composition and its calm, warm, non-detached tone. Two C-variant reference screenshots were supplied, and the same Canvas produced `VDVXDV Home Synthesis v0.2.4`.
+After approving v0.2.3, the user requested one upgrade based on the original Gemini C variant: retain v0.2.3 while adding C's orderly but varied composition and its calm, warm, non-detached tone. Two C-variant reference screenshots were supplied, and the same Canvas produced `tkkdy Home Synthesis v0.2.4`.
 
 The refinement preserves the v0.2.3 first viewport, Liquid Glass navigation, corner policy and Fragments structure. Below the first viewport it adds:
 
@@ -116,7 +116,7 @@ The v0.2.4 source remains unchanged as the approved pre-interaction version.
 
 ## Project hierarchy refinement
 
-After approving every other part of v0.2.5, the user requested a final project-section-only refinement using v0.2.2 and v0.2.5 screenshots. The same Canvas produced `VDVXDV Home Synthesis v0.2.6`; all non-project sections and the v0.2.5 microinteraction system were explicitly locked.
+After approving every other part of v0.2.5, the user requested a final project-section-only refinement using v0.2.2 and v0.2.5 screenshots. The same Canvas produced `tkkdy Home Synthesis v0.2.6`; all non-project sections and the v0.2.5 microinteraction system were explicitly locked.
 
 The project section now uses:
 
@@ -142,11 +142,11 @@ The v0.2.5 source remains unchanged as the approved pre-project-refinement versi
 
 - `desktop.png`: clean 1440 × 1000 viewport capture
 - `mobile.png`: clean 390 × 844 viewport capture
-- `source/vdvxdv-home-synthesis-v0-2-6.html`: current corrected Canvas source
-- `source/vdvxdv-home-synthesis-v0-2-5.html`: retained approved pre-project-refinement source
-- `source/vdvxdv-home-synthesis-v0-2-4.html`: retained approved pre-interaction source
-- `source/vdvxdv-home-synthesis-v0-2-3.html`: retained approved pre-C-refinement source
-- `source/vdvxdv-home-synthesis-v0-2-2.html`: retained pre-convergence source
-- `source/vdvxdv-home-synthesis-v0-2-1.html`: retained pre-feedback source
+- `source/tkkdy-home-synthesis-v0-2-6.html`: current corrected Canvas source
+- `source/tkkdy-home-synthesis-v0-2-5.html`: retained approved pre-project-refinement source
+- `source/tkkdy-home-synthesis-v0-2-4.html`: retained approved pre-interaction source
+- `source/tkkdy-home-synthesis-v0-2-3.html`: retained approved pre-C-refinement source
+- `source/tkkdy-home-synthesis-v0-2-2.html`: retained pre-convergence source
+- `source/tkkdy-home-synthesis-v0-2-1.html`: retained pre-feedback source
 - `TOKENS.md`: extracted prototype design tokens
 - `SYNTHESIS_REVIEW_TEMPLATE.md`: visual approval checklist

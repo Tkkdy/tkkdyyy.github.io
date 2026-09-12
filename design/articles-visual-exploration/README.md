@@ -1,4 +1,4 @@
-# VDVXDV Articles Visual Exploration
+# tkkdy Articles Visual Exploration
 
 本目录是 Articles 的非生产视觉探索。三套方向由 Gemini 3.1 Pro（扩展思考）在 Google Canvas 中生成，Codex 只做了独立页面拆分、离线字体回退、链接整理与浏览器检查；没有把这些页面迁移进 Astro。
 
@@ -10,7 +10,7 @@
 - `final-v1/article.html`：以 C Detail 为主体的长文详情页，正文宽度约 700px，包含普通宽度媒体、约 1000px Wide Media、桌面双图与移动端纵向堆叠。
 - `final-v1/styles.css`：Gemini Canvas Final v1 的独立共享样式，使用系统字体回退后可离线浏览。
 
-本轮没有添加正式 VDVXDV Micro Icon，也没有使用通用图标代替。当前无 Icon 状态本身完整；未来可在标题结构中增加小型 icon slot，而不改变现有信息网格。
+本轮没有添加正式 tkkdy Micro Icon，也没有使用通用图标代替。当前无 Icon 状态本身完整；未来可在标题结构中增加小型 icon slot，而不改变现有信息网格。
 
 ## 快速入口
 

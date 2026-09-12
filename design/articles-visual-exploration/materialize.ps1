@@ -3,7 +3,7 @@
 $explorationRoot = $PSScriptRoot
 $projectRoot = Split-Path (Split-Path $explorationRoot -Parent) -Parent
 $localCanvasSource = Join-Path $explorationRoot 'gemini-canvas-source.html'
-$runtimeCanvasSource = Join-Path $projectRoot '.playwright-mcp\vdvxdv-articles-visual-exploration.html'
+$runtimeCanvasSource = Join-Path $projectRoot '.playwright-mcp\tkkdy-articles-visual-exploration.html'
 $canvasSource = if (Test-Path -LiteralPath $localCanvasSource) { $localCanvasSource } else { $runtimeCanvasSource }
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 
@@ -63,7 +63,7 @@ $css += @'
 
 $nav = @'
 <nav class="glass-header" aria-label="主导航">
-    <a href="#" class="brand">VDVXDV</a>
+    <a href="#" class="brand">tkkdy</a>
     <a href="#">项目</a><a href="#">随笔</a><a href="#" class="active">文章</a>
     <a href="#">碎片</a><a href="#">影像</a><a href="#">关于</a>
     <a href="#" style="margin-left:auto;">搜索</a>
@@ -112,9 +112,9 @@ foreach ($view in $views) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="VDVXDV Articles 视觉原型：$($view.Title)">
+    <meta name="description" content="tkkdy Articles 视觉原型：$($view.Title)">
     <link rel="icon" href="data:,">
-    <title>$($view.Title) · VDVXDV</title>
+    <title>$($view.Title) · tkkdy</title>
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
@@ -135,13 +135,13 @@ $hub = @'
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="VDVXDV Articles 三方向视觉原型比较入口">
+    <meta name="description" content="tkkdy Articles 三方向视觉原型比较入口">
     <link rel="icon" href="data:,">
-    <title>Articles Visual Exploration · VDVXDV</title>
+    <title>Articles Visual Exploration · tkkdy</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<nav class="glass-header" aria-label="主导航"><a href="#" class="brand">VDVXDV</a><a href="#" class="active">Articles Visual Exploration</a></nav>
+<nav class="glass-header" aria-label="主导航"><a href="#" class="brand">tkkdy</a><a href="#" class="active">Articles Visual Exploration</a></nav>
 <main class="hub">
     <p class="hub-kicker">Comparison Hub / Non-production</p>
     <h1>Articles, three ways of remembering.</h1>

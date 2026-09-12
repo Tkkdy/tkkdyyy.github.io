@@ -8,7 +8,7 @@
 - Tool：Canvas
 - Image Gen：未使用
 
-完整工程文件上传 Gemini 被安全审查拒绝，因此只使用最小化、去敏后的文字 Brief：用户已提供的 Projects 事实、VDVXDV 品牌 token、真实 Morning Radar 字段和明确标记的 Prototype fixtures。没有向 Gemini 上传源码、内部文档或设计资产。
+完整工程文件上传 Gemini 被安全审查拒绝，因此只使用最小化、去敏后的文字 Brief：用户已提供的 Projects 事实、tkkdy 品牌 token、真实 Morning Radar 字段和明确标记的 Prototype fixtures。没有向 Gemini 上传源码、内部文档或设计资产。
 
 ## Direction A
 

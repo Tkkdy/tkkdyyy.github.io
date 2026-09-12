@@ -1,4 +1,4 @@
-# VDVXDV Projects — Final Homepage Candidate
+# tkkdy Projects — Final Homepage Candidate
 
 This folder contains the single final Projects homepage candidate. Open `index.html` through a local HTTP server; no build step or external dependency is required.
 
@@ -19,8 +19,8 @@ This folder contains the single final Projects homepage candidate. Open `index.h
 | `assets/desktop-pet-blink-process.png` | **REAL** | Actual blink compositing/debug comparison; retained as evidence, not currently placed in the page. |
 | `assets/mini-her-contact-sheet.png` | **REAL** | Final QA contact sheet: nine states, 57 used frames. |
 | `assets/mini-her-idle.gif` | **REAL** | Final QA idle preview; retained as evidence, not required for the static-first page. |
-| `assets/vdvxdv-home-desktop.png` | **CAPTURED** | Existing 1440×900 local/standalone homepage capture. It is presented as process evidence, not proof of deployment. |
-| `assets/vdvxdv-home-mobile.png` | **CAPTURED** | Existing 390×844 local/standalone homepage capture. It is presented as process evidence, not proof of deployment. |
+| `assets/tkkdy-home-desktop.png` | **CAPTURED** | Existing 1440×900 local/standalone homepage capture. It is presented as process evidence, not proof of deployment. |
+| `assets/tkkdy-home-mobile.png` | **CAPTURED** | Existing 390×844 local/standalone homepage capture. It is presented as process evidence, not proof of deployment. |
 | Tetris terminal reconstruction in `index.html` | **PROTOTYPE-ONLY** | Reconstructed from the verified README feature set. It is visibly labelled and is not presented as a runtime screenshot. |
 | ESP32 source trace in `index.html` | **REAL** | Transcribed from the three real sketches: GPIO 25 blink, serial state output, and `analogWrite` breathing loop. No hardware image is implied. |
 | Codex Fix decision trace | **PROTOTYPE-ONLY** | A sanitized information design derived from the real safety workflow. It contains no environment values or invented runtime logs. |
@@ -35,7 +35,7 @@ The final local candidate preserves the revised Canvas thesis—editorial archiv
 ## Interaction
 
 - Desktop Pet: click/tap the stage, or use the three controls. `Enter` and `Space` work when the stage has focus.
-- VDVXDV Website: switch between desktop and mobile evidence.
+- tkkdy Website: switch between desktop and mobile evidence.
 - Codex Fix: the only 180° flip. Click/tap or use `Enter` / `Space`.
 - `prefers-reduced-motion: reduce` removes transitions and cursor blinking while preserving direct state changes.
 
@@ -55,7 +55,7 @@ Accepted concept reference: `../qa/direction-b-1440.png`.
 | Locked reference point | Final treatment |
 | --- | --- |
 | Quiet cold-white editorial field | Preserved with a cooler gray paper surface and graphite rules. |
-| Floating VDVXDV pill navigation | Preserved on desktop; reduced to brand + location on mobile rather than hidden. |
+| Floating tkkdy pill navigation | Preserved on desktop; reduced to brand + location on mobile rather than hidden. |
 | Serif project titles plus mono evidence metadata | Preserved and strengthened with vertical stage indices and provenance labels. |
 | Asymmetric archive rhythm | Preserved, but every real project now receives its own evidence anatomy instead of repeated article rows. |
 | Morning Radar as the dominant current-work story | Preserved and upgraded from a placeholder text block to the real captured brief. |
