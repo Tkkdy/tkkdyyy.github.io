@@ -7,6 +7,7 @@ import { getPublishedEssays } from '../../lib/content/essays';
 import { formatDate } from '../../lib/content/homepage';
 import EssaysUniverseMap from '../../components/EssaysUniverseMap.astro';
 import { withBase } from '../../lib/site-url';
+import { taxonomyHref } from '../../lib/content/taxonomy';
 
 const essays = await getPublishedEssays();
 const themes = [...new Set(essays.flatMap((essay) => essay.data.tags ?? []))].slice(0, 8);
@@ -29,28 +30,36 @@ const dateParts = (date: Date) => ({
       </header>
       {
         essays.length === 0 ? <p class="essay-empty">公开随笔正在慢慢出现。</p> : essays.map((essay) => (
-          <a class="essay-row" id={`essay-${essay.data.slug}`} href={withBase(`essays/${essay.data.slug}/`)}>
+          <article class="essay-row" id={`essay-${essay.data.slug}`}>
             <time class="essay-row-date" datetime={dateParts(essay.data.publishedAt).iso}>
               <span>{dateParts(essay.data.publishedAt).year}</span>
               <b>{dateParts(essay.data.publishedAt).monthDay}</b>
             </time>
 
             <div class="essay-row-copy">
-              <h2 class="essay-row-title"><span>{essay.data.title}</span></h2>
+              <h2 class="essay-row-title">
+                <a href={withBase(`essays/${essay.data.slug}/`)}><span>{essay.data.title}</span></a>
+              </h2>
               {essay.data.summary && <p class="essay-row-summary">{essay.data.summary}</p>}
               {essay.data.tags && essay.data.tags.length > 0 && (
                 <ul class="essay-row-tags" aria-label="标签">
-                  {essay.data.tags.map((tag) => <li>{tag}</li>)}
+                  {essay.data.tags.map((tag) => (
+                    <li><a href={withBase(taxonomyHref('tags', tag))}>{tag}</a></li>
+                  ))}
                 </ul>
               )}
             </div>
 
-            <div class:list={['essay-row-visual', !essay.data.cover && 'is-empty']} aria-hidden={!essay.data.cover}>
+            <a
+              class:list={['essay-row-visual', !essay.data.cover && 'is-empty']}
+              href={withBase(`essays/${essay.data.slug}/`)}
+              aria-label={`阅读随笔：${essay.data.title}`}
+            >
               {essay.data.cover && (
                 <img src={withBase(essay.data.cover)} alt={essay.data.coverAlt ?? ''} loading="lazy" />
               )}
-            </div>
-          </a>
+            </a>
+          </article>
         ))
       }
     </section>

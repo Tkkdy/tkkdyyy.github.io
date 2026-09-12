@@ -386,12 +386,11 @@
 }
 
 .essay-row:hover,
-.essay-row:focus-visible {
+.essay-row:focus-within {
   background: rgba(255, 255, 255, 0.16);
-  outline: 0;
 }
 
-.essay-row:focus-visible {
+.essay-row:focus-within {
   box-shadow: inset 0 0 0 1px var(--essay-warm-point);
 }
 
@@ -429,8 +428,14 @@
   transition: background-size 220ms ease;
 }
 
+.essay-row-title a,
+.essay-row-tags a {
+  color: inherit;
+  text-decoration: none;
+}
+
 .essay-row:hover .essay-row-title span,
-.essay-row:focus-visible .essay-row-title span {
+.essay-row:focus-within .essay-row-title span {
   background-size: 100% 1px;
 }
 
@@ -451,9 +456,21 @@
   list-style: none;
 }
 
+.essay-row-tags a:hover,
+.essay-row-tags a:focus-visible {
+  color: var(--essay-warm-point);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 .essay-row-visual {
   width: 100%;
   justify-self: end;
+}
+
+.essay-row-visual:focus-visible {
+  outline: 1px solid var(--essay-warm-point);
+  outline-offset: 4px;
 }
 
 .essay-row-visual img {
@@ -465,7 +482,7 @@
 }
 
 .essay-row:hover .essay-row-visual img,
-.essay-row:focus-visible .essay-row-visual img {
+.essay-row:focus-within .essay-row-visual img {
   transform: rotate(0.45deg) scale(1.01);
 }
 
