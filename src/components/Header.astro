@@ -185,6 +185,20 @@ const searchUrl = withBase('search/');
 
   nav.addEventListener('pointerleave', () => magneticPill.classList.remove('is-visible'));
 
+  // 首页的深色项目区块滚到固定导航下方时，切换导航前景色；离开后立即恢复。
+  const darkSection = document.querySelector('.dark-section') as HTMLElement | null;
+  if (darkSection) {
+    const syncNavigationContrast = () => {
+      const navRect = nav.getBoundingClientRect();
+      const sectionRect = darkSection.getBoundingClientRect();
+      nav.classList.toggle('is-on-dark', sectionRect.top < navRect.bottom && sectionRect.bottom > navRect.top);
+    };
+
+    syncNavigationContrast();
+    window.addEventListener('scroll', syncNavigationContrast, { passive: true });
+    window.addEventListener('resize', syncNavigationContrast);
+  }
+
   searchInput.addEventListener('input', () => {
     if (timer) clearTimeout(timer);
     timer = setTimeout(runSearch, 150);

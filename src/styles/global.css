@@ -473,6 +473,35 @@ button {
 
 .glass-nav:hover { background: rgba(255, 255, 255, 0.05); }
 
+/* 首页深色项目区块覆盖导航时，仅切换前景色以保证可读性；
+   玻璃的 2px 模糊、5% 底层与高光层保持不变。 */
+.glass-nav.is-on-dark .nav-wordmark img {
+  filter: brightness(0) invert(1);
+}
+
+.glass-nav.is-on-dark .nav-links a,
+.glass-nav.is-on-dark .nav-search,
+.glass-nav.is-on-dark .nav-search-input,
+.glass-nav.is-on-dark .nav-search-exit,
+.glass-nav.is-on-dark .nav-search-clear {
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.glass-nav.is-on-dark .nav-divider {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+.glass-nav.is-on-dark .nav-magnetic-pill {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.glass-nav.is-on-dark .nav-wordmark:hover,
+.glass-nav.is-on-dark .nav-links a:hover,
+.glass-nav.is-on-dark .nav-search:hover,
+.glass-nav.is-on-dark .nav-links a[aria-current='page'] {
+  color: #fff;
+}
+
 /* The 5% base layer is intentionally translucent. These highlights make the
    glass edge readable even when the page beneath it is a flat colour. */
 .glass-nav::before {
