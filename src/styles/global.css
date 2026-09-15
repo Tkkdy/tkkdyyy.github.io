@@ -513,8 +513,34 @@ button {
 }
 
 .nav-default {
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: 0;
+}
+
+.nav-default > .nav-wordmark {
+  grid-column: 1;
+  justify-self: start;
+}
+
+.nav-default > .nav-divider:first-of-type {
+  grid-column: 1;
+  justify-self: end;
+}
+
+.nav-default > .nav-links {
+  grid-column: 2;
+  justify-self: center;
+}
+
+.nav-default > .nav-divider:last-of-type {
+  grid-column: 3;
+  justify-self: start;
+}
+
+.nav-default > .nav-search {
+  grid-column: 3;
+  justify-self: end;
 }
 
 .nav-wordmark {
