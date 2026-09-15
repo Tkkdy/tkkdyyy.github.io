@@ -22,7 +22,9 @@ const searchUrl = withBase('search/');
 
     <!-- 默认状态 -->
     <div class="nav-default" data-nav-default>
-      <a class="nav-wordmark" href={withBase()} data-nav-interactive>tkkdy</a>
+      <a class="nav-wordmark" href={withBase()} data-nav-interactive aria-label="tkkdy 首页">
+        <img src={withBase('brand/tkkdy-logo.png')} alt="" />
+      </a>
 
       <div class="nav-divider" aria-hidden="true"></div>
 

@@ -520,11 +520,21 @@ button {
 .nav-wordmark {
   position: relative;
   z-index: 3;
-  padding: 7px 14px;
+  display: inline-flex;
+  padding: 4px 9px;
+  align-items: center;
+  justify-content: center;
   color: #1d1d1f;
   font-size: 15px;
   font-weight: 650;
   letter-spacing: 0.8px;
+}
+
+.nav-wordmark img {
+  display: block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 .nav-divider {
@@ -631,6 +641,7 @@ button {
   .nav-default,
   .nav-search-mode { padding: 0 8px; }
   .nav-wordmark { padding: 5px 10px; font-size: 13px; }
+  .nav-wordmark img { width: 26px; height: 26px; }
   .nav-search { padding: 5px 9px; font-size: 12px; }
   .nav-search-mode { gap: 4px; }
   .nav-search-exit,

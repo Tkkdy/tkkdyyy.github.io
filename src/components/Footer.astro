@@ -6,7 +6,9 @@ import { withBase } from '../lib/site-url';
 <footer class="site-footer" data-pagefind-ignore>
   <div class="footer-inner">
     <div class="footer-brand">
-      <a class="footer-wordmark" href={withBase()}>tkkdy</a>
+      <a class="footer-wordmark" href={withBase()} aria-label="tkkdy 首页">
+        <img src={withBase('brand/tkkdy-logo.png')} alt="" />
+      </a>
       <p class="footer-desc">
         这是一个属于技术创作者的个人网站。用来安放长文、项目与一闪而过的念头。
       </p>
@@ -57,11 +59,20 @@ import { withBase } from '../lib/site-url';
   }
 
   .footer-wordmark {
+    display: inline-flex;
+    align-items: center;
     font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--color-ink);
+  }
+
+  .footer-wordmark img {
+    display: block;
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
   }
 
   .footer-desc {
