@@ -456,9 +456,9 @@ button {
   height: 54px;
   padding: 0;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(44px) saturate(210%) brightness(1.08);
-  -webkit-backdrop-filter: blur(44px) saturate(210%) brightness(1.08);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(2px) saturate(180%) brightness(1.05);
+  -webkit-backdrop-filter: blur(2px) saturate(180%) brightness(1.05);
   border: 0.5px solid rgba(255, 255, 255, 0.85);
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.95),
@@ -466,9 +466,12 @@ button {
     0 16px 36px -8px rgba(0, 0, 0, 0.08),
     0 2px 6px rgba(0, 0, 0, 0.04);
   transition: background 500ms var(--nav-ease), border-color 500ms var(--nav-ease), box-shadow 500ms var(--nav-ease), transform 400ms var(--nav-ease);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Songti SC", serif;
 }
 
 .glass-nav:active { transform: scale(0.992); }
+
+.glass-nav:hover { background: rgba(255, 255, 255, 0.05); }
 
 .nav-specular {
   position: absolute;
@@ -660,6 +663,7 @@ button {
 .nav-search-input {
   padding: 6px 0;
   color: #1d1d1f;
+  font-family: inherit;
   font-size: 15px;
   letter-spacing: 0.2px;
 }
