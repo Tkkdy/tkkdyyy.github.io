@@ -569,7 +569,8 @@ button {
   width: 32px;
   height: 32px;
   object-fit: contain;
-  transform: translateY(2px);
+  /* Keep the 32px mark on the 54px navigation bar's geometric centre. */
+  transform: translateY(0);
 }
 
 .nav-divider {
