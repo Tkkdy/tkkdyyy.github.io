@@ -1,5 +1,5 @@
 ---
-{ slug: tingge, publishedAt: 2026-10-18, status: published, homepage: { show: false }, title: 不知道听什么的时候, summary: 老的唱片店 }
+{ slug: tingge, publishedAt: 2026-10-18, status: published, homepage: { show: false }, title: 不知道听什么的时候, summary: 老的唱片店, tags: [ feelings ], categories: [ 歌, 随笔 ] }
 ---
 
 我从网易云转到 Apple Music，其实只是因为音质。
