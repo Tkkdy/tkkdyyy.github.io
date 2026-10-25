@@ -1,0 +1,112 @@
+# DRAFT ONLY: not under the repository .github/workflows directory.
+name: Restricted VPS preview deployment
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Full reviewed source commit including VPS fixes
+        required: true
+        type: string
+      expected_current:
+        description: Exact current releases/...; fails on drift
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: restricted-vps-preview
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7, official tag resolved read-only
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: pipeline
+          persist-credentials: false
+      - name: Validate full SHA
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: '[[ "$SOURCE_SHA" =~ ^[a-f0-9]{40}$ ]]'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.source_sha }}
+          path: site
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+      - name: Build without deployment credentials
+        working-directory: site
+        env:
+          SITE_URL: ${{ vars.VPS_SITE_URL }}
+        run: |
+          npm ci
+          npm run check
+          npm run build:vps
+      - name: Validate static output and package provenance
+        env:
+          SITE_URL: ${{ vars.VPS_SITE_URL }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          WORKFLOW_SHA: ${{ github.workflow_sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          python pipeline/ops/deploy/release_bundle.py --source site --output bundle.zip --site "$SITE_URL" --source-sha "$SOURCE_SHA" --workflow-sha "$WORKFLOW_SHA" --run-id "$RUN_ID" --attempt "$RUN_ATTEMPT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: vps-release-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            bundle.zip
+            bundle.zip.sha256
+          retention-days: 30
+          if-no-files-found: error
+  deploy:
+    needs: build
+    if: vars.VPS_AUTODEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: vps-preview
+      url: ${{ vars.VPS_SITE_URL }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: pipeline
+          persist-credentials: false
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: vps-release-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Prepare credentials after environment approval
+        env:
+          VPS_KEY: ${{ secrets.VPS_DEPLOY_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          test -n "$VPS_KEY" && test -n "$VPS_KNOWN_HOSTS"
+          umask 077
+          printf '%s\n' "$VPS_KEY" > "$RUNNER_TEMP/vps-key"
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > "$RUNNER_TEMP/vps-known-hosts"
+      - name: Single activation with external verification and rollback
+        env:
+          SITE_URL: ${{ vars.VPS_SITE_URL }}
+          VPS_SSH_HOST: ${{ vars.VPS_SSH_HOST }}
+          VPS_SSH_USER: ${{ vars.VPS_SSH_USER }}
+          EXPECTED_CURRENT: ${{ inputs.expected_current }}
+          REVIEWED_WORKFLOW_SHA: ${{ github.workflow_sha }}
+        run: |
+          export VPS_KEY_FILE="$RUNNER_TEMP/vps-key" VPS_KNOWN_HOSTS_FILE="$RUNNER_TEMP/vps-known-hosts"
+          python pipeline/ops/deploy/publish_client.py
+      - name: Remove only own runner credential files
+        if: always()
+        run: rm -f -- "$RUNNER_TEMP/vps-key" "$RUNNER_TEMP/vps-known-hosts"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: vps-deployment-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: deployment-evidence.json
+          retention-days: 90
+

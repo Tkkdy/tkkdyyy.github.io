@@ -13,11 +13,13 @@ interface Props {
   description?: string;
   /** noindex（搜索页 / 404 必须） */
   noindex?: boolean;
+  /** 是否输出 canonical 及对应的 og:url；默认保留 */
+  includeCanonical?: boolean;
   /** Open Graph type；内容详情页可用 article */
   ogType?: string;
 }
 
-const { title, description = SITE.description, noindex = false, ogType = 'website' } = Astro.props;
+const { title, description = SITE.description, noindex = false, includeCanonical = true, ogType = 'website' } = Astro.props;
 
 // canonical：统一使用站点配置域名 + 当前路径（部署后只改 config.ts 一处）
 const canonical = new URL(Astro.url.pathname, SITE.url).toString();
@@ -25,7 +27,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).toString();
 
 <title>{title}</title>
 <meta name="description" content={description} />
-<link rel="canonical" href={canonical} />
+{includeCanonical && <link rel="canonical" href={canonical} />}
 <link rel="icon" href={withBase('brand/tkkdy-logo.png')} type="image/png" />
 
 <!-- RSS Discovery -->
@@ -39,11 +41,11 @@ const canonical = new URL(Astro.url.pathname, SITE.url).toString();
 <!-- Open Graph -->
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:url" content={canonical} />
+{includeCanonical && <meta property="og:url" content={canonical} />}
 <meta property="og:type" content={ogType} />
 <meta property="og:site_name" content={SITE.name} />
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary" />
 
-{noindex && <meta name="robots" content="noindex" />}
+{(noindex || import.meta.env.VPS_PREVIEW === true) && <meta name="robots" content="noindex" />}

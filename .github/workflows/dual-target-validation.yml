@@ -1,0 +1,153 @@
+# ISOLATED BRANCH ONLY. No secrets, Pages deployment or VPS connection.
+{
+  "name": "Isolated dual-target validation",
+  "on": {
+    "push": {
+      "branches": [
+        "codex/dual-site-m1-m2"
+      ]
+    }
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "concurrency": {
+    "group": "isolated-dual-target-${{ github.ref }}",
+    "cancel-in-progress": false
+  },
+  "jobs": {
+    "build": {
+      "name": "Build and test ${{ matrix.target }}",
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 25,
+      "strategy": {
+        "fail-fast": false,
+        "matrix": {
+          "include": [
+            {
+              "target": "pages",
+              "script": "build"
+            },
+            {
+              "target": "vps",
+              "script": "build:vps"
+            }
+          ]
+        }
+      },
+      "env": {
+        "SITE_URL": "https://preview.boenbot.top",
+        "BUILD_SCRIPT": "${{ matrix.script }}",
+        "TARGET": "${{ matrix.target }}",
+        "SOURCE_SHA": "${{ github.sha }}"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "with": {
+            "node-version": 24
+          }
+        },
+        {
+          "run": "npm ci\nnpm run check\nnpm run \"$BUILD_SCRIPT\"\npython ops/deploy/write_version.py --source . --dist dist --target \"$TARGET\" --workflow \"$SOURCE_SHA\""
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "with": {
+            "name": "build-${{ matrix.target }}",
+            "path": "dist",
+            "if-no-files-found": "error",
+            "retention-days": 7
+          }
+        },
+        {
+          "name": "Reusable package and fault tests",
+          "if": "matrix.target == 'vps'",
+          "env": {
+            "VPS_BUILD_DIR": "${{ github.workspace }}/dist"
+          },
+          "run": "python -m unittest discover -s ops/deploy -p 'test_*.py' -v"
+        },
+        {
+          "name": "Prepare disposable SSH and browser tooling",
+          "if": "matrix.target == 'vps'",
+          "run": "sudo apt-get update -qq\nsudo apt-get install -y -qq openssh-server libnss3-tools\nnpx playwright install --with-deps chromium"
+        },
+        {
+          "name": "Actual Linux SSH, trusted TLS, browser acceptance and rollback",
+          "if": "matrix.target == 'vps'",
+          "env": {
+            "ISOLATED_RECEIVER_TEST": "true"
+          },
+          "run": "python ops/deploy/integration_linux.py"
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "if": "always() && matrix.target == 'vps'",
+          "with": {
+            "name": "isolated-linux-evidence",
+            "path": "integration-evidence",
+            "if-no-files-found": "warn",
+            "retention-days": 7
+          }
+        }
+      ]
+    },
+    "parity": {
+      "needs": "build",
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 10,
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "with": {
+            "node-version": 24
+          }
+        },
+        {
+          "run": "npm ci --ignore-scripts"
+        },
+        {
+          "uses": "actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0",
+          "with": {
+            "name": "build-pages",
+            "path": "builds/pages"
+          }
+        },
+        {
+          "uses": "actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0",
+          "with": {
+            "name": "build-vps",
+            "path": "builds/vps"
+          }
+        },
+        {
+          "run": "node scripts/audit-dual-builds.mjs builds parity.json"
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "if": "always()",
+          "with": {
+            "name": "content-parity",
+            "path": "parity.json",
+            "retention-days": 7
+          }
+        }
+      ]
+    }
+  }
+}
