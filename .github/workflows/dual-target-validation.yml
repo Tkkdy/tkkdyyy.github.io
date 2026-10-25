@@ -4,7 +4,8 @@
   "on": {
     "push": {
       "branches": [
-        "codex/dual-site-m1-m2"
+        "codex/dual-site-m1-m2",
+        "codex/admin-secure-migration"
       ]
     }
   },

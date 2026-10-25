@@ -4,6 +4,7 @@ from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from release_bundle import require,release_target,sha
 from receiver import atomic_link,https_body,exclusive
+from release_records import read_record
 
 def rollback(policy,expected,target,apply=False):
  p=Path(policy);require(not p.is_symlink() and p.stat().st_uid==0 and not p.stat().st_mode&0o022,'root-owned policy required')
@@ -15,14 +16,11 @@ def rollback(policy,expected,target,apply=False):
   candidate=root/target;require(candidate.is_dir() and candidate.resolve()==candidate,'unsafe target release')
   rid=Path(target).name;record_path=root/'records'/('deploy-'+rid+'.json');manifest_path=root/'records'/('manifest-'+rid+'.json')
   require(not record_path.is_symlink() and not manifest_path.is_symlink(),'linked record')
-  record=json.loads(record_path.read_text());raw=manifest_path.read_bytes();require(sha(raw)==record['manifestSha256'],'manifest identity differs')
-  manifest=json.loads(raw);files={}
-  from release_bundle import safe_name
-  for item in manifest:
-   name=safe_name(item['path']);file=candidate/name;require(file.resolve()==file and stat.S_ISREG(file.stat().st_mode),'unsafe release file')
-   body=file.read_bytes();require(len(body)==item['bytes'] and sha(body)==item['sha256'],'rollback file differs');files[name]=body
+  record=read_record(root,rid);raw=manifest_path.read_bytes();require(sha(raw)==record['manifestSha256'],'manifest identity differs')
+  from import_manual_release import verify_manifest
+  manifest,files=verify_manifest(candidate,raw,record['manifestSha256'])
   require(record['current']==target and record['site']==config['site'],'rollback identity differs')
-  result={'scope':'OWNER_OPERATED','expected':expected,'target':target,'sourceSha':record['sourceSha'],'filesVerified':len(files),'applied':False}
+  result={'scope':'OWNER_OPERATED','expected':expected,'target':target,'sourceSha':record['sourceSha'],'recordType':record.get('recordType','CI_ACCEPTED'),'filesVerified':len(files),'applied':False}
   if not apply:return result
   old_hash=sha((root/expected/'index.html').read_bytes())
   try:

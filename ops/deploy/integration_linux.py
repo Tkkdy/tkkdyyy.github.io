@@ -28,8 +28,8 @@ for n,b in data.items():
  p=old/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(b+(b'<!--old-->\n' if n=='index.html' else b''))
 os.symlink('releases/old',DEPLOY/'current');original={n:sha((old/n).read_bytes()) for n in data}
 modules=T/'receiver';modules.mkdir()
-for n in ['receiver.py','release_bundle.py','source_authority.py','rollback_release.py']:shutil.copy2(CODE/n,modules/n)
-policy=T/'policy.json';policy.write_text(json.dumps({'enabled':True,'root':str(DEPLOY),'site':SITE,'reviewedWorkflowSha':SOURCE,'sourceAuthority':'allowlist','approvedSourceShas':[SOURCE]}))
+for n in ['receiver.py','release_bundle.py','source_authority.py','rollback_release.py','release_records.py','import_manual_release.py']:shutil.copy2(CODE/n,modules/n)
+policy=T/'policy.json';policy.write_text(json.dumps({'enabled':True,'root':str(DEPLOY),'site':SITE,'reviewedWorkflowSha':SOURCE,'sourceAuthority':'allowlist','approvedSourceShas':[SOURCE],'bootstrapSourceSha':SOURCE}))
 worker=T/'worker.py';worker.write_text('import sys\nsys.path.insert(0,'+repr(str(modules))+')\nimport receiver\nreceiver.main('+repr(str(policy))+')\n')
 cmd('ssh-keygen','-q','-t','ed25519','-N','','-f',str(T/'host-key'));cmd('ssh-keygen','-q','-t','ed25519','-N','','-f',str(T/'client-key'))
 auth=T/'authorized';auth.write_text('restrict '+(T/'client-key.pub').read_text());auth.chmod(0o644)
@@ -52,6 +52,7 @@ ForceCommand /usr/bin/env SSL_CERT_FILE={T/'ca.crt'} /usr/bin/python3 -I {worker
 LogLevel VERBOSE
 ''')
 parts=(T/'host-key.pub').read_text().split();known=T/'known_hosts';known.write_text(f'[127.0.0.1]:{SSH} '+parts[0]+' '+parts[1]+'\n')
+(DEPLOY/'records/.ci.lock').touch(mode=0o600)
 root('chown','-R',USER+':'+USER,str(DEPLOY));root('mkdir','-p','/run/sshd')
 # The test UID cannot change policy, forced command, authorization or executable modules.
 root('chown','root:root',str(T),str(auth),str(policy),str(worker),str(config),str(modules),*[str(p) for p in modules.iterdir()])
@@ -86,6 +87,15 @@ try:
   except OSError:time.sleep(.05)
  else:raise RuntimeError('sshd did not become ready')
  env=os.environ.copy();env.update(SITE_URL=SITE,REVIEWED_WORKFLOW_SHA=SOURCE,VPS_SSH_HOST='127.0.0.1',VPS_SSH_USER=USER,VPS_SSH_PORT=str(SSH),VPS_KEY_FILE=str(T/'client-key'),VPS_KNOWN_HOSTS_FILE=str(known),SSL_CERT_FILE=str(T/'ca.crt'),CURL_CA_BUNDLE=str(T/'ca.crt'))
+ # Import a legacy current release with its independently pinned manifest, never a fake CI success.
+ legacy_manifest=[{'path':n,'bytes':len((old/n).read_bytes()),'sha256':original[n]} for n in sorted(data)];legacy_raw=json.dumps(legacy_manifest).encode();legacy_path=T/'original-manual-manifest.json';legacy_path.write_bytes(legacy_raw)
+ import_command=['sudo','-n','/usr/bin/env','SSL_CERT_FILE='+str(T/'ca.crt'),'/usr/bin/python3','-I',str(modules/'import_manual_release.py'),'--policy',str(policy),'--target','releases/old','--source-sha',SOURCE,'--manifest',str(legacy_path),'--manifest-sha256',sha(legacy_raw)]
+ bad=subprocess.run(import_command[:-1]+['0'*64],capture_output=True);assert bad.returncode!=0;assert not (DEPLOY/'records/manual-old.json').exists()
+ for apply in [False,True]:
+  result=cmd(*(import_command+(['--apply'] if apply else [])));report=json.loads(result.stdout);assert report['recordType']=='OWNER_IMPORTED_MANUAL' and report['ciAccepted'] is False;(E/('manual-import-'+str(apply)+'.json')).write_bytes(result.stdout)
+  assert os.readlink(DEPLOY/'current')=='releases/old'
+ assert not (DEPLOY/'records/deploy-old.json').exists();assert subprocess.run(import_command+['--apply'],capture_output=True).returncode!=0
+ checks.append('manual-baseline-pinned-manifest-import-provenance-no-overwrite-no-switch')
  raw,meta=bundle(100);(E/'bundle.zip').write_bytes(raw);(E/'bundle.zip.sha256').write_text(sha(raw))
  client=subprocess.run([sys.executable,str(CODE/'publish_client.py')],cwd=E,env=env,capture_output=True,timeout=400);(E/'client.log').write_bytes(client.stdout+b'\nSTDERR\n'+client.stderr);assert client.returncode==0,client.stderr.decode()+client.stdout.decode()
  current='releases/'+meta['releaseId'];assert os.readlink(DEPLOY/'current')==current;checks.append('actual-client-trusted-TLS-full-manifest-browser-commit')
@@ -106,6 +116,10 @@ try:
   command=['sudo','-n','-u',USER,'/usr/bin/env','SSL_CERT_FILE='+str(T/'ca.crt'),'/usr/bin/python3','-I',str(modules/'rollback_release.py'),'--policy',str(policy),'--expected-current',newer,'--target',current]+(['--apply'] if apply else [])
   result=cmd(*command);(E/('owner-rollback-'+str(apply)+'.json')).write_bytes(result.stdout)
  assert os.readlink(DEPLOY/'current')==current;checks.append('owner-dry-run-and-hash-checked-rollback-with-real-HTTPS')
+ # The original manual baseline is now a verified owner rollback target, then restore the CI release.
+ for expected,target,label in [(current,'releases/old','manual'),('releases/old',current,'restore-ci')]:
+  result=cmd('sudo','-n','-u',USER,'/usr/bin/env','SSL_CERT_FILE='+str(T/'ca.crt'),'/usr/bin/python3','-I',str(modules/'rollback_release.py'),'--policy',str(policy),'--expected-current',expected,'--target',target,'--apply');value=json.loads(result.stdout);assert value['serverHttpsVerified'] is True;assert os.readlink(DEPLOY/'current')==target;(E/('baseline-rollback-'+label+'.json')).write_bytes(result.stdout)
+ checks.append('actual-owner-rollback-to-imported-manual-baseline-and-restore-CI')
  forbidden=subprocess.run(SSH_CMD[:-1]+['rollback-v1'],input=b'',capture_output=True,timeout=15);assert forbidden.returncode!=0;checks.append('deploy-key-cannot-invoke-owner-rollback')
  for n,digest in original.items():assert sha((old/n).read_bytes())==digest
  assert len(list((DEPLOY/'releases').iterdir()))==6;checks.append('all-old-and-failed-releases-retained')

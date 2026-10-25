@@ -50,8 +50,10 @@ def authorize_source(metadata,config,root,previous):
     require(config.get('sourceAuthority')=='github-main','unknown source authority')
     require(config.get('repository')=='Tkkdy/tkkdyyy.github.io','unexpected repository')
     from source_authority import verify_main
-    current_record=root/'records'/('deploy-'+Path(previous).name+'.json')
-    baseline=json.loads(current_record.read_text())['sourceSha'] if current_record.is_file() else config['bootstrapSourceSha']
+    from release_records import read_record
+    rid=Path(previous).name
+    has_record=any(path.exists() or path.is_symlink() for path in [root/'records'/(kind+'-'+rid+'.json') for kind in ['deploy','manual']])
+    baseline=read_record(root,rid)['sourceSha'] if has_record else config['bootstrapSourceSha']
     verify_main(config['repository'],metadata['sourceSha'],baseline)
 
 def main(policy_path=None):
