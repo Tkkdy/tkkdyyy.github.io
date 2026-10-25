@@ -4,7 +4,7 @@ import http from 'node:http';
 import {readFile,realpath,lstat} from 'node:fs/promises';
 import {resolve,relative,sep,extname} from 'node:path';
 import {createHash} from 'node:crypto';
-const MIME={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.avif':'image/avif','.woff2':'font/woff2'};
+const MIME={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.avif':'image/avif','.gif':'image/gif','.woff2':'font/woff2'};
 const safeHeaders={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex, nofollow','Referrer-Policy':'no-referrer','Cross-Origin-Opener-Policy':'same-origin','Cross-Origin-Resource-Policy':'same-origin'};
 function htmlPolicy(body){
  const hashes=[...body.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)].filter(([,attrs])=>!/(?:^|\s)src\s*=/i.test(attrs)).map(([, ,script])=>"'sha256-"+createHash('sha256').update(script).digest('base64')+"'");
@@ -40,7 +40,8 @@ export async function createAdminServer({origin,staticRoot,broker,maxBodyBytes=3
     config.public_folder='/uploads';
     return send(200,yamlStringify(config),{'Content-Type':'application/yaml; charset=utf-8','Content-Security-Policy':"default-src 'none'"});
    }
-   if(!(decoded.startsWith('/admin/')||decoded.startsWith('/_astro/')||decoded.startsWith('/uploads/')||decoded==='/favicon.svg'||decoded==='/brand/tkkdy-logo.png'))return send(404);
+   const historicalImage=/^\/(?:projects|images|brand)\/.+\.(?:png|jpe?g|webp|avif|gif|svg)$/i.test(decoded);
+   if(!(historicalImage||decoded.startsWith('/admin/')||decoded.startsWith('/_astro/')||decoded.startsWith('/uploads/')||decoded==='/favicon.svg'||decoded==='/brand/tkkdy-logo.png'))return send(404);
    const candidate=resolve(root,'.'+decoded+(decoded.endsWith('/')?'index.html':''));
    const rel=relative(root,candidate);if(rel.startsWith('..')||rel.startsWith(sep))return send(404);
    // Reject every symlink component, including links whose final target is still inside root.

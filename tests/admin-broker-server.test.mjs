@@ -27,3 +27,10 @@ test('CMS configuration is authenticated, same-origin and cannot select main or 
  const f=await fixture(t);assert.equal((await fetch(f.origin+'/admin/config.yml')).status,401);
  const response=await fetch(f.origin+'/admin/config.yml',{headers:{cookie:'synthetic=owner'}});assert.equal(response.status,200);const config=await response.text();assert.match(config,/branch: codex\/probe/);assert.match(config,/auth_methods:\n    - oauth/);assert(config.includes(f.origin+'/api/v3'));assert(!config.includes('token'));assert(!config.includes('branch: main'));
 });
+
+test('existing project images are readable after login while sibling scripts and HTML stay unavailable',async t=>{
+ const f=await fixture(t);await mkdir(join(f.dir,'projects'));await writeFile(join(f.dir,'projects/old-image.png'),Buffer.from([137,80,78,71,13,10,26,10]));await writeFile(join(f.dir,'projects/unsafe.js'),'alert(1)');await writeFile(join(f.dir,'projects/unsafe.html'),'<script>alert(1)</script>');
+ assert.equal((await fetch(f.origin+'/projects/old-image.png')).status,401);
+ const image=await fetch(f.origin+'/projects/old-image.png',{headers:{cookie:'synthetic=owner'}});assert.equal(image.status,200);assert.match(image.headers.get('content-security-policy'),/sandbox/);
+ for(const file of ['unsafe.js','unsafe.html'])assert.equal((await fetch(f.origin+'/projects/'+file,{headers:{cookie:'synthetic=owner'}})).status,404);
+});
