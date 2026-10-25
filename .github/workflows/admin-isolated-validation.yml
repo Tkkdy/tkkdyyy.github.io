@@ -45,6 +45,13 @@
           "run": "npm ci --ignore-scripts\nnpm run check"
         },
         {
+          "name": "Private Admin build and browser tooling before credential exposure",
+          "env": {
+            "ADMIN_SITE_URL": "http://127.0.0.1:19443"
+          },
+          "run": "npm run build:admin\nnpx playwright install --with-deps chromium"
+        },
+        {
           "id": "probe",
           "name": "Short-lived token; synthetic identity; actual test branch writes",
           "env": {
@@ -57,7 +64,7 @@
           "if": "always()",
           "with": {
             "name": "admin-real-write-evidence",
-            "path": "admin-integration.json",
+            "path": "admin-integration.json\nadmin-cms-browser.json",
             "if-no-files-found": "warn",
             "retention-days": 7
           }

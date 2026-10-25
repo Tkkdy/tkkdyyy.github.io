@@ -1,0 +1,20 @@
+/** Actual browser + actual GitHub content; synthetic OAuth identity, test branch only. */
+import {chromium} from 'playwright';import assert from 'node:assert/strict';import {writeFile} from 'node:fs/promises';
+export async function inspectCmsBrowser({origin,cookie,githubToken}){
+ const browser=await chromium.launch({headless:true});const context=await browser.newContext();const page=await context.newPage();let stage='OPEN_CMS';const requests=[],errors=[];
+ await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
+ const [name,value]=cookie.split('=');await context.addCookies([{name,value,url:origin,httpOnly:true,sameSite:'Lax'}]);
+ page.on('pageerror',error=>errors.push(error.message.slice(0,200)));
+ page.on('request',request=>{assert(!JSON.stringify(request.headers()).includes(githubToken),'Raw GitHub credential reached browser');});
+ page.on('response',response=>{if(response.url().includes('/api/'))requests.push({path:new URL(response.url()).pathname,status:response.status()});});
+ try{
+  await page.goto(origin+'/admin/sveltia.html');const signIn=page.getByRole('button',{name:/Sign In with/});await signIn.waitFor();assert(await page.getByRole('button',{name:/Access Token/}).isDisabled());
+  stage='SESSION_BRIDGE';const popup=context.waitForEvent('page');await signIn.click();await popup;
+  stage='LOAD_REAL_ARTICLES';await page.getByText('Collections',{exact:true}).waitFor({timeout:45000});
+  await page.getByText('Articles',{exact:true}).first().click();await page.getByText(/上下文正在成为|context-is-the-new-interface/).first().waitFor({timeout:30000});
+  stage='LOAD_REAL_PROJECTS';await page.getByText('Projects',{exact:true}).first().click();await page.getByText(/Morning Radar|morning-radar/).first().waitFor({timeout:15000});
+  await page.getByText(/Morning Radar|morning-radar/).first().dblclick();await page.getByRole('textbox',{name:'Name',exact:true}).waitFor({timeout:15000});assert.match(await page.getByRole('textbox',{name:'Name',exact:true}).inputValue(),/Morning Radar/);
+  stage='LOAD_REAL_IMAGES';await page.getByText('Images',{exact:true}).first().click();await page.getByText(/Main Visual|photo-main-landscape/).first().waitFor({timeout:15000});await page.getByText(/Main Visual|photo-main-landscape/).first().dblclick();await page.getByRole('textbox',{name:'Alt',exact:true}).waitFor({timeout:15000});assert((await page.getByRole('textbox',{name:'Alt',exact:true}).inputValue()).includes('占位'));
+  assert.equal(errors.length,0);const report={scope:'REAL_GITHUB_CMS_READ_AND_EDIT_FORMS_SYNTHETIC_AUTH',status:'PASS',realOAuthValidated:false,productionWrites:false,checks:['RAW_TOKEN_NOT_IN_BROWSER_REQUESTS','PAT_LOGIN_DISABLED','SAME_ORIGIN_POPUP_BRIDGE','REAL_ARTICLE_DATA','REAL_PROJECT_EDIT_FORM','REAL_IMAGE_EDIT_FORM'],requests,errors};await writeFile('admin-cms-browser.json',JSON.stringify(report,null,2)+'\n');return report;
+ }catch(error){await writeFile('admin-cms-browser.json',JSON.stringify({scope:'REAL_GITHUB_CMS_READ_AND_EDIT_FORMS_SYNTHETIC_AUTH',status:'FAILED',stage,reason:error.name,body:(await page.locator('body').innerText().catch(()=>'' )).slice(0,2500),requests,errors},null,2)+'\n');throw Error('CMS browser failed at '+stage);}finally{await context.close();await browser.close();}
+}

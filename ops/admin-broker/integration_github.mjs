@@ -1,3 +1,5 @@
+import {resolve} from 'node:path';
+import {inspectCmsBrowser} from './cms_browser.mjs';
 /** Actual GitHub test-branch writes. Authentication upstream is explicitly synthetic. */
 import assert from 'node:assert/strict';import {mkdtemp,rm,writeFile} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join} from 'node:path';
 import {createBroker} from './core.mjs';import {createAdminServer} from './server.mjs';import {createGitHubClient,textToBase64,readAdminSession} from '../../src/lib/admin/github-content.mjs';import {publishStory} from '../../src/lib/admin/publish-story.mjs';
@@ -19,7 +21,7 @@ try{
   if(url==='https://api.github.com/user')return Response.json({id:144055705,login:'Tkkdy'});
   return nativeFetch(url,options);
  }});
- server=await createAdminServer({origin,staticRoot:root,broker});await new Promise(r=>server.listen(port,'127.0.0.1',r));
+ server=await createAdminServer({origin,staticRoot:resolve('dist-admin'),broker});await new Promise(r=>server.listen(port,'127.0.0.1',r));
  stage='SYNTHETIC_AUTH_REAL_HTTP';const initial=await nativeFetch(origin+'/auth/login',{redirect:'manual'});const state=new URL(initial.headers.get('location')).searchParams.get('state');const flowCookie=initial.headers.getSetCookie()[0].split(';')[0];
  const callback=await nativeFetch(origin+'/auth/callback?code=synthetic&state='+state,{headers:{cookie:flowCookie},redirect:'manual'});assert.equal(callback.status,303);const cookie=callback.headers.getSetCookie().find(x=>x.startsWith('editorial-local-session=')).split(';')[0];
  // Browser transport shim only supplies cookie/Origin and resolves relative URLs; content client is unchanged.
@@ -33,7 +35,8 @@ try{
  stage='STALE_HEAD_AND_FORBIDDEN_WRITES';await assert.rejects(client.commitFiles({expectedHeadOid:draftCommit.sha,message:'Stale head probe',files:[{path,contentBase64:textToBase64(draft)}]}));assert.equal(await client.getHead(),result.commitSha);
  for(const badPath of ['.github/workflows/deploy.yml','src/pages/index.astro'])await assert.rejects(client.commitFiles({expectedHeadOid:result.commitSha,message:'Forbidden write probe',files:[{path:badPath,contentBase64:textToBase64('refused before GitHub')}]}));
  const versions=await client.deploymentStatus(result.commitSha);assert(versions.targets.every(x=>x.status==='UNKNOWN'));
+ stage='REAL_CMS_BROWSER';await inspectCmsBrowser({origin,cookie,githubToken:token});
  const mainAfter=(await api('/repos/'+REPOSITORY+'/git/ref/heads/main')).object.sha;
- const report={schema:1,scope:'SYNTHETIC_AUTH_REAL_GITHUB_TEST_BRANCH_WRITES',productionWrites:false,realOAuthValidated:false,status:'PASS',sourceSha:source,testBranch:branch,draftSha:draftCommit.sha,publishSha:result.commitSha,mainBefore,mainAfter,mainChangedDuringTest:mainBefore!==mainAfter,checks:['ACTUAL_HTTP_COOKIE_CSRF','REAL_DRAFT_COMMIT_AND_READBACK','REAL_STUDIO_PUBLICATION_ON_TEST_BRANCH','STALE_HEAD_REJECTED','WORKFLOW_AND_CODE_WRITES_REJECTED','UNCONFIGURED_TARGETS_NOT_SUCCESS']};
+ const report={schema:1,scope:'SYNTHETIC_AUTH_REAL_GITHUB_TEST_BRANCH_WRITES',productionWrites:false,realOAuthValidated:false,status:'PASS',sourceSha:source,testBranch:branch,draftSha:draftCommit.sha,publishSha:result.commitSha,mainBefore,mainAfter,mainChangedDuringTest:mainBefore!==mainAfter,checks:['ACTUAL_HTTP_COOKIE_CSRF','REAL_DRAFT_COMMIT_AND_READBACK','REAL_STUDIO_PUBLICATION_ON_TEST_BRANCH','STALE_HEAD_REJECTED','WORKFLOW_AND_CODE_WRITES_REJECTED','UNCONFIGURED_TARGETS_NOT_SUCCESS','REAL_GITHUB_CMS_BROWSER_FORMS']};
  await writeFile('admin-integration.json',JSON.stringify(report,null,2)+'\n');await writeFile(process.env.GITHUB_OUTPUT,`test_branch=${branch}\ncontent_sha=${result.commitSha}\n`,{flag:'a'});console.log(JSON.stringify(report));
 }catch{console.error('Isolated Admin integration failed at '+stage);process.exitCode=1;}finally{globalThis.fetch=nativeFetch;if(server)await new Promise(r=>server.close(r));if(root)await rm(root,{recursive:true,force:true});}
