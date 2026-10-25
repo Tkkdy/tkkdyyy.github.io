@@ -1,0 +1,2 @@
+# Preserve the exact audited vendor bytes for SRI on Windows and Linux.
+public/admin/vendor/sveltia-cms-0.164.2.js -text
