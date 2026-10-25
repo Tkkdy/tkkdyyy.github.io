@@ -1,6 +1,6 @@
 # 双站受限自动发布：实现与启用边界
 
-当前为隔离验收通过、生产未安装。真实 Ubuntu Actions 40210837932 已运行正式客户端和接收器、严格 SSH、可信 TLS、全资源摘要、Pagefind 浏览器门禁及所有者回滚。34 项部署测试通过。完整证据见仓库外 M2-isolated-acceptance.md 和 evidence/ci-40210837932；隔离成功不证明真实 VPS UID/ACL 已配置。
+当前为隔离验收通过、生产未安装。真实 Ubuntu Actions 40219977768 已运行正式客户端和接收器、严格 SSH、可信 TLS、全资源摘要、Pagefind 浏览器门禁及所有者回滚，补齐旧人工版本导入后真正切回/恢复。45 项部署测试通过。完整证据见仓库外 M2-isolated-acceptance.md 和 evidence/ci-40219977768；隔离成功不证明真实 VPS UID/ACL 已配置。
 
 ## 实际实现
 
@@ -9,14 +9,15 @@
 - release_bundle.py 校验路径、类型、秘密模式、后台隔离、canonical/noindex、资源引用和逐文件字节/SHA；记录源码、流水线、配置和 lockfile 哈希。50 MB 总量、8 MB 单文件限制。
 - receiver.py 非 root forced-command，仅 deploy-v1；独占锁、expectedCurrent 比较、候选健康检查、原子 current 和不可覆盖 release。等待客户端成功 verdict 才写成功记录；否决、EOF 和受控超时回滚。历史版本全部保留。
 - publish_client.py 固定 known_hosts；资源串行可信 HTTPS 校验，普通 20 秒，超过 1 MB 为 60 秒，无不安全 TLS 或重试；browser_gate.mjs 的真实 Pagefind 搜索/点击属于成功前必要门禁。
-- rollback_release.py 仅所有者调用，默认 dry run，核验已接受记录、manifest 和所有文件后才允许 --apply；切换失败恢复原 current 并核对 HTTPS。日常密钥不能调用。
+- import_manual_release.py 仅 root 所有者调用，默认 dry run；固定原清单SHA、完整目录与字节检查、当前目标比较和可信HTTPS关键资源核验后，才以manual-记录保留人工版本归属，ciAccepted=false。安装需先为部署UID建立0600锁，导入不会创建root专属锁、切换current或修改release。
+- rollback_release.py 仅所有者调用，默认 dry run，核验CI记录或明确导入的manual记录、完整manifest及所有文件（含未列出文件拒绝）后才允许 --apply；切换失败恢复原 current 并核对 HTTPS。日常密钥不能调用。
 - status_report.py 分别报告两个公开版本与 HTTP 健康。版本相同不代表完整功能验收。GitHub 提交、构建成功不能显示成两站发布成功。
 
 ## 生产启用前仍须完成
 
-实际 VPS 的只读 UID/ACL/sshd/目录/主机指纹核对、原 release 的新记录格式导入方案、专用部署账户和密钥、root 所有策略/接收器安装、真实环境审批设置和安装后回滚演练均未执行。policy.DRAFT.json 仍 enabled=false，reviewedWorkflowSha=NOT_CONFIGURED。不能直接安装并打开开关。
+实际 VPS 的只读 UID/ACL/sshd/目录/主机指纹核对、原 release 的真实导入核验、专用部署账户和密钥、root 所有策略/接收器安装、真实环境审批设置和安装后回滚演练均未执行。policy.DRAFT.json 仍 enabled=false，reviewedWorkflowSha=NOT_CONFIGURED。不能直接安装并打开开关。
 
-现有手动 release 不一定带新接收器要求的 records/manifest；自动失败回滚 current 可以返回它，但 rollback_release.py 主动选择目标需要记录。必须从已有验收 manifest 独立核验全部字节并建立可审计迁移记录，或保留旧人工回滚入口；禁止伪造过去由新系统接受的成功记录。
+现有手动 release 不一定带新接收器要求的 records/manifest；自动失败回滚 current 可以返回它，但 rollback_release.py 主动选择目标需要记录。import_manual_release.py 已实现上述兼容，但未在VPS执行。必须从已有验收 manifest 独立核验全部字节并建立可审计迁移记录；在实机验收前保留旧人工回滚入口；禁止伪造过去由新系统接受的成功记录。
 
 集中审查准备与未决参数见仓库外 Production-change-review.md。目前无已批准生产安装命令。生产部署所需的新身份、ACL、密钥与工作流变更不能继承旧 HTTPS A 授权。
 
