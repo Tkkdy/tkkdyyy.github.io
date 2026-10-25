@@ -1,5 +1,5 @@
 ---
-{ slug: story-2026-10-25, publishedAt: 2026-10-25, status: published, tags: [ 批判 ], homepage: { show: false }, title: 生活的主语, summary: 你到底是活给别人看，还是活给自己享受的？, categories: [ 思考, 随笔 ] }
+{ slug: agency, publishedAt: 2026-10-25, status: published, tags: [ 批判 ], homepage: { show: false }, title: 生活的主语, summary: 你到底是活给别人看，还是活给自己享受的？, categories: [ 思考, 随笔 ] }
 ---
 
 我一直有一个不太理解的现象。
