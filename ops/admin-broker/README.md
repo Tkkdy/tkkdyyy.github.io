@@ -16,15 +16,21 @@
 
 `npm run check` 运行 Astro 与 Node 测试。`ADMIN_SITE_URL=http://127.0.0.1:19443 npm run build:admin` 生成私有 dist-admin（Windows 用 PowerShell 环境变量语法）。该目录不得上传到公共静态站。HTTP 适配器必须由调用者绑定 127.0.0.1，公共访问应走经批准的 HTTPS 反向代理。
 
-createBroker(config, dependencies) 与 createAdminServer(...) 是可测试模块，尚无生产安装器。测试采用注入的合成上游，不代表真实 GitHub App OAuth 验收。测试服务器脚本位于仓库外，不会进入产物。
+createBroker(config, dependencies) 与 createAdminServer(...) 是可测试模块，已有run.mjs stdin配置入口，但尚无生产安装器。测试采用注入的合成上游，不代表真实 GitHub App OAuth 验收。测试服务器脚本位于仓库外，不会进入产物。
 
 ## 待完成，不得据此宣布上线
 
-1. 完成运行入口、密钥安全读取及本地独立备用服务打包。Windows 备用凭证须 DPAPI/凭证管理器保护；不能改用明文长期 PAT。
-2. 处理 CMS 本地字体/图标和更新检查：当前外部请求被 CSP 拒绝，保留证据，不放宽脚本或任意网络权限。
-3. 使用短期凭证在独立测试分支执行真实内容写入、重新获取与双构建。不得实验性写 main。
+1. run.mjs仅绑定回环，stdin接收秘密配置；Setup-LocalAdmin.ps1/Start-LocalAdmin.ps1使用Windows用户DPAPI。已用合成秘密通过真实Windows加解密与Node服务测试；真实App凭证尚未配置。
+2. Material Symbols图标字体已固定为Google官方WOFF2并记录哈希/Apache许可证；文本字体使用系统回退。原CMS外部字体及unpkg更新检查仍被CSP拒绝，未放宽脚本或任意网络权限。
+3. Actions 40215490643已用短期凭证在独立测试分支完成真实草稿、Studio提交/回读、过期SHA/越权拒绝及两站构建一致性。认证为合成上游；真实GitHub App OAuth仍待验收。
 4. 所有者审查后注册/配置 GitHub App：仅指定仓库，Contents read/write、Actions read、Metadata read；短期用户令牌保持启用，禁止不需要的权限和 webhook。回调只列出实际批准的编辑站与回环地址。
 5. 真实 OAuth、历史内容加载、项目/影像编辑、图片和发布状态完整验收尚未完成。
 6. 公共内容与带认证 Admin 必须使用不同 origin。VPS 新编辑域名、DNS/TLS/Nginx、服务用户、文件权限和生产自动发布启用均须集中审查批准。不得因已有 HTTPS 恢复授权直接部署此模块。
 
 线上仍使用已验收旧 release，GitHub Pages 原工作流继续生产，生产凭证和服务未被本目录改动。
+
+## 独立 Windows 备用路径（真实 App 审查配置后才能登录）
+
+使用 PowerShell 7、Node 24。在独立副本生成私有构建后，所有者运行 Setup-LocalAdmin.ps1 -ClientId <经批准的AppClientId> -Branch <已有测试分支>，在隐藏提示输入 client secret。配置默认保存到用户 LOCALAPPDATA/EditorialStudio，密文只适用于当前Windows账号，拒绝覆盖旧配置。随后运行 Start-LocalAdmin.ps1，访问 http://127.0.0.1:19443/admin/。不依赖VPS在线，但仍依赖GitHub；草稿通过导出/导入跨站迁移。需要迁移电脑时重新授权配置，不能复制DPAPI密文当作可跨设备恢复的备份。
+
+VPS服务将用同一run.mjs及单独受保护配置；服务账户、专用Admin origin和反向代理必须另行审查。尚未在真实VPS安装。

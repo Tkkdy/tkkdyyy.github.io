@@ -40,7 +40,7 @@ export async function createAdminServer({origin,staticRoot,broker,maxBodyBytes=3
     config.public_folder='/uploads';
     return send(200,yamlStringify(config),{'Content-Type':'application/yaml; charset=utf-8','Content-Security-Policy':"default-src 'none'"});
    }
-   if(!(decoded.startsWith('/admin/')||decoded.startsWith('/_astro/')||decoded.startsWith('/uploads/')||decoded==='/favicon.svg'))return send(404);
+   if(!(decoded.startsWith('/admin/')||decoded.startsWith('/_astro/')||decoded.startsWith('/uploads/')||decoded==='/favicon.svg'||decoded==='/brand/tkkdy-logo.png'))return send(404);
    const candidate=resolve(root,'.'+decoded+(decoded.endsWith('/')?'index.html':''));
    const rel=relative(root,candidate);if(rel.startsWith('..')||rel.startsWith(sep))return send(404);
    // Reject every symlink component, including links whose final target is still inside root.
