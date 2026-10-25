@@ -37,6 +37,7 @@ export function validateAddition({path,contents}){
   requirePolicy(data&&typeof data==='object'&&!Array.isArray(data),'frontmatter须为对象。');
   requirePolicy(['draft','published','archived'].includes(data.status),'内容状态错误。');requirePolicy(typeof data.slug==='string'&&/^[\p{L}\p{N}][\p{L}\p{N}-]{0,180}$/u.test(data.slug),'URL slug无效。');
   const collection=path.split('/')[2];
+  for(const field of ['publishedAt','updatedAt','startedAt','capturedAt'])if(Object.hasOwn(data,field))requirePolicy(typeof data[field]==='string'&&/^\d{4}-\d{2}-\d{2}/.test(data[field])&&Number.isFinite(Date.parse(data[field])),`${field}须为有效日期；未填写的可选日期应省略。`);
   if(['articles','essays'].includes(collection))requirePolicy(typeof data.title==='string'&&data.title.trim(),'缺少标题。');
   if(collection==='projects')requirePolicy(typeof data.name==='string'&&data.name.trim(),'项目缺少名称。');
   if(collection==='images')requirePolicy(typeof data.image==='string'&&data.image&&typeof data.alt==='string'&&data.alt.trim(),'影像缺少图片或说明。');

@@ -29,3 +29,8 @@ test('GraphQL parser admits Sveltia commit mutation but rejects alternate writes
 test('secrets and malformed frontmatter are refused before any GitHub API call',()=>{
  for(const body of ['no frontmatter',markdown.replace('status: draft','status: unknown'),markdown+'\n-----BEGIN PRIVATE KEY-----',markdown+'\nghp_'+'a'.repeat(40)])assert.throws(()=>validateAddition({...addition,contents:Buffer.from(body).toString('base64')}));
 });
+
+test('CMS empty optional dates are rejected before commit instead of breaking both builds',()=>{
+ const text='---\nslug: test-photo\nimage: /uploads/test.png\nalt: test\npublishedAt: 2026-10-25\nstatus: draft\ncapturedAt: \'\'\n---\n';
+ assert.throws(()=>validateAddition({path:'src/content/images/test-photo.md',contents:Buffer.from(text).toString('base64')}),/有效日期/);
+});
