@@ -88,7 +88,7 @@ try:
  else:raise RuntimeError('sshd did not become ready')
  env=os.environ.copy();env.update(SITE_URL=SITE,REVIEWED_WORKFLOW_SHA=SOURCE,VPS_SSH_HOST='127.0.0.1',VPS_SSH_USER=USER,VPS_SSH_PORT=str(SSH),VPS_KEY_FILE=str(T/'client-key'),VPS_KNOWN_HOSTS_FILE=str(known),SSL_CERT_FILE=str(T/'ca.crt'),CURL_CA_BUNDLE=str(T/'ca.crt'))
  # Import a legacy current release with its independently pinned manifest, never a fake CI success.
- legacy_manifest=[{'path':n,'bytes':len((old/n).read_bytes()),'sha256':original[n]} for n in sorted(data)];legacy_raw=json.dumps(legacy_manifest).encode();legacy_path=T/'original-manual-manifest.json';legacy_path.write_bytes(legacy_raw)
+ legacy_manifest=[{'path':n,'bytes':len((old/n).read_bytes()),'sha256':original[n]} for n in sorted(data)];legacy_raw=json.dumps(legacy_manifest).encode();legacy_path=E/'original-manual-manifest.json';legacy_path.write_bytes(legacy_raw)
  import_command=['sudo','-n','/usr/bin/env','SSL_CERT_FILE='+str(T/'ca.crt'),'/usr/bin/python3','-I',str(modules/'import_manual_release.py'),'--policy',str(policy),'--target','releases/old','--source-sha',SOURCE,'--manifest',str(legacy_path),'--manifest-sha256',sha(legacy_raw)]
  bad=subprocess.run(import_command[:-1]+['0'*64],capture_output=True);assert bad.returncode!=0;assert not (DEPLOY/'records/manual-old.json').exists()
  for apply in [False,True]:
