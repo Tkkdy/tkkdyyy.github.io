@@ -1,5 +1,6 @@
 import {resolve} from 'node:path';
-import {inspectCmsBrowser} from './cms_browser.mjs';
+import YAML from 'yaml';
+import {inspectCmsBrowser,UPLOAD_PNG_BASE64} from './cms_browser.mjs';
 /** Actual GitHub test-branch writes. Authentication upstream is explicitly synthetic. */
 import assert from 'node:assert/strict';import {mkdtemp,rm,writeFile} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join} from 'node:path';
 import {createBroker} from './core.mjs';import {createAdminServer} from './server.mjs';import {createGitHubClient,textToBase64,readAdminSession} from '../../src/lib/admin/github-content.mjs';import {publishStory} from '../../src/lib/admin/publish-story.mjs';
@@ -36,10 +37,16 @@ try{
  for(const badPath of ['.github/workflows/deploy.yml','src/pages/index.astro'])await assert.rejects(client.commitFiles({expectedHeadOid:result.commitSha,message:'Forbidden write probe',files:[{path:badPath,contentBase64:textToBase64('refused before GitHub')}]}));
  const versions=await client.deploymentStatus(result.commitSha);assert(versions.targets.every(x=>x.status==='UNKNOWN'));
  stage='REAL_CMS_BROWSER';await inspectCmsBrowser({origin,cookie,githubToken:token});
- const finalSha=await client.getHead();assert.notEqual(finalSha,result.commitSha);
+ const browserSha=await client.getHead();assert.notEqual(browserSha,result.commitSha);
+ stage='REAL_UPLOAD_READBACK';const browserContent=(await client.readFile(path,browserSha)).content;const metadata=YAML.parse(browserContent.match(/^---\r?\n([\s\S]*?)\r?\n---/)[1]);assert.match(metadata.cover,/^\/uploads\/admin-write-probe-\d+-cover-[a-f0-9]{12}\.png$/);assert.equal(metadata.coverAlt,'Synthetic isolated upload, test branch only');
+ const uploaded=await api('/repos/'+REPOSITORY+'/contents/public'+metadata.cover+'?ref='+browserSha);assert.equal(uploaded.encoding,'base64');assert.deepEqual(Buffer.from(uploaded.content,'base64'),Buffer.from(UPLOAD_PNG_BASE64,'base64'));
+ stage='REAL_CONTENT_BLOB_CONFLICT';const storyResponse=await globalThis.fetch('/api/story?path='+encodeURIComponent(path));assert.equal(storyResponse.status,200);const loadedStory=await storyResponse.json();const oldStory=loadedStory.story;assert(oldStory.sourceBlobSha);
+ const concurrentContent=browserContent+'\nConcurrent synthetic writer change. Test branch only.\n';const concurrent=await client.commitFiles({expectedHeadOid:browserSha,message:'Test concurrent content writer on isolated branch',files:[{path,contentBase64:textToBase64(concurrentContent)}]});
+ await assert.rejects(publishStory({session,state:{...oldStory,bodyBlocks:{type:'doc',content:[{type:'paragraph',content:[{type:'text',text:'Stale synthetic body must never replace concurrent content.'}]}]}}}),/开始编辑后已变化/);
+ const finalSha=await client.getHead();assert.equal(finalSha,concurrent.sha);assert.equal((await client.readFile(path,finalSha)).content,concurrentContent);
  assert.match((await client.readFile('src/content/projects/morning-radar.md',finalSha)).content,/ISOLATED CMS BROWSER TEST/);
  assert.match((await client.readFile('src/content/images/photo-main-landscape.md',finalSha)).content,/ISOLATED CMS BROWSER TEST/);
  const mainAfter=(await api('/repos/'+REPOSITORY+'/git/ref/heads/main')).object.sha;
- const report={schema:1,scope:'SYNTHETIC_AUTH_REAL_GITHUB_TEST_BRANCH_WRITES',productionWrites:false,realOAuthValidated:false,status:'PASS',sourceSha:source,testBranch:branch,draftSha:draftCommit.sha,studioSha:result.commitSha,publishSha:finalSha,mainBefore,mainAfter,mainChangedDuringTest:mainBefore!==mainAfter,checks:['ACTUAL_HTTP_COOKIE_CSRF','REAL_DRAFT_COMMIT_AND_READBACK','REAL_STUDIO_PUBLICATION_ON_TEST_BRANCH','STALE_HEAD_REJECTED','WORKFLOW_AND_CODE_WRITES_REJECTED','UNCONFIGURED_TARGETS_NOT_SUCCESS','REAL_GITHUB_CMS_BROWSER_FORMS']};
+ const report={schema:1,scope:'SYNTHETIC_AUTH_REAL_GITHUB_TEST_BRANCH_WRITES',productionWrites:false,realOAuthValidated:false,status:'PASS',sourceSha:source,testBranch:branch,draftSha:draftCommit.sha,studioSha:result.commitSha,publishSha:finalSha,mainBefore,mainAfter,mainChangedDuringTest:mainBefore!==mainAfter,checks:['ACTUAL_HTTP_COOKIE_CSRF','REAL_DRAFT_COMMIT_AND_READBACK','REAL_STUDIO_PUBLICATION_ON_TEST_BRANCH','STALE_HEAD_REJECTED','WORKFLOW_AND_CODE_WRITES_REJECTED','UNCONFIGURED_TARGETS_NOT_SUCCESS','REAL_GITHUB_CMS_BROWSER_FORMS','REAL_UPLOAD_BYTES_READBACK','REAL_CONTENT_BLOB_CONFLICT_REFUSED']};
  await writeFile('admin-integration.json',JSON.stringify(report,null,2)+'\n');await writeFile(process.env.GITHUB_OUTPUT,`test_branch=${branch}\ncontent_sha=${finalSha}\n`,{flag:'a'});console.log(JSON.stringify(report));
 }catch{console.error('Isolated Admin integration failed at '+stage);process.exitCode=1;}finally{globalThis.fetch=nativeFetch;if(server)await new Promise(r=>server.close(r));if(root)await rm(root,{recursive:true,force:true});}

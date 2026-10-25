@@ -1,5 +1,6 @@
 /** Actual browser + actual GitHub content; synthetic OAuth identity, test branch only. */
 import {chromium} from 'playwright';import assert from 'node:assert/strict';import {writeFile} from 'node:fs/promises';
+export const UPLOAD_PNG_BASE64='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNgaHAAAAFEAMERbpc7AAAAAElFTkSuQmCC';
 export async function inspectCmsBrowser({origin,cookie,githubToken}){
  const browser=await chromium.launch({headless:true});const context=await browser.newContext();const page=await context.newPage();let stage='OPEN_CMS';const requests=[],errors=[];
  await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
@@ -10,8 +11,9 @@ export async function inspectCmsBrowser({origin,cookie,githubToken}){
  page.on('response',response=>{if(response.url().includes('/api/'))requests.push({path:new URL(response.url()).pathname,status:response.status()});});
  try{
   stage='LIVE_STUDIO_LIST';await page.goto(origin+'/admin/');const liveRow=page.locator('.story-row').filter({hasText:'Isolated Admin write probe'});await liveRow.waitFor({timeout:30000});await liveRow.click();
-  stage='LIVE_STUDIO_EDITOR';await page.waitForFunction(()=>document.querySelector('.story-title-input')?.value==='Isolated Admin write probe',{timeout:15000});
+  stage='LIVE_STUDIO_EDITOR';await page.waitForFunction(()=>document.querySelector('.story-title-input')?.value==='Isolated Admin write probe',undefined,{timeout:15000});
   await page.getByRole('textbox',{name:'副标题或导语'}).fill('Live edit after publication without rebuilding Admin');
+  stage='LIVE_STUDIO_UPLOAD';await page.locator('#cover-input').setInputFiles({name:'isolated-test.png',mimeType:'image/png',buffer:Buffer.from(UPLOAD_PNG_BASE64,'base64')});await page.locator('.cover-preview img[src^="data:"]').waitFor();await page.locator('[name="coverAlt"]').fill('Synthetic isolated upload, test branch only');
   const studioResponse=page.waitForResponse(r=>r.url().endsWith('/api/graphql')&&r.request().postData()?.includes('mutation'),{timeout:30000});await page.getByRole('button',{name:'发布',exact:true}).click();const saved=await studioResponse;assert.equal(saved.status(),200);assert(!(await saved.json()).errors?.length);
   await page.goto(origin+'/admin/sveltia.html');const signIn=page.getByRole('button',{name:/Sign In with/});await signIn.waitFor();assert(await page.getByRole('button',{name:/Access Token/}).isDisabled());
   stage='SESSION_BRIDGE';const popup=context.waitForEvent('page');await signIn.click();await popup;
@@ -23,6 +25,6 @@ export async function inspectCmsBrowser({origin,cookie,githubToken}){
   await page.goto(origin+'/admin/sveltia.html');await page.getByText('Collections',{exact:true}).waitFor({timeout:30000});
   stage='LOAD_REAL_IMAGES';await page.getByText('Images',{exact:true}).first().click();await page.getByText(/Main Visual|photo-main-landscape/).first().waitFor({timeout:15000});await page.getByText(/Main Visual|photo-main-landscape/).first().dblclick();await page.getByRole('textbox',{name:'Alt',exact:true}).waitFor({timeout:15000});assert((await page.getByRole('textbox',{name:'Alt',exact:true}).inputValue()).includes('占位'));
   stage='SAVE_IMAGE';const caption=page.getByRole('textbox',{name:'Caption',exact:true});await caption.fill((await caption.inputValue())+' ISOLATED CMS BROWSER TEST');await save();
-  assert.equal(errors.length,0);const report={scope:'REAL_GITHUB_CMS_READ_AND_EDIT_FORMS_SYNTHETIC_AUTH',status:'PASS',realOAuthValidated:false,productionWrites:false,checks:['LIVE_STUDIO_LIST_AFTER_NEW_COMMIT','LIVE_STUDIO_GENERIC_EDITOR_SAVE','RAW_TOKEN_NOT_IN_BROWSER_REQUESTS','PAT_LOGIN_DISABLED','SAME_ORIGIN_POPUP_BRIDGE','REAL_ARTICLE_DATA','REAL_PROJECT_EDIT_FORM','REAL_IMAGE_EDIT_FORM','REAL_PROJECT_BROWSER_COMMIT','REAL_IMAGE_BROWSER_COMMIT'],requests,errors};await writeFile('admin-cms-browser.json',JSON.stringify(report,null,2)+'\n');return report;
+  assert.equal(errors.length,0);const report={scope:'REAL_GITHUB_CMS_READ_AND_EDIT_FORMS_SYNTHETIC_AUTH',status:'PASS',realOAuthValidated:false,productionWrites:false,checks:['LIVE_STUDIO_LIST_AFTER_NEW_COMMIT','LIVE_STUDIO_GENERIC_EDITOR_SAVE','REAL_BROWSER_COVER_UPLOAD','RAW_TOKEN_NOT_IN_BROWSER_REQUESTS','PAT_LOGIN_DISABLED','SAME_ORIGIN_POPUP_BRIDGE','REAL_ARTICLE_DATA','REAL_PROJECT_EDIT_FORM','REAL_IMAGE_EDIT_FORM','REAL_PROJECT_BROWSER_COMMIT','REAL_IMAGE_BROWSER_COMMIT'],requests,errors};await writeFile('admin-cms-browser.json',JSON.stringify(report,null,2)+'\n');return report;
  }catch(error){await writeFile('admin-cms-browser.json',JSON.stringify({scope:'REAL_GITHUB_CMS_READ_AND_EDIT_FORMS_SYNTHETIC_AUTH',status:'FAILED',stage,reason:error.name,body:(await page.locator('body').innerText().catch(()=>'' )).slice(0,2500),requests,errors},null,2)+'\n');throw Error('CMS browser failed at '+stage);}finally{await context.close();await browser.close();}
 }
