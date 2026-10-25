@@ -10,6 +10,7 @@ class BundleTests(unittest.TestCase):
         fixture=Path(os.environ['VPS_BUILD_DIR']).resolve()
         cls.data={p.relative_to(fixture).as_posix():p.read_bytes() for p in fixture.rglob('*') if p.is_file()}
         cls.meta={'releaseId':'ci-'+'a'*12+'-100-1','site':SITE,'sourceSha':'a'*40,'workflowSha':'b'*40,'lockfileSha256':'c'*64,'vpsConfigSha256':'d'*64}
+        cls.data['deployment.json']=json.dumps({'target':'vps','sourceSha':'a'*40,'pipelineSha':'b'*40,'lockfileSha256':'c'*64,'configSha256':'d'*64}).encode()
     def bundle(self,data=None,meta=None,modify_manifest=None,extra=None):
         data=copy.deepcopy(self.data if data is None else data)
         manifest=[{'path':n,'bytes':len(b),'sha256':sha(b)} for n,b in sorted(data.items())]
@@ -24,6 +25,9 @@ class BundleTests(unittest.TestCase):
     def test_real_accepted_artifact(self):
         raw=self.bundle();m,manifest,data=self.check(raw,workflow='b'*40)
         self.assertEqual(len(data),len(self.data));self.assertEqual(len(manifest),len(self.data))
+    def test_public_identity_must_match_archive_provenance(self):
+        d=copy.deepcopy(self.data);identity=json.loads(d['deployment.json']);identity['sourceSha']='e'*40;d['deployment.json']=json.dumps(identity).encode()
+        with self.assertRaises(ValueError):self.check(self.bundle(data=d))
     def test_wrong_archive_hash(self):
         with self.assertRaises(ValueError):load_bundle(self.bundle(),'0'*64,SITE)
     def test_wrong_file_hash(self):

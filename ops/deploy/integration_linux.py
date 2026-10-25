@@ -28,7 +28,7 @@ for n,b in data.items():
  p=old/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(b+(b'<!--old-->\n' if n=='index.html' else b''))
 os.symlink('releases/old',DEPLOY/'current');original={n:sha((old/n).read_bytes()) for n in data}
 modules=T/'receiver';modules.mkdir()
-for n in ['receiver.py','release_bundle.py','source_authority.py']:shutil.copy2(CODE/n,modules/n)
+for n in ['receiver.py','release_bundle.py','source_authority.py','rollback_release.py']:shutil.copy2(CODE/n,modules/n)
 policy=T/'policy.json';policy.write_text(json.dumps({'enabled':True,'root':str(DEPLOY),'site':SITE,'reviewedWorkflowSha':SOURCE,'sourceAuthority':'allowlist','approvedSourceShas':[SOURCE]}))
 worker=T/'worker.py';worker.write_text('import sys\nsys.path.insert(0,'+repr(str(modules))+')\nimport receiver\nreceiver.main('+repr(str(policy))+')\n')
 cmd('ssh-keygen','-q','-t','ed25519','-N','','-f',str(T/'host-key'));cmd('ssh-keygen','-q','-t','ed25519','-N','','-f',str(T/'client-key'))
@@ -98,8 +98,17 @@ try:
  q=subprocess.run(SSH_CMD,input=b'',capture_output=True,timeout=15);assert q.returncode!=0 and b'READY_FOR_BUNDLE' not in q.stdout;checks.append('actual-exclusive-flock')
  save('lock-holder-rollback',p,(json.dumps({'token':ready['token'],'passed':False})+'\n').encode());assert os.readlink(DEPLOY/'current')==current
  p,m=begin(100);result=save('duplicate-release',p);assert p.returncode!=0 and os.readlink(DEPLOY/'current')==current;checks.append('existing-release-not-overwritten')
+ # A distinct synthetic candidate lets owner rollback verify different index bytes.
+ data['index.html']+=b'<!--candidate105-->\n'
+ p,m=begin(105);ready=json.loads(p.stdout.readline());assert ready['phase']=='WAIT_PUBLIC_VERDICT'
+ save('owner-rollback-candidate',p,(json.dumps({'token':ready['token'],'passed':True})+'\n').encode());newer='releases/'+m['releaseId'];assert os.readlink(DEPLOY/'current')==newer
+ for apply in [False,True]:
+  command=['sudo','-n','-u',USER,'/usr/bin/env','SSL_CERT_FILE='+str(T/'ca.crt'),'/usr/bin/python3','-I',str(modules/'rollback_release.py'),'--policy',str(policy),'--expected-current',newer,'--target',current]+(['--apply'] if apply else [])
+  result=cmd(*command);(E/('owner-rollback-'+str(apply)+'.json')).write_bytes(result.stdout)
+ assert os.readlink(DEPLOY/'current')==current;checks.append('owner-dry-run-and-hash-checked-rollback-with-real-HTTPS')
+ forbidden=subprocess.run(SSH_CMD[:-1]+['rollback-v1'],input=b'',capture_output=True,timeout=15);assert forbidden.returncode!=0;checks.append('deploy-key-cannot-invoke-owner-rollback')
  for n,digest in original.items():assert sha((old/n).read_bytes())==digest
- assert len(list((DEPLOY/'releases').iterdir()))==5;checks.append('all-old-and-failed-releases-retained')
+ assert len(list((DEPLOY/'releases').iterdir()))==6;checks.append('all-old-and-failed-releases-retained')
  for path in [policy,worker,auth,modules/'receiver.py']:assert subprocess.run(['sudo','-n','-u',USER,'test','-w',str(path)]).returncode!=0
  checks.append('test-UID-cannot-write-policy-executable-or-authorized-keys')
  root('truncate','-s','0',str(auth));revoked=subprocess.run(SSH_CMD,input=b'',capture_output=True,timeout=15);assert revoked.returncode==255;assert os.readlink(DEPLOY/'current')==current;checks.append('revoked-ephemeral-key-refused')

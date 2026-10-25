@@ -77,6 +77,8 @@ def load_bundle(raw,digest,site,workflow=None):
         if workflow:require(metadata['workflowSha']==workflow,'unreviewed workflow')
         require(re.fullmatch(r'ci-[a-f0-9]{12}-[0-9]{1,20}-[0-9]{1,3}',metadata.get('releaseId','')),'invalid release ID')
         validate_site(data,site)
+        identity=json.loads(data.get('deployment.json',b'{}'))
+        require(identity.get('target')=='vps' and identity.get('sourceSha')==metadata['sourceSha'] and identity.get('pipelineSha')==metadata['workflowSha'] and identity.get('lockfileSha256')==metadata['lockfileSha256'] and identity.get('configSha256')==metadata['vpsConfigSha256'],'public version identity differs from trusted pipeline metadata')
         return metadata,manifest,data
 def pack(source,output,site,source_sha,workflow_sha,run_id,attempt):
     import subprocess,os

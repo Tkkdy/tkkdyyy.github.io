@@ -3,6 +3,7 @@ import argparse,hashlib,json,pathlib,re,subprocess
 
 def write(source,dist,target,workflow):
  source=pathlib.Path(source).resolve();dist=pathlib.Path(dist).resolve()
+ if subprocess.check_output(['git','status','--porcelain'],cwd=source,text=True).strip():raise ValueError('Dirty checkout cannot claim exact source SHA')
  sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=source,text=True).strip()
  if target not in ['pages','vps'] or not re.fullmatch('[a-f0-9]{40}',workflow):raise ValueError('Invalid build identity')
  if not dist.is_dir() or dist.is_symlink():raise ValueError('Invalid dist')

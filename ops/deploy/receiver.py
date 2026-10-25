@@ -91,6 +91,7 @@ def main(policy_path=None):
                 with opener.open('http://127.0.0.1:'+str(server.server_port)+'/'+urllib.parse.quote(name),timeout=5) as r:require(r.status==200 and sha(r.read())==sha(data[name]),'candidate HTTP prehealth')
         finally:server.shutdown();server.server_close()
         old_hash=sha((root/previous/'index.html').read_bytes());committed=False
+        exclusive(root/'records'/('manifest-'+rid+'.json'),json.dumps(manifest,sort_keys=True).encode())
         exclusive(root/'records'/('intent-'+rid+'.json'),json.dumps({'previous':previous,'new':new,'archiveSha256':header['archiveSha256'],'metadata':metadata}).encode())
         authorize_source(metadata,config,root,previous) # Recheck after extraction/prehealth, before activation.
         activate_transaction(root,new,previous,critical,data,old_hash,metadata,header,manifest,stream)
