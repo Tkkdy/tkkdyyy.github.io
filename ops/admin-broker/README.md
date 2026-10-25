@@ -1,6 +1,6 @@
 # Admin broker：本地安全迁移实现，未上线
 
-本目录实现 Editorial Studio / Sveltia 共用的受限服务端认证与内容写入。当前仅在独立开发副本及合成身份环境验证；未注册 GitHub App、未修改生产权限、未连接生产写入。
+本目录实现 Editorial Studio / Sveltia 共用的受限服务端认证与内容写入。当前已在独立开发副本和真实测试分支验证内容读写，但 OAuth 身份仍为合成；未注册 GitHub App、未修改生产权限、未连接生产写入。
 
 ## 已实现边界
 
@@ -10,7 +10,7 @@
 - CSRF 与精确 Origin 校验。Sveltia 的 token / Bearer 认证头只承载会话绑定的 CSRF，不能脱离 HttpOnly Cookie 使用；不会获得 GitHub 凭证。
 - server.mjs 验证 Host、原始路径、文件类型和每级符号链接；限制请求体；不提供目录列表；所有静态 Admin 文件需登录。CSP 仅允许本地脚本及构建生成的内联脚本哈希。
 - Sveltia 0.164.2 从 npm 官方完整包 SHA512 校验后提取，脚本 SRI 和许可证见 public/admin/vendor。运行时不下载第三方脚本。
-- Studio 读写绑定相同基准 SHA，分支变化使提交失败，不自动覆盖。提交成功后分别读取两站版本标记与 HEAD 健康，不把仓库写入等同于完整部署/功能验收。
+- Studio 实时列表和通用编辑页从固定 Git head 读取内容，无需每次内容发布后重建后台；提交以 expectedHeadOid 防提交窗口竞争，以 sourceBlobSha 防编辑期间正文变化，不自动覆盖。提交成功后分别读取两站版本标记与 HEAD 健康，不把仓库写入等同于完整部署/功能验收。
 
 ## 本地验证
 
@@ -22,9 +22,9 @@ createBroker(config, dependencies) 与 createAdminServer(...) 是可测试模块
 
 1. run.mjs仅绑定回环，stdin接收秘密配置；Setup-LocalAdmin.ps1/Start-LocalAdmin.ps1使用Windows用户DPAPI。已用合成秘密通过真实Windows加解密与Node服务测试；真实App凭证尚未配置。
 2. Material Symbols图标字体已固定为Google官方WOFF2并记录哈希/Apache许可证；文本字体使用系统回退。原CMS外部字体及unpkg更新检查仍被CSP拒绝，未放宽脚本或任意网络权限。
-3. Actions 40215490643已用短期凭证在独立测试分支完成真实草稿、Studio提交/回读、过期SHA/越权拒绝及两站构建一致性。认证为合成上游；真实GitHub App OAuth仍待验收。
+3. Actions 40218051834 已用短期凭证在独立测试分支完成真实草稿、实时 Studio 列表/编辑保存、CMS 项目与影像浏览器提交/回读，以及双构建一致性。真实 GitHub 凭证只在服务端；认证为合成上游，真实 GitHub App OAuth 仍待验收。后续专项证据见仓库外 M3-local-progress.md。
 4. 所有者审查后注册/配置 GitHub App：仅指定仓库，Contents read/write、Actions read、Metadata read；短期用户令牌保持启用，禁止不需要的权限和 webhook。回调只列出实际批准的编辑站与回环地址。
-5. 真实 OAuth、历史内容加载、项目/影像编辑、图片和发布状态完整验收尚未完成。
+5. 真实 OAuth 尚未完成；历史内容、项目/影像编辑已通过真实测试分支浏览器验收，不能用它代替真实账号授权验证。生产部署状态及主/备用入口最终验收尚未完成。
 6. 公共内容与带认证 Admin 必须使用不同 origin。VPS 新编辑域名、DNS/TLS/Nginx、服务用户、文件权限和生产自动发布启用均须集中审查批准。不得因已有 HTTPS 恢复授权直接部署此模块。
 
 线上仍使用已验收旧 release，GitHub Pages 原工作流继续生产，生产凭证和服务未被本目录改动。
