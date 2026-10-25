@@ -93,7 +93,7 @@
           "if": "always() && matrix.target == 'vps'",
           "with": {
             "name": "isolated-linux-evidence",
-            "path": "integration-evidence",
+            "path": "integration-evidence/*.json\nintegration-evidence/*.log",
             "if-no-files-found": "warn",
             "retention-days": 7
           }

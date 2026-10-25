@@ -1,12 +1,12 @@
 """Disposable GitHub Linux integration; never run on an actual server."""
-import os,sys,json,tempfile,pathlib,subprocess,shutil,ssl,http.server,threading,socket,struct,time,zipfile,io
+import os,sys,json,secrets,tempfile,pathlib,subprocess,shutil,ssl,http.server,threading,socket,struct,time,zipfile,io
 P=pathlib.Path
 if sys.platform!='linux' or os.environ.get('GITHUB_ACTIONS')!='true' or os.environ.get('ISOLATED_RECEIVER_TEST')!='true':raise SystemExit('Only disposable GitHub Linux CI is allowed')
 CODE=P(__file__).resolve().parent;REPO=CODE.parent.parent;sys.path.insert(0,str(CODE))
 from release_bundle import sha,load_bundle
 USER='site-receiver-test';SOURCE=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip();PUBLIC='https://preview.boenbot.top'
 E=REPO/'integration-evidence';E.mkdir(exist_ok=False)
-T=P(tempfile.mkdtemp(prefix='dual-site-'));T.chmod(0o755);DEPLOY=T/'deploy';DEPLOY.mkdir();(DEPLOY/'records').mkdir();(DEPLOY/'releases').mkdir()
+T=P('/var/lib')/('dual-site-integration-'+secrets.token_hex(8));subprocess.run(['sudo','-n','install','-d','-o',str(os.getuid()),'-g',str(os.getgid()),'-m','755',str(T)],check=True);DEPLOY=T/'deploy';DEPLOY.mkdir();(DEPLOY/'records').mkdir();(DEPLOY/'releases').mkdir()
 def cmd(*a,**kw):return subprocess.run(list(a),check=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,**kw)
 def root(*a):return cmd('sudo','-n',*a)
 def port():
@@ -105,5 +105,8 @@ try:
  root('truncate','-s','0',str(auth));revoked=subprocess.run(SSH_CMD,input=b'',capture_output=True,timeout=15);assert revoked.returncode==255;assert os.readlink(DEPLOY/'current')==current;checks.append('revoked-ephemeral-key-refused')
  report={'state':'PASS','scope':'DISPOSABLE_GITHUB_LINUX_REAL_SSH_TLS_FILESYSTEM','sourceSha':SOURCE,'checks':checks,'productionVpsChanged':False,'publicSiteChanged':False,'syntheticDomain':SITE,'realBrowser':True,'productionACLValidated':False}
  (E/'summary.json').write_text(json.dumps(report,indent=2));print(json.dumps(report))
+except BaseException:
+ print((E/'sshd.log').read_text(errors='replace'),flush=True)
+ raise
 finally:
  server.shutdown();server.server_close();daemon.terminate();log.close()
