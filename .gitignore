@@ -23,3 +23,6 @@ Desktop.ini
 # Python deployment checks
 __pycache__/
 integration-evidence/
+
+# Private protected-admin build (never a public deployment artifact)
+dist-admin/

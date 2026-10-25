@@ -5,11 +5,12 @@ import Placeholder from '@tiptap/extension-placeholder';
 import StarterKit from '@tiptap/starter-kit';
 import { TextSelection } from '@tiptap/pm/state';
 import { marked } from 'marked';
+import { sanitizeAdminHtml } from './safe-preview.mjs';
 import { convertedBlockJson } from './convert-block.mjs';
 import { draftStorageKey, resolveDraftId } from './draft-storage.mjs';
 import { createPreviewPayload, PREVIEW_STORAGE_KEY } from './preview-data.mjs';
 import { serializeTipTap } from './serialize-tiptap.mjs';
-import { GITHUB_TOKEN_KEY, publishStory, waitForDeploy } from './publish-story.mjs';
+import { publishStory } from './publish-story.mjs';
 import { validateStory } from './validate-story.mjs';
 
 type TaxonomyKind = 'categories' | 'tags';
@@ -80,7 +81,7 @@ function parseStoredState(value: string | null): Partial<EditorState> {
 
 function markdownToHtml(markdown: string): string {
   const result = marked.parse(markdown, { async: false, gfm: true });
-  return typeof result === 'string' && result.trim() ? result : '<p></p>';
+  return typeof result === 'string' && result.trim() ? sanitizeAdminHtml(result) : '<p></p>';
 }
 
 function countWords(text: string): number {
@@ -210,7 +211,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       Callout,
       DragHandle.configure({ render: () => dragHandle, nested: false }),
     ],
-    content: isJsonDocument(state.bodyBlocks) ? state.bodyBlocks : markdownToHtml(state.body || initial.body || ''),
+    content: markdownToHtml(isJsonDocument(state.bodyBlocks) ? serializeTipTap(state.bodyBlocks) : state.body || initial.body || ''),
     editorProps: {
       attributes: { class: 'story-prose', 'aria-label': '正文区块' },
     },
@@ -299,6 +300,11 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     Object.assign(state, nextState);
     return nextState;
   };
+
+  document.addEventListener('admin:flush-draft', (event) => {
+    window.clearTimeout(saveTimer);
+    try { persistDraft(); } catch { event.preventDefault(); showToast('草稿未能保存，导出已停止。'); }
+  });
 
   function scheduleSave() {
     if (saveLabel) saveLabel.textContent = '正在保存……';
@@ -571,25 +577,26 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
         throw new Error(validationErrors.join(' '));
       }
 
-      let token = localStorage.getItem(GITHUB_TOKEN_KEY) || '';
-      if (!token) {
-        token = window.prompt(
-          '首次发布需要连接 GitHub。\n\n请输入具有以下权限的 Personal Access Token：\n- Contents: Read and write\n- Actions: Read\n\nToken 只会保存在当前浏览器中，不会写入网站仓库。',
-        )?.trim() || '';
-        if (!token) throw new Error('发布需要 GitHub Token。');
-        localStorage.setItem(GITHUB_TOKEN_KEY, token);
-      }
-
-      const result = await publishStory({ state: nextState, token, onProgress: updatePublishStep });
+      const result = await publishStory({ state: nextState, onProgress: updatePublishStep });
       if (publishedUrl instanceof HTMLAnchorElement) {
         publishedUrl.href = result.publicUrl;
-        publishedUrl.hidden = false;
+        publishedUrl.hidden = result.branch !== 'main';
       }
-      showToast('内容已写入仓库，网站部署已经开始。');
-      const run = await waitForDeploy(result.github, result.commitSha, updatePublishStep);
-      showToast(run ? `发布成功：${result.publicUrl}` : `内容已写入仓库，网站部署已经开始：${result.publicUrl}`);
+      showToast(`内容已写入 ${result.branch}：${result.commitSha.slice(0, 8)}。`);
+      updatePublishStep('deploy', 'running');
+      try {
+        const report = await result.github.deploymentStatus(result.commitSha);
+        const labels: Record<string, string> = {CURRENT_VERSION_VERIFIED:'公开版本与 HTTP 健康核验通过', NOT_DEPLOYED:'测试分支未部署到生产', VERSION_DIFFERS:'线上版本与本次提交不同', FAILED:'公开健康检查失败', UNKNOWN:'尚未确认'};
+        for (const target of report.targets) {
+          const row = editorRoot.querySelector(`[data-target-status="${target.target}"]`);
+          if (row) row.textContent = `${target.target === 'pages' ? 'GitHub Pages' : 'VPS'}：${labels[target.status] || '尚未确认'}${target.actualSha ? `（${target.actualSha.slice(0, 8)}）` : ''}`;
+        }
+        updatePublishStep('deploy', report.targets.every((target: {status: string}) => target.status === 'CURRENT_VERSION_VERIFIED') ? 'success' : 'triggered');
+      } catch {
+        updatePublishStep('deploy', 'triggered');
+      }
+      showToast(`内容已写入 ${result.branch}。两站结果见发布状态；版本核验不代表完整功能验收。`);
     } catch (error) {
-      if ((error as { status?: number }).status === 401) localStorage.removeItem(GITHUB_TOKEN_KEY);
       const running = progress?.querySelector<HTMLElement>('[data-status="running"]');
       if (running?.dataset.publishStep) updatePublishStep(running.dataset.publishStep, 'failure');
       showToast(error instanceof Error ? error.message : '发布失败。');
