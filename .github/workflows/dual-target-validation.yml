@@ -6,6 +6,17 @@
       "branches": [
         "codex/dual-site-m1-m2",
         "codex/admin-secure-migration"
+      ],
+      "paths": [
+        "src/**",
+        "public/**",
+        "scripts/**",
+        "ops/deploy/**",
+        "!ops/deploy/*.md",
+        "tests/**",
+        "astro.config*",
+        "package*.json",
+        ".github/workflows/dual-target-validation.yml"
       ]
     }
   },

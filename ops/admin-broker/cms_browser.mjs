@@ -6,7 +6,7 @@ export async function inspectCmsBrowser({origin,cookie,githubToken}){
  await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
  async function save(){const responsePromise=page.waitForResponse(r=>r.url().endsWith('/api/graphql')&&r.request().postData()?.includes('mutation'),{timeout:30000});await page.getByRole('button',{name:'Save',exact:true}).click();const response=await responsePromise;assert.equal(response.status(),200);const data=await response.json();assert(!data.errors?.length,'CMS commit rejected');assert(data.data?.createCommitOnBranch?.commit?.oid);}
  const [name,value]=cookie.split('=');await context.addCookies([{name,value,url:origin,httpOnly:true,sameSite:'Lax'}]);
- page.on('pageerror',error=>errors.push(error.message.slice(0,200)));page.on('console',message=>{if(message.type()==='error')consoleErrors.push(message.text().slice(0,700));});
+ page.on('pageerror',error=>errors.push(error.message.slice(0,200)));page.on('console',message=>{if(message.type()==='error')consoleErrors.push(message.text().replace(/[A-Za-z0-9_-]{24,}/g,'[REDACTED_LONG_IDENTIFIER]').slice(0,700));});
  page.on('request',request=>{assert(!JSON.stringify(request.headers()).includes(githubToken),'Raw GitHub credential reached browser');});
  page.on('response',response=>{if(response.url().includes('/api/'))requests.push({path:new URL(response.url()).pathname,status:response.status()});});
  try{

@@ -6,9 +6,9 @@ import {resolve,relative,sep,extname} from 'node:path';
 import {createHash} from 'node:crypto';
 const MIME={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.avif':'image/avif','.gif':'image/gif','.woff2':'font/woff2'};
 const safeHeaders={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex, nofollow','Referrer-Policy':'no-referrer','Cross-Origin-Opener-Policy':'same-origin','Cross-Origin-Resource-Policy':'same-origin'};
-function htmlPolicy(body){
+function htmlPolicy(body,{cms=false}={}){
  const hashes=[...body.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)].filter(([,attrs])=>!/(?:^|\s)src\s*=/i.test(attrs)).map(([, ,script])=>"'sha256-"+createHash('sha256').update(script).digest('base64')+"'");
- return `default-src 'self'; script-src 'self' ${hashes.join(' ')}; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self'; media-src 'self' https:; connect-src 'self'; frame-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'; form-action 'self'`;
+ return `default-src 'self'; script-src 'self' ${hashes.join(' ')}; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self'; media-src 'self' https:; connect-src 'self'${cms?' blob:':''}; frame-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'; form-action 'self'`;
 }
 export async function createAdminServer({origin,staticRoot,broker,maxBodyBytes=30_000_000}){
  const expected=new URL(origin);if(!['127.0.0.1','localhost'].includes(expected.hostname)&&expected.protocol!=='https:')throw Error('Public origin requires HTTPS.');
@@ -49,7 +49,7 @@ export async function createAdminServer({origin,staticRoot,broker,maxBodyBytes=3
    if(!(await lstat(candidate)).isFile())return send(404);
    const extension=extname(candidate);if(!MIME[extension])return send(404);
    const bytes=await readFile(candidate);
-   return send(200,bytes,{'Content-Type':MIME[extension],'Content-Security-Policy':extension==='.html'?htmlPolicy(bytes.toString('utf8')):"default-src 'none'; sandbox"});
+   return send(200,bytes,{'Content-Type':MIME[extension],'Content-Security-Policy':extension==='.html'?htmlPolicy(bytes.toString('utf8'),{cms:decoded==='/admin/sveltia.html'}):"default-src 'none'; sandbox"});
   }catch(error){return send(error.code==='ENOENT'||error.code==='ENOTDIR'?404:500);}
  });
  server.requestTimeout=30_000;server.headersTimeout=15_000;server.keepAliveTimeout=5000;

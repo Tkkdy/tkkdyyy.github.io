@@ -34,3 +34,10 @@ test('existing project images are readable after login while sibling scripts and
  const image=await fetch(f.origin+'/projects/old-image.png',{headers:{cookie:'synthetic=owner'}});assert.equal(image.status,200);assert.match(image.headers.get('content-security-policy'),/sandbox/);
  for(const file of ['unsafe.js','unsafe.html'])assert.equal((await fetch(f.origin+'/projects/'+file,{headers:{cookie:'synthetic=owner'}})).status,404);
 });
+
+test('only CMS can fetch local blob documents; blob scripts and external network stay blocked',async t=>{
+ const f=await fixture(t);await writeFile(join(f.dir,'admin/sveltia.html'),'<h1>CMS</h1>');
+ const cms=await fetch(f.origin+'/admin/sveltia.html',{headers:{cookie:'synthetic=owner'}}),studio=await fetch(f.origin+'/admin/',{headers:{cookie:'synthetic=owner'}});
+ const policy=cms.headers.get('content-security-policy');assert.match(policy,/connect-src 'self' blob:;/);assert.match(studio.headers.get('content-security-policy'),/connect-src 'self';/);
+ const scripts=policy.split(';').find(rule=>rule.trim().startsWith('script-src'));assert(!scripts.includes('blob:'));assert(!scripts.includes('unsafe-inline'));assert(!scripts.includes('unsafe-eval'));assert(!policy.match(/connect-src[^;]*https:/));
+});
