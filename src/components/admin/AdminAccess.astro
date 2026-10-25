@@ -1,0 +1,33 @@
+---
+const raw=import.meta.env.PUBLIC_ADMIN_ORIGIN;
+let editorOrigin='';
+if(raw){const parsed=new URL(raw);if(parsed.protocol!=='https:'||parsed.origin!==raw||parsed.username||parsed.password)throw Error('PUBLIC_ADMIN_ORIGIN must be a pure HTTPS origin');editorOrigin=parsed.origin;}
+---
+<details class="admin-access">
+ <summary data-auth-label>编辑连接</summary>
+ <div>
+  <p data-auth-message>可先保存或迁移本地草稿，再连接编辑服务。</p>
+  {editorOrigin && <p><a href={`${editorOrigin}/admin/`} target="_blank" rel="noopener noreferrer">打开主编辑站 ↗</a></p>}
+  <p><a href="http://127.0.0.1:19443/admin/" target="_blank" rel="noopener noreferrer">打开本机备用编辑 ↗</a></p>
+  <p>本机备用服务需先启动；VPS 离线时仍可使用。</p>
+  <button type="button" data-auth-logout hidden>退出当前编辑会话</button>
+ </div>
+</details>
+<style>
+ .admin-access{position:relative;font-size:12px}.admin-access summary{cursor:pointer;white-space:nowrap}.admin-access>div{position:absolute;right:0;top:28px;z-index:100;width:265px;padding:15px;background:#fff;border:1px solid #ddd;border-radius:8px;box-shadow:0 8px 30px #0001}.admin-access p{margin:0 0 10px;line-height:1.6}.admin-access a{color:#267563}.admin-access button{padding:6px 10px;border:1px solid #ccc;border-radius:4px;cursor:pointer}
+</style>
+<script>
+ const root=document.querySelector('.admin-access');
+ // Remove only the old Studio credential; historical draft keys are untouched.
+ try { localStorage.removeItem('tkkdy-editorial:github-token'); } catch { /* Storage can be disabled. */ }
+ async function refresh(){
+  try{
+   const response=await fetch('/api/session',{credentials:'same-origin',cache:'no-store'});if(!response.ok)return;const session=await response.json();if(!session.authenticated)return;
+   const label=root?.querySelector('[data-auth-label]'),message=root?.querySelector('[data-auth-message]'),logout=root?.querySelector('[data-auth-logout]');
+   if(label)label.textContent=`${session.user.login} · 已连接`;
+   if(message)message.textContent=`当前编辑分支：${session.branch}。提交后请分别核对两站发布结果。`;
+   if(logout instanceof HTMLButtonElement){logout.hidden=false;logout.onclick=async()=>{const result=await fetch('/api/logout',{method:'POST',credentials:'same-origin',headers:{'X-Admin-CSRF':session.csrf}});if(result.ok)location.assign('/admin/');};}
+  }catch{/* Static Pages supports local drafts and the explicit independent editor link. */}
+ }
+ refresh();
+</script>

@@ -1,3 +1,4 @@
+import {inspectWorkflow} from './workflow-status.mjs';
 import {inspectTargets} from './deployment-status.mjs';
 /** OAuth/session core. GitHub tokens stay server-side; no refresh token persistence. */
 import {randomBytes,createHash,timingSafeEqual} from 'node:crypto';
@@ -51,7 +52,7 @@ export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now()}={}){
      const hash=createHash('sha256').update(script).digest('base64');
      return new Response('<!doctype html><meta charset="utf-8"><title>连接编辑器</title><p>正在连接已登录会话。</p><script>'+script+'</script>',{headers:{...headers,'Content-Type':'text/html; charset=utf-8','Content-Security-Policy':`default-src 'none'; script-src 'sha256-${hash}'; frame-ancestors 'none'; base-uri 'none'`}});
     }
-    if(path==='/api/deployments'&&request.method==='GET'){const expectedSha=url.searchParams.get('sha');requirePolicy(/^[a-f0-9]{40}$/.test(expectedSha||''),'提交版本无效。');return response({targets:await inspectTargets({targets:config.targets,branch:config.branch,expectedSha,fetchImpl})});}
+    if(path==='/api/deployments'&&request.method==='GET'){const expectedSha=url.searchParams.get('sha');requirePolicy(/^[a-f0-9]{40}$/.test(expectedSha||''),'提交版本无效。');const [targets,pipeline]=await Promise.all([inspectTargets({targets:config.targets,branch:config.branch,expectedSha,fetchImpl}),inspectWorkflow({github:(path)=>github(path,s.token),repository:config.repository,expectedSha,branch:config.branch})]);return response({targets:targets.map(target=>({...target,pipeline:pipeline[target.target]}))});}
     if(path==='/api/session'&&request.method==='GET')return response(publicSession(s));
     if(path==='/api/logout'&&request.method==='POST'){mutationGuard(request,s);sessions.delete(s.id);return response({loggedOut:true},200,{'Set-Cookie':cookie(cookieName,'',0)});}
     if(path==='/api/graphql'&&request.method==='POST'){

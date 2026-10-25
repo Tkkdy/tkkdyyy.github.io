@@ -528,6 +528,8 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     renderTaxonomy(kind);
   });
 
+  let lastPublication: Awaited<ReturnType<typeof publishStory>> | null = null;
+  const refreshButton = editorRoot.querySelector<HTMLButtonElement>('[data-refresh-deploy]');
   const updatePublishStep = (step: string, statusValue: string) => {
     const item = editorRoot.querySelector(`[data-publish-step="${step}"]`);
     if (!(item instanceof HTMLElement)) return;
@@ -535,6 +537,26 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     const labels: Record<string, string> = { running: '…', success: '✓', failure: '×', triggered: '↗' };
     item.dataset.marker = labels[statusValue] || '';
   };
+
+  const refreshDeployment = async (result: Awaited<ReturnType<typeof publishStory>>) => {
+    try {
+        const report = await result.github.deploymentStatus(result.commitSha);
+        const labels: Record<string, string> = {CURRENT_VERSION_VERIFIED:'公开版本与 HTTP 健康核验通过', NOT_DEPLOYED:'测试分支未部署到生产', VERSION_DIFFERS:'线上版本与本次提交不同', FAILED:'公开健康检查失败', UNKNOWN:'尚未确认'};
+        for (const target of report.targets) {
+          const row = editorRoot.querySelector(`[data-target-status="${target.target}"]`);
+          if (row) row.textContent = `${target.target === 'pages' ? 'GitHub Pages' : 'VPS'}：${labels[target.status] || '尚未确认'}${target.actualSha ? `（${target.actualSha.slice(0, 8)}）` : ''}；流水线：${({SUCCEEDED:'已成功',FAILED:'失败',PENDING:'执行中',SKIPPED:'未部署',NOT_REQUESTED:'测试分支不触发生产',UNKNOWN:'尚未确认'} as Record<string,string>)[target.pipeline?.state] || '尚未确认'}${target.pipeline?.job ? ` · ${target.pipeline.job}` : ''}${target.pipeline?.step ? ` · ${target.pipeline.step}` : ''}`;
+        }
+        updatePublishStep('deploy', report.targets.every((target: {status: string}) => target.status === 'CURRENT_VERSION_VERIFIED') ? 'success' : 'triggered');
+      } catch {
+        editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：本次状态查询失败，请刷新核验。`; });
+        updatePublishStep('deploy', 'triggered');
+      }
+  };
+  refreshButton?.addEventListener('click', async () => {
+    if (!lastPublication) return;
+    refreshButton.disabled = true;
+    try { await refreshDeployment(lastPublication); } finally { refreshButton.disabled = false; }
+  });
 
   document.querySelectorAll<HTMLButtonElement>('[data-phase-action]').forEach((button) => button.addEventListener('click', async () => {
     const action = button.getAttribute('data-phase-action');
@@ -554,6 +576,9 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       return;
     }
     if (action !== 'Publish') return;
+    lastPublication = null;
+    if (refreshButton) refreshButton.hidden = true;
+    editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：尚未核验`; });
 
     if (progress instanceof HTMLElement) progress.hidden = false;
     progress?.querySelectorAll<HTMLElement>('[data-publish-step]').forEach((item) => {
@@ -584,17 +609,9 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       }
       showToast(`内容已写入 ${result.branch}：${result.commitSha.slice(0, 8)}。`);
       updatePublishStep('deploy', 'running');
-      try {
-        const report = await result.github.deploymentStatus(result.commitSha);
-        const labels: Record<string, string> = {CURRENT_VERSION_VERIFIED:'公开版本与 HTTP 健康核验通过', NOT_DEPLOYED:'测试分支未部署到生产', VERSION_DIFFERS:'线上版本与本次提交不同', FAILED:'公开健康检查失败', UNKNOWN:'尚未确认'};
-        for (const target of report.targets) {
-          const row = editorRoot.querySelector(`[data-target-status="${target.target}"]`);
-          if (row) row.textContent = `${target.target === 'pages' ? 'GitHub Pages' : 'VPS'}：${labels[target.status] || '尚未确认'}${target.actualSha ? `（${target.actualSha.slice(0, 8)}）` : ''}`;
-        }
-        updatePublishStep('deploy', report.targets.every((target: {status: string}) => target.status === 'CURRENT_VERSION_VERIFIED') ? 'success' : 'triggered');
-      } catch {
-        updatePublishStep('deploy', 'triggered');
-      }
+      lastPublication = result;
+      if (refreshButton) refreshButton.hidden = false;
+      await refreshDeployment(result);
       showToast(`内容已写入 ${result.branch}。两站结果见发布状态；版本核验不代表完整功能验收。`);
     } catch (error) {
       const running = progress?.querySelector<HTMLElement>('[data-status="running"]');
