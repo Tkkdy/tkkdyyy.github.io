@@ -26,3 +26,9 @@ export function createGitHubClient({owner,repo,branch,csrf}){
   },
  };
 }
+
+/** Git blob identity of the exact UTF-8 bytes sent to createCommitOnBranch. */
+export async function gitBlobSha(text){
+ const bytes=new TextEncoder().encode(text),header=new TextEncoder().encode('blob '+bytes.length+'\0'),buffer=new Uint8Array(header.length+bytes.length);buffer.set(header);buffer.set(bytes,header.length);
+ return [...new Uint8Array(await crypto.subtle.digest('SHA-1',buffer))].map(value=>value.toString(16).padStart(2,'0')).join('');
+}

@@ -2,7 +2,7 @@
 import { createDraftId, draftStorageKey } from './draft-storage.mjs';
 const PREFIX='tkkdy-editorial:';
 const IDS=/^(?:draft-[a-zA-Z0-9-]{8,}|(?:article|essay|fragment)-[a-zA-Z0-9-]+|new-story)$/;
-const STRINGS=['title','deck','body','type','status','slug','publishedAt','updatedAt','cover','coverAlt','sourcePath'];
+const STRINGS=['title','deck','body','type','status','slug','publishedAt','updatedAt','cover','coverAlt','sourcePath','sourceBlobSha'];
 const LIMIT=20_000_000;
 function draft(value){
  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('草稿内容格式错误。');

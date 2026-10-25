@@ -1,3 +1,4 @@
+import {createContentReader} from './content-reader.mjs';
 import {inspectWorkflow} from './workflow-status.mjs';
 import {inspectTargets} from './deployment-status.mjs';
 /** OAuth/session core. GitHub tokens stay server-side; no refresh token persistence. */
@@ -43,7 +44,7 @@ export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now()}={}){
      requirePolicy(typeof token.access_token==='string'&&token.token_type==='bearer'&&Number.isFinite(token.expires_in)&&token.expires_in>0,'App必须启用短期用户令牌。');
      const user=await github('/user',token.access_token);requirePolicy(user.id===config.ownerId,'此账号不是站点所有者。');
      const repo=await github('/repos/'+config.repository,token.access_token);requirePolicy(repo.id===config.repositoryId&&repo.full_name===config.repository,'目标仓库不匹配。');
-     requirePolicy(sessions.size<30,'登录会话过多。');const id=nonce(),s={csrf:nonce(),token:token.access_token,user:{id:user.id,login:user.login},expires:clock()+Math.min(1800,token.expires_in)*1000};sessions.set(id,s);
+     requirePolicy(sessions.size<30,'登录会话过多。');const id=nonce(),s={csrf:nonce(),token:token.access_token,user:{id:user.id,login:user.login},expires:clock()+Math.min(1800,token.expires_in)*1000};s.reader=createContentReader({github:(path,options)=>github(path,s.token,options),repository:config.repository,branch:config.branch});sessions.set(id,s);
      const result=redirect(flow.back);result.headers.append('Set-Cookie',cookie(cookieName,id,1800));result.headers.append('Set-Cookie',cookie(flowCookie,'',0));return result;
     }
     const s=session(request);
@@ -52,6 +53,8 @@ export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now()}={}){
      const hash=createHash('sha256').update(script).digest('base64');
      return new Response('<!doctype html><meta charset="utf-8"><title>连接编辑器</title><p>正在连接已登录会话。</p><script>'+script+'</script>',{headers:{...headers,'Content-Type':'text/html; charset=utf-8','Content-Security-Policy':`default-src 'none'; script-src 'sha256-${hash}'; frame-ancestors 'none'; base-uri 'none'`}});
     }
+    if(path==='/api/stories'&&request.method==='GET')return response(await s.reader());
+    if(path==='/api/story'&&request.method==='GET'){const catalog=await s.reader(),story=catalog.stories.find(item=>item.sourcePath===url.searchParams.get('path'));return story?response({head:catalog.head,story}):response({error:'当前分支中没有此内容。'},404);}
     if(path==='/api/deployments'&&request.method==='GET'){const expectedSha=url.searchParams.get('sha');requirePolicy(/^[a-f0-9]{40}$/.test(expectedSha||''),'提交版本无效。');const [targets,pipeline]=await Promise.all([inspectTargets({targets:config.targets,branch:config.branch,expectedSha,fetchImpl}),inspectWorkflow({github:(path)=>github(path,s.token),repository:config.repository,expectedSha,branch:config.branch})]);return response({targets:targets.map(target=>({...target,pipeline:pipeline[target.target]}))});}
     if(path==='/api/session'&&request.method==='GET')return response(publicSession(s));
     if(path==='/api/logout'&&request.method==='POST'){mutationGuard(request,s);sessions.delete(s.id);return response({loggedOut:true},200,{'Set-Cookie':cookie(cookieName,'',0)});}

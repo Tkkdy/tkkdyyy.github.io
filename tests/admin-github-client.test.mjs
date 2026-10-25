@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {createGitHubClient,readAdminSession} from '../src/lib/admin/github-content.mjs';
+import test from 'node:test';import assert from 'node:assert/strict';import {createGitHubClient,readAdminSession,gitBlobSha} from '../src/lib/admin/github-content.mjs';
 const sha='a'.repeat(40),next='b'.repeat(40);
 test('browser client sends session-bound CSRF only to own origin and pins content reads and mutation to one head',async t=>{
  const original=globalThis.fetch,calls=[];t.after(()=>globalThis.fetch=original);
@@ -14,3 +14,5 @@ test('missing file remains distinguishable from authentication failure; GraphQL 
  globalThis.fetch=async()=>Response.json({error:'Login'},{status:401});await assert.rejects(client.readFile('new.md'),e=>e.status===401);await assert.rejects(readAdminSession(),e=>e.status===401);
  globalThis.fetch=async()=>Response.json({errors:[{message:'Head moved'}]});await assert.rejects(client.commitFiles({expectedHeadOid:sha,message:'Draft',files:[]}),/尚未确认/);
 });
+
+test('Git blob identity matches the canonical hello newline object',async()=>{assert.equal(await gitBlobSha('hello\n'),'ce013625030ba8dba906f756967f9e9ca394464a');});

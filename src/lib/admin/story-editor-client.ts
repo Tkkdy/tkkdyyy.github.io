@@ -35,6 +35,7 @@ type EditorState = {
   coverAlt: string;
   publishNumber?: number;
   sourcePath: string;
+  sourceBlobSha?: string;
 };
 
 const Callout = Node.create({
@@ -609,6 +610,9 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       }
       showToast(`内容已写入 ${result.branch}：${result.commitSha.slice(0, 8)}。`);
       updatePublishStep('deploy', 'running');
+      state.sourcePath = result.sourcePath;
+      state.sourceBlobSha = result.sourceBlobSha;
+      persistDraft();
       lastPublication = result;
       if (refreshButton) refreshButton.hidden = false;
       await refreshDeployment(result);
@@ -645,5 +649,23 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
 }
 
 export function initializeStoryEditors() {
-  document.querySelectorAll<HTMLElement>('.editor-workspace').forEach(initializeStoryEditor);
+  document.querySelectorAll<HTMLElement>('.editor-workspace').forEach(async root => {
+    const explicitSource = new URL(location.href).searchParams.get('source');
+    try {
+      const response = await fetch('/api/session', {credentials:'same-origin',cache:'no-store'}).catch(() => null);
+      if (response?.ok && (await response.json().catch(() => null))?.authenticated) {
+        const initial = JSON.parse(root.dataset.story || '{}');
+        const path = explicitSource || initial.sourcePath;
+        if (path) {
+          const live = await fetch('/api/story?path='+encodeURIComponent(path), {credentials:'same-origin',cache:'no-store'});
+          if (!live.ok) throw Error('当前分支内容读取失败；未载入旧副本，请返回内容列表后重试。');
+          root.dataset.story = JSON.stringify((await live.json()).story);
+        }
+      } else if (explicitSource) throw Error('请连接编辑服务后打开此内容。');
+      initializeStoryEditor(root);
+    } catch (error) {
+      const message = document.createElement('p'); message.textContent = error instanceof Error ? error.message : '内容载入失败。';
+      root.replaceChildren(message);
+    }
+  });
 }

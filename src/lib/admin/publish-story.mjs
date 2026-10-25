@@ -1,5 +1,5 @@
 import { mergeStudioFrontmatter } from './frontmatter.mjs';
-import { createGitHubClient, textToBase64, readAdminSession } from './github-content.mjs';
+import { createGitHubClient, textToBase64, readAdminSession, gitBlobSha } from './github-content.mjs';
 import { findLocalImageSources, rewriteImageSources, serializeTipTap } from './serialize-tiptap.mjs';
 import { assertValidStory } from './validate-story.mjs';
 
@@ -91,6 +91,7 @@ export async function publishStory({ state, session, onProgress = () => {} }) {
   const destinationPath = `src/content/${directory}/${state.slug}.md`;
   const sourcePath = state.sourcePath || '';
   const existing = sourcePath ? await github.readFile(sourcePath, expectedHeadOid) : await github.readFile(destinationPath, expectedHeadOid);
+  if (state.sourceBlobSha && existing?.sha !== state.sourceBlobSha) throw new Error('内容在开始编辑后已变化，请保留本地草稿并重新打开比较；未覆盖仓库。');
   if (!sourcePath && existing) throw new Error(`地址 ${destinationPath} 已经存在其他内容，请打开该内容进行编辑。`);
   if (sourcePath && !existing) throw new Error(`原内容文件 ${sourcePath} 已不在当前编辑分支上，请刷新后再发布。`);
   if (sourcePath && sourcePath !== destinationPath) {
@@ -114,5 +115,6 @@ export async function publishStory({ state, session, onProgress = () => {} }) {
 
   const route = state.type === 'Fragment' ? `fragments/#${state.slug}` : `${directory}/${state.slug}/`;
   const publicUrl = `https://tkkdy.github.io/tkkdyyy.github.io/${route}`;
-  return { commitSha: commit.sha, publicUrl, github, branch: session.branch };
+  const savedBlobSha = await gitBlobSha(content);
+  return { commitSha: commit.sha, publicUrl, github, branch: session.branch, sourcePath: destinationPath, sourceBlobSha: savedBlobSha };
 }
