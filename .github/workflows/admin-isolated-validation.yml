@@ -1,0 +1,174 @@
+# TEST BRANCH ONLY. No Pages deploy, VPS, production secrets or real OAuth account.
+{
+  "name": "Isolated Admin real test-branch publication",
+  "on": {
+    "push": {
+      "branches": [
+        "codex/admin-secure-migration"
+      ]
+    }
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "concurrency": {
+    "group": "isolated-admin-${{ github.ref }}",
+    "cancel-in-progress": false
+  },
+  "jobs": {
+    "write-probe": {
+      "if": "github.repository == 'Tkkdy/tkkdyyy.github.io' && github.event_name == 'push' && github.ref == 'refs/heads/codex/admin-secure-migration'",
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 10,
+      "permissions": {
+        "contents": "write"
+      },
+      "outputs": {
+        "content_sha": "${{ steps.probe.outputs.content_sha }}",
+        "test_branch": "${{ steps.probe.outputs.test_branch }}"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "with": {
+            "node-version": 24
+          }
+        },
+        {
+          "run": "npm ci --ignore-scripts\nnpm run check"
+        },
+        {
+          "id": "probe",
+          "name": "Short-lived token; synthetic identity; actual test branch writes",
+          "env": {
+            "GH_TEST_TOKEN": "${{ github.token }}"
+          },
+          "run": "node ops/admin-broker/integration_github.mjs"
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "if": "always()",
+          "with": {
+            "name": "admin-real-write-evidence",
+            "path": "admin-integration.json",
+            "if-no-files-found": "warn",
+            "retention-days": 7
+          }
+        }
+      ]
+    },
+    "build": {
+      "needs": "write-probe",
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 15,
+      "strategy": {
+        "fail-fast": false,
+        "matrix": {
+          "include": [
+            {
+              "target": "pages",
+              "script": "build"
+            },
+            {
+              "target": "vps",
+              "script": "build:vps"
+            }
+          ]
+        }
+      },
+      "env": {
+        "SITE_URL": "https://preview.boenbot.top",
+        "BUILD_SCRIPT": "${{ matrix.script }}",
+        "TARGET": "${{ matrix.target }}",
+        "CONTENT_SHA": "${{ needs.write-probe.outputs.content_sha }}",
+        "PIPELINE_SHA": "${{ github.sha }}"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ needs.write-probe.outputs.content_sha }}",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "with": {
+            "node-version": 24
+          }
+        },
+        {
+          "run": "test \"$(git rev-parse HEAD)\" = \"$CONTENT_SHA\"\nnpm ci\nnpm run \"$BUILD_SCRIPT\"\npython ops/deploy/write_version.py --source . --dist dist --target \"$TARGET\" --workflow \"$PIPELINE_SHA\""
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "with": {
+            "name": "admin-test-build-${{ matrix.target }}",
+            "path": "dist",
+            "if-no-files-found": "error",
+            "retention-days": 7
+          }
+        }
+      ]
+    },
+    "parity": {
+      "needs": [
+        "write-probe",
+        "build"
+      ],
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 10,
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ needs.write-probe.outputs.content_sha }}",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "with": {
+            "node-version": 24
+          }
+        },
+        {
+          "run": "npm ci --ignore-scripts"
+        },
+        {
+          "uses": "actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0",
+          "with": {
+            "name": "admin-test-build-pages",
+            "path": "builds/pages"
+          }
+        },
+        {
+          "uses": "actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0",
+          "with": {
+            "name": "admin-test-build-vps",
+            "path": "builds/vps"
+          }
+        },
+        {
+          "run": "node scripts/audit-dual-builds.mjs builds admin-test-parity.json"
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "if": "always()",
+          "with": {
+            "name": "admin-test-parity",
+            "path": "admin-test-parity.json",
+            "retention-days": 7
+          }
+        }
+      ]
+    }
+  }
+}
