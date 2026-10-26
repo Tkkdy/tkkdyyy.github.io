@@ -15,3 +15,5 @@ sudo env GITHUB_ACTIONS=true ACL_GUARD_FIXTURE=true GITHUB_SHA="$GITHUB_SHA" pyt
 ```
 
 The dedicated branch workflow has read-only repository permissions, no secrets, no Pages deployment and no VPS target. It preserves `integration-evidence/acl-guard.json`, reports production writes false and distinguishes real process-session testing from real SSH testing. Existing pinned ZIP, installer, protected production release, main and production workflow remain unchanged.
+
+A second real SSH/TCP-reset case starts the same guardian through a bounded transient systemd system service and verifies its actual `/system.slice/<unit>.service` cgroup and runtime/restart properties. This is an isolated runner test, not proof of production systemd availability/configuration. It adds no permanent unit, production CLI or automatic boot recovery.
