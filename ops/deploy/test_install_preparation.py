@@ -10,6 +10,7 @@ class InstallationReviewTests(unittest.TestCase):
         self.modules = {n: ('# reviewed ' + n).encode() for n in prep.MODULES}
         self.configs = {p: prep.digest(p.encode()) for p in ['/etc/nginx/nginx.conf', '/etc/nginx/sites-enabled/default', '/etc/nginx/sites-enabled/music.leux.me', '/etc/nginx/sites-enabled/preview.boenbot.top']}
         self.events = [{'kind': 'gateConfig', 'path': p, 'sha256': h} for p, h in self.configs.items() if not p.endswith('preview.boenbot.top')]
+        self.events.append({'kind': 'gateConfig', 'path': '/etc/nginx/sites-available/preview.boenbot.top', 'sha256': 'f'*64})
         self.events.append({'kind': 'deploymentCompleted', 'serverAcceptance': 'PASS', 'mainSha': prep.SOURCE, 'current': prep.CURRENT, 'nginxSha256': self.configs['/etc/nginx/sites-enabled/preview.boenbot.top']})
         self.report = {'scope': 'READ_ONLY_PRODUCTION_PREFLIGHT', 'state': 'PASS', 'mutations': False, 'uid': 1001, 'utc': '2026-10-26T03:14:55Z', 'current': {'path': prep.ROOT + '/current', 'symlink': True, 'target': prep.CURRENT}, 'finalCurrent': prep.CURRENT, 'releaseManifest': {'state': 'PASS', 'files': 115, 'manifest': copy.deepcopy(self.original), 'extraFiles': []}, 'nginxConfigHashes': [{'path': p, 'sha256': h} for p, h in self.configs.items()], 'services': {n: {'code': 0, 'stdout': 'active'} for n in ('nginx', 'ssh', 'certbot.timer')}, 'accounts': {'psyduck': {'uid': 1001}, 'www-data': {'uid': 33}, 'preview-deploy': {'status': 'ABSENT'}, 'editorial-admin': {'status': 'ABSENT'}}, 'paths': [], 'tools': {'getfacl': None, 'setfacl': None}, 'versions': {'python3': {'code': 0, 'stdout': 'Python 3.12.3'}}}
         self.report['paths'] = [{'path': p, 'uid': 1001, 'gid': 1001, 'mode': '0o755', 'symlink': False} for p in (prep.ROOT, prep.ROOT + '/releases', prep.ROOT + '/records', prep.ROOT + '/' + prep.CURRENT)]
@@ -35,6 +36,11 @@ class InstallationReviewTests(unittest.TestCase):
             self.assertNotIn('authorized_keys', z.namelist())
         self.assertEqual(raw, prep.archive(plan, self.raw, self.modules))
         self.assertFalse(plan['productionInstalled']); self.assertFalse(plan['authorizationReceived'])
+    def test_accepted_https_hash_replaces_only_known_pre_recovery_http_hash(self):
+        plan = self.plan()
+        self.assertEqual(plan['expectedNginxConfigHashes'], self.configs)
+        self.events.insert(0, {'kind': 'gateConfig', 'path': '/etc/nginx/unknown-site', 'sha256': 'f'*64})
+        with self.assertRaisesRegex(ValueError, 'incomplete baseline'): self.plan()
     def test_preflight_failure_not_accepted_as_server_pass(self):
         self.session['exitCode'] = 255
         with self.assertRaisesRegex(ValueError, 'did not complete'): self.plan()

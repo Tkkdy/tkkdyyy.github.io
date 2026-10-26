@@ -23,6 +23,12 @@ def baseline_hashes(events):
         if item.get('kind') == 'deploymentCompleted': completed = item
     require(completed and completed.get('serverAcceptance') == 'PASS', 'missing prior A acceptance')
     require(completed['mainSha'] == SOURCE and completed['current'] == CURRENT, 'prior A identity differs')
+    # The A entry gate pinned the pre-recovery HTTP sites-available file.
+    # Its final completion event pins the accepted HTTPS config; do not mistake
+    # the earlier HTTP hash for current drift or ignore arbitrary extra paths.
+    prior_vhost = '/etc/nginx/sites-available/preview.boenbot.top'
+    require(set(result) == {'/etc/nginx/nginx.conf', '/etc/nginx/sites-enabled/default', '/etc/nginx/sites-enabled/music.leux.me', prior_vhost}, 'incomplete baseline config pins')
+    del result[prior_vhost]
     result['/etc/nginx/sites-enabled/preview.boenbot.top'] = completed['nginxSha256']
     require(set(result) == {'/etc/nginx/nginx.conf', '/etc/nginx/sites-enabled/default', '/etc/nginx/sites-enabled/music.leux.me', '/etc/nginx/sites-enabled/preview.boenbot.top'}, 'incomplete baseline config pins')
     return result
