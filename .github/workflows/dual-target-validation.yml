@@ -90,7 +90,7 @@
         {
           "name": "Prepare disposable SSH and browser tooling",
           "if": "matrix.target == 'vps'",
-          "run": "sudo apt-get update -qq\nsudo apt-get install -y -qq openssh-server libnss3-tools\nnpx playwright install --with-deps chromium"
+          "run": "sudo apt-get update -qq\nsudo apt-get install -y -qq openssh-server libnss3-tools acl\nnpx playwright install --with-deps chromium"
         },
         {
           "name": "Actual Linux SSH, trusted TLS, browser acceptance and rollback",
@@ -98,7 +98,7 @@
           "env": {
             "ISOLATED_RECEIVER_TEST": "true"
           },
-          "run": "python ops/deploy/integration_linux.py"
+          "run": "python ops/deploy/integration_linux.py\nsudo -n /usr/bin/env GITHUB_ACTIONS=true ISOLATED_RECEIVER_INSTALL=true python3 -I ops/deploy/integration_install_linux.py"
         },
         {
           "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
