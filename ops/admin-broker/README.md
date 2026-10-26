@@ -41,7 +41,7 @@ VPS服务将用同一run.mjs及单独受保护配置；服务账户、专用Admi
 
 Studio 从 main 的准确 SHA 读取内容；发布改为受会话/Origin/CSRF 保护的 `/api/proposals`。服务只创建 `codex/editorial-proposal-<UUID>` 内容分支、单提交和 PR，复核真实 diff 只能包含本次批准的内容/图片路径。main 漂移、其他代码差异、未知写入结果都停止；同会话同请求并发只创建一次。不会写 main、合并 PR、删除分支、自动重试或声明两站部署成功。本地草稿保持，界面显示提案链接及尚未确认合并/部署。
 
-当前权限不足/尚未验证：真实 GitHub App 授权仍暂缓；PR 模式需要另行审查 Pull requests:write（以及既有 Contents:write）。未调用真实 PR API、未进行浏览器闭环、未验证 branch protection 拒绝。没有自动合并或合并后状态追踪；当前“刷新”不会假装知道 PR 已合并。Sveltia 在此模式的直接写 mutation 会被拒绝，其原生 editorial workflow 适配尚缺，不能据此启用生产 main 保护或宣称完整编辑体验已兼容。不得以允许 main mutation 作为补救。
+当前权限不足/尚未验证：真实 GitHub App 授权仍暂缓；PR 模式需要另行审查 Pull requests:write（以及既有 Contents:write）。未调用真实 PR API、未验证 branch protection 拒绝。已通过本地真实浏览器/合成GitHub上游闭环；刷新可只读核对明确merged与main祖先关系，并按最终合并SHA追踪双站版本，但没有自动合并功能。Sveltia 在此模式的直接写 mutation 会被拒绝，其原生 editorial workflow 适配尚缺，不能据此启用生产 main 保护或宣称完整编辑体验已兼容。不得以允许 main mutation 作为补救。
 
 定向测试：`node --test tests/admin-content-proposals.test.mjs tests/admin-github-client.test.mjs tests/admin-broker-auth.test.mjs`。上游使用合成 GitHub 响应；测试通过不证明真实 OAuth、权限或线上内容发布。
 
