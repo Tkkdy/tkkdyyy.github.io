@@ -32,7 +32,7 @@
           }
         },
         {
-          "run": "sudo apt-get update\nsudo apt-get install --no-install-recommends -y acl openssh-server\nsudo env GITHUB_ACTIONS=true ACL_GUARD_FIXTURE=true GITHUB_SHA=\"$GITHUB_SHA\" python3 -I -B ops/deploy/integration_acl_guard_linux.py"
+          "run": "test -x /usr/bin/getfacl\ntest -x /usr/bin/setfacl\ntest -x /usr/sbin/sshd\nsudo env GITHUB_ACTIONS=true ACL_GUARD_FIXTURE=true GITHUB_SHA=\"$GITHUB_SHA\" python3 -I -B ops/deploy/integration_acl_guard_linux.py"
         },
         {
           "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",

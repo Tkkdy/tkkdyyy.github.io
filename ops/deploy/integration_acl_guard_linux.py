@@ -122,7 +122,7 @@ LogLevel VERBOSE
 key=(transport/'host.pub').read_text().split();known=transport/'known_hosts';known.write_text('[127.0.0.1]:'+str(proxyport)+' '+key[0]+' '+key[1]+'\n')
 Path('/run/sshd').mkdir(exist_ok=True)
 log=(transport/'sshd.log').open('wb');daemon=subprocess.Popen(['/usr/sbin/sshd','-D','-e','-f',str(conf)],stdout=log,stderr=log)
-reset=threading.Event();closed=threading.Event();proxy_errors=[]
+reset=threading.Event();closed=threading.Event();proxy_errors=[];reset_sockets=[]
 def relay():
     sockets=[]
     try:
@@ -136,7 +136,10 @@ def relay():
     except BaseException as error:proxy_errors.append(str(error))
     finally:
         for sock in sockets:
-            if reset.is_set():sock.setsockopt(socket.SOL_SOCKET,socket.SO_LINGER,struct.pack('ii',1,0))
+            if reset.is_set():
+                sock.setsockopt(socket.SOL_SOCKET,socket.SO_LINGER,struct.pack('ii',1,0))
+                assert struct.unpack('ii',sock.getsockopt(socket.SOL_SOCKET,socket.SO_LINGER,8))==(1,0)
+                reset_sockets.append(True)
             sock.close()
         proxy.close();closed.set()
 try:
@@ -154,11 +157,13 @@ try:
     guardian_pid=json.loads(line)['guardianPid'];wait(state,'GRANTED')
     reset.set();assert closed.wait(3),'TCP reset relay did not close'
     stdout,stderr=ssh.communicate(timeout=6)
-    assert ssh.returncode==255 and not proxy_errors,(ssh.returncode,stderr,proxy_errors)
+    assert ssh.returncode==255 and not proxy_errors and len(reset_sockets)==2,(ssh.returncode,stderr,proxy_errors,reset_sockets)
     os.kill(guardian_pid,0);wait(state,'ROLLED_BACK');unchanged(base,state)
-    assert 'reset' in stderr.lower() or 'closed' in stderr.lower(),stderr
+    # OpenSSH can report EPIPE when writing after the injected RST. The gate is
+    # both sockets' checked SO_LINGER(1,0), SSH exit255 and exact real ACL recovery.
+    assert any(message in stderr.lower() for message in ['reset','closed','broken pipe']),stderr
     checks.append('real-OpenSSH-TCP-reset-detached-root-guardian-survives-and-restores-exact-ACL')
-    (transport/'client-result.json').write_text(json.dumps({'sshExit':ssh.returncode,'stderr':stderr,'tcpReset':True,'guardianSurvived':True,'realPAMSessionCovered':False}))
+    (transport/'client-result.json').write_text(json.dumps({'sshExit':ssh.returncode,'stderr':stderr,'tcpReset':True,'resetSockets':len(reset_sockets),'guardianSurvived':True,'realPAMSessionCovered':False}))
 finally:
     reset.set();daemon.terminate();daemon.wait(timeout=5);log.close()
 
