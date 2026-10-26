@@ -86,5 +86,80 @@ p=subprocess.run([sys.executable,'-I','-B',str(CODE/'acl_guard.py'),'supervise',
 assert p.returncode!=0 and not state.exists() and guard.acl(base/'site')==before
 checks.append('unreviewed-existing-ACL-refused-before-mutation')
 
-output={'state':'PASS','scope':'DISPOSABLE_REAL_ROOT_ACL_PROCESS_SESSIONS','sourceSha':os.environ.get('GITHUB_SHA'),'checks':checks,'productionInstalled':False,'productionACLChanged':False,'realSSHTransportTested':False,'realSessionSIGHUPTested':True,'powerLossOrGuardianSIGKILLCovered':False,'allFixtureEvidenceRetained':True}
+
+# One real OpenSSH session via a loopback-only resettable TCP path. No real host.
+import select,socket,struct,threading,shlex
+base=fixture();state=base/'lease-ssh-reset'
+transport=base/'ssh-fixture';transport.mkdir(mode=0o700)
+for name in ['host','client']:
+    subprocess.run(['ssh-keygen','-q','-t','ed25519','-N','','-f',str(transport/name)],check=True)
+auth=transport/'authorized';auth.write_text('restrict '+(transport/'client.pub').read_text());auth.chmod(0o600)
+def freeport():
+    with socket.socket() as sock:sock.bind(('127.0.0.1',0));return sock.getsockname()[1]
+serverport=freeport()
+proxy=socket.socket();proxy.bind(('127.0.0.1',0));proxy.listen(1);proxyport=proxy.getsockname()[1]
+worker=transport/'worker.py';worker.write_text('import sys,time\nsys.path.insert(0,'+repr(str(CODE))+')\nimport acl_guard\nfrom pathlib import Path\nacl_guard.launch(Path('+repr(str(base))+'),Path('+repr(str(state))+'),'+str(uid)+',6)\ntime.sleep(30)\n')
+conf=transport/'sshd.conf'
+conf.write_text(f'''Port {serverport}
+ListenAddress 127.0.0.1
+HostKey {transport/'host'}
+PidFile {transport/'sshd.pid'}
+AuthorizedKeysFile {auth}
+AllowUsers root
+PermitRootLogin prohibit-password
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+UsePAM no
+StrictModes yes
+AllowTcpForwarding no
+AllowAgentForwarding no
+X11Forwarding no
+PermitTTY no
+ForceCommand /usr/bin/env GITHUB_ACTIONS=true ACL_GUARD_FIXTURE=true /usr/bin/python3 -I -B {worker}
+LogLevel VERBOSE
+''')
+key=(transport/'host.pub').read_text().split();known=transport/'known_hosts';known.write_text('[127.0.0.1]:'+str(proxyport)+' '+key[0]+' '+key[1]+'\n')
+Path('/run/sshd').mkdir(exist_ok=True)
+log=(transport/'sshd.log').open('wb');daemon=subprocess.Popen(['/usr/sbin/sshd','-D','-e','-f',str(conf)],stdout=log,stderr=log)
+reset=threading.Event();closed=threading.Event();proxy_errors=[]
+def relay():
+    sockets=[]
+    try:
+        client,_=proxy.accept();backend=socket.create_connection(('127.0.0.1',serverport),timeout=3);sockets=[client,backend]
+        while not reset.is_set():
+            ready,_,_=select.select(sockets,[],[],.05)
+            for sock in ready:
+                data=sock.recv(65536)
+                if not data:return
+                (backend if sock is client else client).sendall(data)
+    except BaseException as error:proxy_errors.append(str(error))
+    finally:
+        for sock in sockets:
+            if reset.is_set():sock.setsockopt(socket.SOL_SOCKET,socket.SO_LINGER,struct.pack('ii',1,0))
+            sock.close()
+        proxy.close();closed.set()
+try:
+    for i in range(100):
+        assert daemon.poll() is None,'fixture sshd exited'
+        try:
+            with socket.create_connection(('127.0.0.1',serverport),timeout=.1):break
+        except OSError:time.sleep(.05)
+    else:raise AssertionError('fixture sshd startup timeout')
+    threading.Thread(target=relay,daemon=True).start()
+    ssh=subprocess.Popen(['ssh','-T','-p',str(proxyport),'-o','BatchMode=yes','-o','ConnectionAttempts=1','-o','ConnectTimeout=5','-o','StrictHostKeyChecking=yes','-o','UserKnownHostsFile='+str(known),'-o','IdentitiesOnly=yes','-i',str(transport/'client'),'root@127.0.0.1','ignored-by-fixed-fixture-command'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+    assert select.select([ssh.stdout],[],[],10)[0],'SSH launcher did not respond'
+    line=ssh.stdout.readline()
+    assert line,'SSH root fixture denied: '+ssh.stderr.read()
+    guardian_pid=json.loads(line)['guardianPid'];wait(state,'GRANTED')
+    reset.set();assert closed.wait(3),'TCP reset relay did not close'
+    stdout,stderr=ssh.communicate(timeout=6)
+    assert ssh.returncode==255 and not proxy_errors,(ssh.returncode,stderr,proxy_errors)
+    os.kill(guardian_pid,0);wait(state,'ROLLED_BACK');unchanged(base,state)
+    assert 'reset' in stderr.lower() or 'closed' in stderr.lower(),stderr
+    checks.append('real-OpenSSH-TCP-reset-detached-root-guardian-survives-and-restores-exact-ACL')
+    (transport/'client-result.json').write_text(json.dumps({'sshExit':ssh.returncode,'stderr':stderr,'tcpReset':True,'guardianSurvived':True,'realPAMSessionCovered':False}))
+finally:
+    reset.set();daemon.terminate();daemon.wait(timeout=5);log.close()
+
+output={'state':'PASS','scope':'DISPOSABLE_REAL_ROOT_ACL_PROCESS_SESSIONS','sourceSha':os.environ.get('GITHUB_SHA'),'checks':checks,'productionInstalled':False,'productionACLChanged':False,'realSSHTransportTested':True,'realTCPResetTested':True,'realPAMSessionCovered':False,'realSessionSIGHUPTested':True,'powerLossOrGuardianSIGKILLCovered':False,'allFixtureEvidenceRetained':True}
 E=CODE.parent.parent/'integration-evidence';E.mkdir(exist_ok=True);(E/'acl-guard.json').write_text(json.dumps(output,indent=2));print(json.dumps(output))
