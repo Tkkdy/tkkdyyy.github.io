@@ -1,0 +1,49 @@
+{
+  "name": "Isolated ACL guardian validation",
+  "on": {
+    "push": {
+      "branches": [
+        "codex/acl-guard-recovery"
+      ],
+      "paths": [
+        "ops/deploy/acl_guard.py",
+        "ops/deploy/integration_acl_guard_linux.py",
+        ".github/workflows/acl-guard-validation.yml"
+      ]
+    }
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "concurrency": {
+    "group": "isolated-acl-guard-${{ github.ref }}",
+    "cancel-in-progress": false
+  },
+  "jobs": {
+    "guardian": {
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 8,
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "persist-credentials": false
+          }
+        },
+        {
+          "run": "sudo apt-get update\nsudo apt-get install --no-install-recommends -y acl\nsudo env GITHUB_ACTIONS=true ACL_GUARD_FIXTURE=true GITHUB_SHA=\"$GITHUB_SHA\" python3 -I -B ops/deploy/integration_acl_guard_linux.py"
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "if": "always()",
+          "with": {
+            "name": "acl-guard-evidence",
+            "path": "integration-evidence/acl-guard.json",
+            "retention-days": 7
+          }
+        }
+      ]
+    }
+  }
+}
