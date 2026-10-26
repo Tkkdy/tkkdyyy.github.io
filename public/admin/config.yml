@@ -1,8 +1,12 @@
 backend:
   name: github
   repo: Tkkdy/tkkdyyy.github.io
-  branch: main
-  auth_methods: [token]
+  branch: codex/admin-not-configured
+  auth_methods: [oauth]
+
+# Empty optional dates/URLs must be absent, not empty strings (Astro schema).
+output:
+  omit_empty_optional_fields: true
 
 media_folder: public/uploads
 public_folder: /tkkdyyy.github.io/uploads

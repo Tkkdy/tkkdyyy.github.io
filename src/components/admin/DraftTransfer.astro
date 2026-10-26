@@ -1,0 +1,49 @@
+---
+const base = import.meta.env.BASE_URL;
+---
+<div class="draft-transfer" data-draft-transfer data-base={base}>
+  <button type="button" class="secondary-action" data-draft-open>草稿迁移</button>
+  <dialog class="draft-transfer-dialog" data-draft-dialog>
+    <form method="dialog"><h2>迁移本地草稿</h2><button type="submit" aria-label="关闭草稿迁移">关闭</button></form>
+    <p>导出当前浏览器保存的草稿，再到另一后台导入。正文和本地图片会保留；导入时创建新副本。</p>
+    <p>草稿文件可能包含私人内容，请妥善保存。</p>
+    <div class="draft-transfer-actions">
+      <button type="button" class="secondary-action" data-draft-export>导出草稿</button>
+      <label class="secondary-action">导入草稿<input type="file" accept="application/json,.json" data-draft-import hidden /></label>
+    </div>
+    <p data-draft-status role="status" aria-live="polite"></p>
+    <ul data-draft-links></ul>
+  </dialog>
+</div>
+<script>
+  import { exportDrafts, importDrafts } from '../../lib/admin/draft-transfer.mjs';
+  for(const root of document.querySelectorAll<HTMLElement>('[data-draft-transfer]')){
+    const dialog=root.querySelector<HTMLDialogElement>('[data-draft-dialog]');
+    const status=root.querySelector<HTMLElement>('[data-draft-status]');
+    const setStatus=(text:string)=>{if(status)status.textContent=text;};
+    root.querySelector('[data-draft-open]')?.addEventListener('click',()=>dialog?.showModal());
+    root.querySelector('[data-draft-export]')?.addEventListener('click',()=>{
+      try{
+        if(!document.dispatchEvent(new Event('admin:flush-draft',{cancelable:true})))throw Error('请先解决当前草稿的保存问题。');
+        const {bundle,skipped}=exportDrafts(localStorage);
+        if(!bundle.drafts.length)throw Error(skipped.length?'未能导出：现有草稿格式有误，请保留当前浏览器数据。':'当前浏览器没有已保存的草稿。');
+        const blob=new Blob([JSON.stringify(bundle,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+        a.href=url;a.download=`editorial-drafts-${new Date().toISOString().slice(0,10)}.json`;a.click();window.setTimeout(()=>URL.revokeObjectURL(url),1000);
+        setStatus(`已导出 ${bundle.drafts.length} 项草稿。${skipped.length?`另有 ${skipped.length} 项格式有误未导出，请保留原浏览器数据。`:''}`);
+      }catch(error){setStatus(error instanceof Error?error.message:'导出失败，请保留原浏览器数据。');}
+    });
+    root.querySelector('[data-draft-import]')?.addEventListener('change',async(event)=>{
+      const input=event.target as HTMLInputElement,file=input.files?.[0];if(!file)return;
+      try{
+        if(file.size>20_000_000)throw Error('草稿包超过20MB。');
+        const drafts=importDrafts(await file.text(),localStorage),list=root.querySelector('[data-draft-links]');list?.replaceChildren();
+        for(const draft of drafts){const li=document.createElement('li'),a=document.createElement('a');a.textContent=`继续编辑：${draft.title}`;a.href=`${root.dataset.base}admin/stories/new/?draft=${encodeURIComponent(draft.id)}`;li.append(a);list?.append(li);}
+        setStatus(`已导入 ${drafts.length} 项新副本，原有草稿保持不变。`);
+      }catch(error){setStatus(error instanceof Error?error.message:'导入失败。');}
+      finally{input.value='';}
+    });
+  }
+</script>
+<style>
+  .draft-transfer{margin-left:auto}.draft-transfer-dialog{width:min(600px,90vw);padding:24px;border:1px solid #ddd8ce;border-radius:10px;color:#302e2a;background:#faf9f6}.draft-transfer-dialog::backdrop{background:#2228}.draft-transfer-dialog form{display:flex;align-items:center;justify-content:space-between;gap:20px}.draft-transfer-dialog h2{font-size:18px}.draft-transfer-dialog p{line-height:1.7}.draft-transfer-actions{display:flex;gap:12px;align-items:center}.draft-transfer-actions label{cursor:pointer}.draft-transfer-dialog li{margin:10px 0}.draft-transfer-dialog button{cursor:pointer}
+</style>

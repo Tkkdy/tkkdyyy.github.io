@@ -1,3 +1,4 @@
+import { rememberProposal } from './proposal-history.mjs';
 import { Editor, Node, mergeAttributes, type JSONContent } from '@tiptap/core';
 import DragHandle from '@tiptap/extension-drag-handle';
 import Image from '@tiptap/extension-image';
@@ -5,11 +6,12 @@ import Placeholder from '@tiptap/extension-placeholder';
 import StarterKit from '@tiptap/starter-kit';
 import { TextSelection } from '@tiptap/pm/state';
 import { marked } from 'marked';
+import { sanitizeAdminHtml } from './safe-preview.mjs';
 import { convertedBlockJson } from './convert-block.mjs';
 import { draftStorageKey, resolveDraftId } from './draft-storage.mjs';
 import { createPreviewPayload, PREVIEW_STORAGE_KEY } from './preview-data.mjs';
 import { serializeTipTap } from './serialize-tiptap.mjs';
-import { GITHUB_TOKEN_KEY, publishStory, waitForDeploy } from './publish-story.mjs';
+import { publishStory } from './publish-story.mjs';
 import { validateStory } from './validate-story.mjs';
 
 type TaxonomyKind = 'categories' | 'tags';
@@ -34,6 +36,7 @@ type EditorState = {
   coverAlt: string;
   publishNumber?: number;
   sourcePath: string;
+  sourceBlobSha?: string;
 };
 
 const Callout = Node.create({
@@ -80,7 +83,7 @@ function parseStoredState(value: string | null): Partial<EditorState> {
 
 function markdownToHtml(markdown: string): string {
   const result = marked.parse(markdown, { async: false, gfm: true });
-  return typeof result === 'string' && result.trim() ? result : '<p></p>';
+  return typeof result === 'string' && result.trim() ? sanitizeAdminHtml(result) : '<p></p>';
 }
 
 function countWords(text: string): number {
@@ -210,7 +213,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       Callout,
       DragHandle.configure({ render: () => dragHandle, nested: false }),
     ],
-    content: isJsonDocument(state.bodyBlocks) ? state.bodyBlocks : markdownToHtml(state.body || initial.body || ''),
+    content: markdownToHtml(isJsonDocument(state.bodyBlocks) ? serializeTipTap(state.bodyBlocks) : state.body || initial.body || ''),
     editorProps: {
       attributes: { class: 'story-prose', 'aria-label': '正文区块' },
     },
@@ -299,6 +302,11 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     Object.assign(state, nextState);
     return nextState;
   };
+
+  document.addEventListener('admin:flush-draft', (event) => {
+    window.clearTimeout(saveTimer);
+    try { persistDraft(); } catch { event.preventDefault(); showToast('草稿未能保存，导出已停止。'); }
+  });
 
   function scheduleSave() {
     if (saveLabel) saveLabel.textContent = '正在保存……';
@@ -522,6 +530,10 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     renderTaxonomy(kind);
   });
 
+  let lastPublication: Awaited<ReturnType<typeof publishStory>> | null = null;
+  const refreshButton = editorRoot.querySelector<HTMLButtonElement>('[data-refresh-deploy]');
+  const exportProposal = editorRoot.querySelector<HTMLButtonElement>('[data-export-proposal]');
+  exportProposal?.addEventListener('click',()=>{const receipt=lastPublication?.proposal?.recoveryReceipt;if(typeof receipt!=='string')return;const url=URL.createObjectURL(new Blob([JSON.stringify({schema:1,receipt})],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='editorial-studio-proposal.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
   const updatePublishStep = (step: string, statusValue: string) => {
     const item = editorRoot.querySelector(`[data-publish-step="${step}"]`);
     if (!(item instanceof HTMLElement)) return;
@@ -529,6 +541,38 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     const labels: Record<string, string> = { running: '…', success: '✓', failure: '×', triggered: '↗' };
     item.dataset.marker = labels[statusValue] || '';
   };
+
+  const refreshDeployment = async (result: Awaited<ReturnType<typeof publishStory>>) => {
+    try {
+        let expectedSha = result.commitSha;
+        if (result.proposal) {
+          const proposal = await result.github.proposalStatus(result.proposal.pullRequestNumber);
+          if (proposal.branch !== result.proposal.branch || proposal.commitSha !== result.proposal.commitSha) throw new Error('提案身份变化。');
+          if (proposal.state !== 'MERGED_ON_MAIN') {
+            const status = ({PULL_REQUEST_OPEN:'内容提案待合并，尚未部署',PULL_REQUEST_CLOSED:'内容提案已关闭，未合并',PROPOSAL_CHANGED:'提案内容已变化，需重新审查'} as Record<string,string>)[proposal.state] || '提案状态尚未核验';
+            editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：${status}`; });
+            updatePublishStep('deploy', 'triggered');
+            return;
+          }
+          expectedSha = proposal.mergedSha;
+        }
+        const report = await result.github.deploymentStatus(expectedSha);
+        const labels: Record<string, string> = {CURRENT_VERSION_VERIFIED:'公开版本与 HTTP 健康核验通过', NOT_DEPLOYED:'测试分支未部署到生产', VERSION_DIFFERS:'线上版本与本次提交不同', FAILED:'公开健康检查失败', UNKNOWN:'尚未确认'};
+        for (const target of report.targets) {
+          const row = editorRoot.querySelector(`[data-target-status="${target.target}"]`);
+          if (row) row.textContent = `${target.target === 'pages' ? 'GitHub Pages' : 'VPS'}：${labels[target.status] || '尚未确认'}${target.actualSha ? `（${target.actualSha.slice(0, 8)}）` : ''}；流水线：${({SUCCEEDED:'已成功',FAILED:'失败',PENDING:'执行中',SKIPPED:'未部署',NOT_REQUESTED:'测试分支不触发生产',UNKNOWN:'尚未确认'} as Record<string,string>)[target.pipeline?.state] || '尚未确认'}${target.pipeline?.job ? ` · ${target.pipeline.job}` : ''}${target.pipeline?.step ? ` · ${target.pipeline.step}` : ''}`;
+        }
+        updatePublishStep('deploy', report.targets.every((target: {status: string}) => target.status === 'CURRENT_VERSION_VERIFIED') ? 'success' : 'triggered');
+      } catch {
+        editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：本次状态查询失败，请刷新核验。`; });
+        updatePublishStep('deploy', 'triggered');
+      }
+  };
+  refreshButton?.addEventListener('click', async () => {
+    if (!lastPublication) return;
+    refreshButton.disabled = true;
+    try { await refreshDeployment(lastPublication); } finally { refreshButton.disabled = false; }
+  });
 
   document.querySelectorAll<HTMLButtonElement>('[data-phase-action]').forEach((button) => button.addEventListener('click', async () => {
     const action = button.getAttribute('data-phase-action');
@@ -548,6 +592,10 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       return;
     }
     if (action !== 'Publish') return;
+    lastPublication = null;
+    if (exportProposal) exportProposal.hidden = true;
+    if (refreshButton) refreshButton.hidden = true;
+    editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：尚未核验`; });
 
     if (progress instanceof HTMLElement) progress.hidden = false;
     progress?.querySelectorAll<HTMLElement>('[data-publish-step]').forEach((item) => {
@@ -571,25 +619,32 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
         throw new Error(validationErrors.join(' '));
       }
 
-      let token = localStorage.getItem(GITHUB_TOKEN_KEY) || '';
-      if (!token) {
-        token = window.prompt(
-          '首次发布需要连接 GitHub。\n\n请输入具有以下权限的 Personal Access Token：\n- Contents: Read and write\n- Actions: Read\n\nToken 只会保存在当前浏览器中，不会写入网站仓库。',
-        )?.trim() || '';
-        if (!token) throw new Error('发布需要 GitHub Token。');
-        localStorage.setItem(GITHUB_TOKEN_KEY, token);
+      const result = await publishStory({ state: nextState, onProgress: updatePublishStep });
+      if (result.proposal) {
+        try { rememberProposal(result.proposal,localStorage); } catch { showToast('提案已创建，但恢复记录未保存；请保留PR链接并导出当前提案记录。'); }
+        if (publishedUrl instanceof HTMLAnchorElement) { publishedUrl.href = result.proposal.url; publishedUrl.textContent = '查看内容提案'; publishedUrl.hidden = false; }
+        lastPublication = result;
+        if (exportProposal) exportProposal.hidden = typeof result.proposal.recoveryReceipt !== 'string';
+        if (refreshButton) { refreshButton.disabled = false; refreshButton.hidden = false; }
+        await refreshDeployment(result);
+        showToast('内容提案已创建，本地草稿保留；合并与双站部署尚未确认。');
+        return;
       }
 
-      const result = await publishStory({ state: nextState, token, onProgress: updatePublishStep });
       if (publishedUrl instanceof HTMLAnchorElement) {
         publishedUrl.href = result.publicUrl;
-        publishedUrl.hidden = false;
+        publishedUrl.hidden = result.branch !== 'main';
       }
-      showToast('内容已写入仓库，网站部署已经开始。');
-      const run = await waitForDeploy(result.github, result.commitSha, updatePublishStep);
-      showToast(run ? `发布成功：${result.publicUrl}` : `内容已写入仓库，网站部署已经开始：${result.publicUrl}`);
+      showToast(`内容已写入 ${result.branch}：${result.commitSha.slice(0, 8)}。`);
+      updatePublishStep('deploy', 'running');
+      state.sourcePath = result.sourcePath;
+      state.sourceBlobSha = result.sourceBlobSha;
+      persistDraft();
+      lastPublication = result;
+      if (refreshButton) refreshButton.hidden = false;
+      await refreshDeployment(result);
+      showToast(`内容已写入 ${result.branch}。两站结果见发布状态；版本核验不代表完整功能验收。`);
     } catch (error) {
-      if ((error as { status?: number }).status === 401) localStorage.removeItem(GITHUB_TOKEN_KEY);
       const running = progress?.querySelector<HTMLElement>('[data-status="running"]');
       if (running?.dataset.publishStep) updatePublishStep(running.dataset.publishStep, 'failure');
       showToast(error instanceof Error ? error.message : '发布失败。');
@@ -621,5 +676,23 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
 }
 
 export function initializeStoryEditors() {
-  document.querySelectorAll<HTMLElement>('.editor-workspace').forEach(initializeStoryEditor);
+  document.querySelectorAll<HTMLElement>('.editor-workspace').forEach(async root => {
+    const explicitSource = new URL(location.href).searchParams.get('source');
+    try {
+      const response = await fetch('/api/session', {credentials:'same-origin',cache:'no-store'}).catch(() => null);
+      if (response?.ok && (await response.json().catch(() => null))?.authenticated) {
+        const initial = JSON.parse(root.dataset.story || '{}');
+        const path = explicitSource || initial.sourcePath;
+        if (path) {
+          const live = await fetch('/api/story?path='+encodeURIComponent(path), {credentials:'same-origin',cache:'no-store'});
+          if (!live.ok) throw Error('当前分支内容读取失败；未载入旧副本，请返回内容列表后重试。');
+          root.dataset.story = JSON.stringify((await live.json()).story);
+        }
+      } else if (explicitSource) throw Error('请连接编辑服务后打开此内容。');
+      initializeStoryEditor(root);
+    } catch (error) {
+      const message = document.createElement('p'); message.textContent = error instanceof Error ? error.message : '内容载入失败。';
+      root.replaceChildren(message);
+    }
+  });
 }

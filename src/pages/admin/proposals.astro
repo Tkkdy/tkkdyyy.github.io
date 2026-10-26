@@ -1,0 +1,19 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import {getEditorialStories} from '../../lib/admin/stories';
+const stories=await getEditorialStories();
+---
+<AdminLayout title="历史提案" stories={stories}>
+ <section class="proposal-history" data-proposal-history>
+  <h1>历史提案与部署追踪</h1>
+  <p>重新登录后核验已有提案。这里不会保存正文、创建 PR、合并或部署。</p>
+  <p data-history-note role="status">读取本地签名元数据……</p>
+  <label>已保存提案 <select data-history-select><option value="">请选择</option></select></label>
+  <div class="history-actions"><button data-history-refresh disabled>核验提案与两站状态</button><button data-history-export disabled>导出记录</button><button data-history-import>导入记录</button><input data-history-file type="file" accept="application/json,.json" hidden /></div>
+  <a data-history-pr hidden target="_blank" rel="noopener noreferrer">查看已核验 PR</a>
+  <div data-history-targets aria-live="polite"></div>
+  <p>版本标记及 HTTP 健康核验不代表完整功能验收。导入文件仅为待核验数据，签名不是登录凭据。</p>
+ </section>
+</AdminLayout>
+<style>.proposal-history{padding:32px;max-width:900px}.history-actions{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}.proposal-history button,.proposal-history select{padding:9px;border:1px solid #ccc;border-radius:6px;background:white;color:#222}.proposal-history a{display:inline-block;margin:12px 0}</style>
+<script>import '../../lib/admin/proposal-history-client.mjs';</script>

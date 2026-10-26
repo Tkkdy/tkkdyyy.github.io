@@ -1,6 +1,8 @@
 ---
 import '../styles/admin.css';
 import AdminIcon from '../components/admin/AdminIcon.astro';
+import DraftTransfer from '../components/admin/DraftTransfer.astro';
+import AdminAccess from '../components/admin/AdminAccess.astro';
 import AdminSidebar from '../components/admin/AdminSidebar.astro';
 import type { EditorialStory } from '../lib/admin/stories';
 
@@ -37,6 +39,8 @@ const { title, section = '内容', active = 'stories', stories, layout = 'list' 
             <span>{section}</span>
             {title !== section && <><AdminIcon name="chevron" size={14} /><strong>{title}</strong></>}
           </div>
+          <DraftTransfer />
+          <AdminAccess />
           {layout === 'editor' && (
             <>
               <div class="editor-save-state"><AdminIcon name="check" size={15} /><span>已保存到本地</span></div>

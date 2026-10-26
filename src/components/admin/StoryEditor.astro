@@ -105,14 +105,19 @@ const insertItems = [
       <p>建议尺寸：1200 × 630</p>
     </div>
     <a class="sveltia-fallback" href={`${base}admin/sveltia.html`}>打开 Sveltia 备用后台 <AdminIcon name="external" size={14} /></a>
+    <a class="sveltia-fallback" href={`${base}admin/proposals/`}>历史提案与部署追踪</a>
     <div class="publishing-card publish-progress" data-publish-progress hidden>
       <h2>发布进度</h2>
       <ol>
         <li data-publish-step="validate">内容校验</li>
         <li data-publish-step="save">保存草稿</li>
         <li data-publish-step="git">写入仓库</li>
-        <li data-publish-step="deploy">部署网站</li>
+        <li data-publish-step="deploy">核验两站公开版本</li>
       </ol>
+      <p data-target-status="pages">GitHub Pages：尚未核验</p>
+      <p data-target-status="vps">VPS：尚未核验</p>
+      <button type="button" class="secondary-action" data-export-proposal hidden>导出当前提案记录</button>
+      <button type="button" class="secondary-action" data-refresh-deploy hidden>刷新两站状态</button>
       <a data-published-url hidden target="_blank" rel="noopener noreferrer">查看内容 ↗</a>
     </div>
   </aside>
