@@ -49,6 +49,7 @@ def exclusive(path,raw,mode=0o644,uid=0,gid=0):
 
 def perform(raw,approved_sha,apply=False,prefix=None,service_check=None):
     require(platform.system()=='Linux' and os.getuid()==0,'Linux root required; no sudo is invoked by this tool')
+    import grp, pwd
     if prefix is not None:
         require(os.environ.get('GITHUB_ACTIONS')=='true' and os.environ.get('ISOLATED_RECEIVER_INSTALL')=='true' and str(prefix).startswith('/var/lib/dual-install-ci-'),'only disposable CI can remap installation paths')
         prefix=Path(prefix).resolve()
@@ -63,7 +64,6 @@ def perform(raw,approved_sha,apply=False,prefix=None,service_check=None):
         try:pwd.getpwnam(name)
         except KeyError:pass
         else:raise ValueError('pre-existing deployment account')
-    import grp, pwd
     try:grp.getgrnam(ACCOUNT)
     except KeyError:pass
     else:raise ValueError('pre-existing deployment group')

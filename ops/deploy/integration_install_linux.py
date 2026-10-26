@@ -44,6 +44,9 @@ try:
     raise AssertionError('unknown ACL accepted')
 except ValueError as error:assert 'unreviewed existing extended ACL' in str(error)
 install.command('/usr/bin/setfacl','-b',str(root));checks.append('pre-existing-named-ACL-refused-before-mutation')
+# Preserve a pristine independent tree for a deliberate post-ACL failure.
+fault=P(str(T)+'-fault');shutil.copytree(T,fault,symlinks=True)
+for path in (fault/str(install.ROOT).lstrip('/'),fault/str(install.ROOT+'/releases').lstrip('/'),fault/str(install.ROOT+'/records').lstrip('/'),fault/str(install.ROOT+'/'+install.CURRENT).lstrip('/')):os.chown(path,1001,1001)
 result=install.perform(raw,digest,apply=True,prefix=T,service_check=service)
 assert result['stage']=='INSTALLED_DISABLED_PASS' and result['applied'] and not result['keyInstalled'] and not result['receiverEnabled'];checks.append('actual-root-disabled-account-modules-policy-lock-and-ACL-install')
 assert (mapped('/var/lib/preview-deploy')/'.ssh/authorized_keys').read_bytes()==b''
@@ -59,6 +62,24 @@ for path in (root,root/'releases',root/'records'):
     value=install.command('/usr/bin/getfacl','-c','-p',str(path));assert 'user:'+str(result['deploymentUid'])+':' not in value
 assert os.readlink(root/'current')==install.CURRENT and (mapped('/var/lib/preview-deploy')/'.ssh/authorized_keys').read_bytes()==b''
 checks.append('actual-exact-ACL-restore-with-locked-account-empty-key-and-all-files-retained')
+# Force an actual negative-access gate failure AFTER named ACLs were applied.
+# A second disposable UID avoids deleting/reusing the first installation.
+saved_account=install.ACCOUNT;install.ACCOUNT='preview-deploy-fault'
+(fault/'etc/letsencrypt').chmod(0o777)
+try:
+    try:
+        install.perform(raw,digest,apply=True,prefix=fault,service_check=service)
+        raise AssertionError('post-ACL access failure was not detected')
+    except ValueError as error:assert 'unexpected deployment write access' in str(error),str(error)
+finally:install.ACCOUNT=saved_account
+failure=json.loads((fault/plan['backupDirectory'].lstrip('/')/'failure.json').read_text())
+assert failure['originalACLsRestored'] is True
+for path in (fault/install.ROOT.lstrip('/'),fault/(install.ROOT+'/releases').lstrip('/'),fault/(install.ROOT+'/records').lstrip('/')):
+    acl=install.command('/usr/bin/getfacl','-c','-p',str(path));assert {line for line in acl.splitlines() if line}=={'user::rwx','group::r-x','other::r-x'}
+assert (fault/'var/lib/preview-deploy/.ssh/authorized_keys').read_bytes()==b''
+assert json.loads((fault/'etc/preview-deploy/policy.json').read_bytes())['enabled'] is False
+assert os.readlink(fault/install.ROOT.lstrip('/')/'current')==install.CURRENT
+checks.append('actual-post-ACL-failure-automatically-restores-exact-ACL-keeps-disabled-files-and-account')
 report={'state':'PASS','scope':'DISPOSABLE_REAL_ROOT_ACCOUNT_ACL_INSTALL_SYNTHETIC_SITE_CONFIG_SERVICES','checks':checks,'productionInstalled':False,'productionACLValidated':False,'realSystemctlValidated':False,'publicSiteChanged':False,'allTestArtifactsRetained':True,'testRoot':str(T)}
 E=CODE.parent.parent/'integration-evidence';E.mkdir(exist_ok=True);(E/'disabled-install.json').write_text(json.dumps(report,indent=2));print(json.dumps(report))
 fixture.doCleanups()
