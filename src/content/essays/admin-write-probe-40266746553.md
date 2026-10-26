@@ -11,3 +11,4 @@ coverAlt: Synthetic isolated upload, test branch only
 ---
 
 Synthetic isolated test content. Never deployed to production.
+Concurrent synthetic writer change. Test branch only.
