@@ -94,6 +94,14 @@
     "adminMigrationIncluded": false,
     "localOnly": true,
     "productionAuthorized": false,
-    "patchFileBytePolicy": "SHA256 of canonical Git blob bytes, independent of checkout CRLF/LF"
+    "patchFileBytePolicy": "SHA256 of canonical Git blob bytes, independent of checkout CRLF/LF",
+    "isolatedCI": {
+      "workflow": ".github/workflows/minimal-dual-target-validation.yml",
+      "workflowSha256": "ab60e607224582a4b8b5b6c1194cc3cec43306cf936335353292ab1db3c501de",
+      "branch": "codex/dual-target-review",
+      "addedCheck": "real generated CI ZIP with client SSH boundary intercepted",
+      "deploymentJobs": false,
+      "productionAuthorized": false
+    }
   }
 }

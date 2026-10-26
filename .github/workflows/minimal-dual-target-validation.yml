@@ -4,7 +4,8 @@
   "on": {
     "push": {
       "branches": [
-        "codex/dual-site-minimal"
+        "codex/dual-site-minimal",
+        "codex/dual-target-review"
       ],
       "paths": [
         "src/**",
@@ -82,6 +83,14 @@
           "name": "Validate exact VPS archive and deployment identity",
           "if": "matrix.target == 'vps'",
           "run": "python -B ops/deploy/release_bundle.py --source . --output \"$RUNNER_TEMP/minimal-vps.zip\" --site \"$SITE_URL\" --source-sha \"$SOURCE_SHA\" --workflow-sha \"$SOURCE_SHA\" --run-id \"$GITHUB_RUN_ID\" --attempt \"$GITHUB_RUN_ATTEMPT\""
+        },
+        {
+          "name": "Check runner-bound upload identity without opening SSH",
+          "if": "matrix.target == 'vps'",
+          "env": {
+            "VPS_BUNDLE_FILE": "${{ runner.temp }}/minimal-vps.zip"
+          },
+          "run": "python -B -m unittest discover -s ops/deploy -p test_publish_client.py -v"
         },
         {
           "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
