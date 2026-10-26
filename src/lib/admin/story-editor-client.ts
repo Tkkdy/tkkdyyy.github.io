@@ -612,7 +612,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       if (result.proposal) {
         if (publishedUrl instanceof HTMLAnchorElement) { publishedUrl.href = result.proposal.url; publishedUrl.textContent = '查看内容提案'; publishedUrl.hidden = false; }
         lastPublication = result;
-        if (refreshButton) refreshButton.disabled = false;
+        if (refreshButton) { refreshButton.disabled = false; refreshButton.hidden = false; }
         await refreshDeployment(result);
         showToast('内容提案已创建，本地草稿保留；合并与双站部署尚未确认。');
         return;
