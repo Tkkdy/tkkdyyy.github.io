@@ -19,6 +19,12 @@ export function createGitHubClient({owner,repo,branch,csrf}){
   async authenticate(){return request(API_ROOT+'/user');},
   async getHead(){return (await request(`${API_ROOT}/repos/${owner}/${repo}/git/ref/heads/${encodeURIComponent(branch)}`)).object.sha;},
   async readFile(path,ref=branch){try{const f=await request(`${API_ROOT}/repos/${owner}/${repo}/contents/${encodeURIComponent(path).replace(/%2F/g,'/')}?ref=${encodeURIComponent(ref)}`);if(f.type!=='file'||!f.content)throw Error('内容文件无法读取。');return{path,sha:f.sha,content:base64ToText(f.content)};}catch(e){if(e.status===404)return null;throw e;}},
+  async proposalStatus(number){
+   if(!Number.isSafeInteger(number)||number<1)throw Error('提案编号无效。');
+   const result=await request('/api/proposals/'+number);
+   if(result.pullRequestNumber!==number||!['PULL_REQUEST_OPEN','PULL_REQUEST_CLOSED','PROPOSAL_CHANGED','MERGED_ON_MAIN'].includes(result.state)||result.deploymentConfirmed!==false||(result.state==='MERGED_ON_MAIN'&&(!/^[a-f0-9]{40}$/.test(result.mergedSha||'')||result.merged!==true)))throw Error('提案状态尚未核实。');
+   return result;
+  },
   async proposeFiles({requestId=crypto.randomUUID(),expectedHeadOid,message,files,deletePaths=[]}){
    if(!/^[a-f0-9]{40}$/.test(expectedHeadOid||''))throw Error('内容基准版本失效。');
    const proposal=await request('/api/proposals',{method:'POST',body:JSON.stringify({requestId,expectedHeadOid,message:{headline:message},fileChanges:{additions:files.map(f=>({path:f.path,contents:f.contentBase64})),deletions:deletePaths.map(path=>({path}))}})});

@@ -540,13 +540,20 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
   };
 
   const refreshDeployment = async (result: Awaited<ReturnType<typeof publishStory>>) => {
-    if (result.proposal) {
-      editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：内容提案已创建，合并与部署尚未核验；请打开提案查看。`; });
-      updatePublishStep('deploy', 'triggered');
-      return;
-    }
     try {
-        const report = await result.github.deploymentStatus(result.commitSha);
+        let expectedSha = result.commitSha;
+        if (result.proposal) {
+          const proposal = await result.github.proposalStatus(result.proposal.pullRequestNumber);
+          if (proposal.branch !== result.proposal.branch || proposal.commitSha !== result.proposal.commitSha) throw new Error('提案身份变化。');
+          if (proposal.state !== 'MERGED_ON_MAIN') {
+            const status = ({PULL_REQUEST_OPEN:'内容提案待合并，尚未部署',PULL_REQUEST_CLOSED:'内容提案已关闭，未合并',PROPOSAL_CHANGED:'提案内容已变化，需重新审查'} as Record<string,string>)[proposal.state] || '提案状态尚未核验';
+            editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：${status}`; });
+            updatePublishStep('deploy', 'triggered');
+            return;
+          }
+          expectedSha = proposal.mergedSha;
+        }
+        const report = await result.github.deploymentStatus(expectedSha);
         const labels: Record<string, string> = {CURRENT_VERSION_VERIFIED:'公开版本与 HTTP 健康核验通过', NOT_DEPLOYED:'测试分支未部署到生产', VERSION_DIFFERS:'线上版本与本次提交不同', FAILED:'公开健康检查失败', UNKNOWN:'尚未确认'};
         for (const target of report.targets) {
           const row = editorRoot.querySelector(`[data-target-status="${target.target}"]`);

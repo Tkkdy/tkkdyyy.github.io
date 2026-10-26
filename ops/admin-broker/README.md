@@ -44,3 +44,5 @@ Studio 从 main 的准确 SHA 读取内容；发布改为受会话/Origin/CSRF �
 当前权限不足/尚未验证：真实 GitHub App 授权仍暂缓；PR 模式需要另行审查 Pull requests:write（以及既有 Contents:write）。未调用真实 PR API、未进行浏览器闭环、未验证 branch protection 拒绝。没有自动合并或合并后状态追踪；当前“刷新”不会假装知道 PR 已合并。Sveltia 在此模式的直接写 mutation 会被拒绝，其原生 editorial workflow 适配尚缺，不能据此启用生产 main 保护或宣称完整编辑体验已兼容。不得以允许 main mutation 作为补救。
 
 定向测试：`node --test tests/admin-content-proposals.test.mjs tests/admin-github-client.test.mjs tests/admin-broker-auth.test.mjs`。上游使用合成 GitHub 响应；测试通过不证明真实 OAuth、权限或线上内容发布。
+
+PR状态增量：当前会话创建的提案可以只读刷新。仅在GitHub明确merged=true、最终merge_commit_sha有效且为当前main祖先时，才用该最终SHA分别查询两站版本和流水线；不把PR head或未合并测试merge SHA用于上线判断。提案改动、关闭、未知身份均停止或明确显示未合并。没有自动合并功能。合并后追踪已通过定向测试和本地真实Edge/合成上游验证；真实App/PR与Sveltia PR保存仍未完成。

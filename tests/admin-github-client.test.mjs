@@ -29,3 +29,10 @@ test('browser PR client uses only session CSRF, verifies proposal identity and n
  globalThis.fetch=async()=>Response.json({...proposal,url:'https://evil.example/'});
  await assert.rejects(client.proposeFiles({requestId,expectedHeadOid:sha,message:'Propose',files:[]}),/尚未核实/);
 });
+
+test('browser reads session PR status and rejects a malformed merged result',async t=>{
+ const original=globalThis.fetch;t.after(()=>globalThis.fetch=original);const client=createGitHubClient({owner:'Tkkdy',repo:'tkkdyyy.github.io',branch:'main',csrf:'CSRF'});let called;
+ globalThis.fetch=async(url,options)=>{called={url,options};return Response.json({pullRequestNumber:17,state:'MERGED_ON_MAIN',merged:true,mergedSha:'c'.repeat(40),deploymentConfirmed:false});};
+ assert.equal((await client.proposalStatus(17)).mergedSha,'c'.repeat(40));assert.equal(called.url,'/api/proposals/17');assert.equal(called.options.credentials,'same-origin');
+ globalThis.fetch=async()=>Response.json({pullRequestNumber:17,state:'MERGED_ON_MAIN',merged:true,mergedSha:'main',deploymentConfirmed:false});await assert.rejects(client.proposalStatus(17),/尚未核实/);await assert.rejects(client.proposalStatus('../1'),/编号/);
+});

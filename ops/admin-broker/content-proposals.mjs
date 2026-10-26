@@ -6,7 +6,7 @@ const SHA=/^[a-f0-9]{40}$/,UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-
 const MUTATION='mutation($input:CreateCommitOnBranchInput!){createCommitOnBranch(input:$input){commit{oid}}}';
 
 export function createContentProposalService({github,enabled=false,clock=()=>Date.now()}){
- const requests=new Map(),prefix='/repos/'+REPOSITORY;
+ const requests=new Map(),proposals=new Map(),prefix='/repos/'+REPOSITORY;
  async function submit(request){
   requirePolicy(enabled===true,'内容PR模式尚未启用。');
   requirePolicy(request&&typeof request==='object'&&!Array.isArray(request)&&Object.keys(request).every(k=>['requestId','expectedHeadOid','message','fileChanges'].includes(k)),'提案参数不允许。');
@@ -55,11 +55,27 @@ export function createContentProposalService({github,enabled=false,clock=()=>Dat
    const pr=await github(prefix+'/pulls',{method:'POST',body:JSON.stringify({title:commit.message.headline,head:branch,base:'main',body:'Editorial content proposal. Await repository checks and merge; neither site deployment is confirmed.',draft:false,maintainer_can_modify:false})});
    requirePolicy(Number.isSafeInteger(pr.number)&&pr.number>0&&pr.state==='open'&&pr.merged!==true&&pr.head?.ref===branch&&pr.head.sha===commitSha&&pr.head.repo?.id===REPO_ID&&pr.base?.ref==='main'&&pr.base.sha===commit.expectedHeadOid&&pr.base.repo?.id===REPO_ID,'PR身份或基准不符。');
    const url='https://github.com/'+REPOSITORY+'/pull/'+pr.number;requirePolicy(pr.html_url===url,'PR地址不符。');
-   return {state:'PULL_REQUEST_OPEN',branch,baseSha:commit.expectedHeadOid,commitSha,pullRequestNumber:pr.number,url,merged:false,deploymentConfirmed:false};
+   const proposal=Object.freeze({state:'PULL_REQUEST_OPEN',branch,baseSha:commit.expectedHeadOid,commitSha,pullRequestNumber:pr.number,url,merged:false,deploymentConfirmed:false});proposals.set(pr.number,proposal);return proposal;
   }catch(error){
    // Do not replay a timed-out write or delete an uncertain branch/commit/PR.
    throw Object.assign(Error('内容提案未确认完成，停止于'+phase+'；未执行main写入或合并。'),{status:error.status===403?403:502,code:'PROPOSAL_STOPPED_NO_RETRY',phase,branch,commitSha,automaticRetry:false});
   }
  }
- return {submit};
+ async function inspect(number){
+  requirePolicy(enabled===true&&Number.isSafeInteger(number)&&number>0&&proposals.has(number),'当前会话没有此内容提案。');
+  const original=proposals.get(number),pr=await github(prefix+'/pulls/'+number);
+  requirePolicy(pr.number===number&&pr.html_url===original.url&&pr.base?.ref==='main'&&pr.base.repo?.id===REPO_ID&&pr.head?.ref===original.branch&&pr.head.repo?.id===REPO_ID,'PR身份变化。');
+  const result={...original,merged:false,mergedSha:null,mainShaObserved:null,deploymentConfirmed:false,scope:'READ_ONLY_PR_AND_MAIN_ANCESTRY'};
+  if(pr.head.sha!==original.commitSha)return {...result,state:'PROPOSAL_CHANGED'};
+  requirePolicy(['open','closed'].includes(pr.state)&&typeof pr.merged==='boolean','PR状态无效。');
+  if(!pr.merged)return {...result,state:pr.state==='closed'?'PULL_REQUEST_CLOSED':'PULL_REQUEST_OPEN'};
+  // Before merge GitHub may expose a synthetic test merge SHA. Never use it without merged=true.
+  requirePolicy(pr.state==='closed'&&SHA.test(pr.merge_commit_sha||''),'已合并提交无效。');
+  const main=await github(prefix+'/git/ref/heads/main'),mainSha=main.object?.sha;
+  requirePolicy(main.object?.type==='commit'&&SHA.test(mainSha||''),'main版本无效。');
+  const ancestry=await github(prefix+'/compare/'+pr.merge_commit_sha+'...'+mainSha);
+  requirePolicy(['identical','ahead'].includes(ancestry.status)&&ancestry.behind_by===0,'合并版本未在当前main历史内。');
+  return {...result,state:'MERGED_ON_MAIN',merged:true,mergedSha:pr.merge_commit_sha,mainShaObserved:mainSha};
+ }
+ return {submit,inspect};
 }

@@ -66,8 +66,8 @@ test('untrusted PR URL or head cannot be displayed as success',async()=>{
  await assert.rejects(createContentProposalService({...f,enabled:true}).submit(request()),e=>e.phase==='CREATE_PULL_REQUEST');
 });
 import {createBroker} from '../ops/admin-broker/core.mjs';
-function brokerFixture(mode='pull-request'){
- const upstream=fixture();
+function brokerFixture(mode='pull-request',override=()=>undefined){
+ const upstream=fixture(override);
  const config={origin:'https://studio.example',repository:repo,repositoryId:rid,ownerId:144055705,branch:mode==='pull-request'?'main':'codex/test',allowMain:false,clientId:'SYNTHETIC_CLIENT',clientSecret:'SYNTHETIC_SECRET',publicationMode:mode};
  const broker=createBroker(config,{fetchImpl:async(url,options)=>{
   if(url.endsWith('/access_token'))return Response.json({access_token:'SYNTHETIC_SERVER_TOKEN',expires_in:1800,token_type:'bearer'});
@@ -102,4 +102,45 @@ test('legacy test-branch mode does not enable PR permissions and unsafe mode com
  const cfg={origin:'https://studio.example',repository:repo,repositoryId:rid,ownerId:144055705,branch:'main',clientId:'synthetic',clientSecret:'synthetic'};
  assert.throws(()=>createBroker({...cfg,publicationMode:'pull-request',allowMain:true}),/禁止直接/);
  assert.throws(()=>createBroker({...cfg,publicationMode:'unknown'}),/模式/);
+});
+
+function inspectedPr(patch={}){return {number:17,state:'open',merged:false,head:{ref:'codex/editorial-proposal-'+id,sha:next,repo:{id:rid}},base:{ref:'main',sha:base,repo:{id:rid}},html_url:'https://github.com/'+repo+'/pull/17',...patch};}
+test('open test-merge SHA and closed-unmerged proposal never become a deployment SHA',async()=>{
+ for(const closed of [false,true]){
+  const f=fixture(({url})=>url.endsWith('/pulls/17')?inspectedPr({state:closed?'closed':'open',merge_commit_sha:'c'.repeat(40)}):undefined),service=createContentProposalService({...f,enabled:true});
+  await service.submit(request());const before=f.calls.length;const status=await service.inspect(17);
+  assert.equal(status.state,closed?'PULL_REQUEST_CLOSED':'PULL_REQUEST_OPEN');assert.equal(status.mergedSha,null);assert.equal(status.deploymentConfirmed,false);
+  assert.deepEqual(f.calls.slice(before).map(c=>c.url),['/repos/'+repo+'/pulls/17']);
+ }
+});
+test('merge, squash and rebase final main SHA is tracked instead of PR head or synthetic pre-merge SHA',async()=>{
+ for(const final of ['c','d','e']){
+  const merged=final.repeat(40),latest='f'.repeat(40);let inspect=false;
+  const f=fixture(({url})=>{
+   if(!inspect)return;
+   if(url.endsWith('/pulls/17'))return inspectedPr({state:'closed',merged:true,merge_commit_sha:merged});
+   if(url.endsWith('/heads/main'))return {object:{type:'commit',sha:latest}};
+   if(url.endsWith('/compare/'+merged+'...'+latest))return {status:'ahead',behind_by:0};
+  }),service=createContentProposalService({...f,enabled:true});await service.submit(request());inspect=true;const before=f.calls.length,status=await service.inspect(17);
+  assert.equal(status.state,'MERGED_ON_MAIN');assert.equal(status.mergedSha,merged);assert.notEqual(status.mergedSha,next);assert.equal(status.mainShaObserved,latest);assert.equal(status.deploymentConfirmed,false);assert(f.calls.slice(before).every(c=>c.method==='GET'));
+ }
+});
+test('unknown PR, edited head, transferred PR identity and merged SHA outside main fail safely',async()=>{
+ const edited=fixture(({url})=>url.endsWith('/pulls/17')?inspectedPr({head:{ref:'codex/editorial-proposal-'+id,sha:'c'.repeat(40),repo:{id:rid}}}):undefined),service=createContentProposalService({...edited,enabled:true});
+ await assert.rejects(service.inspect(17),/没有此/);assert.equal(edited.calls.length,0);await service.submit(request());assert.equal((await service.inspect(17)).state,'PROPOSAL_CHANGED');
+ for(const variant of ['repo','malformed','diverged']){
+  let inspect=false;const f=fixture(({url})=>{
+   if(!inspect)return;
+   if(url.endsWith('/pulls/17'))return inspectedPr(variant==='repo'?{base:{ref:'main',repo:{id:1}}}:{state:'closed',merged:true,merge_commit_sha:variant==='malformed'?'main':'c'.repeat(40)});
+   if(url.includes('/compare/'))return {status:'diverged',behind_by:1};
+  }),s=createContentProposalService({...f,enabled:true});await s.submit(request());inspect=true;await assert.rejects(s.inspect(17));
+ }
+});
+test('HTTP proposal status is session-bound and only reads a proposal created by this session',async()=>{
+ const f=brokerFixture('pull-request',({url})=>url.endsWith('/pulls/17')?inspectedPr():undefined),auth=await f.login();
+ assert.equal((await f.broker.handle(f.req('/api/proposals/17'))).status,401);
+ assert.equal((await f.broker.handle(f.req('/api/proposals/17',{headers:{cookie:auth.cookie}}))).status,403);
+ const created=await f.broker.handle(f.req('/api/proposals',{method:'POST',headers:auth.headers,body:JSON.stringify(request())}));assert.equal(created.status,200);
+ const status=await f.broker.handle(f.req('/api/proposals/17',{headers:{cookie:auth.cookie}}));assert.equal(status.status,200);assert.equal((await status.json()).state,'PULL_REQUEST_OPEN');
+ const second=await f.login();assert.equal((await f.broker.handle(f.req('/api/proposals/17',{headers:{cookie:second.cookie}}))).status,403);
 });
