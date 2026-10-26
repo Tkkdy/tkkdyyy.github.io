@@ -77,6 +77,20 @@
             "if-no-files-found": "error",
             "retention-days": 7
           }
+        },
+        {
+          "name": "Validate exact VPS archive and deployment identity",
+          "if": "matrix.target == 'vps'",
+          "run": "python -B ops/deploy/release_bundle.py --source . --output \"$RUNNER_TEMP/minimal-vps.zip\" --site \"$SITE_URL\" --source-sha \"$SOURCE_SHA\" --workflow-sha \"$SOURCE_SHA\" --run-id \"$GITHUB_RUN_ID\" --attempt \"$GITHUB_RUN_ATTEMPT\""
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "if": "matrix.target == 'vps'",
+          "with": {
+            "name": "validated-vps-bundle",
+            "path": "${{ runner.temp }}/minimal-vps.zip\n${{ runner.temp }}/minimal-vps.zip.sha256",
+            "retention-days": 30
+          }
         }
       ]
     },

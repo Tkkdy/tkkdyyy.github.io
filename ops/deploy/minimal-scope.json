@@ -61,5 +61,6 @@
     "fast-uri": "moderate",
     "http-cache-semantics": "high"
   },
-  "lockfileSha256": "7a66048c4c6bcb26f6e5cf5e5942e663f5d848d828d8132a03a254d092fb6ba0"
+  "lockfileSha256": "af39c2b975fb078f06935e999391a578b51e2686905cd9f36032f087d6131a62",
+  "identityBytePolicy": ".gitattributes pins audited lock/config/runtime files to LF across Windows/Linux"
 }
