@@ -74,5 +74,25 @@
     ],
     "contentMatchesMain": true,
     "productionDeployed": false
+  },
+  "integration": {
+    "baseCandidate": "710549ae88a17ab53fd9bc6627c048e1816839eb",
+    "datePatch": "23fa3bd2463607d5d253b974304cfe9bfc6ab073",
+    "clientBindingPatch": "6b8d16d2cb2e629dda8ad2531e7e0ca5ba646261",
+    "patchFiles": {
+      "ops/deploy/README.md": "87b1151460b9eb509d901d358de4e9e262b5bb92d0f214e9bbe6fc5cb3125c67",
+      "ops/deploy/publish_client.py": "246c87b7d79ed02d9f27ad1da15932a34b2f45e5cde726f872982f601353c093",
+      "ops/deploy/test_publish_client.py": "49467d328e12813bc9f715be6c475cc633f8a9ec2529d552931d552cb737be60",
+      "src/components/EssaysUniverseMap.astro": "5e921daa6b94a661d2bd1e29343f090f27d9ed5719c86f3778159d2d03beb561",
+      "src/lib/content/homepage.ts": "c549dd8558ce8a38c63dfb00646d5de0b85abef3bdddc054a2aee0e139b42da5",
+      "src/pages/essays/index.astro": "7a200c45b7a5afc010aa3308f35c7aacc96c4ef472181dbabeb05960f2876fa3"
+    },
+    "metadataFile": "ops/deploy/minimal-scope.json",
+    "completeDeltaRelativeContentMainFiles": 48,
+    "historicalCopiedFiles": "copiedFiles remains the original extraction source hashes; patchFiles supersedes those bytes where listed",
+    "formalPagesWorkflow": "unchanged",
+    "adminMigrationIncluded": false,
+    "localOnly": true,
+    "productionAuthorized": false
   }
 }
