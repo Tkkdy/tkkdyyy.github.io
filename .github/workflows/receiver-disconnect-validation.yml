@@ -1,0 +1,45 @@
+{
+  "name": "Isolated receiver hard-disconnect validation",
+  "on": {
+    "push": {
+      "branches": [
+        "codex/acl-guard-recovery"
+      ],
+      "paths": [
+        "ops/deploy/receiver.py",
+        "ops/deploy/integration_receiver_disconnect_linux.py",
+        ".github/workflows/receiver-disconnect-validation.yml"
+      ]
+    }
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "jobs": {
+    "disconnect": {
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 6,
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "persist-credentials": false
+          }
+        },
+        {
+          "run": "test -x /usr/sbin/sshd\npython3 -m unittest discover -s ops/deploy -p test_transaction.py\nsudo env GITHUB_ACTIONS=true RECEIVER_DISCONNECT_FIXTURE=true GITHUB_SHA=\"$GITHUB_SHA\" python3 -I -B ops/deploy/integration_receiver_disconnect_linux.py"
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "if": "always()",
+          "with": {
+            "name": "receiver-disconnect-evidence",
+            "path": "integration-evidence/",
+            "retention-days": 7
+          }
+        }
+      ]
+    }
+  }
+}
