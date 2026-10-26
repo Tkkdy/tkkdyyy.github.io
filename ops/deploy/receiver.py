@@ -67,7 +67,7 @@ def main(policy_path=None):
     site=site_origin(config['site']);root=Path(config['root'])
     require(root.is_absolute() and root.resolve()==root,'linked/relative root')
     for folder in [root,root/'releases',root/'records']:require(folder.is_dir() and not folder.is_symlink(),'unsafe deployment folder')
-    signal.signal(signal.SIGALRM,timeout_handler);signal.signal(signal.SIGTERM,timeout_handler);signal.alarm(120)
+    signal.signal(signal.SIGALRM,timeout_handler);signal.signal(signal.SIGTERM,timeout_handler);signal.signal(signal.SIGHUP,timeout_handler);signal.alarm(120)
     lockfd=os.open(root/'records'/'.ci.lock',os.O_RDWR|os.O_CREAT|os.O_NOFOLLOW,0o600)
     fcntl.flock(lockfd,fcntl.LOCK_EX|fcntl.LOCK_NB)
     with os.fdopen(lockfd,'w'):
