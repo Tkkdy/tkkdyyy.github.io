@@ -55,6 +55,9 @@ def make_plan(report, session, original_raw, events, modules, source_sha, now=No
     expected_configs = baseline_hashes(events)
     actual_configs = {i['path']: i.get('sha256') for i in report['nginxConfigHashes']}
     require(len(actual_configs) == len(report['nginxConfigHashes']) and actual_configs == expected_configs, 'Nginx config drift')
+    config_targets = {i['path']: i.get('target') for i in report['nginxConfigHashes']}
+    expected_targets = {p: p if p == '/etc/nginx/nginx.conf' else p.replace('/sites-enabled/', '/sites-available/') for p in expected_configs}
+    require(config_targets == expected_targets, 'Nginx configuration target identity drift')
     for name in ('nginx', 'ssh', 'certbot.timer'):
         require(report['services'][name].get('code') == 0 and report['services'][name].get('stdout') == 'active', 'inactive protected service: ' + name)
     require(report['accounts']['psyduck']['uid'] == 1001 and report['accounts']['www-data']['uid'] == 33, 'account identity drift')
@@ -74,7 +77,7 @@ def make_plan(report, session, original_raw, events, modules, source_sha, now=No
         'schema': 1, 'stage': 'DISABLED_RECEIVER_INSTALL_REVIEW_ONLY',
         'preparationSourceSha': source_sha, 'observedUtc': report['utc'],
         'server': {'sshHost': '203.55.176.11', 'sshLogin': 'psyduck', 'uid': 1001},
-        'expectedCurrent': CURRENT, 'root': ROOT, 'expectedNginxConfigHashes': expected_configs,
+        'expectedCurrent': CURRENT, 'root': ROOT, 'expectedNginxConfigHashes': expected_configs, 'expectedNginxConfigTargets': expected_targets,
         'originalManifestSha256': MANIFEST_SHA, 'originalFileCount': len(original),
         'backupDirectory': '/var/backups/dual-site-receiver-' + stamp,
         'moduleDestination': '/usr/local/lib/preview-deploy',

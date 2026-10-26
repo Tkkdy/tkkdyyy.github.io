@@ -12,7 +12,7 @@ class InstallationReviewTests(unittest.TestCase):
         self.events = [{'kind': 'gateConfig', 'path': p, 'sha256': h} for p, h in self.configs.items() if not p.endswith('preview.boenbot.top')]
         self.events.append({'kind': 'gateConfig', 'path': '/etc/nginx/sites-available/preview.boenbot.top', 'sha256': 'f'*64})
         self.events.append({'kind': 'deploymentCompleted', 'serverAcceptance': 'PASS', 'mainSha': prep.SOURCE, 'current': prep.CURRENT, 'nginxSha256': self.configs['/etc/nginx/sites-enabled/preview.boenbot.top']})
-        self.report = {'scope': 'READ_ONLY_PRODUCTION_PREFLIGHT', 'state': 'PASS', 'mutations': False, 'uid': 1001, 'utc': '2026-10-26T03:14:55Z', 'current': {'path': prep.ROOT + '/current', 'symlink': True, 'target': prep.CURRENT}, 'finalCurrent': prep.CURRENT, 'releaseManifest': {'state': 'PASS', 'files': 115, 'manifest': copy.deepcopy(self.original), 'extraFiles': []}, 'nginxConfigHashes': [{'path': p, 'sha256': h} for p, h in self.configs.items()], 'services': {n: {'code': 0, 'stdout': 'active'} for n in ('nginx', 'ssh', 'certbot.timer')}, 'accounts': {'psyduck': {'uid': 1001}, 'www-data': {'uid': 33}, 'preview-deploy': {'status': 'ABSENT'}, 'editorial-admin': {'status': 'ABSENT'}}, 'paths': [], 'tools': {'getfacl': None, 'setfacl': None}, 'versions': {'python3': {'code': 0, 'stdout': 'Python 3.12.3'}}}
+        self.report = {'scope': 'READ_ONLY_PRODUCTION_PREFLIGHT', 'state': 'PASS', 'mutations': False, 'uid': 1001, 'utc': '2026-10-26T03:14:55Z', 'current': {'path': prep.ROOT + '/current', 'symlink': True, 'target': prep.CURRENT}, 'finalCurrent': prep.CURRENT, 'releaseManifest': {'state': 'PASS', 'files': 115, 'manifest': copy.deepcopy(self.original), 'extraFiles': []}, 'nginxConfigHashes': [{'path': p, 'sha256': h, 'target': p if p == '/etc/nginx/nginx.conf' else p.replace('/sites-enabled/', '/sites-available/')} for p, h in self.configs.items()], 'services': {n: {'code': 0, 'stdout': 'active'} for n in ('nginx', 'ssh', 'certbot.timer')}, 'accounts': {'psyduck': {'uid': 1001}, 'www-data': {'uid': 33}, 'preview-deploy': {'status': 'ABSENT'}, 'editorial-admin': {'status': 'ABSENT'}}, 'paths': [], 'tools': {'getfacl': None, 'setfacl': None}, 'versions': {'python3': {'code': 0, 'stdout': 'Python 3.12.3'}}}
         self.report['paths'] = [{'path': p, 'uid': 1001, 'gid': 1001, 'mode': '0o755', 'symlink': False} for p in (prep.ROOT, prep.ROOT + '/releases', prep.ROOT + '/records', prep.ROOT + '/' + prep.CURRENT)]
         self.report['paths'] += [{'path': p, 'status': 'ABSENT'} for p in ('/usr/local/lib/preview-deploy', '/etc/preview-deploy', '/etc/preview-deploy/policy.json', '/var/lib/preview-deploy')]
         self.session = {'exitCode': 0, 'scope': 'READ_ONLY_RETRY'}
@@ -49,6 +49,9 @@ class InstallationReviewTests(unittest.TestCase):
         for items in [original[:-1], original + [original[0]], [{**original[0], 'sha256': '0'*64}] + original[1:]]:
             self.report['nginxConfigHashes'] = items
             with self.assertRaisesRegex(ValueError, 'Nginx config drift'): self.plan()
+    def test_equal_bytes_at_unexpected_config_target_refused(self):
+        self.report['nginxConfigHashes'][-1]['target'] = '/tmp/unreviewed-vhost'
+        with self.assertRaisesRegex(ValueError, 'target identity drift'): self.plan()
     def test_same_file_count_different_bytes_refused(self):
         self.report['releaseManifest']['manifest'][2]['sha256'] = '0'*64
         with self.assertRaisesRegex(ValueError, 'file identities differ'): self.plan()

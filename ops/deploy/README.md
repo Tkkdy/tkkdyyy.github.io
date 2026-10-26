@@ -43,4 +43,4 @@ prepare_receiver_install.py 仅本地生成 ZIP，不连接服务器或执行安
 
 实机2026-10-26T03:14:55Z只读核验已完成：当前冻结旧版本115文件（114公开资源加internal404）完整、配置与A一致、核心服务active；Python3.12.3可用，Node/npm及ACL工具缺失。ACL工具缺失不代表不存在扩展ACL。安装前需获批准安装ACL工具、重新保存准确ACL/掩码，检查所有实机身份与摘要、目标目录不存在、root专有备份目录不存在；包不替代这些执行门禁。只读证书磁盘权限不足不代表公网TLS故障。
 
-本地安装准备安全测试13项通过；此包不是root安装器，也不声称真实VPS账户、ACL、forced-command或回滚已验收。实际root安装、密钥启用、旧release导入及生产发布仍按集中批准执行。Admin的Node运行时和独立origin属于后续单独范围。
+本地安装准备安全测试14项通过，安装器离线边界7项通过；包内不带安装器；独立install_disabled_receiver.py默认root只读预演，只有明确--apply才安装且始终禁用。它重新核对所有原文件、current、Nginx摘要及精确链接目标；存在未知ACL、账户、目录或锁即停止。运行脚本及全部父目录须root所有且不可由组/其他用户写，拒绝直接sudo运行用户目录脚本。先在root独占暂存目录核对SHA并保存准确ACL/掩码和批准包；应用失败只恢复本次ACL，保留锁定账户及禁用文件供检查，不删除release。7项离线边界不证明真实Linux root或生产权限，integration_install_linux.py在一次性Actions中另验真实root/账户/ACL，使用合成站点/config/services，不能冒充生产systemctl验收。实际root安装、密钥启用、旧release导入及生产发布仍按集中批准执行。Admin的Node运行时和独立origin属于后续单独范围。

@@ -32,6 +32,8 @@ def unpack(raw,approved_sha):
     expected_policy={'enabled':False,'root':ROOT,'site':'https://preview.boenbot.top','reviewedWorkflowSha':'NOT_CONFIGURED','approvedSourceShas':[],'sourceAuthority':'github-main','repository':'Tkkdy/tkkdyyy.github.io','bootstrapSourceSha':'88ac30aa31d4c806e6af9a71b955db2f0dd16967'}
     require(policy==plan['policy']==expected_policy,'policy is not exact disabled configuration')
     require(set(plan['expectedNginxConfigHashes'])==CONFIGS,'config pin whitelist differs')
+    targets={p:p if p=='/etc/nginx/nginx.conf' else p.replace('/sites-enabled/','/sites-available/') for p in CONFIGS}
+    require(plan.get('expectedNginxConfigTargets')==targets,'config target identity pins differ')
     require(plan['originalFileCount']==115 and sha(data['original-manifest.json'])==plan['originalManifestSha256'],'original manifest differs')
     require(set(plan['moduleHashes'])==set(MODULES) and all(sha(data['modules/'+n])==plan['moduleHashes'][n] for n in MODULES),'module identities differ')
     manifest=json.loads(data['original-manifest.json']);require(len(manifest)==115 and len({i['path'] for i in manifest})==115,'original file count differs')
@@ -82,6 +84,7 @@ def perform(raw,approved_sha,apply=False,prefix=None,service_check=None):
             if path.is_file():files.append(path.relative_to(root/CURRENT).as_posix())
         require(set(files)=={i['path'] for i in manifest},'unlisted release files')
         for name,digest in plan['expectedNginxConfigHashes'].items():
+            require(P(name).resolve()==P(plan['expectedNginxConfigTargets'][name]),'Nginx configuration target identity drift: '+name)
             require(sha(P(name).read_bytes())==digest,'Nginx config drift: '+name)
     unchanged()
     for name in ('nginx','ssh','certbot.timer'):

@@ -20,7 +20,8 @@ fixture.original=manifest;fixture.raw=json.dumps(manifest,ensure_ascii=False).en
 fixture.report['releaseManifest']['manifest']=manifest
 fixture.modules={name:(CODE/name).read_bytes() for name in prep.MODULES}
 for name in fixture.configs:
-    path=mapped(name);path.write_bytes(name.encode())
+    path=mapped(name);target=mapped(name if name=='/etc/nginx/nginx.conf' else name.replace('/sites-enabled/','/sites-available/'));target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(name.encode())
+    if path!=target:os.symlink('../sites-available/'+path.name,path)
 os.symlink(install.CURRENT,root/'current')
 plan=fixture.plan();raw=prep.archive(plan,fixture.raw,fixture.modules);digest=install.sha(raw)
 service=lambda name:'active' # fixture only; real production path always invokes systemctl
