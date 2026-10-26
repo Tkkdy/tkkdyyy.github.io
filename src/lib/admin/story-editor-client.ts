@@ -540,6 +540,11 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
   };
 
   const refreshDeployment = async (result: Awaited<ReturnType<typeof publishStory>>) => {
+    if (result.proposal) {
+      editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：内容提案已创建，合并与部署尚未核验；请打开提案查看。`; });
+      updatePublishStep('deploy', 'triggered');
+      return;
+    }
     try {
         const report = await result.github.deploymentStatus(result.commitSha);
         const labels: Record<string, string> = {CURRENT_VERSION_VERIFIED:'公开版本与 HTTP 健康核验通过', NOT_DEPLOYED:'测试分支未部署到生产', VERSION_DIFFERS:'线上版本与本次提交不同', FAILED:'公开健康检查失败', UNKNOWN:'尚未确认'};
@@ -604,6 +609,15 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       }
 
       const result = await publishStory({ state: nextState, onProgress: updatePublishStep });
+      if (result.proposal) {
+        if (publishedUrl instanceof HTMLAnchorElement) { publishedUrl.href = result.proposal.url; publishedUrl.textContent = '查看内容提案'; publishedUrl.hidden = false; }
+        lastPublication = result;
+        if (refreshButton) refreshButton.disabled = false;
+        await refreshDeployment(result);
+        showToast('内容提案已创建，本地草稿保留；合并与双站部署尚未确认。');
+        return;
+      }
+
       if (publishedUrl instanceof HTMLAnchorElement) {
         publishedUrl.href = result.publicUrl;
         publishedUrl.hidden = result.branch !== 'main';

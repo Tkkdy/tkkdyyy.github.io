@@ -16,3 +16,16 @@ test('missing file remains distinguishable from authentication failure; GraphQL 
 });
 
 test('Git blob identity matches the canonical hello newline object',async()=>{assert.equal(await gitBlobSha('hello\n'),'ce013625030ba8dba906f756967f9e9ca394464a');});
+
+test('browser PR client uses only session CSRF, verifies proposal identity and never reports main deployment',async t=>{
+ const original=globalThis.fetch;t.after(()=>globalThis.fetch=original);
+ const requestId='d8556e29-254b-4fe5-a949-09aa45ac8971',branch='codex/editorial-proposal-'+requestId;
+ const calls=[],proposal={state:'PULL_REQUEST_OPEN',merged:false,deploymentConfirmed:false,commitSha:next,baseSha:sha,branch,pullRequestNumber:17,url:'https://github.com/Tkkdy/tkkdyyy.github.io/pull/17'};
+ globalThis.fetch=async(url,options)=>{calls.push({url,options});return Response.json(proposal);};
+ const client=createGitHubClient({owner:'Tkkdy',repo:'tkkdyyy.github.io',branch:'main',csrf:'SYNTHETIC_CSRF'});
+ const result=await client.proposeFiles({requestId,expectedHeadOid:sha,message:'Propose',files:[{path:'src/content/essays/new.md',contentBase64:btoa('fixture')}],deletePaths:[]});
+ assert.equal(result.proposal.merged,false);assert.equal(result.sha,next);assert.equal(calls[0].url,'/api/proposals');assert.equal(calls[0].options.credentials,'same-origin');assert.equal(calls[0].options.headers['X-Admin-CSRF'],'SYNTHETIC_CSRF');assert(!calls[0].options.headers.Authorization);
+ const body=JSON.parse(calls[0].options.body);assert.equal(body.requestId,requestId);assert.equal(body.expectedHeadOid,sha);assert(!body.branch);
+ globalThis.fetch=async()=>Response.json({...proposal,url:'https://evil.example/'});
+ await assert.rejects(client.proposeFiles({requestId,expectedHeadOid:sha,message:'Propose',files:[]}),/尚未核实/);
+});

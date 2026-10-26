@@ -19,10 +19,16 @@ export function createGitHubClient({owner,repo,branch,csrf}){
   async authenticate(){return request(API_ROOT+'/user');},
   async getHead(){return (await request(`${API_ROOT}/repos/${owner}/${repo}/git/ref/heads/${encodeURIComponent(branch)}`)).object.sha;},
   async readFile(path,ref=branch){try{const f=await request(`${API_ROOT}/repos/${owner}/${repo}/contents/${encodeURIComponent(path).replace(/%2F/g,'/')}?ref=${encodeURIComponent(ref)}`);if(f.type!=='file'||!f.content)throw Error('内容文件无法读取。');return{path,sha:f.sha,content:base64ToText(f.content)};}catch(e){if(e.status===404)return null;throw e;}},
+  async proposeFiles({requestId=crypto.randomUUID(),expectedHeadOid,message,files,deletePaths=[]}){
+   if(!/^[a-f0-9]{40}$/.test(expectedHeadOid||''))throw Error('内容基准版本失效。');
+   const proposal=await request('/api/proposals',{method:'POST',body:JSON.stringify({requestId,expectedHeadOid,message:{headline:message},fileChanges:{additions:files.map(f=>({path:f.path,contents:f.contentBase64})),deletions:deletePaths.map(path=>({path}))}})});
+   if(proposal.state!=='PULL_REQUEST_OPEN'||proposal.merged!==false||proposal.deploymentConfirmed!==false||!/^[a-f0-9]{40}$/.test(proposal.commitSha||'')||proposal.baseSha!==expectedHeadOid||proposal.branch!=='codex/editorial-proposal-'+requestId||!Number.isSafeInteger(proposal.pullRequestNumber)||proposal.pullRequestNumber<1||proposal.url!==`https://github.com/${owner}/${repo}/pull/${proposal.pullRequestNumber}`)throw Error('提案结果尚未核实。');
+   return {sha:proposal.commitSha,proposal};
+  },
   async commitFiles({branch:target=branch,expectedHeadOid,message,files,deletePaths=[]}){
    if(target!==branch||!/^[a-f0-9]{40}$/.test(expectedHeadOid||''))throw Error('分支或基准版本失效。');
    const input={branch:{repositoryNameWithOwner:`${owner}/${repo}`,branchName:branch},expectedHeadOid,message:{headline:message},fileChanges:{additions:files.map(f=>({path:f.path,contents:f.contentBase64})),deletions:deletePaths.map(path=>({path}))}};
-   const result=await request('/api/graphql',{method:'POST',body:JSON.stringify({query:'mutation($input:CreateCommitOnBranchInput!){createCommitOnBranch(input:$input){commit{oid}}}',variables:{input}})});return{sha:result.data.createCommitOnBranch.commit.oid};
+   const result=await request('/api/graphql',{method:'POST',body:JSON.stringify({query:'mutation($input:CreateCommitOnBranchInput!){createCommitOnBranch(input:$input){commit{oid}}}',variables:{input}})});return{sha:result.data.createCommitOnBranch.commit.oid,proposal:null};
   },
  };
 }

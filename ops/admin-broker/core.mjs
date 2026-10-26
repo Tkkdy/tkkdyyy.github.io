@@ -1,3 +1,4 @@
+import {createContentProposalService} from './content-proposals.mjs';
 import {createContentReader} from './content-reader.mjs';
 import {inspectWorkflow} from './workflow-status.mjs';
 import {inspectTargets} from './deployment-status.mjs';
@@ -12,7 +13,7 @@ export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now()}={}){
  const origin=new URL(config.origin);requirePolicy(origin.origin===config.origin&&origin.pathname==='/'&&!origin.username&&!origin.password,'认证服务地址必须是纯origin。');
  const local=['127.0.0.1','localhost'].includes(origin.hostname);requirePolicy(origin.protocol==='https:'||local&&origin.protocol==='http:','仅回环服务可使用HTTP。');
  requirePolicy(config.repository==='Tkkdy/tkkdyyy.github.io'&&config.repositoryId===1355866312&&config.ownerId===144055705,'仓库或所有者身份不匹配。');
- requirePolicy(config.clientId&&config.clientSecret&&config.branch,'缺少App配置。');requirePolicy(config.branch!=='main'||config.allowMain===true,'main写入尚未批准。');
+ requirePolicy(config.clientId&&config.clientSecret&&config.branch,'缺少App配置。');const proposalMode=config.publicationMode==='pull-request';requirePolicy(['direct','pull-request'].includes(config.publicationMode??'direct'),'发布模式错误。');requirePolicy(!proposalMode||(config.branch==='main'&&config.allowMain!==true),'PR模式只允许读取main，禁止直接main写入开关。');requirePolicy(config.branch!=='main'||config.allowMain===true||proposalMode,'main写入尚未批准。');
  const sessions=new Map(),flows=new Map(),cookieName=local?'editorial-local-session':'__Host-editorial-session',flowCookie=local?'editorial-local-oauth':'__Host-editorial-oauth';
  const cookie=(name,value,seconds)=>`${name}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${seconds}${origin.protocol==='https:'?'; Secure':''}`;
  const headers={'Cache-Control':'no-store','Referrer-Policy':'no-referrer','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"};
@@ -26,7 +27,7 @@ export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now()}={}){
   if(!r.ok)throw Object.assign(Error('GitHub服务请求失败。'),{status:[401,404].includes(r.status)?r.status:502});return raw?JSON.parse(raw):null;
  }
  async function github(path,token,options={}){return remote('https://api.github.com'+path,{...options,headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'editorial-owner-broker',Authorization:`Bearer ${token}`,'Content-Type':'application/json'}});}
- function publicSession(s){return {authenticated:true,user:s.user,csrf:s.csrf,repository:config.repository,branch:config.branch,expiresAt:s.expires};}
+ function publicSession(s){return {authenticated:true,user:s.user,csrf:s.csrf,repository:config.repository,branch:config.branch,publicationMode:proposalMode?'pull-request':'direct',expiresAt:s.expires};}
  return {
   async authenticate(request){purge();requirePolicy(new URL(request.url).origin===config.origin,'Host不匹配。');return publicSession(session(request));},
   async handle(request){
@@ -44,7 +45,7 @@ export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now()}={}){
      requirePolicy(typeof token.access_token==='string'&&token.token_type==='bearer'&&Number.isFinite(token.expires_in)&&token.expires_in>0,'App必须启用短期用户令牌。');
      const user=await github('/user',token.access_token);requirePolicy(user.id===config.ownerId,'此账号不是站点所有者。');
      const repo=await github('/repos/'+config.repository,token.access_token);requirePolicy(repo.id===config.repositoryId&&repo.full_name===config.repository,'目标仓库不匹配。');
-     requirePolicy(sessions.size<30,'登录会话过多。');const id=nonce(),s={csrf:nonce(),token:token.access_token,user:{id:user.id,login:user.login},expires:clock()+Math.min(1800,token.expires_in)*1000};s.reader=createContentReader({github:(path,options)=>github(path,s.token,options),repository:config.repository,branch:config.branch});sessions.set(id,s);
+     requirePolicy(sessions.size<30,'登录会话过多。');const id=nonce(),s={csrf:nonce(),token:token.access_token,user:{id:user.id,login:user.login},expires:clock()+Math.min(1800,token.expires_in)*1000};s.reader=createContentReader({github:(path,options)=>github(path,s.token,options),repository:config.repository,branch:config.branch});s.proposals=createContentProposalService({github:(path,options)=>github(path,s.token,options),enabled:proposalMode,clock});sessions.set(id,s);
      const result=redirect(flow.back);result.headers.append('Set-Cookie',cookie(cookieName,id,1800));result.headers.append('Set-Cookie',cookie(flowCookie,'',0));return result;
     }
     const s=session(request);
@@ -57,6 +58,7 @@ export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now()}={}){
     if(path==='/api/story'&&request.method==='GET'){const catalog=await s.reader(),story=catalog.stories.find(item=>item.sourcePath===url.searchParams.get('path'));return story?response({head:catalog.head,story}):response({error:'当前分支中没有此内容。'},404);}
     if(path==='/api/deployments'&&request.method==='GET'){const expectedSha=url.searchParams.get('sha');requirePolicy(/^[a-f0-9]{40}$/.test(expectedSha||''),'提交版本无效。');const [targets,pipeline]=await Promise.all([inspectTargets({targets:config.targets,branch:config.branch,expectedSha,fetchImpl}),inspectWorkflow({github:(path)=>github(path,s.token),repository:config.repository,expectedSha,branch:config.branch})]);return response({targets:targets.map(target=>({...target,pipeline:pipeline[target.target]}))});}
     if(path==='/api/session'&&request.method==='GET')return response(publicSession(s));
+    if(path==='/api/proposals'&&request.method==='POST'){mutationGuard(request,s);requirePolicy(proposalMode,'内容PR模式尚未启用。');return response(await s.proposals.submit(await boundedJSON(request)));}
     if(path==='/api/logout'&&request.method==='POST'){mutationGuard(request,s);sessions.delete(s.id);return response({loggedOut:true},200,{'Set-Cookie':cookie(cookieName,'',0)});}
     if(path==='/api/graphql'&&request.method==='POST'){
      mutationGuard(request,s);const body=await boundedJSON(request);authorizeGraphql(body,config);return response(await github('/graphql',s.token,{method:'POST',body:JSON.stringify(body)}));

@@ -104,17 +104,17 @@ export async function publishStory({ state, session, onProgress = () => {} }) {
   }
 
   const content = mergeStudioFrontmatter(existing?.content ?? '', state.type, studioFields(state, cover), markdown);
-  const commit = await github.commitFiles({
-    branch: session.branch,
+  const changes = {
     expectedHeadOid,
     message: `${state.status === 'published' ? 'Publish' : 'Save'} ${state.type.toLowerCase()}: ${state.slug}`,
     files: [...uploadFiles, { path: destinationPath, contentBase64: textToBase64(content) }],
     deletePaths: sourcePath && sourcePath !== destinationPath ? [sourcePath] : [],
-  });
+  };
+  const commit = session.publicationMode==='pull-request' ? await github.proposeFiles(changes) : await github.commitFiles({...changes,branch:session.branch});
   onProgress('git', 'success');
 
   const route = state.type === 'Fragment' ? `fragments/#${state.slug}` : `${directory}/${state.slug}/`;
   const publicUrl = `https://tkkdy.github.io/tkkdyyy.github.io/${route}`;
   const savedBlobSha = await gitBlobSha(content);
-  return { commitSha: commit.sha, publicUrl, github, branch: session.branch, sourcePath: destinationPath, sourceBlobSha: savedBlobSha };
+  return { commitSha: commit.sha, publicUrl, github, branch: commit.proposal?.branch??session.branch, proposal:commit.proposal, sourcePath: destinationPath, sourceBlobSha: savedBlobSha };
 }
