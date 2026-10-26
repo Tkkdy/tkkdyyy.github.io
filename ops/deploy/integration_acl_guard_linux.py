@@ -9,10 +9,11 @@ account='acl-guard-fixture'
 subprocess.run(['/usr/sbin/useradd','--system','--user-group','--no-create-home','--shell','/usr/sbin/nologin',account],check=True)
 uid=pwd.getpwnam(account).pw_uid
 checks=[]
+BASES=[]
 
 
 def fixture():
-    base=Path(tempfile.mkdtemp(prefix='acl-guard-ci-',dir='/var/lib'));base.chmod(0o755)
+    base=Path(tempfile.mkdtemp(prefix='acl-guard-ci-',dir='/var/lib'));base.chmod(0o755);BASES.append(base)
     site=base/'site'
     for p in [site,site/'releases',site/'records']:
         p.mkdir();p.chmod(0o755);os.chown(p,1001,1001)
@@ -162,4 +163,13 @@ finally:
     reset.set();daemon.terminate();daemon.wait(timeout=5);log.close()
 
 output={'state':'PASS','scope':'DISPOSABLE_REAL_ROOT_ACL_PROCESS_SESSIONS','sourceSha':os.environ.get('GITHUB_SHA'),'checks':checks,'productionInstalled':False,'productionACLChanged':False,'realSSHTransportTested':True,'realTCPResetTested':True,'realPAMSessionCovered':False,'realSessionSIGHUPTested':True,'powerLossOrGuardianSIGKILLCovered':False,'allFixtureEvidenceRetained':True}
-E=CODE.parent.parent/'integration-evidence';E.mkdir(exist_ok=True);(E/'acl-guard.json').write_text(json.dumps(output,indent=2));print(json.dumps(output))
+E=CODE.parent.parent/'integration-evidence';E.mkdir(exist_ok=True);
+for i,base in enumerate(BASES):
+    for state in base.glob('lease-*'):
+        if not state.is_dir():continue
+        for name in ['journal.jsonl','original-acls.txt']:
+            source=state/name
+            if source.is_file():(E/(str(i)+'-'+state.name+'-'+name)).write_bytes(source.read_bytes())
+    source=base/'ssh-fixture/client-result.json'
+    if source.exists():(E/'ssh-tcp-reset-client.json').write_bytes(source.read_bytes())
+(E/'acl-guard.json').write_text(json.dumps(output,indent=2));print(json.dumps(output))

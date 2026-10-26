@@ -39,7 +39,7 @@
           "if": "always()",
           "with": {
             "name": "acl-guard-evidence",
-            "path": "integration-evidence/acl-guard.json",
+            "path": "integration-evidence/",
             "retention-days": 7
           }
         }
