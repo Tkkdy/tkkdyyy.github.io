@@ -80,12 +80,12 @@
     "datePatch": "23fa3bd2463607d5d253b974304cfe9bfc6ab073",
     "clientBindingPatch": "6b8d16d2cb2e629dda8ad2531e7e0ca5ba646261",
     "patchFiles": {
-      "ops/deploy/README.md": "87b1151460b9eb509d901d358de4e9e262b5bb92d0f214e9bbe6fc5cb3125c67",
+      "ops/deploy/README.md": "95de393b4353cabd1c2b4c93d5cf2ad2a8951bce1a8ec38917dfc8be5cac0013",
       "ops/deploy/publish_client.py": "246c87b7d79ed02d9f27ad1da15932a34b2f45e5cde726f872982f601353c093",
       "ops/deploy/test_publish_client.py": "49467d328e12813bc9f715be6c475cc633f8a9ec2529d552931d552cb737be60",
-      "src/components/EssaysUniverseMap.astro": "5e921daa6b94a661d2bd1e29343f090f27d9ed5719c86f3778159d2d03beb561",
-      "src/lib/content/homepage.ts": "c549dd8558ce8a38c63dfb00646d5de0b85abef3bdddc054a2aee0e139b42da5",
-      "src/pages/essays/index.astro": "7a200c45b7a5afc010aa3308f35c7aacc96c4ef472181dbabeb05960f2876fa3"
+      "src/components/EssaysUniverseMap.astro": "5171ed7373aa59525a10be7a244ad5d2119b3f6c73b76ecbe54230c10de51774",
+      "src/lib/content/homepage.ts": "02a2721398b3fefd480e5658602fbfa1edba461a1247baa98ad50c42e86c1dc4",
+      "src/pages/essays/index.astro": "2ca67f2806b20d2c20dce2978c73fcc0eeb86365abc9463a29eb0de3a766f7a7"
     },
     "metadataFile": "ops/deploy/minimal-scope.json",
     "completeDeltaRelativeContentMainFiles": 48,
@@ -93,6 +93,7 @@
     "formalPagesWorkflow": "unchanged",
     "adminMigrationIncluded": false,
     "localOnly": true,
-    "productionAuthorized": false
+    "productionAuthorized": false,
+    "patchFileBytePolicy": "SHA256 of canonical Git blob bytes, independent of checkout CRLF/LF"
   }
 }
