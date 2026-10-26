@@ -62,5 +62,17 @@
     "http-cache-semantics": "high"
   },
   "lockfileSha256": "af39c2b975fb078f06935e999391a578b51e2686905cd9f36032f087d6131a62",
-  "identityBytePolicy": ".gitattributes pins audited lock/config/runtime files to LF across Windows/Linux"
+  "identityBytePolicy": ".gitattributes pins audited lock/config/runtime files to LF across Windows/Linux",
+  "contentMain": "545a9c5466985e0d2fb33ab48b364e9b43baa913",
+  "contentSync": {
+    "previousCandidate": "8c40b1702e04c88d58b41e637cef2da6a2f1bc05",
+    "upstreamChanges": [
+      {
+        "status": "added",
+        "path": "src/content/essays/chances.md"
+      }
+    ],
+    "contentMatchesMain": true,
+    "productionDeployed": false
+  }
 }
