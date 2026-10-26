@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && pagefind --site dist",
+    "build": "astro build && node scripts/normalize-public-urls.mjs pages && pagefind --site dist",
     "build:astro": "astro build",
     "preview": "astro preview",
     "check": "astro check && node --test tests/*.test.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "build:vps": "astro build --config astro.config.vps.mjs && node scripts/normalize-public-urls.mjs vps && node scripts/prune-vps-admin.mjs && pagefind --site dist"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
@@ -22,11 +23,13 @@
     "@tiptap/starter-kit": "^3.31.3",
     "astro": "^7.2.0",
     "marked": "^18.0.11",
+    "parse5": "8.0.1",
     "yaml": "^2.9.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "pagefind": "^1.5.2",
+    "playwright": "1.64.1",
     "typescript": "^6.0.3"
   }
 }

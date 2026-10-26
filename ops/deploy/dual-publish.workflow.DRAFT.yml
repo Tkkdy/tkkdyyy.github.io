@@ -1,0 +1,295 @@
+# INERT PROPOSAL. Replace existing deploy.yml only after owner approval; never enable alongside it.
+{
+  "name": "Independent dual-site publishing",
+  "on": {
+    "push": {
+      "branches": [
+        "main"
+      ]
+    },
+    "workflow_dispatch": null
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "jobs": {
+    "pages-build": {
+      "if": "github.ref == 'refs/heads/main'",
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 20,
+      "env": {
+        "SITE_URL": "${{ vars.VPS_SITE_URL }}",
+        "SOURCE_SHA": "${{ github.sha }}",
+        "PIPELINE_SHA": "${{ vars.REVIEWED_PIPELINE_SHA }}"
+      },
+      "steps": [
+        {
+          "name": "Require exact reviewed pipeline SHA",
+          "run": "[[ \"$PIPELINE_SHA\" =~ ^[a-f0-9]{40}$ ]]"
+        },
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "path": "site",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ vars.REVIEWED_PIPELINE_SHA }}",
+            "path": "pipeline",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "with": {
+            "node-version": 24
+          }
+        },
+        {
+          "working-directory": "site",
+          "run": "npm ci\nnpm run check\nnpm run build"
+        },
+        {
+          "run": "python pipeline/ops/deploy/write_version.py --source site --dist site/dist --target pages --workflow \"$PIPELINE_SHA\""
+        },
+        {
+          "uses": "actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b",
+          "with": {
+            "path": "site/dist",
+            "name": "pages-${{ github.run_id }}-${{ github.run_attempt }}"
+          }
+        }
+      ]
+    },
+    "vps-build": {
+      "if": "github.ref == 'refs/heads/main'",
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 20,
+      "env": {
+        "SITE_URL": "${{ vars.VPS_SITE_URL }}",
+        "SOURCE_SHA": "${{ github.sha }}",
+        "PIPELINE_SHA": "${{ vars.REVIEWED_PIPELINE_SHA }}"
+      },
+      "steps": [
+        {
+          "name": "Require exact reviewed pipeline SHA",
+          "run": "[[ \"$PIPELINE_SHA\" =~ ^[a-f0-9]{40}$ ]]"
+        },
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "path": "site",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ vars.REVIEWED_PIPELINE_SHA }}",
+            "path": "pipeline",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "with": {
+            "node-version": 24
+          }
+        },
+        {
+          "working-directory": "site",
+          "run": "npm ci\nnpm run check\nnpm run build:vps"
+        },
+        {
+          "run": "python pipeline/ops/deploy/write_version.py --source site --dist site/dist --target vps --workflow \"$PIPELINE_SHA\""
+        },
+        {
+          "env": {
+            "RUN_ID": "${{ github.run_id }}",
+            "RUN_ATTEMPT": "${{ github.run_attempt }}"
+          },
+          "run": "python pipeline/ops/deploy/release_bundle.py --source site --output bundle.zip --site \"$SITE_URL\" --source-sha \"$SOURCE_SHA\" --workflow-sha \"$PIPELINE_SHA\" --run-id \"$RUN_ID\" --attempt \"$RUN_ATTEMPT\""
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "with": {
+            "name": "vps-${{ github.run_id }}-${{ github.run_attempt }}",
+            "path": "bundle.zip\nbundle.zip.sha256",
+            "if-no-files-found": "error",
+            "retention-days": 30
+          }
+        }
+      ]
+    },
+    "pages-deploy": {
+      "needs": "pages-build",
+      "if": "vars.DUAL_PAGES_DEPLOY_ENABLED == 'true' && github.ref == 'refs/heads/main'",
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 15,
+      "concurrency": {
+        "group": "github-pages",
+        "cancel-in-progress": false
+      },
+      "permissions": {
+        "contents": "read",
+        "pages": "write",
+        "id-token": "write"
+      },
+      "environment": {
+        "name": "github-pages",
+        "url": "${{ steps.deployment.outputs.page_url }}"
+      },
+      "steps": [
+        {
+          "name": "Reject superseded source before deployment",
+          "env": {
+            "SOURCE_SHA": "${{ github.sha }}",
+            "GH_TOKEN": "${{ github.token }}",
+            "REPOSITORY": "${{ github.repository }}"
+          },
+          "run": "test \"$(gh api \"repos/$REPOSITORY/commits/main\" --jq .sha)\" = \"$SOURCE_SHA\""
+        },
+        {
+          "uses": "actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346",
+          "id": "deployment",
+          "with": {
+            "artifact_name": "pages-${{ github.run_id }}-${{ github.run_attempt }}"
+          }
+        }
+      ]
+    },
+    "vps-deploy": {
+      "needs": "vps-build",
+      "if": "vars.VPS_AUTODEPLOY_ENABLED == 'true' && github.ref == 'refs/heads/main'",
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 25,
+      "concurrency": {
+        "group": "restricted-vps-preview",
+        "cancel-in-progress": false
+      },
+      "env": {
+        "SITE_URL": "${{ vars.VPS_SITE_URL }}",
+        "SOURCE_SHA": "${{ github.sha }}",
+        "PIPELINE_SHA": "${{ vars.REVIEWED_PIPELINE_SHA }}"
+      },
+      "environment": {
+        "name": "vps-preview",
+        "url": "${{ vars.VPS_SITE_URL }}"
+      },
+      "steps": [
+        {
+          "name": "Require exact reviewed pipeline SHA",
+          "run": "[[ \"$PIPELINE_SHA\" =~ ^[a-f0-9]{40}$ ]]"
+        },
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ vars.REVIEWED_PIPELINE_SHA }}",
+            "path": "pipeline",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "with": {
+            "node-version": 24
+          }
+        },
+        {
+          "working-directory": "pipeline",
+          "run": "npm ci --ignore-scripts\nnpx playwright install --with-deps chromium"
+        },
+        {
+          "uses": "actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0",
+          "with": {
+            "name": "vps-${{ github.run_id }}-${{ github.run_attempt }}"
+          }
+        },
+        {
+          "name": "Credentials only after build and environment gate",
+          "env": {
+            "VPS_KEY": "${{ secrets.VPS_DEPLOY_KEY }}",
+            "VPS_KNOWN_HOSTS": "${{ secrets.VPS_KNOWN_HOSTS }}"
+          },
+          "run": "test -n \"$VPS_KEY\" && test -n \"$VPS_KNOWN_HOSTS\"\numask 077\nprintf '%s\\n' \"$VPS_KEY\" > \"$RUNNER_TEMP/vps-key\"\nprintf '%s\\n' \"$VPS_KNOWN_HOSTS\" > \"$RUNNER_TEMP/vps-known-hosts\""
+        },
+        {
+          "name": "Single guarded transaction and browser acceptance",
+          "env": {
+            "VPS_SSH_HOST": "${{ vars.VPS_SSH_HOST }}",
+            "VPS_SSH_USER": "${{ vars.VPS_SSH_USER }}",
+            "REVIEWED_WORKFLOW_SHA": "${{ vars.REVIEWED_PIPELINE_SHA }}"
+          },
+          "run": "export VPS_KEY_FILE=\"$RUNNER_TEMP/vps-key\" VPS_KNOWN_HOSTS_FILE=\"$RUNNER_TEMP/vps-known-hosts\"\npython pipeline/ops/deploy/publish_client.py"
+        },
+        {
+          "if": "always()",
+          "name": "Remove only runner credential copies",
+          "run": "rm -f -- \"$RUNNER_TEMP/vps-key\" \"$RUNNER_TEMP/vps-known-hosts\""
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "if": "always()",
+          "with": {
+            "name": "vps-deploy-${{ github.run_id }}-${{ github.run_attempt }}",
+            "path": "deployment-evidence.json\nbrowser-evidence.json",
+            "retention-days": 90
+          }
+        }
+      ]
+    },
+    "status": {
+      "if": "always()",
+      "needs": [
+        "pages-build",
+        "vps-build",
+        "pages-deploy",
+        "vps-deploy"
+      ],
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 5,
+      "env": {
+        "SITE_URL": "${{ vars.VPS_SITE_URL }}",
+        "SOURCE_SHA": "${{ github.sha }}",
+        "PIPELINE_SHA": "${{ vars.REVIEWED_PIPELINE_SHA }}"
+      },
+      "steps": [
+        {
+          "name": "Require exact reviewed pipeline SHA",
+          "run": "[[ \"$PIPELINE_SHA\" =~ ^[a-f0-9]{40}$ ]]"
+        },
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ vars.REVIEWED_PIPELINE_SHA }}",
+            "path": "pipeline",
+            "persist-credentials": false
+          }
+        },
+        {
+          "name": "Independent target versions; a commit or green build is not deployment",
+          "env": {
+            "PAGES_URL": "${{ vars.PAGES_SITE_URL }}",
+            "PAGES_JOB": "${{ needs.pages-deploy.result }}",
+            "VPS_JOB": "${{ needs.vps-deploy.result }}"
+          },
+          "run": "python pipeline/ops/deploy/status_report.py --pages \"$PAGES_URL\" --vps \"$SITE_URL\" --expected-sha \"$SOURCE_SHA\" --output dual-status.json\nprintf 'Pages job: %s; VPS job: %s\\n' \"$PAGES_JOB\" \"$VPS_JOB\" >> \"$GITHUB_STEP_SUMMARY\"\ncat dual-status.json >> \"$GITHUB_STEP_SUMMARY\""
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "if": "always()",
+          "with": {
+            "name": "dual-status-${{ github.run_id }}-${{ github.run_attempt }}",
+            "path": "dual-status.json",
+            "retention-days": 90
+          }
+        }
+      ]
+    }
+  }
+}
