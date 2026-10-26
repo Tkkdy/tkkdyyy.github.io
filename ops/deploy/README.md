@@ -34,3 +34,13 @@
 来源检查依赖已审查工具和部署密钥，未实现独立 artifact attestation。持有部署密钥仍有修改该测试站内容的能力；环境审批、forced-command 和路径限制不等于密钥泄露无影响。
 
 线上 VPS 冻结 88ac30aa，Pages 原生产持续运行。只读观察 vps-7 与开发并行，最早 2026-11-01T14:29:45Z 完成；漏跑须记缺口，抽样不是连续可用性证明。http-cache-semantics High / fast-uri Moderate 风险继续保留，不为清零升级无关依赖。音乐站、Hello、Cockpit、旧预览和全部旧 release 受保护。禁止重跑单次 A 或注册新 LE 账户。
+
+## 禁用安装的离线审查包
+
+prepare_receiver_install.py 仅本地生成 ZIP，不连接服务器或执行安装。输入真实只读报告/SSH退出记录、独立原始 static-manifest.json、A成功会话事件及精确干净代码SHA。报告需在48小时内；UID、current、完整文件大小/摘要、全部Nginx配置、服务、账户和目标目录存在性均检查，漂移拒绝。已知Windows stdout中文路径乱码不作为文件路径来源，仅使用固定原清单并交叉比较全部大小/摘要；原始证据不覆盖。
+
+包内只有6项root安装候选Python模块、disabled策略、原清单、plan.json和SHA256SUMS。输出独占创建；不含密钥、凭证、sshd/Nginx配置或自动启用脚本。策略enabled=false且reviewedWorkflowSha=NOT_CONFIGURED，授权文件提案为空，不创建部署密钥。
+
+实机2026-10-26T03:14:55Z只读核验已完成：当前冻结旧版本115文件（114公开资源加internal404）完整、配置与A一致、核心服务active；Python3.12.3可用，Node/npm及ACL工具缺失。ACL工具缺失不代表不存在扩展ACL。安装前需获批准安装ACL工具、重新保存准确ACL/掩码，检查所有实机身份与摘要、目标目录不存在、root专有备份目录不存在；包不替代这些执行门禁。只读证书磁盘权限不足不代表公网TLS故障。
+
+本地安装准备安全测试12项通过；此包不是root安装器，也不声称真实VPS账户、ACL、forced-command或回滚已验收。实际root安装、密钥启用、旧release导入及生产发布仍按集中批准执行。Admin的Node运行时和独立origin属于后续单独范围。
