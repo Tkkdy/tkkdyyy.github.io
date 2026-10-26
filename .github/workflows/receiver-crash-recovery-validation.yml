@@ -1,0 +1,47 @@
+# ISOLATED ONLY: no secrets, deployment, Pages, VPS, or real account changes.
+{
+  "name": "Isolated receiver SIGKILL owner recovery",
+  "on": {
+    "push": {
+      "branches": [
+        "codex/receiver-crash-recovery"
+      ],
+      "paths": [
+        "ops/deploy/integration_receiver_crash_recovery_linux.py",
+        ".github/workflows/receiver-crash-recovery-validation.yml"
+      ]
+    }
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "jobs": {
+    "crash-recovery": {
+      "if": "github.repository == 'Tkkdy/tkkdyyy.github.io' && github.ref == 'refs/heads/codex/receiver-crash-recovery'",
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 6,
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "persist-credentials": false
+          }
+        },
+        {
+          "name": "One isolated SIGKILL and separate owner recovery; no existing suite rerun",
+          "run": "test -x /usr/sbin/sshd\nsudo env GITHUB_ACTIONS=true RECEIVER_CRASH_RECOVERY_FIXTURE=true GITHUB_SHA=\"$GITHUB_SHA\" python3 -I -B ops/deploy/integration_receiver_crash_recovery_linux.py"
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "if": "always()",
+          "with": {
+            "name": "receiver-crash-recovery-evidence",
+            "path": "integration-evidence/",
+            "retention-days": 30
+          }
+        }
+      ]
+    }
+  }
+}
