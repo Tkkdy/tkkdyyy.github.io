@@ -14,8 +14,8 @@ const themes = [...new Set(essays.flatMap((essay) => essay.data.tags ?? []))].sl
 
 const dateParts = (date: Date) => ({
   iso: formatDate(date),
-  year: String(date.getFullYear()),
-  monthDay: `${String(date.getMonth() + 1).padStart(2, '0')}·${String(date.getDate()).padStart(2, '0')}`,
+  year: String(date.getUTCFullYear()),
+  monthDay: `${String(date.getUTCMonth() + 1).padStart(2, '0')}·${String(date.getUTCDate()).padStart(2, '0')}`,
 });
 ---
 

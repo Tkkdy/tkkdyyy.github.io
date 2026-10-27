@@ -5,6 +5,12 @@ from release_bundle import load_bundle,require,release_target,sha
 def main():
     raw=Path('bundle.zip').read_bytes();digest=Path('bundle.zip.sha256').read_text().strip();site=os.environ['SITE_URL']
     metadata,manifest,data=load_bundle(raw,digest,site,os.environ['REVIEWED_WORKFLOW_SHA'])
+    source=os.environ.get('SOURCE_SHA','');run_id=os.environ.get('GITHUB_RUN_ID','');attempt=os.environ.get('GITHUB_RUN_ATTEMPT','')
+    require(re.fullmatch(r'[a-f0-9]{40}',source),'invalid runner source SHA')
+    require(re.fullmatch(r'[1-9][0-9]{0,19}',run_id),'invalid runner run ID')
+    require(re.fullmatch(r'[1-9][0-9]{0,2}',attempt),'invalid runner attempt')
+    require(metadata['sourceSha']==source,'bundle source differs from runner source')
+    require(metadata['releaseId']==f'ci-{source[:12]}-{run_id}-{attempt}','bundle release differs from runner run/attempt')
     expected=os.environ.get('EXPECTED_CURRENT');host=os.environ['VPS_SSH_HOST'];user=os.environ['VPS_SSH_USER']
     require(re.fullmatch(r'[a-z0-9][a-z0-9.-]*',host) and re.fullmatch(r'[a-z_][a-z0-9_-]*',user),'invalid SSH target')
     port=os.environ.get('VPS_SSH_PORT','22');require(port.isdigit() and 1<=int(port)<=65535,'invalid SSH port')

@@ -30,14 +30,14 @@ const positionFor = (index: number) => {
 
 const themeItems = themes.map((label, index) => ({ label, key: `theme-${index + 1}` }));
 const themeKeyByLabel = new Map(themeItems.map(({ label, key }) => [label, key]));
-const stageItems = [...new Set(essays.map((essay) => essay.data.publishedAt.getFullYear()))]
+const stageItems = [...new Set(essays.map((essay) => essay.data.publishedAt.getUTCFullYear()))]
   .sort((a, b) => b - a)
   .map((year, index) => ({ key: String(year), label: String(year), note: index === 0 ? '现在' : '记录' }));
 
 const nodes = essays.map((essay, index) => ({
   essay,
   ...positionFor(index),
-  stage: String(essay.data.publishedAt.getFullYear()),
+  stage: String(essay.data.publishedAt.getUTCFullYear()),
   themeKeys: (essay.data.tags ?? []).map((tag) => themeKeyByLabel.get(tag)).filter(Boolean) as string[],
 }));
 
@@ -90,7 +90,7 @@ const connections = nodes.flatMap((from, fromIndex) =>
             href={`#essay-${essay.data.slug}`}
             data-stage={stage}
             data-themes={themeKeys.join(',')}
-            aria-label={`${essay.data.title}，${essay.data.publishedAt.toLocaleDateString('zh-CN')}`}
+            aria-label={`${essay.data.title}，${essay.data.publishedAt.toLocaleDateString('zh-CN', { timeZone: 'UTC' })}`}
           >
             <circle cx={x} cy={y} r={index === 0 ? 6 : 4} class:list={[index === 0 && 'warm-core']}></circle>
             <circle cx={x} cy={y} r={index === 0 ? 14 : 12} class="focus-ring"></circle>

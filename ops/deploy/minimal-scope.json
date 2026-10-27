@@ -74,5 +74,34 @@
     ],
     "contentMatchesMain": true,
     "productionDeployed": false
+  },
+  "integration": {
+    "baseCandidate": "710549ae88a17ab53fd9bc6627c048e1816839eb",
+    "datePatch": "23fa3bd2463607d5d253b974304cfe9bfc6ab073",
+    "clientBindingPatch": "6b8d16d2cb2e629dda8ad2531e7e0ca5ba646261",
+    "patchFiles": {
+      "ops/deploy/README.md": "95de393b4353cabd1c2b4c93d5cf2ad2a8951bce1a8ec38917dfc8be5cac0013",
+      "ops/deploy/publish_client.py": "246c87b7d79ed02d9f27ad1da15932a34b2f45e5cde726f872982f601353c093",
+      "ops/deploy/test_publish_client.py": "49467d328e12813bc9f715be6c475cc633f8a9ec2529d552931d552cb737be60",
+      "src/components/EssaysUniverseMap.astro": "5171ed7373aa59525a10be7a244ad5d2119b3f6c73b76ecbe54230c10de51774",
+      "src/lib/content/homepage.ts": "02a2721398b3fefd480e5658602fbfa1edba461a1247baa98ad50c42e86c1dc4",
+      "src/pages/essays/index.astro": "2ca67f2806b20d2c20dce2978c73fcc0eeb86365abc9463a29eb0de3a766f7a7"
+    },
+    "metadataFile": "ops/deploy/minimal-scope.json",
+    "completeDeltaRelativeContentMainFiles": 48,
+    "historicalCopiedFiles": "copiedFiles remains the original extraction source hashes; patchFiles supersedes those bytes where listed",
+    "formalPagesWorkflow": "unchanged",
+    "adminMigrationIncluded": false,
+    "localOnly": true,
+    "productionAuthorized": false,
+    "patchFileBytePolicy": "SHA256 of canonical Git blob bytes, independent of checkout CRLF/LF",
+    "isolatedCI": {
+      "workflow": ".github/workflows/minimal-dual-target-validation.yml",
+      "workflowSha256": "ab60e607224582a4b8b5b6c1194cc3cec43306cf936335353292ab1db3c501de",
+      "branch": "codex/dual-target-review",
+      "addedCheck": "real generated CI ZIP with client SSH boundary intercepted",
+      "deploymentJobs": false,
+      "productionAuthorized": false
+    }
   }
 }
