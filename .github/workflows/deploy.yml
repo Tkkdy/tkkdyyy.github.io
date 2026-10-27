@@ -1,37 +1,70 @@
+# P1 Pages-only publisher. VPS automatic publication remains disabled.
 name: Deploy to GitHub Pages
-
 on:
   push:
-    branches: [main]
-  workflow_dispatch:
-
+    branches:
+      - main
+  workflow_dispatch: null
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: github-pages
-  cancel-in-progress: false
-
 jobs:
   build:
-    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      SOURCE_SHA: ${{ github.sha }}
+      PIPELINE_SHA: ${{ vars.REVIEWED_PIPELINE_SHA }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-      - name: Build and upload site
-        uses: withastro/action@v6
+      - name: Require exact reviewed pipeline SHA
+        run: '[[ "$PIPELINE_SHA" =~ ^[a-f0-9]{40}$ ]]'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          build-cmd: npm run build
-
+          ref: ${{ github.sha }}
+          path: site
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ vars.REVIEWED_PIPELINE_SHA }}
+          path: pipeline
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: 24
+      - working-directory: site
+        run: |-
+          npm ci
+          npm run check
+          npm run build
+      - run: python pipeline/ops/deploy/write_version.py --source site --dist site/dist
+          --target pages --workflow "$PIPELINE_SHA"
+      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b
+        with:
+          path: site/dist
+          name: pages-${{ github.run_id }}-${{ github.run_attempt }}
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy
+      - name: Reject superseded source before deployment
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: test "$(gh api "repos/$REPOSITORY/commits/main" --jq .sha)" = "$SOURCE_SHA"
+      - uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
         id: deployment
-        uses: actions/deploy-pages@v5
+        with:
+          artifact_name: pages-${{ github.run_id }}-${{ github.run_attempt }}
