@@ -1,3 +1,4 @@
+import { readAdminSession } from './github-content.mjs';
 import { rememberProposal } from './proposal-history.mjs';
 import { Editor, Node, mergeAttributes, type JSONContent } from '@tiptap/core';
 import DragHandle from '@tiptap/extension-drag-handle';
@@ -613,13 +614,14 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       const nextState = persistDraft();
       updatePublishStep('save', 'success');
 
-      const validationErrors = validateStory(nextState);
+      const session = await readAdminSession();
+      const validationErrors = validateStory(nextState, { allowDraft: session.publicationMode === 'pull-request' });
       if (validationErrors.length) {
         updatePublishStep('validate', 'failure');
         throw new Error(validationErrors.join(' '));
       }
 
-      const result = await publishStory({ state: nextState, onProgress: updatePublishStep });
+      const result = await publishStory({ state: nextState, session, onProgress: updatePublishStep });
       if (result.proposal) {
         try { rememberProposal(result.proposal,localStorage); } catch { showToast('提案已创建，但恢复记录未保存；请保留PR链接并导出当前提案记录。'); }
         if (publishedUrl instanceof HTMLAnchorElement) { publishedUrl.href = result.proposal.url; publishedUrl.textContent = '查看内容提案'; publishedUrl.hidden = false; }

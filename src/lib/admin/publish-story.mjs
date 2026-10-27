@@ -57,10 +57,10 @@ export function assertNoDestinationCollision({ sourcePath, destinationPath, dest
 /** @param {{ state: Record<string, any>, session?: Record<string, any>, onProgress?: (step: string, status: string) => void }} options */
 export async function publishStory({ state, session, onProgress = () => {} }) {
   onProgress('validate', 'running');
-  assertValidStory(state);
+  session ??= await readAdminSession();
+  assertValidStory(state, { allowDraft: session.publicationMode === 'pull-request' });
   onProgress('validate', 'success');
 
-  session ??= await readAdminSession();
   if (session.repository !== `${GITHUB_REPOSITORY.owner}/${GITHUB_REPOSITORY.repo}`) throw new Error('认证仓库不匹配。');
   const github = createGitHubClient({ ...GITHUB_REPOSITORY, branch: session.branch, csrf: session.csrf });
   onProgress('git', 'running');
