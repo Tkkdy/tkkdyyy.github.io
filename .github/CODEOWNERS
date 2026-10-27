@@ -1,0 +1,7 @@
+# Advisory ownership in single-maintainer mode; no independent approval requirement.
+/.github/ @Tkkdy
+/ops/ @Tkkdy
+/scripts/ @Tkkdy
+/package.json @Tkkdy
+/package-lock.json @Tkkdy
+/astro.config* @Tkkdy
