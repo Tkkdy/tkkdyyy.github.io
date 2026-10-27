@@ -2,8 +2,8 @@ import test from 'node:test';import assert from 'node:assert/strict';import {cre
 const cfg={origin:'https://studio.example',repository:'Tkkdy/tkkdyyy.github.io',repositoryId:1355866312,ownerId:144055705,branch:'codex/admin-probe',allowMain:false,clientId:'SYNTHETIC_CLIENT',clientSecret:'SYNTHETIC_SERVER_SECRET'};
 function fixture(options={}){
  const user=options.user??144055705,expires='expires' in options?options.expires:28800;
- let now=0;const calls=[];const broker=createBroker(cfg,{clock:()=>now,fetchImpl:async(url,options)=>{
-  calls.push({url,options});const data=url.endsWith('/access_token')?{access_token:'SYNTHETIC_GITHUB_TOKEN',refresh_token:'SYNTHETIC_REFRESH',expires_in:expires,token_type:'bearer'}:url.endsWith('/user')?{id:user,login:'Tkkdy'}:url.endsWith('/graphql')?{data:{repository:{name:'tkkdyyy.github.io'}}}:{id:cfg.repositoryId,full_name:cfg.repository};return Response.json(data);
+ const oauthError=options.oauthError;let now=0;const calls=[];const broker=createBroker(cfg,{clock:()=>now,fetchImpl:async(url,options)=>{
+  calls.push({url,options});const data=url.endsWith('/access_token')?(oauthError?{error:oauthError,error_description:'SYNTHETIC_PRIVATE_DESCRIPTION'}:{access_token:'SYNTHETIC_GITHUB_TOKEN',refresh_token:'SYNTHETIC_REFRESH',expires_in:expires,token_type:'bearer'}):url.endsWith('/user')?{id:user,login:'Tkkdy'}:url.endsWith('/graphql')?{data:{repository:{name:'tkkdyyy.github.io'}}}:{id:cfg.repositoryId,full_name:cfg.repository};return Response.json(data);
  }});
  const req=(path,options={})=>new Request(cfg.origin+path,options);
  async function start(){const result=await broker.handle(req('/auth/login?back=/admin/'));return {result,url:new URL(result.headers.get('location')),cookie:result.headers.getSetCookie()[0].split(';')[0]};}
@@ -53,4 +53,9 @@ test('Sveltia token scheme still requires the exact session CSRF and only owner 
  assert.equal((await f.broker.handle(f.req('/api/graphql',{method:'POST',headers:{cookie:s.cookie,origin:cfg.origin,authorization:'token '+session.csrf},body:JSON.stringify(query)}))).status,200);
  assert.equal((await f.broker.handle(f.req('/api/v3/repos/'+cfg.repository+'/collaborators/Tkkdy',{headers:{cookie:s.cookie}}))).status,200);
  assert.equal((await f.broker.handle(f.req('/api/v3/repos/'+cfg.repository+'/collaborators/another-user',{headers:{cookie:s.cookie}}))).status,403);
+});
+
+
+test('OAuth installation and credential failures are not mislabeled as token expiry or leaked',async()=>{
+ for(const [oauthError,message] of [['installation_missing_access','尚未获准访问目标仓库'],['incorrect_client_credentials','客户端凭据未通过验证'],['unknown_error','GitHub授权未成功']]){const f=fixture({oauthError});const s=await f.login();assert.equal(s.callback.status,403);assert(!s.cookie);const body=await s.callback.text();assert(body.includes(message));assert(!body.includes('必须启用短期'));assert(!body.includes('SYNTHETIC_PRIVATE_DESCRIPTION'));assert.equal(f.calls.length,1);}
 });

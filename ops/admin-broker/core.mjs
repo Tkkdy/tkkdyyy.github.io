@@ -45,7 +45,10 @@ export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now()}={}){
      const state=url.searchParams.get('state'),flow=flows.get(state);requirePolicy(flow&&flow.expires>clock()&&equal(cookies(request)[flowCookie],state),'登录会话不匹配或已过期。');flows.delete(state);
      const code=url.searchParams.get('code');requirePolicy(typeof code==='string'&&code.length<2048&&code.length>0,'缺少登录授权。');
      const token=await remote('https://github.com/login/oauth/access_token',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/json'},body:JSON.stringify({client_id:config.clientId,client_secret:config.clientSecret,code,redirect_uri:config.origin+'/auth/callback',code_verifier:flow.verifier,repository_id:config.repositoryId})});
-     requirePolicy(typeof token.access_token==='string'&&token.token_type==='bearer'&&Number.isFinite(token.expires_in)&&token.expires_in>0,'App必须启用短期用户令牌。');
+     const oauthErrors={installation_missing_access:'GitHub App尚未获准访问目标仓库，请检查App安装范围。',incorrect_client_credentials:'GitHub App客户端凭据未通过验证，请检查本机配置。',bad_verification_code:'GitHub登录授权码无效或已过期，请重新登录。',redirect_uri_mismatch:'GitHub App回调地址不匹配。'};
+     requirePolicy(!token.error,oauthErrors[token.error]||'GitHub授权未成功，尚未取得访问令牌。');
+     requirePolicy(typeof token.access_token==='string'&&token.token_type==='bearer','GitHub授权未成功，尚未取得可用访问令牌。');
+     requirePolicy(Number.isFinite(token.expires_in)&&token.expires_in>0,'App必须启用短期用户令牌。');
      const user=await github('/user',token.access_token);requirePolicy(user.id===config.ownerId,'此账号不是站点所有者。');
      const repo=await github('/repos/'+config.repository,token.access_token);requirePolicy(repo.id===config.repositoryId&&repo.full_name===config.repository,'目标仓库不匹配。');
      requirePolicy(sessions.size<30,'登录会话过多。');const id=nonce(),s={csrf:nonce(),token:token.access_token,user:{id:user.id,login:user.login},expires:clock()+Math.min(1800,token.expires_in)*1000};s.reader=createContentReader({github:(path,options)=>github(path,s.token,options),repository:config.repository,branch:config.branch});s.proposals=createContentProposalService({github:(path,options)=>github(path,s.token,options),enabled:proposalMode,clock});s.cmsWorkspace=createCmsWorkspace({github:(path,options)=>github(path,s.token,options),enabled:proposalMode});sessions.set(id,s);
