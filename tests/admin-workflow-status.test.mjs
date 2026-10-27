@@ -13,3 +13,13 @@ test('test branches do not query production; running and skipped are never succe
  const result=await inspectWorkflow({repository,branch:'codex/test',expectedSha:sha,github:()=>{throw Error('Must not query');}});assert.equal(result.pages.state,'NOT_REQUESTED');
  assert.equal((await inspect([job('pages-build','success'),{name:'pages-deploy',status:'in_progress',conclusion:null}])).pages.state,'PENDING');assert.equal((await inspect([job('vps-build','success'),job('vps-deploy','skipped')])).vps.state,'SKIPPED');
 });
+
+// Real workflow names are the broker target-identity contract.
+test('production Pages job labels match the strict broker contract without a VPS publisher', async()=>{
+ const {readFileSync}=await import('node:fs');const {parse}=await import('yaml');
+ const workflow=parse(readFileSync(new URL('../.github/workflows/deploy.yml',import.meta.url),'utf8'));
+ assert.equal(workflow.jobs.build.name,'pages-build');assert.equal(workflow.jobs.deploy.name,'pages-deploy');
+ assert.equal(workflow.jobs.deploy.needs,'build');assert.deepEqual(Object.keys(workflow.jobs).sort(),['build','deploy']);
+ const result=await inspect(Object.values(workflow.jobs).map(j=>job(j.name,'success')));
+ assert.equal(result.pages.state,'SUCCEEDED');assert.equal(result.vps.state,'UNKNOWN');
+});
