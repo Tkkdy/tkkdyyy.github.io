@@ -1,0 +1,19 @@
+# Isolated Linux fixture only; never accesses production or deployment secrets.
+name: Isolated legacy record compatibility
+on:
+  push:
+    branches: [codex/legacy-record-bridge]
+permissions:
+  contents: read
+jobs:
+  legacy-record:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Owner import, provenance rejection and controlled rollback in temporary directories
+        run: sudo python3 -B -m unittest discover -s ops/deploy -p 'test_legacy_record.py' -v
+      - name: Existing manifest and provenance regressions
+        run: python3 -B -m unittest discover -s ops/deploy -p 'test_manual_import.py' -v
