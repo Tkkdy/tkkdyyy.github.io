@@ -1,7 +1,7 @@
-export function validateStory(state) {
+export function validateStory(state, { allowDraft = false } = {}) {
   const errors = [];
   if (!['Article', 'Essay', 'Fragment'].includes(state.type)) errors.push('请选择支持的内容类型。');
-  if (state.status !== 'published') errors.push('发布前请将状态设为「已发布」。');
+  if (state.status !== 'published' && !(allowDraft && state.status === 'draft')) errors.push('发布前请将状态设为「已发布」。');
   if (state.type !== 'Fragment' && !state.title?.trim()) errors.push('请填写标题。');
   if (!state.slug?.match(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)) errors.push('URL Slug 只能使用小写字母、数字和单个连字符。');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(state.publishedAt ?? '')) errors.push('请选择发布日期。');
@@ -20,7 +20,7 @@ export function validateStory(state) {
   return errors;
 }
 
-export function assertValidStory(state) {
-  const errors = validateStory(state);
+export function assertValidStory(state, options) {
+  const errors = validateStory(state, options);
   if (errors.length) throw new Error(errors.join('\n'));
 }

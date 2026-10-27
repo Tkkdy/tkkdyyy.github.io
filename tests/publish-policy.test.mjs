@@ -79,3 +79,12 @@ test('slug destination collision rejects rename onto existing path', () => {
     destinationExists: true,
   }));
 });
+
+// Regression: an authenticated PR can store a draft without publishing it publicly.
+test('draft proposals require explicit PR validation and retain all other content checks', () => {
+  const draft = { ...validStory, status: 'draft' };
+  assert.deepEqual(validateStory(draft, { allowDraft: true }), []);
+  assert(validateStory(draft).some(e => e.includes('已发布')));
+  assert(validateStory({ ...draft, status: 'archived' }, { allowDraft: true }).length);
+  assert(validateStory({ ...draft, cover: 'image.png', coverAlt: '' }, { allowDraft: true }).some(e => e.includes('Alt')));
+});
