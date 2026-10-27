@@ -5,7 +5,8 @@
     "push": {
       "branches": [
         "codex/dual-site-minimal",
-        "codex/dual-target-review"
+        "codex/dual-target-review",
+        "codex/p2-integrated-validation"
       ],
       "paths": [
         "src/**",
