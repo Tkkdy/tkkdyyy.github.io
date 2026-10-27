@@ -15,11 +15,16 @@ test('test branches do not query production; running and skipped are never succe
 });
 
 // Real workflow names are the broker target-identity contract.
-test('production Pages job labels match the strict broker contract without a VPS publisher', async()=>{
+test('production target labels and isolated dependencies match the strict broker contract', async()=>{
  const {readFileSync}=await import('node:fs');const {parse}=await import('yaml');
  const workflow=parse(readFileSync(new URL('../.github/workflows/deploy.yml',import.meta.url),'utf8'));
- assert.equal(workflow.jobs.build.name,'pages-build');assert.equal(workflow.jobs.deploy.name,'pages-deploy');
- assert.equal(workflow.jobs.deploy.needs,'build');assert.deepEqual(Object.keys(workflow.jobs).sort(),['build','deploy']);
- const result=await inspect(Object.values(workflow.jobs).map(j=>job(j.name,'success')));
+ assert.equal(workflow.jobs['pages-build'].name,'pages-build');assert.equal(workflow.jobs['pages-deploy'].name,'pages-deploy');
+ assert.equal(workflow.jobs['pages-deploy'].needs,'pages-build');assert.equal(workflow.jobs['vps-deploy'].needs,'vps-build');
+ assert.deepEqual(Object.keys(workflow.jobs).sort(),['pages-build','pages-deploy','status','vps-build','vps-deploy']);
+ assert.equal(workflow.jobs['vps-deploy'].if,"vars.VPS_AUTODEPLOY_ENABLED == 'true' && github.ref == 'refs/heads/main'");
+ for(const target of ['pages','vps'])assert(!workflow.jobs[target+'-build'].needs);
+ for(const [id,j] of Object.entries(workflow.jobs))if(id!=='vps-deploy')assert(!JSON.stringify(j).includes('secrets.'));
+ assert.deepEqual(workflow.permissions,{contents:'read'});
+ const result=await inspect(['pages-build','pages-deploy'].map(id=>job(workflow.jobs[id].name,'success')));
  assert.equal(result.pages.state,'SUCCEEDED');assert.equal(result.vps.state,'UNKNOWN');
 });
