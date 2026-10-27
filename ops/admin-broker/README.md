@@ -1,3 +1,13 @@
+# P1 日常编辑入口（2026-10-27）
+
+Pages `/tkkdyyy.github.io/admin/` 保留写作、本地草稿、预览及草稿导出，不接收 GitHub Token。展开“编辑连接”打开 `http://127.0.0.1:19443/admin/`，本机 OAuth 编辑器负责图片与文章提交、创建 PR。GitHub CI 通过后，维护者在 GitHub 合并；Pages 由唯一正式工作流发布，VPS 自动发布仍禁用。
+
+现有本机配置已为 pull-request/main-read、allowMain=false；启动仓库的 `ops/admin-broker/Start-LocalAdmin.ps1` 即可复用受保护配置。新安装必须先构建私有 Admin，使用 Setup-LocalAdmin.ps1 的 `-PublicationMode pull-request`；不得把真实secret写进命令参数或源码。配置默认拒绝覆盖，历史草稿先在原浏览器/原域名导出后在本机导入，未导出的浏览器草稿不会自动跨域迁移。主站故障不影响本机服务读取 GitHub；电脑需开机运行，未部署公网VPS后台。
+
+真实App5482888、仓库限定与PR6/7/8、CI和跨会话恢复证据已在独立交接验收；下方“未注册/合成”内容为历史阶段记录。保护采用单人PR+必需CI、零独立批准，禁止强推和删除；不承诺防御维护者本人恶意更改代码。不得为编辑器扩大App权限或旁路保护。
+
+---
+
 # Admin broker：本地安全迁移实现，未上线
 
 本目录实现 Editorial Studio / Sveltia 共用的受限服务端认证与内容写入。当前已在独立开发副本和真实测试分支验证内容读写，但 OAuth 身份仍为合成；未注册 GitHub App、未修改生产权限、未连接生产写入。

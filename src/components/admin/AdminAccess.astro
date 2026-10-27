@@ -6,10 +6,10 @@ if(raw){const parsed=new URL(raw);if(parsed.protocol!=='https:'||parsed.origin!=
 <details class="admin-access">
  <summary data-auth-label>编辑连接</summary>
  <div>
-  <p data-auth-message>可先保存或迁移本地草稿，再连接编辑服务。</p>
+  <p data-auth-message>此页面可以写作、保存草稿和预览。创建 PR 请打开本机安全编辑器；草稿可通过“草稿迁移”导出、导入。</p>
   {editorOrigin && <p><a href={`${editorOrigin}/admin/`} target="_blank" rel="noopener noreferrer">打开主编辑站 ↗</a></p>}
   <p><a href="http://127.0.0.1:19443/admin/" target="_blank" rel="noopener noreferrer">打开本机备用编辑 ↗</a></p>
-  <p>本机备用服务需先启动；VPS 离线时仍可使用。</p>
+  <p>启动本机编辑服务后打开上述链接并登录 GitHub。发布会创建 PR，CI 通过后由你合并；两站部署结果分别确认。</p>
   <button type="button" data-auth-logout hidden>退出当前编辑会话</button>
  </div>
 </details>
