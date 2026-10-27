@@ -1,6 +1,6 @@
 ---
 import Header from '../../components/Header.astro';
-import StoryBody from '../../components/content/StoryBody.astro';
+
 
 import '../../styles/tokens.css';
 import '../../styles/global.css';
@@ -49,26 +49,28 @@ import '../../styles/admin-preview.css';
           <img data-preview-cover-image alt="" />
           <figcaption data-preview-cover-caption></figcaption>
         </figure>
-        <StoryBody variant="prose" preview />
+        <iframe data-preview-frame sandbox="" referrerpolicy="no-referrer" title="隔离的草稿正文" style="width:100%;min-height:80vh;border:0;"></iframe>
       </article>
     </main>
 
     <script>
       import { parsePreviewPayload, PREVIEW_STORAGE_KEY } from '../../lib/admin/preview-data.mjs';
       import { renderMarkdownBody } from '../../lib/content/render-body.mjs';
+      import { inertPreviewDocument } from '../../lib/admin/safe-preview.mjs';
+      import { withBase } from '../../lib/site-url';
 
       const payload = parsePreviewPayload(sessionStorage.getItem(PREVIEW_STORAGE_KEY));
       const empty = document.querySelector('[data-preview-empty]');
       const storyElement = document.querySelector('[data-preview-story]');
-      const body = document.querySelector('[data-story-body="preview"]');
+      const body = document.querySelector('[data-preview-frame]');
 
-      if (!payload || !(storyElement instanceof HTMLElement) || !(body instanceof HTMLElement)) {
+      if (!payload || !(storyElement instanceof HTMLElement) || !(body instanceof HTMLIFrameElement)) {
         if (empty instanceof HTMLElement) empty.hidden = false;
       } else {
         const story = payload.story;
         const variant = story.type === 'Essay' ? 'essay-reading-prose' : story.type === 'Fragment' ? 'fragment-entry-body' : 'prose';
-        body.className = `story-body ${variant}`;
-        body.innerHTML = renderMarkdownBody(story.markdown);
+        const styles = Array.from(document.querySelectorAll<HTMLLinkElement>('link[rel=stylesheet]')).map(link => link.href);
+        body.srcdoc = inertPreviewDocument(renderMarkdownBody(story.markdown), styles, variant, window.location.href, import.meta.env.BASE_URL);
         document.body.classList.toggle('essay-page', story.type === 'Essay');
         storyElement.classList.toggle('preview-story--fragment', story.type === 'Fragment');
 
@@ -87,8 +89,7 @@ import '../../styles/admin-preview.css';
         const cover = document.querySelector('[data-preview-cover]');
         const coverImage = document.querySelector('[data-preview-cover-image]');
         if (story.cover && cover instanceof HTMLElement && coverImage instanceof HTMLImageElement) {
-          const base = import.meta.env.BASE_URL;
-          coverImage.src = /^(data:|https?:\/\/)/.test(story.cover) || story.cover.startsWith(base) ? story.cover : `${base}${story.cover.replace(/^\/+/, '')}`;
+          coverImage.src = withBase(story.cover);
           coverImage.alt = story.coverAlt || '';
           setText('[data-preview-cover-caption]', story.coverAlt || '');
           cover.hidden = false;

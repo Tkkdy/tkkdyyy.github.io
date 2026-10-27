@@ -1,10 +1,9 @@
 import { mergeStudioFrontmatter } from './frontmatter.mjs';
-import { createGitHubClient, textToBase64 } from './github-content.mjs';
+import { createGitHubClient, textToBase64, readAdminSession, gitBlobSha } from './github-content.mjs';
 import { findLocalImageSources, rewriteImageSources, serializeTipTap } from './serialize-tiptap.mjs';
 import { assertValidStory } from './validate-story.mjs';
 
 export const GITHUB_REPOSITORY = { owner: 'Tkkdy', repo: 'tkkdyyy.github.io', branch: 'main' };
-export const GITHUB_TOKEN_KEY = 'tkkdy-editorial:github-token';
 
 const TYPE_DIRECTORY = { Article: 'articles', Essay: 'essays', Fragment: 'fragments' };
 const MIME_EXTENSIONS = {
@@ -21,7 +20,7 @@ async function dataUrlFile(dataUrl, basename) {
   const filename = `${basename}-${shortHash}.${MIME_EXTENSIONS[match[1]]}`;
   return {
     gitPath: `public/uploads/${filename}`,
-    publicPath: `/tkkdyyy.github.io/uploads/${filename}`,
+    publicPath: `/uploads/${filename}`,
     contentBase64: match[2],
   };
 }
@@ -55,15 +54,18 @@ export function assertNoDestinationCollision({ sourcePath, destinationPath, dest
   }
 }
 
-/** @param {{ state: Record<string, any>, token: string, onProgress?: (step: string, status: string) => void }} options */
-export async function publishStory({ state, token, onProgress = () => {} }) {
+/** @param {{ state: Record<string, any>, session?: Record<string, any>, onProgress?: (step: string, status: string) => void }} options */
+export async function publishStory({ state, session, onProgress = () => {} }) {
   onProgress('validate', 'running');
   assertValidStory(state);
   onProgress('validate', 'success');
 
-  const github = createGitHubClient({ ...GITHUB_REPOSITORY, token });
+  session ??= await readAdminSession();
+  if (session.repository !== `${GITHUB_REPOSITORY.owner}/${GITHUB_REPOSITORY.repo}`) throw new Error('认证仓库不匹配。');
+  const github = createGitHubClient({ ...GITHUB_REPOSITORY, branch: session.branch, csrf: session.csrf });
   onProgress('git', 'running');
   await github.authenticate();
+  const expectedHeadOid = await github.getHead();
 
   const uploadFiles = [];
   const replacements = {};
@@ -88,11 +90,12 @@ export async function publishStory({ state, token, onProgress = () => {} }) {
   const directory = TYPE_DIRECTORY[state.type];
   const destinationPath = `src/content/${directory}/${state.slug}.md`;
   const sourcePath = state.sourcePath || '';
-  const existing = sourcePath ? await github.readFile(sourcePath) : await github.readFile(destinationPath);
+  const existing = sourcePath ? await github.readFile(sourcePath, expectedHeadOid) : await github.readFile(destinationPath, expectedHeadOid);
+  if (state.sourceBlobSha && existing?.sha !== state.sourceBlobSha) throw new Error('内容在开始编辑后已变化，请保留本地草稿并重新打开比较；未覆盖仓库。');
   if (!sourcePath && existing) throw new Error(`地址 ${destinationPath} 已经存在其他内容，请打开该内容进行编辑。`);
-  if (sourcePath && !existing) throw new Error(`原内容文件 ${sourcePath} 已不在 main 分支上，请刷新后再发布。`);
+  if (sourcePath && !existing) throw new Error(`原内容文件 ${sourcePath} 已不在当前编辑分支上，请刷新后再发布。`);
   if (sourcePath && sourcePath !== destinationPath) {
-    const destination = await github.readFile(destinationPath);
+    const destination = await github.readFile(destinationPath, expectedHeadOid);
     assertNoDestinationCollision({
       sourcePath,
       destinationPath,
@@ -101,41 +104,17 @@ export async function publishStory({ state, token, onProgress = () => {} }) {
   }
 
   const content = mergeStudioFrontmatter(existing?.content ?? '', state.type, studioFields(state, cover), markdown);
-  const commit = await github.commitFiles({
-    branch: GITHUB_REPOSITORY.branch,
+  const changes = {
+    expectedHeadOid,
     message: `${state.status === 'published' ? 'Publish' : 'Save'} ${state.type.toLowerCase()}: ${state.slug}`,
     files: [...uploadFiles, { path: destinationPath, contentBase64: textToBase64(content) }],
     deletePaths: sourcePath && sourcePath !== destinationPath ? [sourcePath] : [],
-  });
+  };
+  const commit = session.publicationMode==='pull-request' ? await github.proposeFiles(changes) : await github.commitFiles({...changes,branch:session.branch});
   onProgress('git', 'success');
 
   const route = state.type === 'Fragment' ? `fragments/#${state.slug}` : `${directory}/${state.slug}/`;
   const publicUrl = `https://tkkdy.github.io/tkkdyyy.github.io/${route}`;
-  return { commitSha: commit.sha, publicUrl, github };
-}
-
-/**
- * @param {ReturnType<typeof createGitHubClient>} github
- * @param {string} commitSha
- * @param {(step: string, status: string) => void} [onProgress]
- * @param {number} [timeoutMs]
- */
-export async function waitForDeploy(github, commitSha, onProgress = () => {}, timeoutMs = 180_000) {
-  onProgress('deploy', 'running');
-  const started = Date.now();
-  while (Date.now() - started < timeoutMs) {
-    const run = await github.findWorkflowRun(commitSha);
-    if (run) {
-      if (run.status !== 'completed') {
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        continue;
-      }
-      if (run.conclusion !== 'success') throw new Error(`网站部署未成功，状态：${run.conclusion}。`);
-      onProgress('deploy', 'success');
-      return run;
-    }
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-  }
-  onProgress('deploy', 'triggered');
-  return null;
+  const savedBlobSha = await gitBlobSha(content);
+  return { commitSha: commit.sha, publicUrl, github, branch: commit.proposal?.branch??session.branch, proposal:commit.proposal, sourcePath: destinationPath, sourceBlobSha: savedBlobSha };
 }

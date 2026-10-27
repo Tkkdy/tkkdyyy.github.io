@@ -1,0 +1,107 @@
+{
+  "baseMain": "a578dc69c7302a61f5c8e313e4d061ddfee4804c",
+  "reusedSource": "c768a4407627a0c6dc698517ffd7dbc9dfa4177b",
+  "scope": "M1_BUILD_AND_M2_INERT_TOOLS_ONLY",
+  "copiedFiles": {
+    "astro.config.mjs": "691393f80900a3acb9c535e0cecbdf2c7ef53cb88a493e6eba1c0a44d62cb9a0",
+    "astro.config.vps.mjs": "4e538f65fda1f5e22f6130f47cbe98bf8b9cf977dfab498aa5362df69b7ca3e5",
+    "scripts/audit-dual-builds.mjs": "ad598d5525391f0f975a4148396454e5948c5ad197e180117d838e8fb295f344",
+    "scripts/normalize-public-urls.mjs": "f307a973c41e9e77971e61372c959f4ae0fadc5d7cd8a9f3c271f2f3ef764a44",
+    "scripts/prune-vps-admin.mjs": "91706b0f11cc716bfc410f1023cd00fb669ee23ebe25e3ad024a8028c2f6ced7",
+    "src/components/SeoHead.astro": "e06ca96ca2835554de17dbc06f13f3f2795642ad69fd5b615160a7fd6d292fa1",
+    "src/config.ts": "5b6641e56180574c506ed7ecc95846e92ce2f2f62fdb276526f9d0970fcf0f1a",
+    "src/layouts/ArticleLayout.astro": "8a54a1ed170399e8b4130783473a997a2ed2e0aed9027900cc9cd568c7d2f62c",
+    "src/layouts/EssayLayout.astro": "6effb41a1137949b255c3b3ffea25bfd7b126c712b7efc015f202fcc4b5e108e",
+    "src/layouts/ImageLayout.astro": "39a7ba54a0db2b0cf0a8c22f4f636c7c713bec5ea8ae7f5d8ec8c77a0d893304",
+    "src/layouts/ProjectLayout.astro": "87456cc69d10bcdbcb531c58e201cc41a00f88bf6b6db121759fb0305d73ddf0",
+    "src/lib/content-url.mjs": "bb3bb3b976ec6cae0977526d0c26b35bab63ab7179d9e5bbcebc29639db87ce3",
+    "src/lib/content/images.ts": "70a89398199581a3c835dcb3abf8824730858f29e661065f8d38ca93380c3600",
+    "src/lib/content/normalize-html.mjs": "07e9c503120cff2af6a8038c8a78f66ffc6a66bf4feeb57cc494f50a6d727b5c",
+    "src/lib/search/pagefind.ts": "54a8b26691e6f0ce86c393cb9697acace2f61e96644e2854a21517f8207749fd",
+    "src/lib/site-url.ts": "315f0b07df9d1ef9ebc727b99f0cb79955a957d7a135a0860e8df5fb28c6fdc8",
+    "src/pages/404.astro": "b5f8523458f3427fa8434179ad7a474735d15fffd6546ad420f793cc7fe20770",
+    "src/pages/about.astro": "21a766b66a29557b652726e7d1521405e944f294b630d200ab1d518aa3f4596c",
+    "src/pages/fragments/index.astro": "aaeb8e7f100d78520ea4240ae1d0b971702c2c197b8ed8e740217a2c8dd00488",
+    "tests/content-url.test.mjs": "fb900cd9ff0d552531a21ff6603a9cf4e2a7623ba99a2552f728511c26190188",
+    "tests/pagefind-cross-origin.browser.js": "f7da39e48722915695b50831e8e8878aed052d1fa11f12b1c5ee8ee56de81c7a",
+    "ops/deploy/browser_gate.mjs": "46a92b1792bafbdd7d1448cef3351c6e43d869197f7f4dd02d0ed3dc6492fd27",
+    "ops/deploy/dual-publish.workflow.DRAFT.yml": "1382f3b8f0b379d5af355a9f2f692237c2d965d71f22918c17e8644caf21702f",
+    "ops/deploy/import_manual_release.py": "7aabb2bd9674aaa6e3b22dc40e874de3390faab6494499fb6fa9faf33c95bdf3",
+    "ops/deploy/policy.DRAFT.json": "5d27d4fb7f6eda891795b975fefc61a96c03db24edc8c9731ea91a37b16ba9aa",
+    "ops/deploy/publish_client.py": "e5db02624db7c2cb998ce52fb602506d7122c43257ebb0f3df6b3df016fc18a0",
+    "ops/deploy/receiver.py": "c87cac2821a39e294816a8e935275cd2461bc3ffb6ee964bbecddeb4be560067",
+    "ops/deploy/release_bundle.py": "47c8fe8edba86f3f79e951f652c6950c6705aa3a1d33bcc6db7cf3dcac5b0f3e",
+    "ops/deploy/release_records.py": "a29f8ac934135f97adaca7c02de5341c3e8b5dd0710d4bee9013cef4ae203c27",
+    "ops/deploy/rollback_release.py": "349bc3b1d41f0c76dcaf9a26ce70d1ebd60f85c1cb470fbc531bd2cc42b9c8b1",
+    "ops/deploy/source_authority.py": "933bcf31d6f6141c25f2302b2e4ef0474df989b2be424d01e665c45a6eab6793",
+    "ops/deploy/status_report.py": "8ac86cf08781acee2836be7e422df521b5d492fbfd3d6f7889d44c8703dbaa6e",
+    "ops/deploy/test_bundle.py": "b97732c50cf8587a148f5bf3b5177212dd6d4808223d0208404d0faf2255746a",
+    "ops/deploy/test_manual_import.py": "8b4671f98cfd9401645001fc28682f6b151c425bbb6fd09258bc2c68caf244ff",
+    "ops/deploy/test_source_authority.py": "1a500be74ba6aae1befedd79dcbe3bf04ae2a414761c9f9be15cca037255a8fc",
+    "ops/deploy/test_transaction.py": "3ff451b5282f347de9eb84a578361b3dbf1b73c45c749be61718e763bd1e3c77",
+    "ops/deploy/write_version.py": "432dc7e4ca117cdd4f6d17fddc33be83fd6fdf40caa91839d6e544e771ed7476",
+    "ops/deploy/official-action-pins.json": "481be742b83f5bf5ebcaf28a74c41a787fb774705fbeb824bd5eba4de9f8926c"
+  },
+  "excluded": [
+    "all Admin changes, config, vendor/font and OAuth/PR adapters",
+    "installer/account/ACL guardian code",
+    "formal deploy.yml changes",
+    "content changes"
+  ],
+  "expectedNewDirectDependencies": {
+    "parse5": "8.0.1"
+  },
+  "expectedNewDevDependencies": {
+    "playwright": "1.64.1"
+  },
+  "productionApproved": false,
+  "dependencyStrategy": "Reuse reviewed build dependency resolutions, prune Admin-only nodes against minimal root manifest; not latest upgrade.",
+  "reviewedDependencyUpdatesRetained": 91,
+  "remainingAdvisories": {
+    "fast-uri": "moderate",
+    "http-cache-semantics": "high"
+  },
+  "lockfileSha256": "af39c2b975fb078f06935e999391a578b51e2686905cd9f36032f087d6131a62",
+  "identityBytePolicy": ".gitattributes pins audited lock/config/runtime files to LF across Windows/Linux",
+  "contentMain": "545a9c5466985e0d2fb33ab48b364e9b43baa913",
+  "contentSync": {
+    "previousCandidate": "8c40b1702e04c88d58b41e637cef2da6a2f1bc05",
+    "upstreamChanges": [
+      {
+        "status": "added",
+        "path": "src/content/essays/chances.md"
+      }
+    ],
+    "contentMatchesMain": true,
+    "productionDeployed": false
+  },
+  "integration": {
+    "baseCandidate": "710549ae88a17ab53fd9bc6627c048e1816839eb",
+    "datePatch": "23fa3bd2463607d5d253b974304cfe9bfc6ab073",
+    "clientBindingPatch": "6b8d16d2cb2e629dda8ad2531e7e0ca5ba646261",
+    "patchFiles": {
+      "ops/deploy/README.md": "95de393b4353cabd1c2b4c93d5cf2ad2a8951bce1a8ec38917dfc8be5cac0013",
+      "ops/deploy/publish_client.py": "246c87b7d79ed02d9f27ad1da15932a34b2f45e5cde726f872982f601353c093",
+      "ops/deploy/test_publish_client.py": "49467d328e12813bc9f715be6c475cc633f8a9ec2529d552931d552cb737be60",
+      "src/components/EssaysUniverseMap.astro": "5171ed7373aa59525a10be7a244ad5d2119b3f6c73b76ecbe54230c10de51774",
+      "src/lib/content/homepage.ts": "02a2721398b3fefd480e5658602fbfa1edba461a1247baa98ad50c42e86c1dc4",
+      "src/pages/essays/index.astro": "2ca67f2806b20d2c20dce2978c73fcc0eeb86365abc9463a29eb0de3a766f7a7"
+    },
+    "metadataFile": "ops/deploy/minimal-scope.json",
+    "completeDeltaRelativeContentMainFiles": 48,
+    "historicalCopiedFiles": "copiedFiles remains the original extraction source hashes; patchFiles supersedes those bytes where listed",
+    "formalPagesWorkflow": "unchanged",
+    "adminMigrationIncluded": false,
+    "localOnly": true,
+    "productionAuthorized": false,
+    "patchFileBytePolicy": "SHA256 of canonical Git blob bytes, independent of checkout CRLF/LF",
+    "isolatedCI": {
+      "workflow": ".github/workflows/minimal-dual-target-validation.yml",
+      "workflowSha256": "ab60e607224582a4b8b5b6c1194cc3cec43306cf936335353292ab1db3c501de",
+      "branch": "codex/dual-target-review",
+      "addedCheck": "real generated CI ZIP with client SSH boundary intercepted",
+      "deploymentJobs": false,
+      "productionAuthorized": false
+    }
+  }
+}

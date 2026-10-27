@@ -1,0 +1,56 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {mkdtemp,mkdir,writeFile,rm,symlink} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join} from 'node:path';import http from 'node:http';import {createAdminServer} from '../ops/admin-broker/server.mjs';
+async function fixture(t,session={repository:'Tkkdy/tkkdyyy.github.io',branch:'codex/probe'}){
+ const dir=await mkdtemp(join(tmpdir(),'editorial-adapter-'));await mkdir(join(dir,'admin'));await writeFile(join(dir,'admin/index.html'),'<script>window.test=1</script><h1>Protected</h1>');await writeFile(join(dir,'admin/secret.env'),'PRIVATE');await writeFile(join(dir,'admin/config.yml'),'backend:\n  name: github\ncollections: []\n');
+ const probe=http.createServer();await new Promise(r=>probe.listen(0,'127.0.0.1',r));const port=probe.address().port;await new Promise(r=>probe.close(r));
+ const origin='http://127.0.0.1:'+port;
+ const broker={authenticate:async req=>{if(req.headers.get('cookie')!=='synthetic=owner')throw Error('unauthorized');return session;},handle:async()=>new Response('{}',{headers:{'set-cookie':['first=1; HttpOnly','second=2; HttpOnly']}})};
+ const server=await createAdminServer({origin,staticRoot:dir,broker,maxBodyBytes:32});await new Promise(r=>server.listen(port,'127.0.0.1',r));t.after(async()=>{await new Promise(r=>server.close(r));await rm(dir,{recursive:true,force:true});});return{dir,origin,port};
+}
+test('actual loopback HTTP gates static admin and assets, emits restrictive CSP and rejects rebinding',async t=>{
+ const f=await fixture(t);assert.equal((await fetch(f.origin+'/admin/')).status,401);
+ const r=await fetch(f.origin+'/admin/',{headers:{cookie:'synthetic=owner'}});assert.equal(r.status,200);assert.match(r.headers.get('content-security-policy'),/script-src 'self' 'sha256-/);assert(!r.headers.get('content-security-policy').includes("script-src 'unsafe-inline'"));assert.equal(r.headers.get('x-robots-tag'),'noindex, nofollow');
+ const forged=await new Promise((resolve,reject)=>{const req=http.get({host:'127.0.0.1',port:f.port,path:'/admin/',headers:{host:'evil.example',cookie:'synthetic=owner'}},res=>{res.resume();resolve(res.statusCode);});req.on('error',reject);});assert.equal(forged,421);
+ for(const path of ['/admin/secret.env','/admin/missing/','/other.html'])assert.equal((await fetch(f.origin+path,{headers:{cookie:'synthetic=owner'}})).status,404);
+});
+test('raw traversal, double decoding and cross-site paths never reach protected static files',async t=>{
+ const f=await fixture(t);for(const path of ['/admin/../admin/','/admin/%2e%2e/admin/','/admin/%252e%252e/','//evil.example/admin/','/admin/%5csecret.env']){
+  const status=await new Promise((resolve,reject)=>{const req=http.get({host:'127.0.0.1',port:f.port,path,headers:{cookie:'synthetic=owner'}},res=>{res.resume();resolve(res.statusCode);});req.on('error',reject);});assert.equal(status,400,path);
+ }
+});
+test('POST input is bounded before broker and static directories cannot be listed',async t=>{
+ const f=await fixture(t);const oversized=await fetch(f.origin+'/api/graphql',{method:'POST',body:'x'.repeat(33)});assert.equal(oversized.status,413);
+ assert.equal((await fetch(f.origin+'/admin/',{method:'POST',body:'x'})).status,405);
+ await mkdir(join(f.dir,'admin/empty'));assert.equal((await fetch(f.origin+'/admin/empty/',{headers:{cookie:'synthetic=owner'}})).status,404);
+});
+
+test('CMS configuration is authenticated, same-origin and cannot select main or PAT authentication',async t=>{
+ const f=await fixture(t);assert.equal((await fetch(f.origin+'/admin/config.yml')).status,401);
+ const response=await fetch(f.origin+'/admin/config.yml',{headers:{cookie:'synthetic=owner'}});assert.equal(response.status,200);const config=await response.text();assert.match(config,/branch: codex\/probe/);assert.match(config,/auth_methods:\n    - oauth/);assert(config.includes(f.origin+'/api/v3'));assert(!config.includes('token'));assert(!config.includes('branch: main'));
+});
+
+test('existing project images are readable after login while sibling scripts and HTML stay unavailable',async t=>{
+ const f=await fixture(t);await mkdir(join(f.dir,'projects'));await writeFile(join(f.dir,'projects/old-image.png'),Buffer.from([137,80,78,71,13,10,26,10]));await writeFile(join(f.dir,'projects/unsafe.js'),'alert(1)');await writeFile(join(f.dir,'projects/unsafe.html'),'<script>alert(1)</script>');
+ assert.equal((await fetch(f.origin+'/projects/old-image.png')).status,401);
+ const image=await fetch(f.origin+'/projects/old-image.png',{headers:{cookie:'synthetic=owner'}});assert.equal(image.status,200);assert.match(image.headers.get('content-security-policy'),/sandbox/);
+ for(const file of ['unsafe.js','unsafe.html'])assert.equal((await fetch(f.origin+'/projects/'+file,{headers:{cookie:'synthetic=owner'}})).status,404);
+});
+
+test('only CMS can fetch local blob documents; blob scripts and external network stay blocked',async t=>{
+ const f=await fixture(t);await writeFile(join(f.dir,'admin/sveltia.html'),'<h1>CMS</h1>');
+ const cms=await fetch(f.origin+'/admin/sveltia.html',{headers:{cookie:'synthetic=owner'}}),studio=await fetch(f.origin+'/admin/',{headers:{cookie:'synthetic=owner'}});
+ const policy=cms.headers.get('content-security-policy');assert.match(policy,/connect-src 'self' blob:;/);assert.match(studio.headers.get('content-security-policy'),/connect-src 'self';/);
+ const scripts=policy.split(';').find(rule=>rule.trim().startsWith('script-src'));assert(!scripts.includes('blob:'));assert(!scripts.includes('unsafe-inline'));assert(!scripts.includes('unsafe-eval'));assert(!policy.match(/connect-src[^;]*https:/));
+});
+
+
+test('PR CMS config refuses main fallback and only its workspace frame permits same-origin framing',async t=>{
+ const session={repository:'Tkkdy/tkkdyyy.github.io',branch:'main',publicationMode:'pull-request',cmsWorkspace:{state:'NOT_STARTED',branch:null}};
+ const f=await fixture(t,session),headers={cookie:'synthetic=owner'};
+ assert.equal((await fetch(f.origin+'/admin/config.yml',{headers})).status,403);
+ session.cmsWorkspace={state:'EDITING',branch:'codex/cms-proposal-synthetic'};
+ const config=await (await fetch(f.origin+'/admin/config.yml',{headers})).text();assert.match(config,/branch: codex\/cms-proposal-synthetic/);assert(!config.includes('branch: main'));
+ await writeFile(join(f.dir,'admin/sveltia.html'),'<h1>CMS</h1>');await writeFile(join(f.dir,'admin/sveltia-workspace.html'),'<h1>CMS</h1>');
+ const normal=await fetch(f.origin+'/admin/sveltia.html',{headers}),frame=await fetch(f.origin+'/admin/sveltia-workspace.html',{headers});
+ assert.match(normal.headers.get('content-security-policy'),/frame-ancestors 'none'/);assert.match(frame.headers.get('content-security-policy'),/frame-ancestors 'self'/);
+ session.cmsWorkspace.state='PULL_REQUEST_OPEN';assert.equal((await fetch(f.origin+'/admin/config.yml',{headers})).status,403);
+});

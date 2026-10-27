@@ -1,6 +1,8 @@
 // tkkdy 影像查询层（栏目页与单张详情页共用）
 
 import { existsSync } from 'node:fs';
+import { resolve, relative } from 'node:path';
+import { publicAssetPath } from '../content-url.mjs';
 import { getCollection, type CollectionEntry } from 'astro:content';
 
 export type ImageOrientation = 'landscape' | 'portrait' | 'square';
@@ -24,12 +26,13 @@ export async function getPublishedImages(): Promise<PublishedImage[]> {
  * 文件不存在时页面保留 Placeholder，不生成 broken <img>。
  */
 export function imageFileExists(imagePath: string): boolean {
-  const publicFile = `./public${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}`;
   try {
-    return existsSync(publicFile);
-  } catch {
-    return false;
-  }
+    const asset = publicAssetPath(imagePath);
+    if (asset === null) return /^https?:\/\//i.test(imagePath);
+    const root = resolve('public'), file = resolve(root, '.' + asset);
+    if (relative(root, file).startsWith('..')) return false;
+    return existsSync(file);
+  } catch { return false; }
 }
 
 /** 展示比例：优先使用内容字段，其次从 slug / 路径推断，默认 landscape */

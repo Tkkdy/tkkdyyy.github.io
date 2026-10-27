@@ -1,0 +1,156 @@
+# EXTRACTION VALIDATION ONLY: no deployments, production secrets, SSH or root operations.
+{
+  "name": "Isolated minimal dual-target extraction",
+  "on": {
+    "push": {
+      "branches": [
+        "codex/dual-site-minimal",
+        "codex/dual-target-review"
+      ],
+      "paths": [
+        "src/**",
+        "public/**",
+        "scripts/**",
+        "ops/deploy/**",
+        "!ops/deploy/*.md",
+        "tests/**",
+        "astro.config*",
+        "package*.json",
+        ".github/workflows/minimal-dual-target-validation.yml"
+      ]
+    }
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "concurrency": {
+    "group": "isolated-dual-target-${{ github.ref }}",
+    "cancel-in-progress": false
+  },
+  "jobs": {
+    "build": {
+      "name": "Build and test ${{ matrix.target }}",
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 25,
+      "strategy": {
+        "fail-fast": false,
+        "matrix": {
+          "include": [
+            {
+              "target": "pages",
+              "script": "build"
+            },
+            {
+              "target": "vps",
+              "script": "build:vps"
+            }
+          ]
+        }
+      },
+      "env": {
+        "SITE_URL": "https://preview.boenbot.top",
+        "BUILD_SCRIPT": "${{ matrix.script }}",
+        "TARGET": "${{ matrix.target }}",
+        "SOURCE_SHA": "${{ github.sha }}"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "with": {
+            "node-version": 24
+          }
+        },
+        {
+          "run": "npm ci\nnpm run check\nnpm run \"$BUILD_SCRIPT\"\npython ops/deploy/write_version.py --source . --dist dist --target \"$TARGET\" --workflow \"$SOURCE_SHA\""
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "with": {
+            "name": "build-${{ matrix.target }}",
+            "path": "dist",
+            "if-no-files-found": "error",
+            "retention-days": 7
+          }
+        },
+        {
+          "name": "Validate exact VPS archive and deployment identity",
+          "if": "matrix.target == 'vps'",
+          "run": "python -B ops/deploy/release_bundle.py --source . --output \"$RUNNER_TEMP/minimal-vps.zip\" --site \"$SITE_URL\" --source-sha \"$SOURCE_SHA\" --workflow-sha \"$SOURCE_SHA\" --run-id \"$GITHUB_RUN_ID\" --attempt \"$GITHUB_RUN_ATTEMPT\""
+        },
+        {
+          "name": "Check runner-bound upload identity without opening SSH",
+          "if": "matrix.target == 'vps'",
+          "env": {
+            "VPS_BUNDLE_FILE": "${{ runner.temp }}/minimal-vps.zip"
+          },
+          "run": "python -B -m unittest discover -s ops/deploy -p test_publish_client.py -v"
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "if": "matrix.target == 'vps'",
+          "with": {
+            "name": "validated-vps-bundle",
+            "path": "${{ runner.temp }}/minimal-vps.zip\n${{ runner.temp }}/minimal-vps.zip.sha256",
+            "retention-days": 30
+          }
+        }
+      ]
+    },
+    "parity": {
+      "needs": "build",
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 10,
+      "steps": [
+        {
+          "uses": "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "persist-credentials": false
+          }
+        },
+        {
+          "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "with": {
+            "node-version": 24
+          }
+        },
+        {
+          "run": "npm ci --ignore-scripts"
+        },
+        {
+          "uses": "actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0",
+          "with": {
+            "name": "build-pages",
+            "path": "builds/pages"
+          }
+        },
+        {
+          "uses": "actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0",
+          "with": {
+            "name": "build-vps",
+            "path": "builds/vps"
+          }
+        },
+        {
+          "run": "node scripts/audit-dual-builds.mjs builds parity.json"
+        },
+        {
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "if": "always()",
+          "with": {
+            "name": "content-parity",
+            "path": "parity.json",
+            "retention-days": 7
+          }
+        }
+      ]
+    }
+  }
+}

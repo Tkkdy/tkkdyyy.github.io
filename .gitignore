@@ -19,3 +19,6 @@ Desktop.ini
 .vscode/
 *.swp
 *.swo
+
+# Private authenticated Admin artifact
+dist-admin/

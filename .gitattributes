@@ -1,0 +1,12 @@
+# Keep deployment identity bytes identical across Windows and Linux.
+.gitattributes text eol=lf
+package.json text eol=lf
+package-lock.json text eol=lf
+astro.config*.mjs text eol=lf
+ops/deploy/*.py text eol=lf
+ops/deploy/*.mjs text eol=lf
+ops/deploy/*.json text eol=lf
+ops/deploy/*.yml text eol=lf
+
+# Preserve audited Admin vendor bytes for SRI.
+public/admin/vendor/sveltia-cms-0.164.2.js -text

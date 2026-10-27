@@ -64,8 +64,9 @@ const fragments = await getPublishedFragments();
                 >
                   <meta
                     name="pagefind-meta"
-                    data-pagefind-meta={`title: ${formatDate(data.publishedAt)}, type: 碎片`}
+                    data-pagefind-meta={`title: ${formatDate(data.publishedAt)}`}
                   />
+                  <meta name="pagefind-meta" data-pagefind-meta="type: 碎片" />
                   <time class="fragment-entry-date" datetime={formatDate(data.publishedAt)}>
                     {formatDate(data.publishedAt)}
                   </time>

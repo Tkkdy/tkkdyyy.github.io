@@ -1,0 +1,7 @@
+{
+  "package": "@sveltia/cms",
+  "version": "0.164.2",
+  "npmIntegrity": "sha512-xF9W2fSoTCaBgpghl+TUowQAZsR6txpIbrVSzNemMNYa537XWcqqKDP+XRL0zb4e+Smhe9/RPOlaEUqKAqqyUw==",
+  "scriptSha256": "bd77155cd4bc50fc4b45ca9ae67e0555188987edc9f01a55f98344f975614628",
+  "scriptSRI": "sha384-8jh4ZuqWt5C7gHKiGgd+Ywoy7eALhOiKhUKx/m6KhUXgomY4Jx6Wf+j++aBPeOhf"
+}

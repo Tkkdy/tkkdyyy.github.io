@@ -1,0 +1,10 @@
+{
+  "enabled": false,
+  "root": "/srv/www/preview.boenbot.top",
+  "site": "https://preview.boenbot.top",
+  "reviewedWorkflowSha": "NOT_CONFIGURED",
+  "approvedSourceShas": [],
+  "sourceAuthority": "github-main",
+  "repository": "Tkkdy/tkkdyyy.github.io",
+  "bootstrapSourceSha": "88ac30aa31d4c806e6af9a71b955db2f0dd16967"
+}

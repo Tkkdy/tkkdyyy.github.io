@@ -18,7 +18,8 @@ const base = import.meta.env.BASE_URL;
 /** 加载 Pagefind 模块（Promise 缓存，只加载一次；返回值就是模块自身） */
 export function loadPagefind(): Promise<any> {
   if (!pagefindModulePromise) {
-    const url = `${base}pagefind/pagefind.js`;
+    // 使用当前页面的绝对地址，避免跨预览切换时沿用旧来源的 import 解析上下文。
+    const url = new URL(`${base}pagefind/pagefind.js`, window.location.origin).href;
     pagefindModulePromise = new Function('url', 'return import(url)')(url).then(
       (mod: any) => mod,
     );
