@@ -16,9 +16,8 @@ featured: true
 homepage:
   show: true
   order: 1
+updatedAt: 2026-10-27
 ---
-
-<!-- Stage 2 fixture：正文占位。文章详情页与正式正文属于后续 Stage。 -->
 
 ## Development fixture
 
@@ -38,6 +37,7 @@ homepage:
 
 ```ts
 const greeting = 'hello, world';
+
 ```
 
 > 引用块：上下文比模型更持久。
