@@ -1,0 +1,27 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import {getEditorialStories} from '../../lib/admin/stories';
+const stories=await getEditorialStories();
+---
+<AdminLayout title="私有草稿与恢复" stories={stories}>
+ <section class="stories-view"><h1>私有草稿与恢复</h1><p data-draft-message role="status">正在载入……</p><div data-private-draft-list></div></section>
+</AdminLayout>
+<script>
+ import {readAdminSession} from '../../lib/admin/github-content.mjs';
+ const list=document.querySelector<HTMLElement>('[data-private-draft-list]')!,message=document.querySelector<HTMLElement>('[data-draft-message]')!;
+ async function run(){try{
+  const session=await readAdminSession();if(!session.privateDrafts)throw Error('当前入口使用浏览器本地草稿，请使用草稿迁移功能。');
+  const request=async(path:string,body?:unknown)=>{const r=await fetch(path,{credentials:'same-origin',cache:'no-store',...(body?{method:'POST',headers:{'Content-Type':'application/json','X-Admin-CSRF':session.csrf},body:JSON.stringify(body)}:{})});const data=await r.json();if(!r.ok)throw Error(data.error);return data;};
+  const {drafts}=await request('/api/drafts');list.replaceChildren();message.textContent=`${drafts.length} 份私有草稿。可下载备份、恢复最近三个版本或删除已完成草稿。`;
+  for(const item of drafts){
+   const row=document.createElement('section');row.className='private-draft-row';const name=document.createElement('strong');name.textContent=item.title;const link=document.createElement('a');
+   const url=new URL(['Project','Image'].includes(item.type)?'/admin/content/':'/admin/stories/new/',location.origin);url.searchParams.set(item.key.startsWith('src/content/')?'source':'draft',item.key);link.href=url.href;link.textContent='继续编辑';
+   const exportButton=document.createElement('button');exportButton.textContent='下载备份';exportButton.onclick=async()=>{try{const {draft}=await request('/api/drafts?key='+encodeURIComponent(item.key));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(draft,null,2)],{type:'application/json'}));a.download='editorial-draft.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}catch(e){message.textContent=String(e);}};
+   const history=document.createElement('button');history.textContent='恢复历史版本';history.onclick=async()=>{try{const result=await request('/api/drafts?history=1&key='+encodeURIComponent(item.key));history.disabled=true;for(const version of result.history){const button=document.createElement('button');button.textContent='恢复 '+version.updated+' · v'+version.revision;button.onclick=async()=>{try{await request('/api/drafts',{key:item.key,action:'restore',revision:version.revision,expectedRevision:item.revision});await run();}catch(e){message.textContent=String(e);}};row.append(button);}if(!result.history.length)message.textContent='此草稿还没有历史版本。';}catch(e){message.textContent=String(e);}};
+   const remove=document.createElement('button');remove.textContent='删除草稿';remove.onclick=async()=>{if(!confirm('删除这份私有草稿及其历史版本？请先下载备份。已发布内容不会删除。'))return;try{await request('/api/drafts',{key:item.key,action:'delete',expectedRevision:item.revision});await run();}catch(e){message.textContent=String(e);}};
+   row.append(name,link,exportButton,history,remove);list.append(row);
+  }
+ }catch(e){message.textContent=e instanceof Error?e.message:'读取失败。';}}
+ void run();
+</script>
+<style>.private-draft-row{display:flex;flex-wrap:wrap;gap:12px;padding:20px 0;border-bottom:1px solid #ddd}.private-draft-row strong{width:100%}.private-draft-row button,.private-draft-row a{min-height:44px;padding:10px;border:1px solid #cbd5d0;background:white;border-radius:5px;font-size:14px}</style>

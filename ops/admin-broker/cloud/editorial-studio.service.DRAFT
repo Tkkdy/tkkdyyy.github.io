@@ -1,0 +1,32 @@
+# Install only after owner approval. Fill immutable release and validated Node path first.
+[Unit]
+Description=Private Editorial Studio
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+User=editorial-studio
+Group=editorial-studio
+WorkingDirectory=/opt/editorial-studio/RELEASE
+LoadCredential=broker.json:/etc/editorial-studio/broker.json
+ExecStart=/bin/sh -c 'exec /usr/bin/node ops/admin-broker/run.mjs --stdin-config < "$CREDENTIALS_DIRECTORY/broker.json"'
+Restart=on-failure
+RestartSec=5
+StateDirectory=editorial-studio
+StateDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/editorial-studio
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+MemoryMax=512M
+TasksMax=64
+LimitNOFILE=1024
+[Install]
+WantedBy=multi-user.target

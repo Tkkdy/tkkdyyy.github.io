@@ -11,7 +11,7 @@ const MIME_EXTENSIONS = {
   'image/svg+xml': 'svg', 'image/webp': 'webp',
 };
 
-async function dataUrlFile(dataUrl, basename) {
+export async function dataUrlFile(dataUrl, basename) {
   const match = dataUrl.match(/^data:([^;,]+);base64,(.+)$/);
   if (!match || !MIME_EXTENSIONS[match[1]]) throw new Error('只能发布 base64 格式的 PNG、JPEG、GIF、WebP、AVIF 或 SVG 图片。');
   const bytes = Uint8Array.from(atob(match[2]), (character) => character.charCodeAt(0));

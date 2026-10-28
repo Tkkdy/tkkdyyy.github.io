@@ -1,5 +1,6 @@
 /** Live editorial content, pinned to one Git head; no frontend code updates on content publish. */
 import YAML from 'yaml';import {requirePolicy} from './policy.mjs';
+const RESOURCE=/^src\/content\/(projects|images)\/[\p{L}\p{N}][\p{L}\p{N}_.-]{0,180}\.md$/u;
 const PATH=/^src\/content\/(articles|essays|fragments)\/[\p{L}\p{N}][\p{L}\p{N}_.-]{0,180}\.md$/u;
 export function editorialStory(path,text,blobSha){
  requirePolicy(PATH.test(path)&&typeof text==='string'&&Buffer.byteLength(text)<=1_000_000,'内容文件超出读取范围。');
@@ -12,10 +13,10 @@ export function createContentReader({github,repository,branch}){
  const [owner,repo]=repository.split('/');let cached;
  return async()=>{
   const head=(await github(`/repos/${repository}/git/ref/heads/${encodeURIComponent(branch)}`)).object?.sha;requirePolicy(/^[a-f0-9]{40}$/.test(head||''),'分支版本无效。');if(cached?.head===head)return cached;
-  const tree=await github(`/repos/${repository}/git/trees/${head}?recursive=1`);requirePolicy(!tree.truncated&&Array.isArray(tree.tree),'仓库内容树不完整。');const files=tree.tree.filter(f=>f.type==='blob'&&PATH.test(f.path));requirePolicy(files.length<=300&&files.every(f=>/^[a-f0-9]{40}$/.test(f.sha)&&f.size<=1_000_000),'内容清单超限。');const stories=[];
+  const tree=await github(`/repos/${repository}/git/trees/${head}?recursive=1`);requirePolicy(!tree.truncated&&Array.isArray(tree.tree),'仓库内容树不完整。');const files=tree.tree.filter(f=>f.type==='blob'&&(PATH.test(f.path)||RESOURCE.test(f.path)));requirePolicy(files.length<=300&&files.every(f=>/^[a-f0-9]{40}$/.test(f.sha)&&f.size<=1_000_000),'内容清单超限。');const stories=[],resources=[];
   for(let index=0;index<files.length;index+=30){const chunk=files.slice(index,index+30),query=`query {repository(owner:${JSON.stringify(owner)},name:${JSON.stringify(repo)}){${chunk.map((file,i)=>`f${i}:object(oid:${JSON.stringify(file.sha)}){...on Blob{text}}`).join(' ')}}}`;
-   const result=await github('/graphql',{method:'POST',body:JSON.stringify({query})});requirePolicy(!result.errors&&result.data?.repository,'内容读取失败。');for(const [i,file]of chunk.entries())stories.push(editorialStory(file.path,result.data.repository['f'+i]?.text,file.sha));
+   const result=await github('/graphql',{method:'POST',body:JSON.stringify({query})});requirePolicy(!result.errors&&result.data?.repository,'内容读取失败。');for(const [i,file]of chunk.entries()){const text=result.data.repository['f'+i]?.text;if(PATH.test(file.path))stories.push(editorialStory(file.path,text,file.sha));else{requirePolicy(typeof text==='string'&&Buffer.byteLength(text)<=1_000_000,'内容读取失败。');const front=text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);requirePolicy(front&&front[1].length<=32000,'内容元数据无效。');const data=YAML.parseDocument(front[1]).toJS({maxAliasCount:0});requirePolicy(data&&typeof data==='object','内容元数据无效。');resources.push({sourcePath:file.path,sourceBlobSha:file.sha,title:data.name||data.title||data.slug||file.path,type:file.path.includes('/projects/')?'Project':'Image',status:data.status||'draft',slug:data.slug||'',deck:data.tagline||data.caption||'',categories:[],tags:data.tags||[],updatedAt:data.updatedAt||data.publishedAt||'',rawContent:text});}}
   }
-  stories.sort((a,b)=>b.publishedAt.localeCompare(a.publishedAt)||a.id.localeCompare(b.id));cached={head,stories};return cached;
+  stories.sort((a,b)=>b.publishedAt.localeCompare(a.publishedAt)||a.id.localeCompare(b.id));cached={head,stories,resources};return cached;
  };
 }

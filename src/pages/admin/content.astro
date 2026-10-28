@@ -1,0 +1,22 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getEditorialStories } from '../../lib/admin/stories';
+const stories=await getEditorialStories();
+---
+<AdminLayout title="编辑项目与影像" stories={stories}>
+ <section class="resource-editor stories-view">
+  <h1>编辑内容</h1><p data-resource-message role="status">正在载入……</p>
+  <form data-resource-form hidden><div data-resource-fields></div>
+   <label>正文<textarea name="resource-body" rows="15"></textarea></label>
+   <div class="resource-actions"><button type="button" data-resource-preview>预览</button><button type="submit">发布提案</button><button type="button" data-resource-save>重试保存</button><button type="button" data-resource-download>下载备份</button></div>
+  </form>
+  <section data-resource-preview-body hidden></section>
+ </section>
+</AdminLayout>
+<script>
+ import {initializeResourceEditor} from '../../lib/admin/resource-editor-client';
+ initializeResourceEditor();
+</script>
+<style>
+ .resource-editor label{display:grid;gap:6px;margin:16px 0;font-size:14px}.resource-editor input,.resource-editor select,.resource-editor textarea{width:100%;padding:10px;font:inherit;font-size:16px;border:1px solid #ccd4d0;border-radius:5px;background:white}.resource-actions{display:flex;gap:10px;flex-wrap:wrap}.resource-actions button{min-height:44px;padding:10px;border:1px solid #bbc9c1;border-radius:5px;background:white}.resource-editor img{max-width:100%}
+</style>
