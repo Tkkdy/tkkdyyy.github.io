@@ -4,6 +4,7 @@ import io
 import json
 import os
 import struct
+import shutil
 import sys
 import tempfile
 import unittest
@@ -167,16 +168,22 @@ class StagePolicyTests(unittest.TestCase):
                        'sourceSha': 'a' * 40, 'reviewedWorkflowSha': 'b' * 40,
                        'archiveSha256': 'c' * 64, 'releaseId': 'ci-' + 'a' * 12 + '-123-1'}
         self.policy = self.base / 'policy.json'
+        self.code = self.base / 'code'
+        self.code.mkdir(mode=0o755)
+        for name in ['stage_receiver.py', 'receiver.py', 'release_bundle.py']:
+            shutil.copyfile(Path(stage.__file__).parent / name, self.code / name)
+            (self.code / name).chmod(0o644)
 
     def check(self, expected=True):
         self.policy.write_text(json.dumps(self.config), encoding='utf-8')
         self.policy.chmod(0o644)
         script = ('import os,sys; os.setgroups([]); os.setgid(65534); os.setuid(65534); '
-                  'sys.path.insert(0,sys.argv[1]); import stage_receiver; '
+                  'sys.path.insert(0,sys.argv[1]); import stage_receiver; print("MODULES_READABLE"); '
                   'stage_receiver.read_policy(sys.argv[2]); print("REAL_UID_POLICY_PASS")')
         result = self.subprocess.run([sys.executable, '-I', '-B', '-c', script,
-                                      str(Path(stage.__file__).parent), str(self.policy)],
+                                      str(self.code), str(self.policy)],
                                      capture_output=True, text=True, timeout=10)
+        self.assertIn('MODULES_READABLE', result.stdout, result.stderr)
         self.assertEqual(result.returncode == 0, expected, result.stderr)
         return result
 

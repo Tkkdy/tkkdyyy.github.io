@@ -13,5 +13,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
+      - name: Candidate receipt identity checks
+        run: python3 -B -m unittest discover -s ops/deploy -p test_stage_client.py -v
       - name: New candidate full-read and failure boundaries
         run: sudo python3 -B -m unittest discover -s ops/deploy -p test_stage_receiver.py -v
