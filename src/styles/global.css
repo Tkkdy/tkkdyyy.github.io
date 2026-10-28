@@ -717,7 +717,7 @@ button {
 .nav-search-panel { top: 86px; }
 
 @media (max-width: 767px) {
-  .glass-nav { width: 184px; height: 44px; }
+  .glass-nav { width: min(248px, calc(100vw - 32px)); height: 48px; }
   .nav-default,
   .nav-search-mode { padding: 0 8px; }
   .nav-wordmark { padding: 5px 10px; font-size: 13px; }
@@ -891,4 +891,77 @@ button {
 
 .nav-search-panel-all:hover {
   color: var(--home-interactive-ruby, #861d2b);
+}
+
+/* Native mobile disclosure lives outside the clipped capsule. Desktop layout is unchanged. */
+.mobile-menu { display: none; }
+@media (max-width: 767px) {
+  .nav-default { grid-template-columns: 1fr 88px 1fr; }
+  .nav-default > .nav-wordmark, .nav-default > .nav-search {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .mobile-menu {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: min(288px, calc(100vw - 32px));
+    transform: translateX(-50%);
+    pointer-events: none;
+    color: #1d1d1f;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  }
+  .mobile-menu summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 88px;
+    min-height: 48px;
+    margin-inline: auto;
+    border-radius: 999px;
+    cursor: pointer;
+    pointer-events: auto;
+    list-style: none;
+    font-size: 13px;
+  }
+  .mobile-menu summary::-webkit-details-marker { display: none; }
+  .mobile-menu-icon { width: 12px; height: 8px; border-block: 1.5px solid currentColor; }
+  .mobile-menu[open] .mobile-menu-icon { height: 0; transform: rotate(-45deg); border-bottom: 0; }
+  .mobile-menu summary:focus-visible, .mobile-menu-panel a:focus-visible {
+    outline: 2px solid var(--home-interactive-ruby, #861d2b);
+    outline-offset: -3px;
+  }
+  .glass-nav.is-on-dark + .mobile-menu summary { color: rgba(255,255,255,.94); }
+  .mobile-menu-panel {
+    margin-top: 10px;
+    padding: 8px;
+    max-height: calc(100dvh - 100px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: 1px solid rgba(255,255,255,.85);
+    border-radius: 24px;
+    background: rgba(246,244,238,.94);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    box-shadow: inset 0 1px 1px #fff, 0 16px 36px -8px rgba(0,0,0,.2);
+    pointer-events: auto;
+  }
+  .mobile-menu-panel ul { list-style: none; margin: 0; padding: 0; }
+  .mobile-menu-panel a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    padding: 8px 16px;
+    border-radius: 16px;
+    color: #1d1d1f;
+    font-size: 15px;
+  }
+  .mobile-menu-panel a span { opacity: .45; }
+  .mobile-menu-panel a:hover, .mobile-menu-panel a[aria-current='page'] {
+    background: rgba(134,29,43,.09);
+    color: var(--home-interactive-ruby, #861d2b);
+  }
 }
