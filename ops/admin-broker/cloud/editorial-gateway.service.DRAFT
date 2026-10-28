@@ -1,0 +1,29 @@
+[Unit]
+Description=Private Editorial Studio outer OAuth gateway
+After=network-online.target editorial-studio.service
+Wants=network-online.target
+[Service]
+Type=simple
+User=editorial-gateway
+Group=editorial-gateway
+LoadCredential=gateway.cfg:/etc/editorial-studio/gateway.cfg
+LoadCredential=outer-client-secret:/etc/editorial-studio/outer-client-secret
+LoadCredential=outer-allowed-emails:/etc/editorial-studio/outer-allowed-emails
+# Installed config must use %d equivalents resolved via CREDENTIALS_DIRECTORY.
+ExecStart=/bin/sh -c 'exec /opt/editorial-studio/bin/oauth2-proxy --config="$CREDENTIALS_DIRECTORY/gateway.cfg" --client-secret-file="$CREDENTIALS_DIRECTORY/outer-client-secret" --authenticated-emails-file="$CREDENTIALS_DIRECTORY/outer-allowed-emails"'
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+MemoryMax=128M
+TasksMax=64
+[Install]
+WantedBy=multi-user.target

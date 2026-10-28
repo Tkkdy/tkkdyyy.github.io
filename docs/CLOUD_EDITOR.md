@@ -4,7 +4,7 @@
 
 ## 使用流程
 
-打开 `https://editor.boenbot.top/admin/`（待批准后开通），通过外层 Access 与 GitHub 所有者认证。首页显示仓库现有文章、随笔、碎片、项目和影像，以及服务端私有草稿。写作自动保存，另一设备打开同一草稿继续。图片随草稿私有保存，点击发布才由现有上传层写入内容提案。发布前选择“已发布”；“草稿”状态禁止发往公开仓库。原 PR/必需 CI/main 保护不变，当前仍需合并 PR；两站状态独立核验。
+打开 `https://editor.boenbot.top/admin/`（待完成独立上线验收后开通），通过外层 Access 与 GitHub 所有者认证。首页显示仓库现有文章、随笔、碎片、项目和影像，以及服务端私有草稿。写作自动保存，另一设备打开同一草稿继续。图片随草稿私有保存，点击发布才由现有上传层写入内容提案。发布前选择“已发布”；“草稿”状态禁止发往公开仓库。原 PR/必需 CI/main 保护不变，当前仍需合并 PR；两站状态独立核验。
 
 文章沿用 TipTap，项目/影像沿用 Sveltia 配置的基础字段，复杂对象字段保留原文，继续通过 Windows Sveltia 修改。本候选没有声称云端 Sveltia 私有工作区已完成：它原有保存动作会产生公开 Git 分支，因此仅在云端禁止其写入；原本地 Sveltia 原样保留。项目/影像目前只编辑已有内容，不提供新建影像。此限制须在产品验收时确认，不能当作全部内容能力已完成。
 
@@ -18,7 +18,7 @@ SQLite FULL同步，单进程操作序列化、事务 CAS revision；其他会�
 
 整库恢复：先停止独立 Admin 服务，保留原数据，运行 `node ops/admin-broker/restore-drafts.mjs /ABS/backup.sqlite /ABS/new-private-directory`。验证 quick_check 和草稿目录后，将私有配置的 draftDirectory 指向新目录再启动。恢复工具只创建新目录，拒绝覆盖。回退时停 Admin，恢复原配置及目录；不影响公开网站。不要直接用 cp 覆盖运行中的数据库。
 
-## 一次性变更申请（尚未批准）
+## 原一次性变更范围（所有者已批准；Access开通因付款资料门禁停止）
 
 建议 Cloudflare Access + 独立 named Tunnel，Node只绑定127.0.0.1:19444。无需修改正式Nginx、证书或打开入站端口。Access和源站均核验签名/issuer/audience/时效，失败关闭；固定Host与Origin，不信任X-Forwarded-*推断认证或公网源。Cookie为__Host-前缀、Secure/HttpOnly/SameSite=Lax；云端会话最长8小时且不超过GitHub令牌实际有效期，本机默认30分钟不变；保留PKCE/state与精确Origin/CSRF，原受限CSP继续适用。
 
@@ -38,7 +38,7 @@ SQLite FULL同步，单进程操作序列化、事务 CAS revision；其他会�
 
 既有Pages/VPS工作流保持原样。VPS正式开关仍按观察与单独授权推进。首次真实双站生产验收后，才以同一合并SHA核对两站公开版本与内容，再评估只对受限内容路径Auto-merge；本候选不实现、不启用自动合并。
 
-## 尚待验证
+## 候选初始状态（后续核验见文末）
 
 真实Cloudflare账户、Access允许的所有者身份、团队域名/AUD、Tunnel和DNS权限未核实；真实云端OAuth与原VPS资源容量未验证。Android/iPadOS需要实体设备验收，桌面浏览器窄视口/触摸模拟不等于实体设备通过。现有源站SHA与开关的参考信息来自2026-10-28交接，安装前必须重新只读核对。
 
@@ -57,3 +57,21 @@ SQLite FULL同步，单进程操作序列化、事务 CAS revision；其他会�
 证据目录：`C:/Users/PsyDuck/Documents/Codex/cloud-editor-evidence-20261028`，包含`browser-results.json`、`dual-build-audit.json`、构建日志及截图。早期浏览器用例中的字段兼容问题已修复；错误的按钮/iframe测试定位已纠正，最终用例通过。不是公网或实机验收。
 
 最后只读公网核验：Pages的deployment.json及HTTP200匹配main `7eae5c02cb40ae53398e15e29d056a8d9ec7e140`；VPS的deployment.json返回404，当前精确SHA为UNKNOWN（不等于网站故障）。GitHub变量VPS_AUTODEPLOY_ENABLED现场读取仍为false。
+
+## 2026-10-28 无需付款资料的外层替代候选
+
+所有者已批准前述一次性上线范围，但随后要求保持 Cloudflare Zero Trust 停止、准备无需付款资料的同等外层方案。实际免费开通页要求付款方式、账单地址与超额收费授权，已停止；只选择过免费计划，没有激活、同意计费、填写资料或创建 Access/DNS/Tunnel。现有 butler-shadow 健康且未修改。
+
+替代链路为：独立 Cloudflare named Tunnel（仅提供 HTTPS）→ 127.0.0.1:19445 OAuth2 Proxy → 127.0.0.1:19444 原 Broker。全主机流量经过网关，没有直达 Broker 的隧道路由；不修改正式 Nginx。Broker 的公网启动配置必须在 Access 与 gateway 两种校验中恰好选择一种，不能关闭外层验证。原本地模式和 GitHub App 仓库/owner ID 校验保持原样。
+
+使用 OAuth2 Proxy 官方稳定版 v7.15.5。外层使用独立 GitHub OAuth App，回调为 https://editor.boenbot.top/oauth2/callback，仅请求 user:email 和 read:org（官方 GitHub provider 会调用组织/团队端点），不申请 repo 权限；内层继续复用现有 GitHub App 的 /auth/callback，并保留本地回调。两个客户端分离，避免将仓库写权限交给外层网关。创建这个额外 OAuth App 是原先“只新增现有 App 回调”之外的真实权限变更；本轮仅准备模板、本地代码和验证，尚未创建。
+
+网关的 authenticated_emails_file 私有文件只存所有者指定的完整邮箱，不设置 email_domains 或通配符，并设置 github_users = ["Tkkdy"]。源码只选 GitHub 已验证的主邮箱，故指定邮箱必须同时是该账号的已验证主邮箱。当前 CLI 只读确认用户 ID144055705 / Tkkdy，读取 /user/emails 返回404权限不足，未扩大 CLI scope；真实主邮箱匹配尚未核实。不能用公开 profile.email 推断验证状态，也不会把 Gmail 登录换成整个 gmail.com 允许。
+
+Broker 每次请求将 Cookie 直接发送到固定127.0.0.1端口的 /oauth2/auth，仅接受202且响应邮箱和用户名均精确匹配。不信任请求的身份头、Bearer或 X-Forwarded-*，不跟随认证子请求重定向，3秒超时，失败关闭。外层 Cookie 使用独立 __Host- 名称、Secure/HttpOnly/Lax、最长8小时、15分钟刷新；state/CSRF与S256 PKCE开启。日志关闭请求与认证日志，防止回调code或会话信息进入日志；私有配置通过systemd LoadCredential提供，持久数据仍由原Broker保管。
+
+生产模板：oauth2-proxy.cfg.DRAFT、editorial-gateway.service.DRAFT、cloudflared-gateway.yml.DRAFT。Broker替代配置移除 access，增加 gateway: {"port":19445,"host":"editor.boenbot.top","allowedEmail":"EXACT_OWNER_EMAIL","allowedUser":"Tkkdy"}。不将真实邮箱、secret或cookie_secret写入公共模板。外层新增一个独立受限系统用户/服务；其余已批准存储、Node服务、现有App回调和回退范围继续有效。生产启用仍需所有者确认这个具体替代客户端变更，并完成VPS交互认证。
+
+验证：官方Windows压缩包SHA256 958a5f7e77c3571cd101eea92e6021ea4f47604f8e25cb02299754265d88e537，官方校验匹配，执行版本7.15.5；生产模板 --config-test 通过。真实网关二进制搭配合成GitHub OAuth/API：精确邮箱及用户名可通过外层但仍需内层登录；错误邮箱、未验证邮箱、其他用户名、伪造Cookie、伪造state、身份头冒用及网关停机均无法取得编辑器/API数据；验证PKCE兑换。提供方对错误用户名返回500错误页，其他邮箱返回403；两者都不签发会话，这是已知错误页体验限制，不是生产可用性通过。合成HTTP测试仅在本机使用非Secure Cookie，生产模板保持Secure。连同原认证与HTTP服务共28项定向测试通过；未使用真实OAuth、未写仓库或VPS。
+
+参考：[OAuth2 Proxy GitHub provider](https://oauth2-proxy.github.io/oauth2-proxy/configuration/providers/github/)、[认证子请求接口](https://oauth2-proxy.github.io/oauth2-proxy/features/endpoints/)、[GitHub邮箱读取权限](https://docs.github.com/en/rest/users/emails#list-email-addresses-for-the-authenticated-user)。
