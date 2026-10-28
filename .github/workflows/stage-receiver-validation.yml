@@ -1,0 +1,17 @@
+# Candidate receiver tests only. No production secrets, SSH, deploy, or site build.
+name: Isolated candidate-only receiver
+on:
+  push:
+    branches: [codex/vps-stage-integration]
+permissions:
+  contents: read
+jobs:
+  stage-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: New candidate full-read and failure boundaries
+        run: sudo python3 -B -m unittest discover -s ops/deploy -p test_stage_receiver.py -v
