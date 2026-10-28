@@ -75,3 +75,21 @@ Broker 每次请求将 Cookie 直接发送到固定127.0.0.1端口的 /oauth2/au
 验证：官方Windows压缩包SHA256 958a5f7e77c3571cd101eea92e6021ea4f47604f8e25cb02299754265d88e537，官方校验匹配，执行版本7.15.5；生产模板 --config-test 通过。真实网关二进制搭配合成GitHub OAuth/API：精确邮箱及用户名可通过外层但仍需内层登录；错误邮箱、未验证邮箱、其他用户名、伪造Cookie、伪造state、身份头冒用及网关停机均无法取得编辑器/API数据；验证PKCE兑换。提供方对错误用户名返回500错误页，其他邮箱返回403；两者都不签发会话，这是已知错误页体验限制，不是生产可用性通过。合成HTTP测试仅在本机使用非Secure Cookie，生产模板保持Secure。连同原认证与HTTP服务共28项定向测试通过；未使用真实OAuth、未写仓库或VPS。
 
 参考：[OAuth2 Proxy GitHub provider](https://oauth2-proxy.github.io/oauth2-proxy/configuration/providers/github/)、[认证子请求接口](https://oauth2-proxy.github.io/oauth2-proxy/features/endpoints/)、[GitHub邮箱读取权限](https://docs.github.com/en/rest/users/emails#list-email-addresses-for-the-authenticated-user)。
+
+## 2026-10-28 已批准替代方案的实施与邮箱条件调整
+
+所有者已批准 GitHub 外层网关替代范围。随后现场发现指定 Gmail 不在 Tkkdy 的 GitHub 邮箱列表内；所有者明确选择保留现有 GitHub 主邮箱，改为准备独立邮箱验证方案。因此 GitHub 外层网关暂停启用，不能扩大邮箱名单或更改账号主邮箱。
+
+本轮真实变更（已核验）：创建独立 Cloudflare Tunnel editorial-studio，ID cfa9fbb3-7759-469e-a5f0-7d1db779a722，尚无连接、DNS或公开路由；创建 GitHub OAuth App Editorial Studio Private Gateway，管理ID3971850，尚未用于登录或取得用户授权。新客户端密钥和 Tunnel token 均直接保存为本机DPAPI密文，没有提交或输出凭证。旧GitHub App的回调已新增 https://editor.boenbot.top/auth/callback 并保留 http://127.0.0.1:19443/auth/callback，两项均现场保存回读；没有改变安装范围、仓库/用户权限或原密钥。Cloudflare Zero Trust仍未激活；butler与公开站点未改。
+
+独立邮箱候选改为 Google OIDC → OAuth2 Proxy → 原GitHub App Broker，仅请求 openid email profile（不读Gmail邮件、Drive或其他Google数据）。Google账号无需绑定到GitHub。沿用精确邮箱文件及独立网关会话；OIDC issuer 固定 https://accounts.google.com，签名/JWKS、audience、有效期、已验证邮箱、nonce、PKCE和state均校验，不关闭issuer或邮箱验证。Broker配置 gateway.identityProvider = "google-oidc" 时，必须为精确@gmail.com地址，并从固定回环认证响应确认邮箱和非空Google数字subject；内层仍独立校验Tkkdy的固定owner ID与仓库ID，不用Google subject替代仓库身份。
+
+新模板 oauth2-proxy-google.cfg.DRAFT 已通过官方7.15.5二进制 --config-test。真实网关搭配本机合成OIDC/JWKS验证：正确身份302；其他邮箱403；未验证邮箱、错误issuer/audience、过期或错误签名拒绝并不签发会话（该网关错误页为500）；伪造nonce403；通过外层后仍需原内层GitHub App。此为本地集成，不是Google真实OAuth验收。Google控制台已登录指定邮箱；只读取独立项目创建表单，已有RAG项目未改，尚未创建新项目、Google客户端或启用计费。
+
+真实Google身份客户端需要独立免费项目 Editorial Studio Identity（外部Testing，仅指定邮箱测试用户）、一个Web OAuth客户端，回调 https://editor.boenbot.top/oauth2/callback。不要启用免费试用、绑定账单、付费API或服务账号，不修改既有项目。由于所有者最新指令为“准备独立邮箱验证方案”，真实创建Google身份配置须先确认这项具体替代变化；已批准的其余独立Admin部署范围继续有效。
+
+SSH预检窗口以255结束，没有取得服务器状态或执行安装。诊断确认：主机ED25519指纹仍匹配固定值，服务器接受原指定SSH公钥，但无可用ssh-agent且批处理无法解锁私钥；不将该现象声称为服务器密码或密钥失效。仅在用户本人完成认证后再做实际VPS容量、现有网站和目录门禁。所有安装、服务启动、DNS绑定与真实登录验收仍未执行。
+
+独立Linux安装资料已本机下载并核对官方SHA256：Node24.19.0 x64、OAuth2 Proxy7.15.5 x64、cloudflared2026.10.5 x64。先核实实际VPS架构/运行时再安装到独立目录，不覆盖系统运行时或其他Tunnel服务。Cloudflare创建的是远程管理Tunnel，安装采用 token-file 与systemd LoadCredential；不把token放命令行，路由最终仅指向网关19445。现有本地管理Tunnel配置DRAFT不用于这个新远程管理Tunnel。
+
+参考：[Google OIDC](https://developers.google.com/identity/openid-connect/openid-connect)、[OAuth2 Proxy OIDC实现](https://github.com/oauth2-proxy/oauth2-proxy/blob/v7.15.5/providers/oidc.go)、[Tunnel token-file参数](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/configure-tunnels/run-parameters/)。
