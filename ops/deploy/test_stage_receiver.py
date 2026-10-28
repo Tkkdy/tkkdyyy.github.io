@@ -4,6 +4,7 @@ import io
 import json
 import os
 import struct
+import sys
 import tempfile
 import unittest
 import zipfile
@@ -141,10 +142,6 @@ class StageTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'quota reached'):
             self.run_stage(config={**self.config, 'maxCandidates': 2})
 
-
-if __name__ == '__main__':
-    unittest.main()
-
 @unittest.skipUnless(os.name == 'posix' and hasattr(os, 'getuid') and os.getuid() == 0,
                      'real root-owned policy and dropped UID fixture require Linux root CI')
 class StagePolicyTests(unittest.TestCase):
@@ -204,3 +201,7 @@ class StagePolicyTests(unittest.TestCase):
     def test_group_writable_stage_parent_refused(self):
         self.root.chmod(0o775)
         self.check(False)
+
+
+if __name__ == '__main__':
+    unittest.main()
