@@ -1,0 +1,14 @@
+{
+  "enabled": false,
+  "uid": 997,
+  "root": "/srv/preview-deploy-stage",
+  "protectedCurrent": "/srv/www/preview.boenbot.top/current",
+  "expectedProtectedCurrent": "releases/preview-main-88ac30aa-f4f1c891-20261024T035620Z",
+  "maxCandidates": 4,
+  "site": "https://preview.boenbot.top",
+  "sourceSha": "7eae5c02cb40ae53398e15e29d056a8d9ec7e140",
+  "reviewedWorkflowSha": "a337bc59eeba7256e220a88aac1c7e6941290729",
+  "releaseId": "ci-7eae5c02cb40-40607787763-1",
+  "buildRunId": "40607787763",
+  "archiveSha256": "8a2d159e7d97f2ea4fbc75a675b554a2e4f01462e1349cf0d6fc35ec8cd8efce"
+}

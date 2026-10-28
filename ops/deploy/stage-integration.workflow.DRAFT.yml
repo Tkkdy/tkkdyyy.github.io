@@ -1,0 +1,50 @@
+# DRAFT OUTSIDE .github/workflows: inactive, no secrets installed or environment created.
+name: Owner-approved candidate VPS integration only
+on:
+  push:
+    branches: [codex/vps-stage-real-integration]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  stage:
+    runs-on: ubuntu-24.04
+    environment: vps-staging
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Fetch existing successful build artifact; never rebuild or deploy Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/Tkkdy/tkkdyyy.github.io/actions/runs/40607787763 --jq '.head_sha + ":" + .conclusion')" = '7eae5c02cb40ae53398e15e29d056a8d9ec7e140:success'
+          gh run download 40607787763 --repo Tkkdy/tkkdyyy.github.io --name vps-40607787763-1 --dir artifact
+      - name: One deliberate disconnect, then independent candidate acceptance (not retry)
+        env:
+          STAGE_KEY: ${{ secrets.STAGE_SSH_KEY }}
+          STAGE_HOST_KEY: ${{ secrets.STAGE_KNOWN_HOSTS }}
+          STAGE_SSH_HOST: '203.55.176.11'
+          STAGE_SSH_USER: preview-deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          key="$RUNNER_TEMP/stage-key"
+          hosts="$RUNNER_TEMP/stage-known-hosts"
+          trap 'rm -f -- "$key" "$hosts"' EXIT
+          printf '%s\n' "$STAGE_KEY" > "$key"
+          printf '%s\n' "$STAGE_HOST_KEY" > "$hosts"
+          unset STAGE_KEY STAGE_HOST_KEY
+          export STAGE_KEY_FILE="$key" STAGE_KNOWN_HOSTS_FILE="$hosts"
+          python3 -B ops/deploy/stage_client.py --bundle artifact/bundle.zip --pins ops/deploy/stage-pins.DRAFT.json --disconnect-after-read > stage-disconnect.json
+          python3 -B ops/deploy/stage_client.py --bundle artifact/bundle.zip --pins ops/deploy/stage-pins.DRAFT.json > stage-success.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: candidate-only-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: stage-*.json
+          retention-days: 14
