@@ -113,4 +113,10 @@ class OwnerStaticTests(unittest.TestCase):
   from release_records import read_record
   self.run_owner(True);(self.root/'records'/('owner-approval-'+Path(self.target).name+'.json')).write_text('{}')
   with self.assertRaisesRegex(ValueError,'approval invalid'):read_record(self.root,Path(self.target).name)
+class OwnerDraftTests(unittest.TestCase):
+ def test_disabled_draft_matches_reviewed_modules_and_observer(self):
+  folder=Path(__file__).resolve().parent;a=json.loads((folder/'tkkdy-owner-once.DRAFT.json').read_text())
+  self.assertIs(a['enabled'],False);self.assertEqual(a['expiresEpoch'],0)
+  for name,digest in a['toolFilesSha256'].items():self.assertEqual(sha((folder/name).read_bytes().replace(b'\r\n',b'\n')),digest,name)
+  self.assertEqual(sha((folder/'owner_public_gate.mjs').read_bytes().replace(b'\r\n',b'\n')),a['externalGateSha256'])
 if __name__=='__main__':unittest.main(verbosity=2)

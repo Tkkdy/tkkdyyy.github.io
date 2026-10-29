@@ -76,6 +76,12 @@ jobs:
           python3 -B -m unittest discover -s ops/deploy -p test_transaction.py -v
           python3 -B -m unittest discover -s ops/deploy -p test_manual_import.py -v
           python3 -B -m unittest discover -s ops/deploy -p test_source_authority.py -v
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with: {node-version: 24}
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Real Chromium observer integration with intercepted fixture network; no public TLS
+        run: node --experimental-vm-modules ops/deploy/test_owner_public_gate.mjs builds/production
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with: {name: migration-parity, path: profile-parity.json, retention-days: 7}

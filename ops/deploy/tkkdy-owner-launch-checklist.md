@@ -63,4 +63,6 @@ before SHA256 `8622c073248a67f66cad920a5e746a9beb0b8ba3d83d2aab0df31b0b0fc9369b`
 
 ## 实测与待实测
 
-本轮将在隔离CI的root-owned临时目录验证新owner事务与拒绝路径；公网观察器只做源码/语法与候选复用检查。生产owner dry-run/apply、候选公网HTTPS、Nginx新配置nginx -t/reload和真正收录切换尚未执行，需最终确认后才能验收。测试中的HTTPS/外部verdict替身不能算公网通过。
+实现提交5cee5cb的隔离CI40873578672已通过19项root-owned Linux事务/反例与原有回归。另补充1项批准草案/模块摘要一致性检查。公网观察器已用真实Chrome和精确现网候选做隔离网络集成：成功、字节篡改拒绝、缺失noindex拒绝三项通过；所有网络被夹具拦截、Google字体CSS被模拟，不代表公网TLS/字体服务验收。最终20项Linux测试与CI产物观察器集成以当前PR头部CI为准。生产owner dry-run/apply、候选公网HTTPS、Nginx新配置nginx -t/reload和真正收录切换尚未执行，需最终确认后才能验收。测试中的HTTPS/外部verdict替身不能算公网通过。
+
+固定LF工具TAR SHA256 `3e7f747f054a929505eba31d1d1ef635a626e22deff7e42b25bd208e1b460e25`。草案逐模块及观察器摘要与受审源码一致性由独立测试验证。精确现网候选再次重放116文件逐字节一致，manifest仍为d3b094b33d246ebebce03a897ded8b5970545e3a0413f862cd796165a54d823d。工具TAR、候选ZIP、原始manifest和批准文件应作为不同身份分别核对，不将工具提交SHA冒充内容源码SHA。
