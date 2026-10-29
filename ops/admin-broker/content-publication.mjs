@@ -69,14 +69,14 @@ export function createContentPublisher({github,enabled=false,active=()=>true,sch
  function start(original){
   if(!enabled)return {state:'MANUAL',reason:'AUTO_PUBLISH_DISABLED'};
   const key=original.pullRequestNumber,old=jobs.get(key);
-  requirePolicy(!stopped&&active(),'发布会话已结束。');
+  if(stopped||!active())return {state:'SESSION_EXPIRED',reason:'LOGIN_AND_RESTORE'};
   if(old){requirePolicy(old.sha===original.commitSha,'同一PR提交变化。');return structuredClone(old.result);}
   requirePolicy(jobs.size<100,'发布任务数量超限。');
   const job={sha:original.commitSha,result:wait('CI_PENDING'),timer:null};jobs.set(key,job);
   async function tick(){
    if(stopped||!active()){job.result={state:'SESSION_EXPIRED',reason:'LOGIN_AND_RESTORE'};return;}
    try{job.result=await advanceContentPublication({github,original,active:()=>!stopped&&active()});}
-   catch{job.result={state:'STOPPED',reason:'VERIFY_OR_MERGE_UNCONFIRMED'};}
+   catch{job.result=stopped||!active()?{state:'SESSION_EXPIRED',reason:'LOGIN_AND_RESTORE'}:{state:'STOPPED',reason:'VERIFY_OR_MERGE_UNCONFIRMED'};}
    if(job.result.state==='WAITING'&&!stopped&&active())job.timer=schedule(tick,15000);
   }
   job.timer=schedule(tick,0);return structuredClone(job.result);

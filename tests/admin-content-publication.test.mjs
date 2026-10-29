@@ -129,3 +129,18 @@ test('explicit resume after failed CI revalidates without duplicating a pending 
  const p=createContentPublisher({...f,enabled:true,schedule:f=>tasks.push(f),cancel:()=>{}});p.start(original);await tasks.shift()();assert.equal(p.status(123).state,'CI_FAILED');assert.equal(writes(f).length,0);
  failed=false;p.resume(original);p.resume(original);assert.equal(tasks.length,1);await tasks.shift()();assert.equal(p.status(123).state,'MERGED');assert.equal(writes(f).length,1);
 });
+
+import {createPublicationAttempt} from '../src/lib/admin/publication-attempt.mjs';
+test('editor sequential clicks and edits share the confirmed PR until a verified finish',async()=>{
+ const attempt=createPublicationAttempt();let writes=0;const submit=async()=>({pr:++writes});
+ assert.deepEqual(await attempt.run(submit),{pr:1});assert.deepEqual(await attempt.run(submit),{pr:1});assert.equal(writes,1);
+ attempt.finish();assert.deepEqual(await attempt.run(submit),{pr:2});
+});
+test('uncertain editor submission is not silently replayed with a new request UUID',async()=>{
+ const attempt=createPublicationAttempt();let writes=0;const submit=async()=>{writes++;throw Error('unknown write result');};
+ await assert.rejects(attempt.run(submit));await assert.rejects(attempt.run(submit));assert.equal(writes,1);
+});
+test('expiry between PR creation and enqueue preserves metadata without throwing or writing',()=>{
+ const f=fixture();const publisher=createContentPublisher({...f,enabled:true,active:()=>false});
+ assert.equal(publisher.start(original).state,'SESSION_EXPIRED');assert.equal(f.calls.length,0);
+});
