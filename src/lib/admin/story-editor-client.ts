@@ -550,10 +550,11 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
           const proposal = await result.github.proposalStatus(result.proposal.pullRequestNumber);
           if (proposal.branch !== result.proposal.branch || proposal.commitSha !== result.proposal.commitSha) throw new Error('提案身份变化。');
           if (proposal.state !== 'MERGED_ON_MAIN') {
-            const status = ({PULL_REQUEST_OPEN:'内容提案待合并，尚未部署',PULL_REQUEST_CLOSED:'内容提案已关闭，未合并',PROPOSAL_CHANGED:'提案内容已变化，需重新审查'} as Record<string,string>)[proposal.state] || '提案状态尚未核验';
+            const autoLabels: Record<string,string>={WAITING:'等待CI与保护规则，内容校验通过后自动合并',MERGED:'已合并，等待部署',NEEDS_UPDATE:'main已有更新，请比较并更新提案',CONFLICT:'内容冲突，未合并',CI_FAILED:'CI失败，未合并',STOPPED:'校验或合并结果未确认，请核验恢复',SESSION_EXPIRED:'会话已结束，请重新登录并恢复发布'};
+            const status = autoLabels[proposal.publication?.state] || ({PULL_REQUEST_OPEN:'内容提案待合并，尚未部署',PULL_REQUEST_CLOSED:'内容提案已关闭，未合并',PROPOSAL_CHANGED:'提案内容已变化，需重新审查'} as Record<string,string>)[proposal.state] || '提案状态尚未核验';
             editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：${status}`; });
             updatePublishStep('deploy', 'triggered');
-            return;
+            return proposal.publication?.state !== 'WAITING';
           }
           expectedSha = proposal.mergedSha;
         }
@@ -564,11 +565,19 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
           if (row) row.textContent = `${target.target === 'pages' ? 'GitHub Pages' : 'VPS'}：${labels[target.status] || '尚未确认'}${target.actualSha ? `（${target.actualSha.slice(0, 8)}）` : ''}；流水线：${({SUCCEEDED:'已成功',FAILED:'失败',PENDING:'执行中',SKIPPED:'未部署',NOT_REQUESTED:'测试分支不触发生产',UNKNOWN:'尚未确认'} as Record<string,string>)[target.pipeline?.state] || '尚未确认'}${target.pipeline?.job ? ` · ${target.pipeline.job}` : ''}${target.pipeline?.step ? ` · ${target.pipeline.step}` : ''}`;
         }
         updatePublishStep('deploy', report.targets.every((target: {status: string}) => target.status === 'CURRENT_VERSION_VERIFIED') ? 'success' : 'triggered');
+        return report.targets.every((target: {pipeline?: {state: string}}) => ['SUCCEEDED','SKIPPED','FAILED'].includes(target.pipeline?.state || ''));
       } catch {
         editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：本次状态查询失败，请刷新核验。`; });
         updatePublishStep('deploy', 'triggered');
       }
   };
+  let publicationPoll: number | undefined;
+  const pollPublication = (result: Awaited<ReturnType<typeof publishStory>>, remaining=100) => {
+    window.clearTimeout(publicationPoll);
+    if(remaining<=0)return;
+    publicationPoll=window.setTimeout(async()=>{const done=await refreshDeployment(result);if(!done)pollPublication(result,remaining-1);},15000);
+  };
+  window.addEventListener('pagehide',()=>window.clearTimeout(publicationPoll),{once:true});
   refreshButton?.addEventListener('click', async () => {
     if (!lastPublication) return;
     refreshButton.disabled = true;
@@ -629,7 +638,8 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
         if (exportProposal) exportProposal.hidden = typeof result.proposal.recoveryReceipt !== 'string';
         if (refreshButton) { refreshButton.disabled = false; refreshButton.hidden = false; }
         await refreshDeployment(result);
-        showToast('内容提案已创建，本地草稿保留；合并与双站部署尚未确认。');
+        showToast(result.proposal.publication?.state==='WAITING'?'已提交自动发布：等待CI，本地草稿保留。':'内容提案已创建，本地草稿保留；合并与双站部署尚未确认。');
+        if(result.proposal.publication?.state==='WAITING')pollPublication(result);
         return;
       }
 
