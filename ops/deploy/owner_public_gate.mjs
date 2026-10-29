@@ -10,10 +10,18 @@ const sha=b=>createHash('sha256').update(b).digest('hex');
 if(proposal.scope!=='OWNER_GUARDED_PUBLIC_ACCEPTANCE'||!/^([a-f0-9]{48})$/.test(proposal.token)||sha(raw)!==proposal.candidateManifestSha256)throw Error('Untrusted/mismatched owner proposal');
 const gateSha256=sha(readFileSync(new URL(import.meta.url)));
 if(gateSha256!==proposal.externalGateSha256)throw Error('Unreviewed external gate');
-const report={gateSha256,scope:proposal.scope,token:proposal.token,candidateManifestSha256:sha(raw),passed:false};
+// Optional transport only: reuse an existing local HTTP proxy without changing TLS or deadlines.
+const proxyValue=process.env.PUBLIC_GATE_PROXY;
+let proxy;
+if(proxyValue){
+ const u=new URL(proxyValue);
+ if(u.protocol!=='http:'||!['127.0.0.1','[::1]'].includes(u.hostname)||!u.port||u.username||u.password||u.pathname!=='/'||u.search||u.hash)throw Error('PUBLIC_GATE_PROXY must be a credential-free loopback HTTP proxy');
+ proxy={server:u.origin};
+}
+const report={transport:proxy?'LOOPBACK_HTTP_PROXY':'DIRECT',gateSha256,scope:proposal.scope,token:proposal.token,candidateManifestSha256:sha(raw),passed:false};
 const site='https://tkkdy.me/',old='https://preview.boenbot.top/';
 const browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHANNEL==='chrome'?{channel:'chrome'}:{})});
-const context=await browser.newContext({ignoreHTTPSErrors:false});
+const context=await browser.newContext({ignoreHTTPSErrors:false,...(proxy?{proxy}:{})});
 const check=(ok,msg)=>{if(!ok)throw Error(msg);};
 const get=url=>context.request.get(url,{maxRedirects:0,timeout:30000});
 try{

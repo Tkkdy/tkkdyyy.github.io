@@ -7,7 +7,7 @@
 - 内容唯一基线：VPS current `releases/preview-main-88ac30aa-f4f1c891-20261024T035620Z`，115文件。原manifest `bdbd0dff0af30ac2b7c3631f22b3228ef501a0f5dcfe6203ed4055c3a5ebd6a0`；已核验桥接 `b4699ac0a78a4180c38772a401df89365369bf2ec3679fcaa2342cba6ad5c7aa`。
 - 候选manifest `d3b094b33d246ebebce03a897ded8b5970545e3a0413f862cd796165a54d823d`；review ZIP `55e3ec0d8c66160e8f2cb8d2e19d02a018adc3804aa6fb77d90d07f015ccb252`。
 - 116文件、40HTML、38条sitemap URL。正文、资源、Pagefind和10条RSS正文/GUID完全保留；44项SEO/模式标记差异。main中的新增随笔和文章修改均不进入候选。
-- 首次目标：`releases/owner-tkkdy-d3b094b33d24-2026102900000001`，从未存在才可执行。一次失败也消耗本次ID，保留失败release/claim，禁止重跑覆盖；重试必须重新调查并另获owner批准，以新的attemptId保留旧证据。
+- 首次目标：`releases/owner-tkkdy-d3b094b33d24-2026102900000003`，从未存在才可执行。一次失败也消耗本次ID，保留失败release/claim，禁止重跑覆盖；重试必须重新调查并另获owner批准，以新的attemptId保留旧证据。
 - 新记录 `OWNER_DERIVED_STATIC` / `ciAccepted=false`，sourceSha仅表示旧基线血缘，sourceAttribution明确为现网静态派生。不伪造当前main/CI身份或deployment.json。
 
 ## 单次owner入口与校验
@@ -65,4 +65,17 @@ before SHA256 `8622c073248a67f66cad920a5e746a9beb0b8ba3d83d2aab0df31b0b0fc9369b`
 
 实现提交5cee5cb的隔离CI40873578672已通过19项root-owned Linux事务/反例与原有回归。另补充1项批准草案/模块摘要一致性检查。公网观察器已用真实Chrome和精确现网候选做隔离网络集成：成功、字节篡改拒绝、缺失noindex拒绝三项通过；所有网络被夹具拦截、Google字体CSS被模拟，不代表公网TLS/字体服务验收。最终20项Linux测试与CI产物观察器集成以当前PR头部CI为准。生产owner dry-run/apply、候选公网HTTPS、Nginx新配置nginx -t/reload和真正收录切换尚未执行，需最终确认后才能验收。测试中的HTTPS/外部verdict替身不能算公网通过。
 
-固定LF工具TAR SHA256 `3e7f747f054a929505eba31d1d1ef635a626e22deff7e42b25bd208e1b460e25`。草案逐模块及观察器摘要与受审源码一致性由独立测试验证。精确现网候选再次重放116文件逐字节一致，manifest仍为d3b094b33d246ebebce03a897ded8b5970545e3a0413f862cd796165a54d823d。工具TAR、候选ZIP、原始manifest和批准文件应作为不同身份分别核对，不将工具提交SHA冒充内容源码SHA。
+固定LF工具TAR SHA256 `40102ab2cb43d74b73192552f2013b746d7f38afcf7588a9616484829afb21bf`。草案逐模块及观察器摘要与受审源码一致性由独立测试验证。精确现网候选再次重放116文件逐字节一致，manifest仍为d3b094b33d246ebebce03a897ded8b5970545e3a0413f862cd796165a54d823d。工具TAR、候选ZIP、原始manifest和批准文件应作为不同身份分别核对，不将工具提交SHA冒充内容源码SHA。
+
+
+## 公网传输修正与失败记录（2026-10-29）
+
+attempt 2026102900000001在dry-run因Windows TAR保留0666暂存manifest权限而拒绝，未切换current；已将root暂存文件显式规范为0600。attempt 2026102900000002通过dry-run并临时切换候选，但受审公网观察器读取362687字节Logo超过30秒，实际passed=false已交回root事务，自动恢复旧current、完整manifest与双域HTTPS核验PASS。该attempt的claim/release/批准/派生/manifest及日志全部保留，不能重跑。
+
+本机HTTPS_PROXY既有配置为无凭证loopback HTTP代理。已安装Playwright APIRequestContext仅使用context/browser显式proxy，观察器未配置时直连，不自动使用HTTPS_PROXY。相同原Logo由VPS读取约0.49秒，Windows curl经现有代理约4.28秒，隔离Playwright显式代理诊断约2.01秒；哈希均为4858ffe1aec781f04dcf44bc060a09e1540d168f5ddaa854e9283618e83332ed。隔离诊断不是owner验收，失败attempt不能因此改判PASS。
+
+观察器和browser_gate.mjs新增可选PUBLIC_GATE_PROXY，默认仍直连；只接受显式端口、无凭证、无路径/查询/fragment的http://127.0.0.1:<port>或IPv6 loopback代理，不读取或修改系统代理。设置后同时应用到浏览器context与API请求，仍使用正常固定公共URL、ignoreHTTPSErrors=false、原30秒时限、逐文件哈希、全部站点/桌面移动搜索/身份token检查。报告记录DIRECT或LOOPBACK_HTTP_PROXY。不得使用注入/预加载修改观察器运行时。
+
+新的禁用草案固定attempt 2026102900000003和新观察器SHA，enabled=false/expiresEpoch=0；候选manifest、ZIP、旧基线、9个Python模块、生产policy/Variables均不变。新工具TAR须重新核对本清单摘要。这个草案未获新attempt上线授权，不能执行。
+
+未来经owner另行确认后，先用显式PUBLIC_GATE_PROXY=http://127.0.0.1:7897完成只读公网预检，再建立新的单次root入口；两阶段外部验收均显式使用该本机既有代理，最终TLS证书元数据检查也须走已声明的同一受控公网路径。root暂存工具/批准文件不可被组或其他用户写，release静态文件须保持Nginx可读。新工具不得覆盖安装目录或启用disabled生产policy。失败仍按原清单恢复noindex及旧current，并停止。

@@ -8,9 +8,17 @@ if(!['preview','production'].includes(profile))throw Error('Invalid indexing pro
 const loopback=['127.0.0.1','localhost'].includes(site.hostname);
 if(!loopback&&process.env.CANONICAL_SITE_URL)throw Error('Public canonical override forbidden');
 const canonicalSite=loopback?new URL(process.env.CANONICAL_SITE_URL||site.href):site;
-const browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHANNEL==='chrome'?{channel:'chrome'}:{})}),context=await browser.newContext({ignoreHTTPSErrors:false}),tab=await context.newPage();
+// Optional transport only: reuse an existing local HTTP proxy without changing TLS or deadlines.
+const proxyValue=process.env.PUBLIC_GATE_PROXY;
+let proxy;
+if(proxyValue){
+ const u=new URL(proxyValue);
+ if(u.protocol!=='http:'||!['127.0.0.1','[::1]'].includes(u.hostname)||!u.port||u.username||u.password||u.pathname!=='/'||u.search||u.hash)throw Error('PUBLIC_GATE_PROXY must be a credential-free loopback HTTP proxy');
+ proxy={server:u.origin};
+}
+const browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHANNEL==='chrome'?{channel:'chrome'}:{})}),context=await browser.newContext({ignoreHTTPSErrors:false,...(proxy?{proxy}:{})}),tab=await context.newPage();
 const errors=[],failures=[];tab.on('pageerror',e=>errors.push(String(e)));tab.on('requestfailed',r=>{if(r.url().startsWith(site.href))failures.push({url:r.url(),error:r.failure()});});
-const report={scope:['127.0.0.1','localhost'].includes(site.hostname)?'ISOLATED_LOOPBACK_BROWSER':'PUBLIC_HTTPS_BROWSER',site:site.href,query,passed:false};
+const report={transport:proxy?'LOOPBACK_HTTP_PROXY':'DIRECT',scope:['127.0.0.1','localhost'].includes(site.hostname)?'ISOLATED_LOOPBACK_BROWSER':'PUBLIC_HTTPS_BROWSER',site:site.href,query,passed:false};
 try{
  const home=await tab.goto(site.href,{waitUntil:'networkidle',timeout:30000});if(home.status()!==200)throw Error('Homepage status');
  const seo=await tab.evaluate(()=>({canonical:document.querySelector('link[rel=canonical]')?.href,og:document.querySelector('meta[property="og:url"]')?.content,blocked:[...document.querySelectorAll('meta[name=robots]')].some(x=>/noindex|none/i.test(x.content))}));
