@@ -69,3 +69,24 @@ CI 三构建、模式反例、内容parity、浏览器及Linux回滚结果见PR�
 本机 Windows 的 `npm run check` 为0错误/0警告及164项Node测试通过，三种构建及Chrome候选验收通过。原目录的用户文件未动。最终PR头部的检查以 [PR #22](https://github.com/Tkkdy/tkkdyyy.github.io/pull/22) 为准；本段与handoff收尾只改文档。
 
 仍未执行：生产manifest桥接写入、生产回滚apply、生产策略/Variables/Nginx变更、current切换、正式收录和内容发布。不要将本节PASS提升为这些步骤的PASS。
+
+
+## 2026-10-29 补充：现网桥接完成，内容基线改为精确运行产物
+
+本节更新上文待执行状态。用户已明确授权旧产物桥接和不切换生产 current 的演练；尚未授权合并或正式切换。main 中未确认内容全部排除。
+
+找回原始发布包 SHA256 `f4f1c8919ba2bfb172629a7f192bbb7247c69d9e3acf9ce31220d51f9f7707eb` 和原始 manifest SHA256 `bdbd0dff0af30ac2b7c3631f22b3228ef501a0f5dcfe6203ed4055c3a5ebd6a0`，115个文件与当前 VPS 逐一核对相同；随后只读下载快照也一致。无需推测旧手工修复源码。
+
+生产仅新增 root-owned `records/legacy-preview-main-88ac30aa-f4f1c891-20261024T035620Z.json` 和对应 `manifest-...json`。原 deploy 记录未修改；桥接类型 OWNER_VERIFIED_LEGACY、ciAccepted=false。原记录 SHA256 `072089625d5efbe781ee3467bd4ef10de9590ccea71d2c33c0765f1732deeb51`；保存后规范化 manifest SHA256 `e458a1b7ae0b812c85690410e2e090c855ad5df5731ade83f83ba7c28b6b057d`。备份 `/var/backups/tkkdy-legacy-bridge-20261029T120612Z-b0a918`，包含旧策略、记录、manifest及演练结果。桥接使用真实公网HTTPS核对首页/CSS/JS后才写记录。原锁权限不变。
+
+回滚演练在该备份下复制完整现网115文件：dry-run通过且不改变演练current；错误正式域名策略被拒绝；真实flock/原子symlink回退通过；故意使后验收失败后恢复演练current通过。后验收传输替换为真实127.0.0.1 HTTP，不能声称正式候选公网HTTPS回滚通过。生产current一次未切换；没有在生产current上执行rollback --apply。
+
+新增 `owner_bridge_rehearsal.py` 保存本次固定身份的受控脚本，用于审查而非自动运行；再次执行遇到已有桥接会停止，不允许盲目重跑。脚本在摘要固定、root-owned的独立暂存目录执行，未替换已安装部署模块。`prepare_live_domain_candidate.py` 只生成本地候选，不含SSH和发布行为，拒绝错误manifest、额外文件、正文篡改和已有输出目录。
+
+正式候选取自精确现网产物，116文件/40 HTML/38 sitemap URL，无路由增删。相比现网变动44项：39个HTML仅head变化（canonical/OG变更；38个普通页移除HTML noindex，search保留；404原样），robots.txt、两份sitemap和RSS导航链接改为新域名，新增vps-build.json。所有body、CSS、JS、图片、字体、Pagefind及10条RSS正文/GUID逐字节保持。候选完整manifest SHA256 `d3b094b33d246ebebce03a897ded8b5970545e3a0413f862cd796165a54d823d`。两次准备输出116文件逐字节一致；Chrome SEO/图片/搜索及结果跳转通过。
+
+**发布身份边界：**这是 OWNER_REVIEW 候选，releaseApproved=false，不是main构建，不是CI_ACCEPTED，没有伪造deployment.json或release.json。现有CI打包/来源门禁原样保留；不能将此ZIP交给普通CI receiver。后续如批准发布，需先审查单次owner静态迁移路径对精确旧manifest、派生工具SHA、新manifest及旧current的约束，并生成诚实的owner派生记录；若既有工具不支持，先补充受审owner工具再执行。不得给旧内容伪贴当前main身份，或以允许任意source/site替代来源校验。
+
+待确认的最终生产差异：安装受审且支持桥接/模式的工具；选定上述精确静态候选并新增独立release；通过owner受控事务生成派生记录、原子切换current；新域名验收后移除其HTTP noindex头。旧域名头继续noindex、不301；Pages配置和自动部署保持不变。GitHub Variables/策略的任何切换须展示精确diff并另获确认，当前未改。完整配置回滚仍需配套恢复旧策略/工具/新域名noindex，rollback_release.py不自动回滚这些配置。
+
+复现命令：`python ops/deploy/prepare_live_domain_candidate.py --live <精确快照目录> --manifest <原始manifest.json> --manifest-sha256 bdbd0dff0af30ac2b7c3631f22b3228ef501a0f5dcfe6203ed4055c3a5ebd6a0 --output <新的空路径>`。
