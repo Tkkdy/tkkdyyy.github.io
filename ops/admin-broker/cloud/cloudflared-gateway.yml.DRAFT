@@ -1,0 +1,9 @@
+# Separate editor tunnel only. The entire hostname goes through the gateway.
+tunnel: APPROVED_EDITOR_TUNNEL_UUID
+credentials-file: /etc/editorial-studio/tunnel.json
+ingress:
+  - hostname: editor.boenbot.top
+    service: http://127.0.0.1:19445
+    originRequest:
+      httpHostHeader: editor.boenbot.top
+  - service: http_status:404

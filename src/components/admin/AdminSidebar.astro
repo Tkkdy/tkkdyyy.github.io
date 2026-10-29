@@ -13,7 +13,7 @@ const recent = stories.slice(0, 3);
 const nav = [
   { id: 'stories', label: '内容', icon: 'stories', href: `${base}admin/stories/` },
   { id: 'media', label: '媒体', icon: 'media' },
-  { id: 'projects', label: '项目', icon: 'projects' },
+  { id: 'projects', label: '项目', icon: 'projects', href: `${base}admin/stories/` },
   { id: 'homepage', label: '首页', icon: 'home' },
   { id: 'taxonomy', label: '分类与标签', icon: 'tag' },
   { id: 'site', label: '查看网站', icon: 'globe', href: base },
@@ -63,6 +63,7 @@ const nav = [
     </div>
   </section>
 
+  <a class="sidebar-story" href={`${base}admin/drafts/`}>私有草稿与恢复</a>
   <a class="sidebar-story" href={`${base}admin/proposals/`}>历史提案与部署追踪</a>
 
   <div class="sidebar-profile">

@@ -1,0 +1,17 @@
+{
+  "origin": "https://editor.boenbot.top",
+  "listenPort": 19444,
+  "sessionSeconds": 28800,
+  "staticRoot": "/opt/editorial-studio/RELEASE/dist-admin",
+  "draftDirectory": "/var/lib/editorial-studio",
+  "repository": "Tkkdy/tkkdyyy.github.io",
+  "repositoryId": 1355866312,
+  "ownerId": 144055705,
+  "branch": "main",
+  "publicationMode": "pull-request",
+  "allowMain": false,
+  "clientId": "REUSE_APPROVED_GITHUB_APP",
+  "clientSecret": "INSTALL_PRIVATELY_NEVER_COMMIT_REAL_VALUE",
+  "access": {"issuer": "https://TEAM.cloudflareaccess.com", "audience": "ACCESS_APPLICATION_AUD", "allowedEmail": "EXACT_OWNER_EMAIL"},
+  "targets": {"pages": "https://tkkdy.github.io/tkkdyyy.github.io/", "vps": "https://preview.boenbot.top/"}
+}

@@ -1,5 +1,7 @@
 # tkkdy Content Admin
 
+云端候选与上线边界见 [CLOUD_EDITOR.md](CLOUD_EDITOR.md)。云端网址尚未开通；Windows 本地入口保留 `http://127.0.0.1:19443/admin/`，使用现有受保护配置启动。
+
 ## Public Site
 
 https://tkkdy.github.io/tkkdyyy.github.io/
@@ -40,10 +42,10 @@ Editorial Studio 中的本地图片以 base64/data URL 形式存在，只用于�
 
 ## Publishing Pipeline
 
-Editorial Studio Validate → 上传本地图片到 `public/uploads/` → 安全合并既有 frontmatter → 单次 GitHub commit → GitHub Actions → Astro + Pagefind → GitHub Pages
+Editorial Studio Validate → 私有草稿保存（云端候选）→ 显式发布时上传图片到内容分支 → 安全合并既有 frontmatter → 内容 PR → 必需 CI / 受保护合并 → GitHub Pages 与 VPS 独立构建及状态核验。VPS 正式自动发布开关仍受观察和授权门禁约束。
 
-Studio 的 Publish 进度会显示本地保存、仓库写入、部署触发/完成和最终文章 URL。TipTap 编辑器本身不调用 GitHub API；浏览器端发布层负责 GitHub I/O。
+Studio 的 Publish 进度会显示本地保存、仓库写入、部署触发/完成和最终文章 URL。TipTap 编辑器通过已有同源发布层调用 Admin Broker；GitHub 凭据只留在服务端。
 
-## Token
+## 登录
 
-首次从 Editorial Studio 发布时会请求 GitHub personal access token。Token 只存于当前浏览器的 localStorage；需要 repository Contents 写权限和 Actions 读权限。不要把 token 写入 repository、环境文件或对话。
+受保护编辑器使用 GitHub App OAuth / PKCE，限定 Tkkdy 与指定仓库。浏览器仅持有 HttpOnly 会话 Cookie 和会话绑定的 CSRF 值，不保存 GitHub Token。Windows 本地 App secret 保持现有 DPAPI 加密方式；云端候选通过受保护 stdin 配置启动。不要在对话或仓库中提供凭据。

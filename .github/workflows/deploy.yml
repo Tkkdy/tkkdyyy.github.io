@@ -15,6 +15,7 @@ jobs:
     timeout-minutes: 20
     env:
       SOURCE_SHA: ${{ github.sha }}
+      PUBLIC_ADMIN_ORIGIN: ${{ vars.PUBLIC_ADMIN_ORIGIN }}
       PIPELINE_SHA: ${{ vars.REVIEWED_PIPELINE_SHA }}
     steps:
       - name: Require exact reviewed pipeline SHA

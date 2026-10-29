@@ -1,0 +1,27 @@
+# Remotely-managed editor tunnel. Entire hostname must point to gateway :19445.
+[Unit]
+Description=Private Editorial Studio dedicated Cloudflare Tunnel
+After=network-online.target editorial-gateway.service
+Wants=network-online.target
+[Service]
+Type=simple
+User=editorial-tunnel
+Group=editorial-tunnel
+LoadCredential=tunnel-token:/etc/editorial-studio/tunnel-token
+ExecStart=/opt/editorial-studio/bin/cloudflared tunnel --no-autoupdate --loglevel warn --metrics 127.0.0.1:19446 run --token-file %d/tunnel-token
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+MemoryMax=256M
+TasksMax=64
+[Install]
+WantedBy=multi-user.target
