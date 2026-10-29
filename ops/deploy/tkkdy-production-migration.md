@@ -90,3 +90,8 @@ CI 三构建、模式反例、内容parity、浏览器及Linux回滚结果见PR�
 待确认的最终生产差异：安装受审且支持桥接/模式的工具；选定上述精确静态候选并新增独立release；通过owner受控事务生成派生记录、原子切换current；新域名验收后移除其HTTP noindex头。旧域名头继续noindex、不301；Pages配置和自动部署保持不变。GitHub Variables/策略的任何切换须展示精确diff并另获确认，当前未改。完整配置回滚仍需配套恢复旧策略/工具/新域名noindex，rollback_release.py不自动回滚这些配置。
 
 复现命令：`python ops/deploy/prepare_live_domain_candidate.py --live <精确快照目录> --manifest <原始manifest.json> --manifest-sha256 bdbd0dff0af30ac2b7c3631f22b3228ef501a0f5dcfe6203ed4055c3a5ebd6a0 --output <新的空路径>`。
+
+
+## 单次owner路径补齐（待确认）
+
+现网派生候选的root专用发布入口、root-owned一次性批准身份、受审工具和完整配置摘要冻结、精确重放、双域HTTPS、外部公网token验收及失败原子恢复已实现于owner_static_release.py。OWNER_DERIVED_STATIC记录保留ciAccepted=false；原CI授权不放宽。精确配置差异与最终确认清单见 [tkkdy-owner-launch-checklist.md](tkkdy-owner-launch-checklist.md)。批准草案禁用且过期，未安装生产工具、修改策略或切换current。19项Linux root事务/反例加入隔离CI；通过情况以当前PR检查为准。

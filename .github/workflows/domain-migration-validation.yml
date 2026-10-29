@@ -69,6 +69,7 @@ jobs:
         run: python3 -B -m unittest discover -s ops/deploy -p test_indexing_profile.py -v
       - name: Actual Linux filesystem rollback in isolated root-owned temporary directories; HTTPS mocked
         run: |
+          sudo python3 -B -m unittest discover -s ops/deploy -p test_owner_static_release.py -v
           sudo python3 -B -m unittest discover -s ops/deploy -p test_domain_rollback.py -v
           sudo python3 -B -m unittest discover -s ops/deploy -p test_legacy_record.py -v
       - run: |
