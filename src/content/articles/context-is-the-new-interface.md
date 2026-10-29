@@ -42,4 +42,6 @@ const greeting = 'hello, world';
 
 > 引用块：上下文比模型更持久。
 
-一键发布验收 2026-10-29：此段为 Development fixture，用于验证真实 App、内容 CI、自动合并与 Pages 发布链路。
+一键发布验收 2026-10-29：此段为 Development fixture，用于验证真实 App、内容 CI、自动合并与 Pages 发布链路。云端一键发布验收 2026-10-29：此段为 Development fixture，用于验证真实云端 App、跨设备私有草稿、图片、内容 CI、自动合并与 Pages 发布。
+
+![Development fixture 云端跨设备图片验收 2026-10-29](/uploads/context-is-the-new-interface-1-87269e2e172d.png "Development fixture 云端跨设备图片验收 2026-10-29")
