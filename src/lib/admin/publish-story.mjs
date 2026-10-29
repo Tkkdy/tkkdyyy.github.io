@@ -54,8 +54,8 @@ export function assertNoDestinationCollision({ sourcePath, destinationPath, dest
   }
 }
 
-/** @param {{ state: Record<string, any>, session?: Record<string, any>, onProgress?: (step: string, status: string) => void }} options */
-export async function publishStory({ state, session, onProgress = () => {} }) {
+/** @param {{ state: Record<string, any>, session?: Record<string, any>, onProgress?: (step: string, status: string) => void, requestId?: string }} options */
+export async function publishStory({ state, session, onProgress = () => {}, requestId }) {
   onProgress('validate', 'running');
   session ??= await readAdminSession();
   assertValidStory(state, { allowDraft: session.publicationMode === 'pull-request' });
@@ -110,7 +110,8 @@ export async function publishStory({ state, session, onProgress = () => {} }) {
     files: [...uploadFiles, { path: destinationPath, contentBase64: textToBase64(content) }],
     deletePaths: sourcePath && sourcePath !== destinationPath ? [sourcePath] : [],
   };
-  const commit = session.publicationMode==='pull-request' ? await github.proposeFiles(changes) : await github.commitFiles({...changes,branch:session.branch});
+  if(session.publicationMode==='pull-request')onProgress('proposal-request','running');
+  const commit = session.publicationMode==='pull-request' ? await github.proposeFiles({...changes,...(requestId?{requestId}:{})}) : await github.commitFiles({...changes,branch:session.branch});
   onProgress('git', 'success');
 
   const route = state.type === 'Fragment' ? `fragments/#${state.slug}` : `${directory}/${state.slug}/`;

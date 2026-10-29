@@ -4,6 +4,7 @@ param(
  [Parameter(Mandatory=$true)][string]$ClientId,
  [ValidateSet('direct','pull-request')][string]$PublicationMode='direct',
  [string]$Branch,
+ [switch]$ContentAutoMerge,
  [string]$ConfigPath=(Join-Path $env:LOCALAPPDATA 'EditorialStudio\local-broker.json'),
  [string]$StaticRoot=(Join-Path $PSScriptRoot '..\..\dist-admin')
 )
@@ -17,7 +18,7 @@ $resolvedStatic=(Resolve-Path -LiteralPath $StaticRoot).Path
 if (-not (Test-Path -LiteralPath (Join-Path $resolvedStatic 'admin\index.html'))) { throw 'Build the private Admin artifact first.' }
 $secret=Read-Host 'GitHub App client secret (encrypted for this Windows user)' -AsSecureString
 $encrypted=ConvertFrom-SecureString -SecureString $secret
-$record=[ordered]@{schema=1;origin='http://127.0.0.1:19443';listenPort=19443;repository='Tkkdy/tkkdyyy.github.io';repositoryId=1355866312;ownerId=144055705;branch=$Branch;allowMain=$false;publicationMode=$PublicationMode;clientId=$ClientId;encryptedClientSecret=$encrypted;staticRoot=$resolvedStatic;targets=@{pages='https://tkkdy.github.io/tkkdyyy.github.io/';vps='https://preview.boenbot.top/'}}
+$record=[ordered]@{schema=1;origin='http://127.0.0.1:19443';listenPort=19443;repository='Tkkdy/tkkdyyy.github.io';repositoryId=1355866312;ownerId=144055705;branch=$Branch;allowMain=$false;publicationMode=$PublicationMode;contentAutoMergeEnabled=[bool]$ContentAutoMerge;clientId=$ClientId;encryptedClientSecret=$encrypted;staticRoot=$resolvedStatic;targets=@{pages='https://tkkdy.github.io/tkkdyyy.github.io/';vps='https://preview.boenbot.top/'}}
 $parent=Split-Path -Parent $ConfigPath
 if (-not (Test-Path -LiteralPath $parent)) { New-Item -ItemType Directory -Path $parent | Out-Null }
 # DPAPI ciphertext is user-bound. CreateNew refuses races/overwrites; no secret is printed.

@@ -1,95 +1,75 @@
-# 云端编辑器：本地候选与一次性上线范围
+# 2026-10-29 一键发布整合候选（尚未部署）
 
-此候选基于 main `7eae5c02cb40ae53398e15e29d056a8d9ec7e140`，分支 `codex/cloud-editor`，独立目录 `C:/Users/PsyDuck/Documents/Codex/cloud-editor-20261028`。未部署、未创建 DNS、未更改 App、未切换 VPS current。当前本机真实 GitHub 登录与 VPS 候选传输的既有验收不等于本候选云端验收。
+基于已部署 c0c9c684 云端版本与 main f006dc38，保留已有 Google 网关、Tunnel、GitHub App 身份、SQLite 草稿及恢复逻辑；只在既有内容 PR 流程上启用已验收的范围/哈希/CI/准确 SHA 自动合并。
 
-## 使用流程
+跨设备恢复使用云端草稿中的持久提交意图和签名收据；显式点击发布才恢复同一 PR，不因读取草稿或历史自动合并。模糊写入结果停止而不创建替代 PR；不同设备保存继续受既有 revision CAS 约束。公开草稿仍由服务端拒绝。合并后保存新的正文基线，后续编辑不会误用发布前哈希。
 
-打开 `https://editor.boenbot.top/admin/`（待完成独立上线验收后开通），通过外层 Access 与 GitHub 所有者认证。首页显示仓库现有文章、随笔、碎片、项目和影像，以及服务端私有草稿。写作自动保存，另一设备打开同一草稿继续。图片随草稿私有保存，点击发布才由现有上传层写入内容提案。发布前选择“已发布”；“草稿”状态禁止发往公开仓库。原 PR/必需 CI/main 保护不变，当前仍需合并 PR；两站状态独立核验。
+Pages 顶部云端入口从 PUBLIC_ADMIN_ORIGIN 配置读取；该公开地址不是凭证。没有把域名硬编码进业务逻辑，原 Pages 草稿和本机备用入口保留。云端启用需切换 editor 自身不可变版本及受保护配置 contentAutoMergeEnabled=true，原 Google/GitHub 凭证、权限、Tunnel、Nginx、观察 current 与 VPS_AUTODEPLOY_ENABLED=false 保持不变。真实多设备一键发布尚未验收，不能用本地测试代替。
 
-文章沿用 TipTap，项目/影像沿用 Sveltia 配置的基础字段，复杂对象字段保留原文，继续通过 Windows Sveltia 修改。本候选没有声称云端 Sveltia 私有工作区已完成：它原有保存动作会产生公开 Git 分支，因此仅在云端禁止其写入；原本地 Sveltia 原样保留。项目/影像目前只编辑已有内容，不提供新建影像。此限制须在产品验收时确认，不能当作全部内容能力已完成。
+以下为既有云端服务的历史验收与恢复基线，不是本次一键发布已上线的证明。
 
-## 私有存储与恢复
+# 云端 Editorial Studio
 
-Node 24.19+ 自带 SQLite；不新增数据库服务。运行时目录必须在仓库和静态目录之外。Linux 目录0700/数据库0600、systemd UMask0077。最多200篇，单篇12MiB，当前和最近3个历史版本合计64MiB；达到限制返回明确错误，事务回滚。单张图片8MB，保留原始 data URL，不发往 GitHub。
+入口：**https://editor.boenbot.top/**。2026-10-28 已部署独立 Admin、Google OIDC 网关和 Cloudflare Tunnel，完成真实所有者登录、写作、上传图片、独立浏览器会话恢复和已有文章私有编辑。本文记录当前状态，替代此前准备阶段的待授权与未部署描述。
 
-SQLite FULL同步，单进程操作序列化、事务 CAS revision；其他会话已更新返回409，禁止悄悄覆盖。文章冲突可载入远端、另存草稿或下载；项目/影像冲突保留当前页，需下载与重新载入比较。手机 IME composition 完成再保存，退出未保存页有提醒；系统强杀浏览器/断网最后一笔输入无法保证，必须看到云端保存确认。
+## 日常使用
 
-“私有草稿与恢复”可下载单篇、恢复最近3个历史版本、显式删除已完成草稿。数据库启动时和每小时生成一致性备份，保留3份；物理数据库上限256MiB，加备份和临时文件需预留至少1.5GiB。备份在同一 VPS，可恢复误操作，不能抵御整机丢失；本轮不向外部传输私人草稿，异机备份另定私有目的地后实施。
+1. 打开入口，使用指定 Google 邮箱登录，再使用 GitHub Tkkdy 登录。
+2. 首页选择已有内容，或点击“新建内容”。支持文章、随笔和碎片；项目与影像支持已有内容的基础字段编辑。
+3. 输入文字、选择封面或正文图片，等待“已保存到云端 · 私有草稿”。图片和草稿保存在 VPS 私有存储，尚未提交 GitHub。
+4. 换设备后登录，在“私有草稿与恢复”点击“继续编辑”。此处也能下载备份、恢复最近三个版本和删除草稿。
+5. 准备发布时将状态改为“已发布”，点击发布创建内容 PR。通过必需 CI 后按现有保护规则合并，在“历史提案与部署追踪”查看两站状态。
 
-整库恢复：先停止独立 Admin 服务，保留原数据，运行 `node ops/admin-broker/restore-drafts.mjs /ABS/backup.sqlite /ABS/new-private-directory`。验证 quick_check 和草稿目录后，将私有配置的 draftDirectory 指向新目录再启动。恢复工具只创建新目录，拒绝覆盖。回退时停 Admin，恢复原配置及目录；不影响公开网站。不要直接用 cp 覆盖运行中的数据库。
+当前仍需合并 PR；没有启用自动合并。VPS 正式自动发布仍关闭，不能将“创建 PR”解释为两站已完成生产发布。草稿状态被服务端禁止提交到公开仓库。
 
-## 原一次性变更范围（所有者已批准；Access开通因付款资料门禁停止）
+## 实际验收
 
-建议 Cloudflare Access + 独立 named Tunnel，Node只绑定127.0.0.1:19444。无需修改正式Nginx、证书或打开入站端口。Access和源站均核验签名/issuer/audience/时效，失败关闭；固定Host与Origin，不信任X-Forwarded-*推断认证或公网源。Cookie为__Host-前缀、Secure/HttpOnly/SameSite=Lax；云端会话最长8小时且不超过GitHub令牌实际有效期，本机默认30分钟不变；保留PKCE/state与精确Origin/CSRF，原受限CSP继续适用。
+- 指定 Google 邮箱真实登录成功，内层 GitHub 登录返回 Tkkdy、固定仓库、main 只读及 pull-request 发布模式。
+- 公网有效 HTTPS。未登录的编辑页面跳转 Google；草稿、会话及认证 API 返回 401。直连 Broker 本地安全检查通过；真实浏览器匿名及伪造身份头/Cookie 访问草稿均返回 401。
+- 真实公网保存中文多段正文与 PNG 图片，预览显示正文及图片；全新浏览器上下文不复制编辑器 Cookie 或 localStorage，重新经过提供方登录后恢复同一草稿与图片。
+- 390px 手机宽度恢复后无横向溢出；已有文章“选择之前”可以读取并保存私有修改。未公开任何本轮验收内容。
+- 草稿版本冲突真实返回 409，临时冲突草稿已清理。服务端草稿数据库权限 0600；专用数据目录 0700。
+- GitHub Pages 真实状态页核验 main `5a7e80df1ac9d77351075920700bd82149ee6799`，公开版本标记与流水线均匹配。VPS 流水线 SKIPPED，公开版本标记尚不可读，准确 SHA 显示 UNKNOWN，不伪称双站一致。
+- Admin 服务实际重启后，草稿、图片和历史版本摘要一致；快照恢复到新目录成功，重复覆盖被拒绝。三个 editor 服务均 active/enabled，保留三份快照，原网站保护基线及 GitHub 正式自动发布 false 均复核一致。没有重启整台 VPS。重启后在原 Chrome 正常代理路径重新登录，实际载入同一草稿的 726 字符正文与私有图片，并继续修改后获得云端保存确认。
+- 真实其他邮箱登录拒绝和实体 Android/iPadOS 操作尚未验收；手机视口测试不能替代实体设备。本机排障中观察到网络路径变化：后续直连超时，现有代理访问 editor 的 API 正常返回 401（约一秒），最后已通过原 Chrome 正常代理路径的真实登录和重启后草稿恢复；未修改系统代理、DNS或其他服务。
 
-批准范围应一次覆盖：
+先前本地构建、126 项检查、30 项认证定向集成及多视口写作证据继续适用；合成 OIDC 错误邮箱/签名/issuer/audience/nonce 拒绝不能替代真实第二账号验收。
 
-1. 仅 editor.boenbot.top 的DNS记录；新建仅限所有者身份的Access应用与策略、独立持久Tunnel，不设Bypass。
-2. 现有VPS创建独立系统用户、只读不可变Admin代码目录 `/opt/editorial-studio/<release>`，私有配置 `/etc/editorial-studio`、数据 `/var/lib/editorial-studio`，安装两个独立systemd服务（Admin与Tunnel）；若缺少合适Node/cloudflared，仅安装所需运行时，不升级其他服务。
-3. 复用现有GitHub App，新增 `https://editor.boenbot.top/auth/callback`，保留 `http://127.0.0.1:19443/auth/callback` 和原安装/仓库权限。client secret通过受保护本机配置解密后直接SSH stdin传入root-only文件，禁止在日志/参数/对话中输出。若App不支持同时保留回调，先停止并提交替代方案，不覆盖本地回调。
-4. 将已验证的候选源代码与私有Admin构建产物传输至该VPS；只改变这个新入口的访问范围。先备份待变更配置，SHA256白名单校验后安装，记录前后差异。不得上传本机私有配置、.git、草稿或日志。
-5. 真实GitHub登录/退出、手机/iPad/桌面、跨设备草稿、图片、失效会话、备份恢复的验收；生产内容发布仅使用所有者明确批准的内容。开发测试内容不发往公开仓库。
+## 独立部署与安全边界
 
-不会随此批准更改preview网站current、正式Nginx路由、VPS正式自动发布开关、既有接收器权限、仓库保护或Auto-merge，也不合并移动导航PR。若Cloudflare计划需要付费则停止，不自动开通费用。
+链路：Cloudflare HTTPS → 独立 named Tunnel → `127.0.0.1:19445` OAuth2 Proxy → `127.0.0.1:19444` 原 GitHub App Broker。没有 editor 直达 Broker 路由，没有修改正式 Nginx，也没有新增公网监听端口。
 
-回滚：禁用并停止两个新服务，撤销新Tunnel入口与仅该子域DNS/Access配置、移除新增App回调；私有数据保留，原本地回调和公开网站不动。不可逆删除私有数据另需批准。
+- 专用 Tunnel：editorial-studio；只有 editor.boenbot.top 路由，目标固定为回环网关，Host 固定为 editor.boenbot.top。DNS 为代理 CNAME，指向该专用 Tunnel。
+- 外层 Google OIDC：独立未关联结算账号的项目、一个 Web 客户端、唯一 HTTPS 回调；仅 openid/email/profile，唯一指定邮箱测试用户和精确邮箱 allowlist。验证 issuer、签名、audience、有效期、已验证邮箱、nonce、state 和 PKCE。
+- 内层保留原 GitHub App、Tkkdy owner ID 与固定仓库 ID 验证；HTTPS callback 与原 Windows 回环 callback 并存，不改变 GitHub 主邮箱。
+- 两层 Cookie 都是独立 __Host- 名称，Secure、HttpOnly、SameSite=Lax。Broker 只向固定回环网关核验会话，不信任客户端身份头或转发头。
+- 三个专用 systemd 用户与服务：editorial-studio、editorial-gateway、editorial-tunnel。无新 sudoers 或 SSH 权限。凭证通过 root-only 文件和 systemd LoadCredential 传递，不写 Git、命令行或访问日志。
+- Node 24.19.0、OAuth2 Proxy 7.15.5、cloudflared 2026.10.5 官方下载并核对 SHA256，独立安装，不覆盖系统运行时或其他 Tunnel。
+- 不启用 Cloudflare Access/Zero Trust 计费。试建但未使用的外层 GitHub OAuth 客户端已删除。Google 初次客户端的密钥曾因控制台控件标签进入工具输出，已撤销并重建；撤销密钥从未部署，新密钥未输出。
 
-## 生产发布门禁
+当前部署修复版本 `c0c9c6843115f3a69fc27d9b5c8363342500e98f`，目录 `/opt/editorial-studio/c0c9c6843115`；仅修改备份目录创建为可重复执行，静态 Admin 产物保持原样，2204 个部署文件逐一核对清单。原始 `f630c94b9256` 目录仅保留审计，它包含本次已修复的备份目录问题，不作为可直接启用的回退版本。当前 `c0c9c6843115` 为已验证恢复版本；原始部署包 SHA256 `50c5bd5dc2332fd19edeef1c49ba434bf0185ad4052b7fe42721b24062cb83e2`。私有配置 `/etc/editorial-studio`，草稿 `/var/lib/editorial-studio`。代码版本分目录保留，三项服务均健康且已开机启用。
 
-既有Pages/VPS工作流保持原样。VPS正式开关仍按观察与单独授权推进。首次真实双站生产验收后，才以同一合并SHA核对两站公开版本与内容，再评估只对受限内容路径Auto-merge；本候选不实现、不启用自动合并。
+## 草稿与恢复
 
-## 候选初始状态（后续核验见文末）
+SQLite FULL 同步、串行事务和版本 CAS；另一会话先保存时返回 409，不静默覆盖。最多 200 篇、单篇含图片 12 MiB、当前及最近三个历史版本合计 64 MiB；单图 8 MB。数据库物理上限 256 MiB。中文 IME 完成组合输入后保存，未完成保存时离开有提醒；断网或强杀前最后一笔输入仍需看云端确认。
 
-真实Cloudflare账户、Access允许的所有者身份、团队域名/AUD、Tunnel和DNS权限未核实；真实云端OAuth与原VPS资源容量未验证。Android/iPadOS需要实体设备验收，桌面浏览器窄视口/触摸模拟不等于实体设备通过。现有源站SHA与开关的参考信息来自2026-10-28交接，安装前必须重新只读核对。
+启动与每小时创建一致性快照，保留三份，位置 `/var/lib/editorial-studio/backups`。同 VPS 快照能恢复误操作，不能抵御整机丢失；本轮没有将私人草稿上传外部备份。
 
-参考：[Access JWT验证](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/)、[Tunnel源站参数](https://developers.cloudflare.com/tunnel/reference/origin-parameters/)、[Node SQLite备份](https://nodejs.org/download/release/latest-jod/docs/api/sqlite.html)。
+整库恢复须停止独立 Admin，保留原数据，使用工具恢复到**新的绝对目录**：
+
+```sh
+/opt/editorial-studio/bin/node /opt/editorial-studio/c0c9c6843115/ops/admin-broker/restore-drafts.mjs /ABS/snapshot.sqlite /ABS/new-private-directory
+```
+
+工具验证 SQLite quick_check 与表结构，拒绝覆盖现有目录。检查恢复数据、专用用户及 0700/0600 权限后，再将私有配置 draftDirectory 指向新目录并启动 Admin。回退时停止 Admin、恢复原配置与数据目录。不要覆盖运行中的数据库。
+
+停止云端入口只操作三个 editorial-* 服务；回退部署只切换 editor 自身不可变版本。不得修改 preview 的 current、Nginx、正式自动发布开关、仓库保护或其他服务。
+
+## 本地备用与能力边界
+
+原 Windows Editorial Studio、Sveltia、GitHub App 本地 callback 和私有本地配置保留。项目/影像的复杂对象字段继续用本地 Sveltia；云端禁止 Sveltia 创建公开草稿分支，项目/影像暂不提供新建 UI。
+
+控制通道从文件轮询改为仅 127.0.0.1 的私有能力认证通道，Host/Origin 校验、请求串行与重复请求缓存。能力值只以 DPAPI 密文保存于专用控制目录，SSH/sudo 口令只在认证进程内存，不复制密钥进 Git。本轮没有改 Windows ACL、关闭系统保护或扩大 AppData 可写范围。旧控制进程两小时到期后已 CLOSED；新 V3 控制窗口已认证，恢复验收在同一会话完成。
 
 
-## 2026-10-28 本轮验证结果
-
-- `npm run check`：0 errors / 0 warnings，126项通过；2项提示为兼容旧浏览器的beforeunload.returnValue弃用提示。
-- 最后定向9项：精确邮箱、RS256签名、issuer/AUD/有效期、HTTP Host/伪造转发头、私有API认证/CSRF、公开草稿提交拒绝、CAS冲突、配额、历史与整库恢复，全部通过。合成密钥、邮箱与OAuth，不是Cloudflare真实身份验收。
-- 本地真实Edge/Chromium浏览器：两个隔离cookie会话长文恢复，图片上传及第三桌面会话恢复，sandbox iframe预览，旧设备冲突另存，项目编辑自动保存及恢复列表通过；无页面错误、无GitHub写入。手机/iPad为尺寸与触摸模拟，尚无实体Android/iPadOS验收。
-- Admin/Pages/VPS构建通过。复用既有双站审计：Pages173文件、VPS123文件；两者44公开HTML、各1072本地引用一致，24内容项；VPS的Admin文件为0，公开源内容和图片未改。
-- 真实权限检查：域名NS指向Cloudflare；editor子域A记录不存在；工具浏览器未登录Cloudflare；SSH BatchMode认证未成功。现有本地App受保护配置存在，只有DPAPI密文，无明文secret输出。没有执行真实DNS/Access/VPS/App变更。
-- 所有者已指定外层精确邮箱名单，配置参数记录在本机独立证据目录，不提交个人邮箱到公共仓库。独立Chrome Cloudflare登录窗口已打开，等待所有者本人完成登录。
-
-证据目录：`C:/Users/PsyDuck/Documents/Codex/cloud-editor-evidence-20261028`，包含`browser-results.json`、`dual-build-audit.json`、构建日志及截图。早期浏览器用例中的字段兼容问题已修复；错误的按钮/iframe测试定位已纠正，最终用例通过。不是公网或实机验收。
-
-最后只读公网核验：Pages的deployment.json及HTTP200匹配main `7eae5c02cb40ae53398e15e29d056a8d9ec7e140`；VPS的deployment.json返回404，当前精确SHA为UNKNOWN（不等于网站故障）。GitHub变量VPS_AUTODEPLOY_ENABLED现场读取仍为false。
-
-## 2026-10-28 无需付款资料的外层替代候选
-
-所有者已批准前述一次性上线范围，但随后要求保持 Cloudflare Zero Trust 停止、准备无需付款资料的同等外层方案。实际免费开通页要求付款方式、账单地址与超额收费授权，已停止；只选择过免费计划，没有激活、同意计费、填写资料或创建 Access/DNS/Tunnel。现有 butler-shadow 健康且未修改。
-
-替代链路为：独立 Cloudflare named Tunnel（仅提供 HTTPS）→ 127.0.0.1:19445 OAuth2 Proxy → 127.0.0.1:19444 原 Broker。全主机流量经过网关，没有直达 Broker 的隧道路由；不修改正式 Nginx。Broker 的公网启动配置必须在 Access 与 gateway 两种校验中恰好选择一种，不能关闭外层验证。原本地模式和 GitHub App 仓库/owner ID 校验保持原样。
-
-使用 OAuth2 Proxy 官方稳定版 v7.15.5。外层使用独立 GitHub OAuth App，回调为 https://editor.boenbot.top/oauth2/callback，仅请求 user:email 和 read:org（官方 GitHub provider 会调用组织/团队端点），不申请 repo 权限；内层继续复用现有 GitHub App 的 /auth/callback，并保留本地回调。两个客户端分离，避免将仓库写权限交给外层网关。创建这个额外 OAuth App 是原先“只新增现有 App 回调”之外的真实权限变更；本轮仅准备模板、本地代码和验证，尚未创建。
-
-网关的 authenticated_emails_file 私有文件只存所有者指定的完整邮箱，不设置 email_domains 或通配符，并设置 github_users = ["Tkkdy"]。源码只选 GitHub 已验证的主邮箱，故指定邮箱必须同时是该账号的已验证主邮箱。当前 CLI 只读确认用户 ID144055705 / Tkkdy，读取 /user/emails 返回404权限不足，未扩大 CLI scope；真实主邮箱匹配尚未核实。不能用公开 profile.email 推断验证状态，也不会把 Gmail 登录换成整个 gmail.com 允许。
-
-Broker 每次请求将 Cookie 直接发送到固定127.0.0.1端口的 /oauth2/auth，仅接受202且响应邮箱和用户名均精确匹配。不信任请求的身份头、Bearer或 X-Forwarded-*，不跟随认证子请求重定向，3秒超时，失败关闭。外层 Cookie 使用独立 __Host- 名称、Secure/HttpOnly/Lax、最长8小时、15分钟刷新；state/CSRF与S256 PKCE开启。日志关闭请求与认证日志，防止回调code或会话信息进入日志；私有配置通过systemd LoadCredential提供，持久数据仍由原Broker保管。
-
-生产模板：oauth2-proxy.cfg.DRAFT、editorial-gateway.service.DRAFT、cloudflared-gateway.yml.DRAFT。Broker替代配置移除 access，增加 gateway: {"port":19445,"host":"editor.boenbot.top","allowedEmail":"EXACT_OWNER_EMAIL","allowedUser":"Tkkdy"}。不将真实邮箱、secret或cookie_secret写入公共模板。外层新增一个独立受限系统用户/服务；其余已批准存储、Node服务、现有App回调和回退范围继续有效。生产启用仍需所有者确认这个具体替代客户端变更，并完成VPS交互认证。
-
-验证：官方Windows压缩包SHA256 958a5f7e77c3571cd101eea92e6021ea4f47604f8e25cb02299754265d88e537，官方校验匹配，执行版本7.15.5；生产模板 --config-test 通过。真实网关二进制搭配合成GitHub OAuth/API：精确邮箱及用户名可通过外层但仍需内层登录；错误邮箱、未验证邮箱、其他用户名、伪造Cookie、伪造state、身份头冒用及网关停机均无法取得编辑器/API数据；验证PKCE兑换。提供方对错误用户名返回500错误页，其他邮箱返回403；两者都不签发会话，这是已知错误页体验限制，不是生产可用性通过。合成HTTP测试仅在本机使用非Secure Cookie，生产模板保持Secure。连同原认证与HTTP服务共28项定向测试通过；未使用真实OAuth、未写仓库或VPS。
-
-参考：[OAuth2 Proxy GitHub provider](https://oauth2-proxy.github.io/oauth2-proxy/configuration/providers/github/)、[认证子请求接口](https://oauth2-proxy.github.io/oauth2-proxy/features/endpoints/)、[GitHub邮箱读取权限](https://docs.github.com/en/rest/users/emails#list-email-addresses-for-the-authenticated-user)。
-
-## 2026-10-28 已批准替代方案的实施与邮箱条件调整
-
-所有者已批准 GitHub 外层网关替代范围。随后现场发现指定 Gmail 不在 Tkkdy 的 GitHub 邮箱列表内；所有者明确选择保留现有 GitHub 主邮箱，改为准备独立邮箱验证方案。因此 GitHub 外层网关暂停启用，不能扩大邮箱名单或更改账号主邮箱。
-
-本轮真实变更（已核验）：创建独立 Cloudflare Tunnel editorial-studio，ID cfa9fbb3-7759-469e-a5f0-7d1db779a722，尚无连接、DNS或公开路由；创建 GitHub OAuth App Editorial Studio Private Gateway，管理ID3971850，尚未用于登录或取得用户授权。新客户端密钥和 Tunnel token 均直接保存为本机DPAPI密文，没有提交或输出凭证。旧GitHub App的回调已新增 https://editor.boenbot.top/auth/callback 并保留 http://127.0.0.1:19443/auth/callback，两项均现场保存回读；没有改变安装范围、仓库/用户权限或原密钥。Cloudflare Zero Trust仍未激活；butler与公开站点未改。
-
-独立邮箱候选改为 Google OIDC → OAuth2 Proxy → 原GitHub App Broker，仅请求 openid email profile（不读Gmail邮件、Drive或其他Google数据）。Google账号无需绑定到GitHub。沿用精确邮箱文件及独立网关会话；OIDC issuer 固定 https://accounts.google.com，签名/JWKS、audience、有效期、已验证邮箱、nonce、PKCE和state均校验，不关闭issuer或邮箱验证。Broker配置 gateway.identityProvider = "google-oidc" 时，必须为精确@gmail.com地址，并从固定回环认证响应确认邮箱和非空Google数字subject；内层仍独立校验Tkkdy的固定owner ID与仓库ID，不用Google subject替代仓库身份。
-
-新模板 oauth2-proxy-google.cfg.DRAFT 已通过官方7.15.5二进制 --config-test。真实网关搭配本机合成OIDC/JWKS验证：正确身份302；其他邮箱403；未验证邮箱、错误issuer/audience、过期或错误签名拒绝并不签发会话（该网关错误页为500）；伪造nonce403；通过外层后仍需原内层GitHub App。此为本地集成，不是Google真实OAuth验收。Google控制台已登录指定邮箱；只读取独立项目创建表单，已有RAG项目未改，尚未创建新项目、Google客户端或启用计费。
-
-真实Google身份客户端需要独立免费项目 Editorial Studio Identity（外部Testing，仅指定邮箱测试用户）、一个Web OAuth客户端，回调 https://editor.boenbot.top/oauth2/callback。不要启用免费试用、绑定账单、付费API或服务账号，不修改既有项目。由于所有者最新指令为“准备独立邮箱验证方案”，真实创建Google身份配置须先确认这项具体替代变化；已批准的其余独立Admin部署范围继续有效。
-
-SSH预检窗口以255结束，没有取得服务器状态或执行安装。诊断确认：主机ED25519指纹仍匹配固定值，服务器接受原指定SSH公钥，但无可用ssh-agent且批处理无法解锁私钥；不将该现象声称为服务器密码或密钥失效。仅在用户本人完成认证后再做实际VPS容量、现有网站和目录门禁。所有安装、服务启动、DNS绑定与真实登录验收仍未执行。
-
-独立Linux安装资料已本机下载并核对官方SHA256：Node24.19.0 x64、OAuth2 Proxy7.15.5 x64、cloudflared2026.10.5 x64。先核实实际VPS架构/运行时再安装到独立目录，不覆盖系统运行时或其他Tunnel服务。Cloudflare创建的是远程管理Tunnel，安装采用 token-file 与systemd LoadCredential；不把token放命令行，路由最终仅指向网关19445。现有本地管理Tunnel配置DRAFT不用于这个新远程管理Tunnel。
-
-参考：[Google OIDC](https://developers.google.com/identity/openid-connect/openid-connect)、[OAuth2 Proxy OIDC实现](https://github.com/oauth2-proxy/oauth2-proxy/blob/v7.15.5/providers/oidc.go)、[Tunnel token-file参数](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/configure-tunnels/run-parameters/)。
+2026-10-28 重启验收实际发现并修复：旧备份实现对已存在目录调用非递归 mkdir，引发 EEXIST，导致后续定时备份及启动失败。新增回归测试先复现失败，修复后 10 项草稿与恢复测试全部通过；随后部署独立修复版本并再次完成真实重启、快照与拒绝覆盖验收。保留失败证据，没有以首次启动成功替代重启验收。该修复已本地提交，未推送或修改公开 main。

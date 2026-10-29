@@ -16,9 +16,8 @@ featured: true
 homepage:
   show: true
   order: 1
+updatedAt: 2026-10-29
 ---
-
-<!-- Stage 2 fixture：正文占位。文章详情页与正式正文属于后续 Stage。 -->
 
 ## Development fixture
 
@@ -38,6 +37,9 @@ homepage:
 
 ```ts
 const greeting = 'hello, world';
+
 ```
 
 > 引用块：上下文比模型更持久。
+
+一键发布验收 2026-10-29：此段为 Development fixture，用于验证真实 App、内容 CI、自动合并与 Pages 发布链路。
