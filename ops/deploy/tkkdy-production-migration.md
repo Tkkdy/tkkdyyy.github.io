@@ -19,7 +19,7 @@
 | essays/re.md | 新增已发布《re手写信》；旧部署记录明确 deferredArticle | 继续保留未批准状态 |
 | essays/p1-editor-migration-verification-20261027.md | 新增 draft，homepage.show=false | 继续排除在公开构建外 |
 
-实际运行目录只读清单与候选构建交叉核对：线上40个HTML，候选45个；新增为四篇随笔详情和 `tags/批判/index.html`，没有删除旧路由。新增文章还会改变列表、标签、搜索和RSS，不能只批准一个详情路径却忽略派生内容。记录的手工修复源码不在远端 main 历史中，不能声称源码 diff 能完整重建现网；实际文件清单作为补充证据。
+实际运行目录只读清单与候选构建交叉核对：线上40个HTML，候选45个；新增为四篇随笔详情和 `tags/批判/index.html`，没有删除旧路由。新增文章还会改变列表、标签、搜索和RSS，不能只批准一个详情路径却忽略派生内容。记录的手工修复对象本轮不在隔离仓库的可用对象中，未完整复原；不能声称源码 diff 能完整重建现网；实际文件清单作为补充证据。
 
 三种分支构建均使用此 PR 的测试源码，包含 main 中待确认的新内容，都是测试产物，`audit_profiles.py` 报告固定 `releaseApproved:false`。不得把其 CI 成功解释为内容发布批准。正式发布前必须重新冻结用户确认过的内容范围和精确源码/工具 SHA；若需要保持 VPS 当前内容，应另行准备有明确差异的内容冻结提交，不能伪造当前 main 的产物身份。
 
@@ -60,3 +60,12 @@ RSS：从现网只读获取10个历史条目的GUID，保存于 `src/data/vps-rs
 本地/CI构建不是上线；浏览器使用127.0.0.1临时服务，不证明公网候选HTTPS。Linux回滚测试在临时root-owned目录中使用真实flock/symlink/fsync/manifest，HTTPS边界被mock；不能声称已在生产执行回滚。本轮禁止生产桥接写入及current切换，因此现网旧格式记录的实际回滚dry-run须留待上线前完成。
 
 CI 三构建、模式反例、内容parity、浏览器及Linux回滚结果见PR检查；本地详细日志与只读线上摘要保存在本次聊天的本地验收目录，不把私有日志或部署凭证提交到仓库。
+
+
+## 已取得的验证结果（非上线证明）
+
+实现提交 `f564f11399a99d366c2879c70f74c7266b8ef683` 的 [隔离 CI 40866696829](https://github.com/Tkkdy/tkkdyyy.github.io/actions/runs/40866696829) 全部成功：Pages、VPS预览、VPS正式三构建；三种候选浏览器；45路由正文一致；原bundle17项、客户端身份10项、收录模式13项；Linux域名回滚7项、原legacy桥接18项、事务12项、manifest11项、来源授权5项。Linux回滚未跳过；真实文件操作发生在runner临时目录，HTTPS mock，不在生产VPS。
+
+本机 Windows 的 `npm run check` 为0错误/0警告及164项Node测试通过，三种构建及Chrome候选验收通过。原目录的用户文件未动。最终PR头部的检查以 [PR #22](https://github.com/Tkkdy/tkkdyyy.github.io/pull/22) 为准；本段与handoff收尾只改文档。
+
+仍未执行：生产manifest桥接写入、生产回滚apply、生产策略/Variables/Nginx变更、current切换、正式收录和内容发布。不要将本节PASS提升为这些步骤的PASS。
