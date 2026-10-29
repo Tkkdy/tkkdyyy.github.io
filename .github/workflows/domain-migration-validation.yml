@@ -1,0 +1,80 @@
+# Validation only: no deployment, SSH, production secrets or live policy writes.
+name: Domain migration isolated validation
+on:
+  push:
+    branches: [codex/tkkdy-production-seo]
+permissions:
+  contents: read
+jobs:
+  builds:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {mode: pages, target: pages, script: build, profile: preview, site: 'https://preview.boenbot.top'}
+          - {mode: preview, target: vps, script: 'build:vps', profile: preview, site: 'https://preview.boenbot.top'}
+          - {mode: production, target: vps, script: 'build:vps', profile: production, site: 'https://tkkdy.me'}
+    env:
+      SITE_URL: ${{ matrix.site }}
+      VPS_INDEXING_PROFILE: ${{ matrix.profile }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with: {persist-credentials: false}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with: {node-version: 24}
+      - run: npm ci
+      - if: matrix.mode == 'pages'
+        run: npm run check
+      - run: npm run '${{ matrix.script }}'
+      - run: python3 -B ops/deploy/write_version.py --source . --dist dist --target '${{ matrix.target }}' --workflow '${{ github.sha }}' --profile '${{ matrix.profile }}'
+      - if: matrix.target == 'vps'
+        run: python3 -B ops/deploy/release_bundle.py --source . --output '${{ runner.temp }}/bundle.zip' --site "$SITE_URL" --source-sha '${{ github.sha }}' --workflow-sha '${{ github.sha }}' --run-id '${{ github.run_id }}' --attempt '${{ github.run_attempt }}' --profile "$VPS_INDEXING_PROFILE"
+      - if: matrix.mode == 'preview'
+        env:
+          VPS_BUILD_DIR: dist
+          VPS_BUNDLE_FILE: ${{ runner.temp }}/bundle.zip
+        run: |
+          python3 -B -m unittest discover -s ops/deploy -p test_bundle.py -v
+          python3 -B -m unittest discover -s ops/deploy -p test_publish_client.py -v
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/verify-local-profile.mjs dist '${{ matrix.mode }}'
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: migration-${{ matrix.mode }}
+          path: dist
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: browser-${{ matrix.mode }}
+          path: browser-evidence.json
+          retention-days: 7
+  compatibility:
+    needs: builds
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with: {persist-credentials: false}
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with: {name: migration-pages, path: builds/pages}
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with: {name: migration-preview, path: builds/preview}
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with: {name: migration-production, path: builds/production}
+      - run: python3 -B ops/deploy/audit_profiles.py builds --report profile-parity.json
+      - env: {VPS_PREVIEW_DIR: builds/preview, VPS_PRODUCTION_DIR: builds/production}
+        run: python3 -B -m unittest discover -s ops/deploy -p test_indexing_profile.py -v
+      - name: Actual Linux filesystem rollback in isolated root-owned temporary directories; HTTPS mocked
+        run: |
+          sudo python3 -B -m unittest discover -s ops/deploy -p test_domain_rollback.py -v
+          sudo python3 -B -m unittest discover -s ops/deploy -p test_legacy_record.py -v
+      - run: |
+          python3 -B -m unittest discover -s ops/deploy -p test_transaction.py -v
+          python3 -B -m unittest discover -s ops/deploy -p test_manual_import.py -v
+          python3 -B -m unittest discover -s ops/deploy -p test_source_authority.py -v
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with: {name: migration-parity, path: profile-parity.json, retention-days: 7}
