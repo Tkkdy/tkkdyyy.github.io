@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp,rm,mkdir,readFile} from 'node:fs/promises';
+import {mkdtemp,rm,mkdir,readFile,readdir} from 'node:fs/promises';
 import {tmpdir} from 'node:os';import {join} from 'node:path';
 import {generateKeyPairSync,sign} from 'node:crypto';
 import {DatabaseSync} from 'node:sqlite';
@@ -82,4 +82,12 @@ test('public HTTP origin checks Access before OAuth and rejects Host/forwarding 
  assert.equal(await status({host:'editor.example','x-forwarded-proto':'https','cf-access-authenticated-user-email':'owner@example.com'}),403);assert.equal(brokerCalls,0);
  assert.equal(await status({host:'evil.example','cf-access-jwt-assertion':'SYNTHETIC_VERIFIED'}),421);assert.equal(brokerCalls,0);
  assert.equal(await status({host:'editor.example','cf-access-jwt-assertion':'SYNTHETIC_VERIFIED'}),200);assert.equal(brokerCalls,1);
+});
+
+
+test('periodic backups and a reopened service reuse the backup directory and retain three snapshots',async t=>{
+ const f=await storeFixture(t);await f.store.save(key,state,0);
+ for(let i=0;i<5;i++){await f.store.backup();await new Promise(resolve=>setTimeout(resolve,3));}
+ assert.equal((await readdir(join(f.dir,'backups'))).filter(n=>n.endsWith('.sqlite')).length,3);
+ const reopened=await openDraftStore({directory:f.dir});try{const {name}=await reopened.backup();const copy=new DatabaseSync(join(f.dir,'backups',name),{readOnly:true});try{assert.equal(JSON.parse(copy.prepare('SELECT payload FROM drafts WHERE key=?').get(key).payload).cover,state.cover);}finally{copy.close();}}finally{await reopened.close();}
 });
