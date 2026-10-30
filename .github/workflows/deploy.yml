@@ -50,6 +50,7 @@ jobs:
     timeout-minutes: 20
     env:
       SITE_URL: ${{ vars.VPS_SITE_URL }}
+      VPS_INDEXING_PROFILE: ${{ vars.VPS_INDEXING_PROFILE || 'preview' }}
       SOURCE_SHA: ${{ github.sha }}
       PIPELINE_SHA: ${{ vars.REVIEWED_PIPELINE_SHA }}
     steps:
@@ -74,14 +75,14 @@ jobs:
           npm run check
           npm run build:vps
       - run: python pipeline/ops/deploy/write_version.py --source site --dist site/dist
-          --target vps --workflow "$PIPELINE_SHA"
+          --target vps --workflow "$PIPELINE_SHA" --profile "$VPS_INDEXING_PROFILE"
       - env:
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
         run: python pipeline/ops/deploy/release_bundle.py --source site --output
           bundle.zip --site "$SITE_URL" --source-sha "$SOURCE_SHA"
           --workflow-sha "$PIPELINE_SHA" --run-id "$RUN_ID" --attempt
-          "$RUN_ATTEMPT"
+          "$RUN_ATTEMPT" --profile "$VPS_INDEXING_PROFILE"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: vps-${{ github.run_id }}-${{ github.run_attempt }}
@@ -127,6 +128,7 @@ jobs:
       cancel-in-progress: false
     env:
       SITE_URL: ${{ vars.VPS_SITE_URL }}
+      VPS_INDEXING_PROFILE: ${{ vars.VPS_INDEXING_PROFILE || 'preview' }}
       SOURCE_SHA: ${{ github.sha }}
       PIPELINE_SHA: ${{ vars.REVIEWED_PIPELINE_SHA }}
     environment:

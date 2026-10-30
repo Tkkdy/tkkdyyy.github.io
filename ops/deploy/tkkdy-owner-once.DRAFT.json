@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "scope": "ONE_OWNER_LIVE_DERIVED_PROMOTION",
+  "enabled": false,
+  "expiresEpoch": 0,
+  "attemptId": "2026102900000005",
+  "root": "/srv/www/preview.boenbot.top",
+  "site": "https://tkkdy.me",
+  "indexingProfile": "production",
+  "expectedCurrent": "releases/preview-main-88ac30aa-f4f1c891-20261024T035620Z",
+  "target": "releases/owner-tkkdy-d3b094b33d24-2026102900000005",
+  "baselineSourceSha": "88ac30aa31d4c806e6af9a71b955db2f0dd16967",
+  "baselineOriginalManifestSha256": "bdbd0dff0af30ac2b7c3631f22b3228ef501a0f5dcfe6203ed4055c3a5ebd6a0",
+  "baselineBridgeSha256": "b4699ac0a78a4180c38772a401df89365369bf2ec3679fcaa2342cba6ad5c7aa",
+  "candidateManifestSha256": "d3b094b33d246ebebce03a897ded8b5970545e3a0413f862cd796165a54d823d",
+  "derivationSha256": "362b33429847ac64edb420f030f64f273d2589212f6f08491a20f31df08e89b7",
+  "policySha256": "4d08942872df7b95454d389453c41b7b3b7399720272049dc556cf5d50461bbc",
+  "protectedFilesSha256": {
+    "/etc/preview-deploy/policy.json": "4d08942872df7b95454d389453c41b7b3b7399720272049dc556cf5d50461bbc"
+  },
+  "toolFilesSha256": {
+    "owner_static_release.py": "857e6e64a609d8ace46262fb9070f94783f0e6c7701e3da6d74e83fd7bebd644",
+    "prepare_live_domain_candidate.py": "e7d2b80263b5ef0382877525946be253c38c4038958b372f81ec5daaf934e57a",
+    "release_bundle.py": "7d918a36af8d16ac159e13d5acdaa5afe76ade8ab588f28667ee3a6e1f436bc5",
+    "release_records.py": "bc369aae6eb0b60bc467a93a8e347e67b3c43342d90cf2135fb9f97935f43d6d",
+    "receiver.py": "6223a6f957c3409a3b18884cbe6e1fb4ef355eb842862473ec991e0aa699a756",
+    "import_manual_release.py": "cae29bc631135a39aa9f864d879bd6057df3da17be2a42fb9f5f10b1b77bac1c",
+    "indexing_profile.py": "a083ce31cf13d2388b0a8ec7974c97f45e9d8c9bbdd811c38a56bf033f92dee1",
+    "rollback_release.py": "6032c95a413b0f43035fd163a62089a72b191d5733770dc6e212f830d2642358",
+    "source_authority.py": "933bcf31d6f6141c25f2302b2e4ef0474df989b2be424d01e665c45a6eab6793"
+  },
+  "externalGateSha256": "068772b6e19907d2c6e1f037922b74467ee3f6144afb03d153126f8153a7ddcd",
+  "nginxTreeSha256": "5bd518e8423d0024312ce8c7ea891c3804f974925ed8f57bad884a9053263b1f",
+  "installedToolsTreeSha256": "0f30235c99cd2175e01ee7b7ba99d0042fe79826c3831234a8a744f9a9765f1d"
+}

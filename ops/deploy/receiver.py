@@ -74,7 +74,7 @@ def main(policy_path=None):
         stream=sys.stdin.buffer;emit(phase='READY_FOR_BUNDLE',current=release_target(os.readlink(root/'current')));size=struct.unpack('!I',exact(stream,4))[0];require(0<size<=16384,'header limit')
         header=json.loads(exact(stream,size));size=header['archiveBytes'];require(type(size)==int and 0<size<=LIMIT,'archive limit')
         previous=release_target(header['expectedCurrent']);require(os.readlink(root/'current')==previous,'approved current differs')
-        metadata,manifest,data=load_bundle(exact(stream,size),header['archiveSha256'],site,config['reviewedWorkflowSha'])
+        metadata,manifest,data=load_bundle(exact(stream,size),header['archiveSha256'],site,config['reviewedWorkflowSha'],config.get('indexingProfile','preview'))
         authorize_source(metadata,config,root,previous)
         rid=metadata['releaseId'];new=release_target('releases/'+rid);candidate=root/new
         require(not (root/'records'/('deploy-'+rid+'.json')).exists(),'existing record')

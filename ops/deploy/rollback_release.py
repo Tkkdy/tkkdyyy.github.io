@@ -5,6 +5,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parent))
 from release_bundle import require,release_target,sha
 from receiver import atomic_link,https_body,exclusive
 from release_records import read_record
+from indexing_profile import indexing_profile
 
 def rollback(policy,expected,target,apply=False):
  p=Path(policy);require(not p.is_symlink() and p.stat().st_uid==0 and not p.stat().st_mode&0o022,'root-owned policy required')
@@ -20,6 +21,7 @@ def rollback(policy,expected,target,apply=False):
   from import_manual_release import verify_manifest
   manifest,files=verify_manifest(candidate,raw,record['manifestSha256'])
   require(record['current']==target and record['site']==config['site'],'rollback identity differs')
+  require(indexing_profile(record.get('indexingProfile','preview'))==indexing_profile(config.get('indexingProfile','preview')),'rollback indexing profile differs')
   result={'scope':'OWNER_OPERATED','expected':expected,'target':target,'sourceSha':record['sourceSha'],'recordType':record.get('recordType','CI_ACCEPTED'),'filesVerified':len(files),'applied':False}
   if not apply:return result
   old_hash=sha((root/expected/'index.html').read_bytes())

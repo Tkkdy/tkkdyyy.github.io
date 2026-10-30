@@ -10,7 +10,7 @@
     "preview": "astro preview",
     "check": "astro check && node --test tests/*.test.mjs",
     "test": "node --test tests/*.test.mjs",
-    "build:vps": "astro build --config astro.config.vps.mjs && node scripts/normalize-public-urls.mjs vps && node scripts/prune-vps-admin.mjs && pagefind --site dist",
+    "build:vps": "astro build --config astro.config.vps.mjs && node scripts/normalize-public-urls.mjs vps && node scripts/prune-vps-admin.mjs && node scripts/write-vps-profile.mjs && pagefind --site dist",
     "build:admin": "astro build --config astro.config.admin.mjs"
   },
   "dependencies": {

@@ -1,0 +1,11 @@
+{
+  "enabled": false,
+  "root": "/srv/www/preview.boenbot.top",
+  "site": "https://tkkdy.me",
+  "indexingProfile": "production",
+  "repository": "Tkkdy/tkkdyyy.github.io",
+  "sourceAuthority": "github-main",
+  "reviewedWorkflowSha": "NOT_CONFIGURED",
+  "approvedSourceShas": [],
+  "bootstrapSourceSha": "88ac30aa31d4c806e6af9a71b955db2f0dd16967"
+}

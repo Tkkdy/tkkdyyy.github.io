@@ -4,7 +4,7 @@ from pathlib import Path
 from release_bundle import load_bundle,require,release_target,sha
 def main():
     raw=Path('bundle.zip').read_bytes();digest=Path('bundle.zip.sha256').read_text().strip();site=os.environ['SITE_URL']
-    metadata,manifest,data=load_bundle(raw,digest,site,os.environ['REVIEWED_WORKFLOW_SHA'])
+    metadata,manifest,data=load_bundle(raw,digest,site,os.environ['REVIEWED_WORKFLOW_SHA'],os.environ.get('VPS_INDEXING_PROFILE','preview'))
     source=os.environ.get('SOURCE_SHA','');run_id=os.environ.get('GITHUB_RUN_ID','');attempt=os.environ.get('GITHUB_RUN_ATTEMPT','')
     require(re.fullmatch(r'[a-f0-9]{40}',source),'invalid runner source SHA')
     require(re.fullmatch(r'[1-9][0-9]{0,19}',run_id),'invalid runner run ID')
