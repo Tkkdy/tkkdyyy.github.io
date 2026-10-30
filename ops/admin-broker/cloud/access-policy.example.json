@@ -1,0 +1,5 @@
+{
+  "application": {"name": "Private Editorial Studio", "domain": "editor.boenbot.top", "type": "self_hosted", "session_duration": "8h", "auto_redirect_to_identity": false},
+  "policy": {"name": "Exact owner email only", "decision": "allow", "include": [{"email": {"email": "EXACT_OWNER_EMAIL"}}], "exclude": [], "require": []},
+  "notes": "Reuse a suitable identity provider or Email One-time PIN. No email-domain selector, Everyone or Bypass. Preserve all other applications."
+}

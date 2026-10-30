@@ -79,17 +79,24 @@ const statusLabels = { draft: '草稿', published: '已发布', archived: '已�
       const container = document.querySelector('.story-rows');
       const base = document.querySelector<HTMLElement>('[data-story-list-base]')?.dataset.storyListBase || '/';
       if (!container || !Array.isArray(catalog.stories)) return;
-      const types: Record<string,string> = {Article:'文章',Essay:'随笔',Fragment:'碎片'};
+      const types: Record<string,string> = {Article:'文章',Essay:'随笔',Fragment:'碎片',Project:'项目',Image:'影像'};
       const statuses: Record<string,string> = {draft:'草稿',published:'已发布',archived:'已归档'};
-      const next = catalog.stories.map((story: {sourcePath:string;title:string;deck:string;slug:string;type:string;status:string;updatedAt:string;tags:string[];categories:string[]}) => {
+      const next = [...catalog.stories,...(catalog.resources||[])].map((story: {sourcePath:string;title:string;deck:string;slug:string;type:string;status:string;updatedAt:string;tags:string[];categories:string[]}) => {
         const row = document.createElement('a'); row.className='story-row'; row.setAttribute('role','row');
-        row.href=base+'admin/stories/new/?source='+encodeURIComponent(story.sourcePath); row.dataset.status=story.status;
+        row.href=base+(['Project','Image'].includes(story.type)?'admin/content/?source=':'admin/stories/new/?source=')+encodeURIComponent(story.sourcePath); row.dataset.status=story.status;
         row.dataset.search=[story.title,story.type,...story.tags,...story.categories].join(' ').toLowerCase();
         const title=document.createElement('span');title.className='story-title-cell';title.setAttribute('role','cell');
         const strong=document.createElement('strong');strong.textContent=story.title;const small=document.createElement('small');small.textContent=story.deck||story.slug;title.append(strong,small);row.append(title);
         for(const value of [types[story.type],statuses[story.status],story.updatedAt,'›']){const cell=document.createElement('span');cell.setAttribute('role','cell');cell.textContent=value||'';row.append(cell);}return row;
       });
       container.replaceChildren(...next,...(empty?[empty]:[]));rows=next;filterRows();
+      const draftsResponse=await fetch('/api/drafts',{credentials:'same-origin',cache:'no-store'});
+      if(draftsResponse.ok){const {drafts}=await draftsResponse.json();for(const draft of drafts){
+        const row=document.createElement('a');row.className='story-row';row.dataset.status='draft';row.dataset.search=(draft.title+' '+draft.type).toLowerCase();
+        const url=new URL(base+(['Project','Image'].includes(draft.type)?'admin/content/':'admin/stories/new/'),location.origin);
+        if(draft.key.startsWith('src/content/'))url.searchParams.set('source',draft.key);else url.searchParams.set('draft',draft.key);
+        row.href=url.href;const cell=document.createElement('span');cell.className='story-title-cell';const title=document.createElement('strong');title.textContent=draft.title;const sub=document.createElement('small');sub.textContent='私有草稿 · '+draft.updatedAt;cell.append(title,sub);row.append(cell);container.prepend(row);next.unshift(row);
+      }rows=next;filterRows();}
       const count=document.querySelector('.stories-heading p');if(count)count.textContent=`当前分支共 ${next.length} 篇内容，已从仓库同步。`;
     } catch { /* Static Pages keeps its build snapshot and local drafts. */ }
   }

@@ -1,3 +1,6 @@
+import {continueCloudPublication} from './continue-cloud-publication.mjs';
+import { createCloudDraftClient } from './cloud-drafts.mjs';
+import {createPublicationAttempt} from './publication-attempt.mjs';
 import { readAdminSession } from './github-content.mjs';
 import { rememberProposal } from './proposal-history.mjs';
 import { Editor, Node, mergeAttributes, type JSONContent } from '@tiptap/core';
@@ -38,6 +41,7 @@ type EditorState = {
   publishNumber?: number;
   sourcePath: string;
   sourceBlobSha?: string;
+  publication?: Record<string, any>;
 };
 
 const Callout = Node.create({
@@ -103,13 +107,13 @@ function fileAsDataUrl(file: File): Promise<string> {
   });
 }
 
-function initializeStoryEditor(editorRoot: HTMLElement) {
+function initializeStoryEditor(editorRoot: HTMLElement, cloud?: ReturnType<typeof createCloudDraftClient>) {
   const initial = JSON.parse(editorRoot.dataset.story || '{}') as EditorState;
   const identity = resolveDraftId(initial.id, window.location.href);
   if (identity.url !== window.location.href) window.history.replaceState(null, '', identity.url);
   initial.id = identity.id;
   const storageKey = draftStorageKey(initial.id);
-  const state: EditorState = { ...initial, ...parseStoredState(localStorage.getItem(storageKey)), id: initial.id };
+  const state: EditorState = { ...initial, ...(cloud ? {} : parseStoredState(localStorage.getItem(storageKey))), id: initial.id };
   state.categories = Array.isArray(state.categories) ? state.categories : [];
   state.tags = Array.isArray(state.tags) ? state.tags : [];
 
@@ -133,6 +137,9 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
   const publishedUrl = editorRoot.querySelector('[data-published-url]');
   let slugWasEdited = Boolean(state.slug);
   let saveTimer = 0;
+  let composing = false;
+  let dirty = false;
+  let pendingSaves = 0;
   let imageDialogMode: 'insert' | 'edit' = 'insert';
 
   if (!(editorElement instanceof HTMLElement)) return;
@@ -299,28 +306,77 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
   };
 
   const persistDraft = (nextState = snapshot()) => {
-    localStorage.setItem(storageKey, JSON.stringify(nextState));
+    if (!cloud) localStorage.setItem(storageKey, JSON.stringify(nextState));
     Object.assign(state, nextState);
     return nextState;
   };
 
   document.addEventListener('admin:flush-draft', (event) => {
+    if(cloud){event.preventDefault();showToast('云端草稿请在“私有草稿与恢复”页面下载备份。');return;}
     window.clearTimeout(saveTimer);
     try { persistDraft(); } catch { event.preventDefault(); showToast('草稿未能保存，导出已停止。'); }
   });
 
+  const feedback = document.createElement('div');
+  feedback.className = 'cloud-draft-feedback';
+  feedback.setAttribute('role','status');
+  const feedbackText = document.createElement('span');
+  feedbackText.textContent = '私有草稿已载入；修改会自动保存。';
+  const retry = document.createElement('button'); retry.type='button'; retry.textContent='重试保存'; retry.hidden=true;
+  const reload = document.createElement('button'); reload.type='button'; reload.textContent='载入另一设备版本'; reload.hidden=true;
+  const copy = document.createElement('button'); copy.type='button'; copy.textContent='将此页另存为草稿'; copy.hidden=true;
+  const download = document.createElement('button'); download.type='button'; download.textContent='下载此页备份'; download.hidden=true;
+  const login=document.createElement('a');login.href='/auth/login?back='+encodeURIComponent(location.pathname+location.search);login.target='_blank';login.rel='noopener';login.textContent='重新登录后返回此页重试';login.hidden=true;
+  feedback.append(feedbackText,retry,reload,copy,download,login);
+  if(cloud){editorRoot.querySelector('.writing-inner')?.prepend(feedback);if(saveLabel)saveLabel.textContent='私有草稿已载入';}
+  function syncMessage(message:string){if(saveLabel)saveLabel.textContent=message;feedbackText.textContent=message;}
+  async function saveCloud(nextState = snapshot()) {
+    if(!cloud)return;
+    const sent=JSON.stringify(nextState); pendingSaves++;
+    syncMessage('正在保存私有草稿……');
+    try {
+      await cloud.save(nextState);
+      dirty=JSON.stringify(snapshot())!==sent;
+      retry.hidden=reload.hidden=copy.hidden=download.hidden=login.hidden=true;
+      syncMessage(dirty?'继续写作，正在等待保存……':'已保存到云端 · 私有草稿');
+    } catch(error) {
+      dirty=true;login.hidden=false;
+      const failure=error as Error & {status?:number};
+      syncMessage(failure.message);retry.hidden=failure.status===409;reload.hidden=copy.hidden=failure.status!==409;download.hidden=false;
+      // Best effort recovery only, never a substitute for a successful server acknowledgement.
+      try{localStorage.setItem(storageKey,JSON.stringify(nextState));}catch{/* Download remains available for image-heavy drafts. */}
+      throw error;
+    } finally {pendingSaves--;}
+  }
+  retry.addEventListener('click',()=>{void saveCloud().catch(()=>{});});
+  reload.addEventListener('click',()=>{dirty=false;location.reload();});
+  copy.addEventListener('click',async()=>{
+    copy.disabled=true;
+    try{
+      const id='draft-'+crypto.randomUUID(),client=createCloudDraftClient({key:id,session:readAdminSession});
+      await client.save({...snapshot(),id});dirty=false;location.assign('/admin/stories/new/?draft='+id);
+    }catch(error){syncMessage(error instanceof Error?error.message:'另存失败，请下载此页备份。');}finally{copy.disabled=false;}
+  });
+  download.addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(snapshot(),null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='editorial-draft.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+  editorRoot.addEventListener('compositionstart',()=>{composing=true;window.clearTimeout(saveTimer);});
+  editorRoot.addEventListener('compositionend',()=>{composing=false;scheduleSave();});
+  window.addEventListener('beforeunload',event=>{if(cloud&&(dirty||pendingSaves)){event.preventDefault();event.returnValue='';}});
+  document.addEventListener('visibilitychange',()=>{if(cloud&&document.hidden&&dirty&&!composing){window.clearTimeout(saveTimer);void saveCloud().catch(()=>{});}});
+  window.addEventListener('online',()=>{if(cloud&&dirty)void saveCloud().catch(()=>{});});
   function scheduleSave() {
+    dirty=true;
     if (saveLabel) saveLabel.textContent = '正在保存……';
     window.clearTimeout(saveTimer);
-    saveTimer = window.setTimeout(() => {
+    if(!composing)saveTimer = window.setTimeout(() => {
       try {
-        persistDraft();
-        if (saveLabel) saveLabel.textContent = '已保存到本地';
+        const next=persistDraft();
+        if(cloud)void saveCloud(next).catch(()=>{});
+        else if (saveLabel) saveLabel.textContent = '已保存到本地';
       } catch {
         if (saveLabel) saveLabel.textContent = '草稿过大，无法保存';
-        showToast('草稿过大，无法保存到本地。请选择更小的图片。');
+        showToast('草稿无法保存，请下载备份或选择更小的图片。');
       }
-    }, 450);
+    }, cloud ? 900 : 450);
     updateDerived();
   }
 
@@ -408,9 +464,9 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     event.preventDefault();
     if (!(imageFile instanceof HTMLInputElement) || !(imageUrl instanceof HTMLInputElement)) return;
     const file = imageFile.files?.[0];
-    if (file && file.size > 900_000) {
+    if (file && file.size > (cloud ? 8_000_000 : 900_000)) {
       if (imageError instanceof HTMLElement) {
-        imageError.textContent = '请选择小于 900 KB 的图片，以确保草稿可以保存到本地。';
+        imageError.textContent = cloud ? '请选择小于 8 MB 的图片。' : '请选择小于 900 KB 的图片，以确保草稿可以保存到本地。';
         imageError.hidden = false;
       }
       return;
@@ -531,6 +587,8 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     renderTaxonomy(kind);
   });
 
+  const publicationAttempt=createPublicationAttempt();
+  let publicationGeneration=0;
   let lastPublication: Awaited<ReturnType<typeof publishStory>> | null = null;
   const refreshButton = editorRoot.querySelector<HTMLButtonElement>('[data-refresh-deploy]');
   const exportProposal = editorRoot.querySelector<HTMLButtonElement>('[data-export-proposal]');
@@ -543,32 +601,47 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     item.dataset.marker = labels[statusValue] || '';
   };
 
-  const refreshDeployment = async (result: Awaited<ReturnType<typeof publishStory>>) => {
+  const refreshDeployment = async (result: Awaited<ReturnType<typeof publishStory>>, generation=publicationGeneration) => {
     try {
         let expectedSha = result.commitSha;
         if (result.proposal) {
           const proposal = await result.github.proposalStatus(result.proposal.pullRequestNumber);
+          if(generation!==publicationGeneration)return true;
           if (proposal.branch !== result.proposal.branch || proposal.commitSha !== result.proposal.commitSha) throw new Error('提案身份变化。');
+          if(proposal.state==='PULL_REQUEST_CLOSED'){publicationAttempt.finish();if(cloud){delete state.publication;await saveCloud(snapshot());}}
           if (proposal.state !== 'MERGED_ON_MAIN') {
-            const status = ({PULL_REQUEST_OPEN:'内容提案待合并，尚未部署',PULL_REQUEST_CLOSED:'内容提案已关闭，未合并',PROPOSAL_CHANGED:'提案内容已变化，需重新审查'} as Record<string,string>)[proposal.state] || '提案状态尚未核验';
+            const autoLabels: Record<string,string>={WAITING:'等待CI与保护规则，内容校验通过后自动合并',MERGED:'已合并，等待部署',NEEDS_UPDATE:'main已有更新，请比较并更新提案',CONFLICT:'内容冲突，未合并',CI_FAILED:'CI失败，未合并',STOPPED:'校验或合并结果未确认，请核验恢复',SESSION_EXPIRED:'会话已结束，请重新登录并恢复发布'};
+            const status = autoLabels[proposal.publication?.state] || ({PULL_REQUEST_OPEN:'内容提案待合并，尚未部署',PULL_REQUEST_CLOSED:'内容提案已关闭，未合并',PROPOSAL_CHANGED:'提案内容已变化，需重新审查'} as Record<string,string>)[proposal.state] || '提案状态尚未核验';
             editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：${status}`; });
             updatePublishStep('deploy', 'triggered');
-            return;
+            return proposal.publication?.state !== 'WAITING';
           }
           expectedSha = proposal.mergedSha;
+          state.sourcePath=result.sourcePath;state.sourceBlobSha=result.sourceBlobSha;const hadCloudProposal=cloud&&state.publication;delete state.publication;persistDraft();if(hadCloudProposal)await saveCloud(snapshot());
+          publicationAttempt.finish();
         }
         const report = await result.github.deploymentStatus(expectedSha);
+        if(generation!==publicationGeneration)return true;
         const labels: Record<string, string> = {CURRENT_VERSION_VERIFIED:'公开版本与 HTTP 健康核验通过', NOT_DEPLOYED:'测试分支未部署到生产', VERSION_DIFFERS:'线上版本与本次提交不同', FAILED:'公开健康检查失败', UNKNOWN:'尚未确认'};
         for (const target of report.targets) {
           const row = editorRoot.querySelector(`[data-target-status="${target.target}"]`);
           if (row) row.textContent = `${target.target === 'pages' ? 'GitHub Pages' : 'VPS'}：${labels[target.status] || '尚未确认'}${target.actualSha ? `（${target.actualSha.slice(0, 8)}）` : ''}；流水线：${({SUCCEEDED:'已成功',FAILED:'失败',PENDING:'执行中',SKIPPED:'未部署',NOT_REQUESTED:'测试分支不触发生产',UNKNOWN:'尚未确认'} as Record<string,string>)[target.pipeline?.state] || '尚未确认'}${target.pipeline?.job ? ` · ${target.pipeline.job}` : ''}${target.pipeline?.step ? ` · ${target.pipeline.step}` : ''}`;
         }
         updatePublishStep('deploy', report.targets.every((target: {status: string}) => target.status === 'CURRENT_VERSION_VERIFIED') ? 'success' : 'triggered');
+        return report.targets.every((target: {pipeline?: {state: string}}) => ['SUCCEEDED','SKIPPED','FAILED'].includes(target.pipeline?.state || ''));
       } catch {
         editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：本次状态查询失败，请刷新核验。`; });
         updatePublishStep('deploy', 'triggered');
       }
   };
+  let publicationPoll: number | undefined;
+  const pollPublication = (result: Awaited<ReturnType<typeof publishStory>>, remaining=100) => {
+    window.clearTimeout(publicationPoll);
+    if(remaining<=0)return;
+    const generation=publicationGeneration;
+    publicationPoll=window.setTimeout(async()=>{if(generation!==publicationGeneration)return;const done=await refreshDeployment(result,generation);if(!done&&generation===publicationGeneration)pollPublication(result,remaining-1);},15000);
+  };
+  window.addEventListener('pagehide',()=>window.clearTimeout(publicationPoll),{once:true});
   refreshButton?.addEventListener('click', async () => {
     if (!lastPublication) return;
     refreshButton.disabled = true;
@@ -586,14 +659,14 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       if (!previewWindow) showToast('请允许浏览器打开弹窗，以查看内容预览。');
       else {
         previewWindow.opener = null;
-        if (saveLabel) saveLabel.textContent = '已保存到本地';
+        if (saveLabel) saveLabel.textContent = cloud ? '预览已打开；云端保存状态见正文上方' : '已保存到本地';
       }
     } catch {
       showToast('无法生成预览，请尝试使用更小的本地图片。');
       return;
     }
     if (action !== 'Publish') return;
-    lastPublication = null;
+    publicationGeneration++;window.clearTimeout(publicationPoll);
     if (exportProposal) exportProposal.hidden = true;
     if (refreshButton) refreshButton.hidden = true;
     editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：尚未核验`; });
@@ -612,24 +685,34 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       window.clearTimeout(saveTimer);
       updatePublishStep('save', 'running');
       const nextState = persistDraft();
+      if(cloud)await saveCloud(nextState);
       updatePublishStep('save', 'success');
 
       const session = await readAdminSession();
+      if(cloud && nextState.status === 'draft')throw new Error('私有草稿已自动保存。请在发布设置中改为“已发布”，再提交发布提案。');
       const validationErrors = validateStory(nextState, { allowDraft: session.publicationMode === 'pull-request' });
       if (validationErrors.length) {
         updatePublishStep('validate', 'failure');
         throw new Error(validationErrors.join(' '));
       }
 
-      const result = await publishStory({ state: nextState, session, onProgress: updatePublishStep });
+      const result = await publicationAttempt.run(async()=>{
+        if(cloud&&state.publication)return continueCloudPublication({record:state.publication,session});
+        const requestId=crypto.randomUUID();let submissionStarted=false;
+        if(cloud){state.publication={state:'SUBMITTING',requestId};await saveCloud(snapshot());}
+        try{return await publishStory({state:nextState,session,requestId,onProgress:(step,status)=>{if(step==='proposal-request')submissionStarted=true;updatePublishStep(step,status);}});}
+        catch(error){if(!submissionStarted){publicationAttempt.finish();if(cloud){delete state.publication;await saveCloud(snapshot());}}throw error;}
+      });
       if (result.proposal) {
+        if(cloud){state.publication={...result.proposal,sourcePath:result.sourcePath,sourceBlobSha:result.sourceBlobSha};try{await saveCloud(snapshot());}catch{showToast('提案已创建，但云端恢复记录保存失败；请保留 PR 链接。');}}
         try { rememberProposal(result.proposal,localStorage); } catch { showToast('提案已创建，但恢复记录未保存；请保留PR链接并导出当前提案记录。'); }
         if (publishedUrl instanceof HTMLAnchorElement) { publishedUrl.href = result.proposal.url; publishedUrl.textContent = '查看内容提案'; publishedUrl.hidden = false; }
         lastPublication = result;
         if (exportProposal) exportProposal.hidden = typeof result.proposal.recoveryReceipt !== 'string';
         if (refreshButton) { refreshButton.disabled = false; refreshButton.hidden = false; }
         await refreshDeployment(result);
-        showToast('内容提案已创建，本地草稿保留；合并与双站部署尚未确认。');
+        showToast(result.proposal.publication?.state==='WAITING'?'已提交自动发布：等待CI，草稿保留。':'提案状态已核验，草稿保留；两站部署结果见下方。');
+        if(result.proposal.publication?.state==='WAITING')pollPublication(result);
         return;
       }
 
@@ -639,6 +722,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
       }
       showToast(`内容已写入 ${result.branch}：${result.commitSha.slice(0, 8)}。`);
       updatePublishStep('deploy', 'running');
+      publicationAttempt.finish();
       state.sourcePath = result.sourcePath;
       state.sourceBlobSha = result.sourceBlobSha;
       persistDraft();
@@ -661,6 +745,7 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     if (!(coverInput instanceof HTMLInputElement) || !coverInput.files?.[0]) return;
     if (!(coverPreview instanceof HTMLElement)) return;
     try {
+      if(coverInput.files[0].size > (cloud ? 8_000_000 : 900_000))throw new Error('封面图片过大，请缩小图片。');
       state.cover = await fileAsDataUrl(coverInput.files[0]);
       const image = document.createElement('img');
       image.alt = valueOf(coverAlt) || '已选择的内容封面';
@@ -672,6 +757,9 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
     }
   });
 
+  if(cloud&&state.publication){
+    try{rememberProposal(state.publication,localStorage);const link=document.createElement('a');link.href='/admin/proposals/';link.textContent='查看此草稿的发布提案与双站状态';feedback.append(link);}catch{syncMessage('发布恢复记录需核对，请保留此草稿。');}
+  }
   updateToolbar();
   updateDerived();
   resizeTextareas();
@@ -679,22 +767,36 @@ function initializeStoryEditor(editorRoot: HTMLElement) {
 
 export function initializeStoryEditors() {
   document.querySelectorAll<HTMLElement>('.editor-workspace').forEach(async root => {
-    const explicitSource = new URL(location.href).searchParams.get('source');
+    const params=new URL(location.href).searchParams;
+    const explicitSource = params.get('source');
     try {
+      let cloud: ReturnType<typeof createCloudDraftClient> | undefined;
       const response = await fetch('/api/session', {credentials:'same-origin',cache:'no-store'}).catch(() => null);
-      if (response?.ok && (await response.json().catch(() => null))?.authenticated) {
+      const session=response?.ok ? await response.json() : null;
+      if (session?.authenticated) {
         const initial = JSON.parse(root.dataset.story || '{}');
         const path = explicitSource || initial.sourcePath;
         if (path) {
           const live = await fetch('/api/story?path='+encodeURIComponent(path), {credentials:'same-origin',cache:'no-store'});
-          if (!live.ok) throw Error('当前分支内容读取失败；未载入旧副本，请返回内容列表后重试。');
+          if (!live.ok) throw Error('当前分支内容读取失败；请返回内容列表后重试。');
           root.dataset.story = JSON.stringify((await live.json()).story);
         }
+        if(session.privateDrafts){
+          const value=JSON.parse(root.dataset.story||'{}');
+          const identity=resolveDraftId(value.id,location.href);history.replaceState(null,'',identity.url);value.id=identity.id;
+          const key=params.has('draft')?value.id:value.sourcePath||value.id;
+          cloud=createCloudDraftClient({key,session:readAdminSession});
+          const saved=await cloud.load();
+          const imported=!saved&&params.has('draft')?parseStoredState(localStorage.getItem(draftStorageKey(value.id))):null;
+          const restored=saved?.state||(imported?.type?{...value,...imported,id:value.id}:value);
+          if(imported?.type)await cloud.save(restored);
+          root.dataset.story=JSON.stringify(restored);
+        }
       } else if (explicitSource) throw Error('请连接编辑服务后打开此内容。');
-      initializeStoryEditor(root);
+      initializeStoryEditor(root,cloud);root.inert=false;
     } catch (error) {
       const message = document.createElement('p'); message.textContent = error instanceof Error ? error.message : '内容载入失败。';
-      root.replaceChildren(message);
+      root.replaceChildren(message);root.inert=false;
     }
   });
 }

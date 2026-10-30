@@ -3,17 +3,21 @@ const raw=import.meta.env.PUBLIC_ADMIN_ORIGIN;
 let editorOrigin='';
 if(raw){const parsed=new URL(raw);if(parsed.protocol!=='https:'||parsed.origin!==raw||parsed.username||parsed.password)throw Error('PUBLIC_ADMIN_ORIGIN must be a pure HTTPS origin');editorOrigin=parsed.origin;}
 ---
+<div class="admin-entry-points">
+{editorOrigin && <a class="cloud-editor-entry" href={`${editorOrigin}/admin/`} target="_blank" rel="noopener noreferrer" title="在新标签页打开；当前本地草稿请先通过草稿迁移导出">云端编辑 ↗</a>}
 <details class="admin-access">
  <summary data-auth-label>编辑连接</summary>
  <div>
-  <p data-auth-message>此页面可以写作、保存草稿和预览。创建 PR 请打开本机安全编辑器；草稿可通过“草稿迁移”导出、导入。</p>
-  {editorOrigin && <p><a href={`${editorOrigin}/admin/`} target="_blank" rel="noopener noreferrer">打开主编辑站 ↗</a></p>}
+  <p data-auth-message>此页面可以写作、保存本地草稿和预览。登录与发布请打开云端编辑器，或使用本机备用编辑器；已有本地草稿可通过“草稿迁移”导出、导入。</p>
+  {editorOrigin && <p><a href={`${editorOrigin}/admin/`} target="_blank" rel="noopener noreferrer">打开云端编辑器 ↗</a></p>}
   <p><a href="http://127.0.0.1:19443/admin/" target="_blank" rel="noopener noreferrer">打开本机备用编辑 ↗</a></p>
-  <p>启动本机编辑服务后打开上述链接并登录 GitHub。发布会创建 PR，CI 通过后由你合并；两站部署结果分别确认。</p>
+  <p data-auth-publish-message>云端入口使用 Google 和 GitHub 登录；本机备用入口需先启动本机编辑服务。发布经过内容提案与 CI 校验，两站部署结果分别确认。</p>
   <button type="button" data-auth-logout hidden>退出当前编辑会话</button>
  </div>
 </details>
+</div>
 <style>
+ .admin-entry-points{display:flex;align-items:center;gap:10px;flex-shrink:0}.cloud-editor-entry{font-size:12px;color:#267563;text-decoration:none;white-space:nowrap}.cloud-editor-entry:hover{text-decoration:underline}.cloud-editor-entry:focus-visible{outline:2px solid #267563;outline-offset:3px;border-radius:2px}
  .admin-access{position:relative;font-size:12px}.admin-access summary{cursor:pointer;white-space:nowrap}.admin-access>div{position:absolute;right:0;top:28px;z-index:100;width:265px;padding:15px;background:#fff;border:1px solid #ddd;border-radius:8px;box-shadow:0 8px 30px #0001}.admin-access p{margin:0 0 10px;line-height:1.6}.admin-access a{color:#267563}.admin-access button{padding:6px 10px;border:1px solid #ccc;border-radius:4px;cursor:pointer}
 </style>
 <script>
@@ -25,7 +29,9 @@ if(raw){const parsed=new URL(raw);if(parsed.protocol!=='https:'||parsed.origin!=
    const response=await fetch('/api/session',{credentials:'same-origin',cache:'no-store'});if(!response.ok)return;const session=await response.json();if(!session.authenticated)return;
    const label=root?.querySelector('[data-auth-label]'),message=root?.querySelector('[data-auth-message]'),logout=root?.querySelector('[data-auth-logout]');
    if(label)label.textContent=`${session.user.login} · 已连接`;
-   if(message)message.textContent=`当前编辑分支：${session.branch}。提交后请分别核对两站发布结果。`;
+   if(message)message.textContent=session.privateDrafts?'草稿自动保存到云端，可在其他设备登录后继续编辑。':`当前编辑分支：${session.branch}。提交后请分别核对两站发布结果。`;
+   const publication=root?.querySelector('[data-auth-publish-message]');
+   if(publication)publication.textContent=session.contentAutoMergeEnabled?'普通内容通过范围校验和必需 CI 后自动合并；合并后分别核对两站部署结果。':'发布会创建内容 PR，CI 通过后由你合并；两站部署结果分别确认。';
    if(logout instanceof HTMLButtonElement){logout.hidden=false;logout.onclick=async()=>{const result=await fetch('/api/logout',{method:'POST',credentials:'same-origin',headers:{'X-Admin-CSRF':session.csrf}});if(result.ok)location.assign('/admin/');};}
   }catch{/* Static Pages supports local drafts and the explicit independent editor link. */}
  }

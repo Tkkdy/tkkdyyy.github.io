@@ -1,3 +1,5 @@
+import YAML from 'yaml';
+import {createContentPublisher} from './content-publication.mjs';
 import {createWorkspaceRecovery,createSignedRecovery} from './workspace-recovery.mjs';
 import {createCmsWorkspace} from './cms-workspace.mjs';
 import {createContentProposalService,validateProposalRecord} from './content-proposals.mjs';
@@ -11,18 +13,20 @@ const nonce=()=>randomBytes(32).toString('base64url');
 const equal=(a,b)=>typeof a==='string'&&typeof b==='string'&&timingSafeEqual(createHash('sha256').update(a).digest(),createHash('sha256').update(b).digest());
 function cookies(request){return Object.fromEntries((request.headers.get('cookie')||'').split(';').map(x=>x.trim().split(/=(.*)/s)).filter(x=>x.length>1).map(([k,v])=>[k,v]));}
 function boundedJSON(request,limit=30_000_000){return request.text().then(raw=>{requirePolicy(Buffer.byteLength(raw)<=limit,'请求体过大。');return JSON.parse(raw);});}
-export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now()}={}){
+export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now(),draftStore=null}={}){
  const origin=new URL(config.origin);requirePolicy(origin.origin===config.origin&&origin.pathname==='/'&&!origin.username&&!origin.password,'认证服务地址必须是纯origin。');
  const local=['127.0.0.1','localhost'].includes(origin.hostname);requirePolicy(origin.protocol==='https:'||local&&origin.protocol==='http:','仅回环服务可使用HTTP。');
  requirePolicy(config.repository==='Tkkdy/tkkdyyy.github.io'&&config.repositoryId===1355866312&&config.ownerId===144055705,'仓库或所有者身份不匹配。');
  requirePolicy(config.clientId&&config.clientSecret&&config.branch,'缺少App配置。');const proposalMode=config.publicationMode==='pull-request';requirePolicy(['direct','pull-request'].includes(config.publicationMode??'direct'),'发布模式错误。');requirePolicy(!proposalMode||(config.branch==='main'&&config.allowMain!==true),'PR模式只允许读取main，禁止直接main写入开关。');requirePolicy(config.branch!=='main'||config.allowMain===true||proposalMode,'main写入尚未批准。');
+ requirePolicy(config.sessionSeconds===undefined||Number.isSafeInteger(config.sessionSeconds)&&config.sessionSeconds>=1800&&config.sessionSeconds<=28800,'编辑会话时长无效。');
+ requirePolicy(config.contentAutoMergeEnabled===undefined||typeof config.contentAutoMergeEnabled==='boolean','自动发布开关须为布尔值。');requirePolicy(!config.contentAutoMergeEnabled||proposalMode,'自动发布仅支持PR模式。');
  const recovery=createWorkspaceRecovery(config),proposalRecovery=createSignedRecovery({...config,domain:'studio-proposal-v1',salt:'editorial-studio-recovery-v1',field:'proposal',validate:validateProposalRecord});
  const sessions=new Map(),flows=new Map(),cookieName=local?'editorial-local-session':'__Host-editorial-session',flowCookie=local?'editorial-local-oauth':'__Host-editorial-oauth';
  const cookie=(name,value,seconds)=>`${name}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${seconds}${origin.protocol==='https:'?'; Secure':''}`;
  const headers={'Cache-Control':'no-store','Referrer-Policy':'no-referrer','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"};
  const response=(body,status=200,extra={})=>new Response(body===null?null:JSON.stringify(body),{status,headers:{...headers,'Content-Type':'application/json; charset=utf-8',...extra}});
  const redirect=(path,extra={})=>new Response(null,{status:303,headers:{...headers,Location:new URL(path,origin).href,...extra}});
- function purge(){for(const map of [sessions,flows])for(const [key,value]of map)if(value.expires<=clock())map.delete(key);}
+ function purge(){for(const map of [sessions,flows])for(const [key,value]of map)if(value.expires<=clock()){value.publisher?.stop();map.delete(key);}}
  function session(request){const id=cookies(request)[cookieName],value=sessions.get(id);if(!value||value.expires<=clock())throw Object.assign(Error('需要登录。'),{status:401});return {id,...value};}
  function mutationGuard(request,value){requirePolicy(request.headers.get('origin')===config.origin,'请求来源不匹配。');const candidate=request.headers.get('x-admin-csrf')??request.headers.get('authorization')?.replace(/^(?:Bearer|token) /i,'');requirePolicy(equal(candidate,value.csrf),'安全校验失效，请重新登录。');}
  async function remote(url,options={}){
@@ -30,7 +34,7 @@ export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now()}={}){
   if(!r.ok)throw Object.assign(Error('GitHub服务请求失败。'),{status:[401,404].includes(r.status)?r.status:502});return raw?JSON.parse(raw):null;
  }
  async function github(path,token,options={}){return remote('https://api.github.com'+path,{...options,headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'editorial-owner-broker',Authorization:`Bearer ${token}`,'Content-Type':'application/json'}});}
- function publicSession(s){return {authenticated:true,user:s.user,csrf:s.csrf,repository:config.repository,branch:config.branch,publicationMode:proposalMode?'pull-request':'direct',expiresAt:s.expires,cmsWorkspace:s.cmsWorkspace?.status()??null,cmsRecoveryReceipt:proposalMode?recovery.seal(s.cmsWorkspace.recoverySnapshot()):null};}
+ function publicSession(s){return {authenticated:true,user:s.user,csrf:s.csrf,repository:config.repository,branch:config.branch,publicationMode:proposalMode?'pull-request':'direct',contentAutoMergeEnabled:config.contentAutoMergeEnabled===true,privateDrafts:Boolean(draftStore),expiresAt:s.expires,cmsWorkspace:s.cmsWorkspace?.status()??null,cmsRecoveryReceipt:proposalMode?recovery.seal(s.cmsWorkspace.recoverySnapshot()):null};}
  return {
   async authenticate(request){purge();requirePolicy(new URL(request.url).origin===config.origin,'Host不匹配。');return publicSession(session(request));},
   async handle(request){
@@ -51,8 +55,8 @@ export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now()}={}){
      requirePolicy(Number.isFinite(token.expires_in)&&token.expires_in>0,'App必须启用短期用户令牌。');
      const user=await github('/user',token.access_token);requirePolicy(user.id===config.ownerId,'此账号不是站点所有者。');
      const repo=await github('/repos/'+config.repository,token.access_token);requirePolicy(repo.id===config.repositoryId&&repo.full_name===config.repository,'目标仓库不匹配。');
-     requirePolicy(sessions.size<30,'登录会话过多。');const id=nonce(),s={csrf:nonce(),token:token.access_token,user:{id:user.id,login:user.login},expires:clock()+Math.min(1800,token.expires_in)*1000};s.reader=createContentReader({github:(path,options)=>github(path,s.token,options),repository:config.repository,branch:config.branch});s.proposals=createContentProposalService({github:(path,options)=>github(path,s.token,options),enabled:proposalMode,clock});s.cmsWorkspace=createCmsWorkspace({github:(path,options)=>github(path,s.token,options),enabled:proposalMode});sessions.set(id,s);
-     const result=redirect(flow.back);result.headers.append('Set-Cookie',cookie(cookieName,id,1800));result.headers.append('Set-Cookie',cookie(flowCookie,'',0));return result;
+     requirePolicy(sessions.size<30,'登录会话过多。');const ttlSeconds=Math.min(config.sessionSeconds??1800,token.expires_in),id=nonce(),s={csrf:nonce(),token:token.access_token,user:{id:user.id,login:user.login},expires:clock()+ttlSeconds*1000};s.publisher=createContentPublisher({github:(path,options)=>github(path,s.token,options),enabled:config.contentAutoMergeEnabled===true,active:()=>sessions.has(id)&&s.expires>clock()});s.reader=createContentReader({github:(path,options)=>github(path,s.token,options),repository:config.repository,branch:config.branch});s.proposals=createContentProposalService({github:(path,options)=>github(path,s.token,options),enabled:proposalMode,clock});s.cmsWorkspace=createCmsWorkspace({github:(path,options)=>github(path,s.token,options),enabled:proposalMode});sessions.set(id,s);
+     const result=redirect(flow.back);result.headers.append('Set-Cookie',cookie(cookieName,id,ttlSeconds));result.headers.append('Set-Cookie',cookie(flowCookie,'',0));return result;
     }
     const s=session(request);
     if(path==='/auth/sveltia'&&request.method==='GET'){
@@ -60,18 +64,32 @@ export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now()}={}){
      const hash=createHash('sha256').update(script).digest('base64');
      return new Response('<!doctype html><meta charset="utf-8"><title>连接编辑器</title><p>正在连接已登录会话。</p><script>'+script+'</script>',{headers:{...headers,'Content-Type':'text/html; charset=utf-8','Content-Security-Policy':`default-src 'none'; script-src 'sha256-${hash}'; frame-ancestors 'none'; base-uri 'none'`}});
     }
-    if(path==='/api/cms-workspace/status'&&request.method==='GET'){requirePolicy(proposalMode,'内容PR模式尚未启用。');return response(await s.cmsWorkspace.inspect());}
-    if(path==='/api/cms-workspace'&&request.method==='POST'){mutationGuard(request,s);requirePolicy(proposalMode,'内容PR模式尚未启用。');const body=await boundedJSON(request);requirePolicy(body&&typeof body==='object'&&['begin','submit','restore'].includes(body.action)&&Object.keys(body).every(k=>body.action==='restore'?['action','receipt'].includes(k):k==='action'),'编辑分支操作不允许。');if(body.action==='restore')return response(await s.cmsWorkspace.restore(recovery.open(body.receipt)));return response(await s.cmsWorkspace[body.action]());}
+    if(path==='/api/cms-workspace/status'&&request.method==='GET'){requirePolicy(proposalMode,'内容PR模式尚未启用。');const p=await s.cmsWorkspace.inspect();return response({...p,publication:s.publisher.status(p.pullRequestNumber)});}
+    if(path==='/api/cms-workspace'&&request.method==='POST'){mutationGuard(request,s);requirePolicy(proposalMode,'内容PR模式尚未启用。');const body=await boundedJSON(request);requirePolicy(body&&typeof body==='object'&&['begin','submit','restore'].includes(body.action)&&Object.keys(body).every(k=>body.action==='restore'?['action','receipt'].includes(k):k==='action'),'编辑分支操作不允许。');if(body.action==='restore')return response(await s.cmsWorkspace.restore(recovery.open(body.receipt)));const p=await s.cmsWorkspace[body.action]();if(body.action==='submit')s.publisher.start({state:'PULL_REQUEST_OPEN',branch:p.branch,baseSha:p.baseSha,commitSha:p.headSha,pullRequestNumber:p.pullRequestNumber,url:p.url});return response({...p,publication:s.publisher.status(p.pullRequestNumber)});}
+    if(path==='/api/drafts'&&request.method==='GET'){
+     requirePolicy(draftStore,'服务端私有草稿未配置。');const key=url.searchParams.get('key');
+     if(key&&url.searchParams.has('history'))return response({history:await draftStore.history(key)});
+     return response(key?{draft:await draftStore.read(key)}:{drafts:await draftStore.list()});
+    }
+    if(path==='/api/drafts'&&request.method==='POST'){
+     mutationGuard(request,s);requirePolicy(draftStore,'服务端私有草稿未配置。');const body=await boundedJSON(request,17_000_000);
+     requirePolicy(body&&Object.keys(body).every(k=>['key','state','expectedRevision','action','revision'].includes(k)),'草稿参数无效。');
+     if(body.action==='delete'){await draftStore.remove(body.key,body.expectedRevision);return response({deleted:true});}
+     if(body.action==='restore')return response({draft:await draftStore.restore(body.key,body.revision,body.expectedRevision)});
+     requirePolicy(!body.action||body.action==='save','草稿操作无效。');return response({draft:await draftStore.save(body.key,body.state,body.expectedRevision)});
+    }
     if(path==='/api/stories'&&request.method==='GET')return response(await s.reader());
+    if(path==='/api/content'&&request.method==='GET'){const catalog=await s.reader(),resource=catalog.resources.find(r=>r.sourcePath===url.searchParams.get('path'));return resource?response({head:catalog.head,resource}):response({error:'没有此内容。'},404);}
     if(path==='/api/story'&&request.method==='GET'){const catalog=await s.reader(),story=catalog.stories.find(item=>item.sourcePath===url.searchParams.get('path'));return story?response({head:catalog.head,story}):response({error:'当前分支中没有此内容。'},404);}
     if(path==='/api/deployments'&&request.method==='GET'){const expectedSha=url.searchParams.get('sha');requirePolicy(/^[a-f0-9]{40}$/.test(expectedSha||''),'提交版本无效。');const [targets,pipeline]=await Promise.all([inspectTargets({targets:config.targets,branch:config.branch,expectedSha,fetchImpl}),inspectWorkflow({github:(path)=>github(path,s.token),repository:config.repository,expectedSha,branch:config.branch})]);return response({targets:targets.map(target=>({...target,pipeline:pipeline[target.target]}))});}
     if(path==='/api/session'&&request.method==='GET')return response(publicSession(s));
-    if(path==='/api/proposals/restore'&&request.method==='POST'){mutationGuard(request,s);requirePolicy(proposalMode,'内容PR模式尚未启用。');const body=await boundedJSON(request,33000);requirePolicy(body&&Object.keys(body).length===1,'提案恢复参数无效。');return response(await s.proposals.restore(proposalRecovery.open(body.receipt)));}
-    if(/^\/api\/proposals\/[1-9][0-9]{0,14}$/.test(path)&&request.method==='GET'){requirePolicy(proposalMode,'内容PR模式尚未启用。');return response(await s.proposals.inspect(Number(path.split('/').at(-1))));}
-    if(path==='/api/proposals'&&request.method==='POST'){mutationGuard(request,s);requirePolicy(proposalMode,'内容PR模式尚未启用。');const p=await s.proposals.submit(await boundedJSON(request));return response({...p,recoveryReceipt:proposalRecovery.seal(p)});}
-    if(path==='/api/logout'&&request.method==='POST'){mutationGuard(request,s);sessions.delete(s.id);return response({loggedOut:true},200,{'Set-Cookie':cookie(cookieName,'',0)});}
+    if(path==='/api/proposals/restore'&&request.method==='POST'){mutationGuard(request,s);requirePolicy(proposalMode,'内容PR模式尚未启用。');const body=await boundedJSON(request,33000);requirePolicy(body&&Object.keys(body).length===1,'提案恢复参数无效。');const p=await s.proposals.restore(proposalRecovery.open(body.receipt));return response({...p,publication:s.publisher.status(p.pullRequestNumber)});}
+    if(/^\/api\/proposals\/[1-9][0-9]{0,14}$/.test(path)&&request.method==='GET'){requirePolicy(proposalMode,'内容PR模式尚未启用。');const p=await s.proposals.inspect(Number(path.split('/').at(-1)));return response({...p,publication:s.publisher.status(p.pullRequestNumber)});}
+    if(/^\/api\/proposals\/[1-9][0-9]{0,14}\/publish$/.test(path)&&request.method==='POST'){mutationGuard(request,s);requirePolicy(config.contentAutoMergeEnabled===true,'自动发布未启用。');const body=await boundedJSON(request,1000);requirePolicy(body&&Object.keys(body).length===1,'恢复参数无效。');const p=await s.proposals.inspect(Number(path.split('/')[3]));requirePolicy(p.state==='PULL_REQUEST_OPEN'&&p.commitSha===body.expectedSha,'提案版本变化或已结束。');return response(s.publisher.resume(p));}
+    if(path==='/api/proposals'&&request.method==='POST'){mutationGuard(request,s);requirePolicy(proposalMode,'内容PR模式尚未启用。');const input=await boundedJSON(request);if(draftStore)for(const file of input.fileChanges?.additions??[]){if(file.path?.endsWith('.md')){const text=Buffer.from(file.contents||'','base64').toString('utf8'),front=text.match(/^---\r?\n([\s\S]*?)\r?\n---/);requirePolicy(front&&YAML.parseDocument(front[1]).toJS({maxAliasCount:0})?.status!=='draft','私有草稿不能进入公开仓库，请先选择已发布状态。');}}const p=await s.proposals.submit(input);const receipt=proposalRecovery.seal(p);const publication=s.publisher.start(p);return response({...p,recoveryReceipt:receipt,publication});}
+    if(path==='/api/logout'&&request.method==='POST'){mutationGuard(request,s);s.publisher.stop();sessions.delete(s.id);return response({loggedOut:true},200,{'Set-Cookie':cookie(cookieName,'',0)});}
     if(path==='/api/graphql'&&request.method==='POST'){
-     mutationGuard(request,s);const body=await boundedJSON(request);if(proposalMode){const authorized=authorizeGraphql(body,{...config,branch:s.cmsWorkspace.status().branch??'codex/cms-not-started'});if(authorized.mutation)return response(await s.cmsWorkspace.mutate(body));}else authorizeGraphql(body,config);return response(await github('/graphql',s.token,{method:'POST',body:JSON.stringify(body)}));
+     mutationGuard(request,s);const body=await boundedJSON(request);if(proposalMode){const authorized=authorizeGraphql(body,{...config,branch:s.cmsWorkspace.status().branch??'codex/cms-not-started'});if(authorized.mutation){requirePolicy(!draftStore,'云端草稿只能私有保存，请通过内容页发布；本地 Sveltia 入口仍可用。');return response(await s.cmsWorkspace.mutate(body));}}else authorizeGraphql(body,config);return response(await github('/graphql',s.token,{method:'POST',body:JSON.stringify(body)}));
     }
     if(path.startsWith('/api/v3/')&&request.method==='GET'){
      const route=decodeURIComponent(path.slice('/api/v3'.length));requirePolicy(!/%|\\|\0/.test(route),'API路径编码不允许。');
@@ -80,7 +98,7 @@ export function createBroker(config,{fetchImpl=fetch,clock=()=>Date.now()}={}){
      return response(await github(route+url.search,s.token));
     }
     return response({error:'未开放此操作。'},404);
-   }catch(error){if(error.status===401)sessions.delete(cookies(request)[cookieName]);return response({error:error.status===401?'登录已失效。':error.status===403?error.message:'请求失败，请检查内容或重新登录。'},[401,403,404].includes(error.status)?error.status:502);}
+   }catch(error){if(error.status===401)sessions.delete(cookies(request)[cookieName]);return response({error:error.status===401?'登录已失效。':[400,403,409,413,507].includes(error.status)?error.message:'请求失败，请检查内容或重新登录。'},[400,401,403,404,409,413,507].includes(error.status)?error.status:502);}
   }
  };
 }

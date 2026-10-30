@@ -1,3 +1,17 @@
+# 普通内容一键发布候选（2026-10-29，尚未生产启用）
+
+复用现有 App 短期用户会话，不新增凭据、App 权限、服务或工作流。`contentAutoMergeEnabled: true` 时，Studio 的发布动作仍先创建独立 PR，服务端自动等待 `ci.yml` 的真实 `check` 成功，再以准确 head SHA 调用 GitHub squash merge；正常的 main push 继续触发现有 Pages 工作流。VPS 开关、观察与生产权限完全不改。新安装可使用 Setup-LocalAdmin.ps1 的 `-ContentAutoMerge -PublicationMode pull-request`；缺省开关 false，已有配置不自动改变。本候选不授权切换现有云端或本地服务。
+
+每次合并前读取固定仓库/作者/分支身份、受保护 main、完整实际 diff、不可变 Git blob 和完整文件树；复用既有内容/图片校验、字节上限与敏感信息拒绝。只允许内容集合 Markdown 和上传图片，拒绝工程文件、越界重命名、符号链接与可执行文件。不能仅靠 PR 标题、标签或编辑器声明进入通道。GitHub 必需检查、严格最新基线及保护规则继续最终裁决，不调用 admin bypass，不修改 main 保护。
+
+同一会话重复发布请求共用现有 requestId；同一 PR/SHA 共用一个后台任务。后台每15秒检查，浏览器关闭后仍运行，最多到该会话30分钟期限；退出登录立即停止。main 落后或冲突显示 NEEDS_UPDATE/CONFLICT，绝不自动覆盖或 rebase。提交变化、校验失败、未知合并结果停止；CI失败须修复后显式恢复。状态为 WAITING、CI_FAILED、NEEDS_UPDATE、CONFLICT、STOPPED、SESSION_EXPIRED 或 MERGED，部署状态另行核验；MERGED 不是两站已上线。
+
+重启/失效后沿用已有签名提案记录：重新登录 → 历史提案核验 → 显式“恢复自动发布”。普通核验/GET/导入只读，旧 PR 不会因升级自动合并；恢复须会话、Origin、CSRF、准确 SHA，所有门禁重新执行。记录只保存已有签名元数据，Token 不进入磁盘或浏览器。Sveltia 提交新 PR 同样可排队，备用编辑功能保留；CMS 旧恢复仍只读，不扩大恢复授权。
+
+验证：`node --test tests/admin-content-publication.test.mjs`；`npm run check`；`ADMIN_SITE_URL=http://127.0.0.1:19443 npm run build:admin` 后 `node tests/admin-content-publication-browser.mjs`（本地 Chrome、合成 API，不能替代真实 GitHub 合并验收）。浏览器脚本不访问 GitHub。PR18 在只读核对时已由 Tkkdy 合并，main 从5a7e80df到c9861582仅新增 games.md；该候选保留文章，没有合并PR18。候选审查后仍须实际 App 权限/真实内容发布验收，不能把合成 PUT 测试称为生产完成。
+
+---
+
 # P1 日常编辑入口（2026-10-27）
 
 Pages `/tkkdyyy.github.io/admin/` 保留写作、本地草稿、预览及草稿导出，不接收 GitHub Token。展开“编辑连接”打开 `http://127.0.0.1:19443/admin/`，本机 OAuth 编辑器负责图片与文章提交、创建 PR。GitHub CI 通过后，维护者在 GitHub 合并；Pages 由唯一正式工作流发布，VPS 自动发布仍禁用。

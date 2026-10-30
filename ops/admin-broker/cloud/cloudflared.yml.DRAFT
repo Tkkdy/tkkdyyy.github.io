@@ -1,0 +1,14 @@
+# Dedicated named tunnel; never change existing website routes or use a Quick Tunnel.
+tunnel: APPROVED_TUNNEL_UUID
+credentials-file: /etc/editorial-studio/tunnel.json
+ingress:
+  - hostname: editor.boenbot.top
+    service: http://127.0.0.1:19444
+    originRequest:
+      httpHostHeader: editor.boenbot.top
+      access:
+        required: true
+        teamName: APPROVED_TEAM
+        audTag:
+          - APPROVED_ACCESS_APPLICATION_AUD
+  - service: http_status:404

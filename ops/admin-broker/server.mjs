@@ -10,13 +10,14 @@ function htmlPolicy(body,{cms=false,cmsFrame=false}={}){
  const hashes=[...body.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)].filter(([,attrs])=>!/(?:^|\s)src\s*=/i.test(attrs)).map(([, ,script])=>"'sha256-"+createHash('sha256').update(script).digest('base64')+"'");
  return `default-src 'self'; script-src 'self' ${hashes.join(' ')}; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self'; media-src 'self' https:; connect-src 'self'${cms?' blob:':''}; frame-src 'self'; frame-ancestors ${cmsFrame?"'self'":"'none'"}; object-src 'none'; base-uri 'none'; form-action 'self'`;
 }
-export async function createAdminServer({origin,staticRoot,broker,maxBodyBytes=30_000_000}){
+export async function createAdminServer({origin,staticRoot,broker,verifyAccess=null,maxBodyBytes=30_000_000}){
  const expected=new URL(origin);if(!['127.0.0.1','localhost'].includes(expected.hostname)&&expected.protocol!=='https:')throw Error('Public origin requires HTTPS.');
  const root=await realpath(staticRoot);
  const server=http.createServer(async(req,res)=>{
   const send=(status,body='',headers={})=>{res.writeHead(status,{...safeHeaders,...headers});res.end(req.method==='HEAD'?undefined:body);};
   try{
    if(req.headers.host!==expected.host)return send(421,'Host mismatch');
+   if(verifyAccess){if(!['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket.remoteAddress)||!await verifyAccess(new Request(expected.origin,{headers:req.headers})))return send(403,'Access verification required');}
    if(!['GET','HEAD','POST'].includes(req.method))return send(405);
    // Validate raw path before URL normalizes dot segments. Never trust forwarding headers.
    const raw=(req.url||'').split('?')[0];let decoded;try{decoded=decodeURIComponent(raw);}catch{return send(400);}
@@ -32,7 +33,9 @@ export async function createAdminServer({origin,staticRoot,broker,maxBodyBytes=3
     return send(result.status,Buffer.from(await result.arrayBuffer()),headers);
    }
    if(!['GET','HEAD'].includes(req.method))return send(405);
+   if(decoded==='/')return send(303,'',{Location:'/admin/'});
    let authenticated;try{authenticated=await broker.authenticate(request);}catch{return send(401,'<!doctype html><meta charset="utf-8"><title>编辑站登录</title><h1>需要登录</h1><p><a href="/auth/login?back=/admin/">使用 GitHub 所有者账号登录</a></p>',{'Content-Type':'text/html; charset=utf-8','Content-Security-Policy':"default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"});}
+   if(decoded==='/admin/content-schema.json'){const schema=parseYaml(await readFile(resolve(root,'admin/config.yml'),'utf8'),{maxAliasCount:0});return send(200,JSON.stringify({collections:schema.collections.filter(c=>['projects','images'].includes(c.name))}),{'Content-Type':'application/json; charset=utf-8'});}
    if(decoded==='/admin/config.yml'){
     if(authenticated?.repository!=='Tkkdy/tkkdyyy.github.io'||!authenticated.branch)return send(403);
     if(authenticated.publicationMode==='pull-request'&&authenticated.cmsWorkspace?.state!=='EDITING')return send(403,'Start an explicit CMS content workspace first.');

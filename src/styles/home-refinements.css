@@ -1,0 +1,104 @@
+/* Approved homepage refinements: preserve all media and pending slots.
+   The third chapter (essays/fragments) retains the original design. */
+body.home-refined {
+  --refined-content: 1200px;
+  --refined-gutter: clamp(24px, 5vw, 72px);
+  --home-ink-secondary: #595752;
+  --color-ink-muted: #68645e;
+  scrollbar-color: #aaa69e #f7f7f5;
+}
+.home-refined .hero {
+  max-width: var(--refined-content);
+  padding: 176px var(--refined-gutter) 96px;
+}
+.home-refined .hero-grid { gap: 64px; }
+.home-refined .hero-title {
+  max-width: 11em;
+  margin-bottom: 28px;
+  font-size: clamp(32px, 3.4vw, 48px);
+  line-height: 1.4;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+}
+.home-refined .hero-copy {
+  max-width: 24em;
+  margin-bottom: 28px;
+  font-size: 16px;
+  line-height: 1.9;
+  text-wrap: pretty;
+}
+.home-refined .hero-links { gap: 28px; font-size: 14px; }
+.home-refined .hero-links a { display: inline-flex; align-items: center; min-height: 44px; gap: 8px; }
+/* Preserve the original feature image area and its contents. */
+.home-refined .featured { margin-top: 0; }
+.home-refined .featured-card { padding-bottom: 8px; }
+.home-refined .featured-body { gap: 20px; }
+.home-refined .featured-meta { gap: 16px; flex-wrap: wrap; }
+.home-refined .featured-date { font-size: 12px; letter-spacing: .025em; }
+.home-refined .featured-category { font-size: 11px; padding: 3px 8px; }
+.home-refined .featured-title {
+  max-width: 17em;
+  font-size: clamp(28px, 2.65vw, 38px);
+  line-height: 1.5;
+  text-wrap: balance;
+  letter-spacing: -.015em;
+}
+.home-refined .featured-summary { font-size: 16px; line-height: 1.9; text-wrap: pretty; }
+.home-refined .featured-cta { min-height: 44px; margin-top: 4px; font-size: 14px; }
+.home-refined .section-header:not(.essays-header):not(.fragments-header) { font-size: 12px; letter-spacing: .04em; }
+.home-refined .projects { padding: 80px 0 64px; }
+.home-refined .projects-inner { max-width: var(--refined-content); padding-inline: var(--refined-gutter); }
+.home-refined .projects-header { margin-bottom: 40px; }
+.home-refined .project-main { gap: 48px; }
+.home-refined .project-visual-link { aspect-ratio: 4 / 3; }
+.home-refined .project-title { font-size: clamp(28px, 3vw, 36px); line-height: 1.35; text-wrap: balance; }
+.home-refined .project-desc { font-size: 16px; line-height: 1.85; color: #c5c1b9; margin-bottom: 28px; }
+.home-refined .project-status-label { color: #bcb8af; font-size: 12px; }
+.home-refined .dark-section .section-header { color: #bcb8af; }
+.home-refined .project-actions { flex-wrap: wrap; gap: 20px; }
+.home-refined .project-actions a { min-height: 44px; }
+.home-refined .btn-link-inverse { color: #c5c1b9; }
+/* Preserve project and fragment slots for a complete content comparison. */
+.home-refined .photography { max-width: var(--refined-content); margin-block: 80px; padding-inline: var(--refined-gutter); }
+.home-refined .photo-container { padding: clamp(24px, 4vw, 56px); }
+.home-refined .photography-header { margin-bottom: 40px; }
+.home-refined .photo-caption { font-size: 12px; letter-spacing: .025em; gap: 12px; flex-wrap: wrap; }
+.home-refined a:focus-visible:not(.essays-fragments *),
+.home-refined button:focus-visible,
+.home-refined input:focus-visible { outline: 2px solid var(--home-interactive-ruby); outline-offset: 5px; }
+.home-refined .dark-section a:focus-visible { outline-color: #f8f6f0; }
+.home-refined ::selection { background: #861d2b; color: #fff; }
+@media (min-width: 1024px) {
+  .home-refined .hero-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 72px; }
+  .home-refined .hero-intro,
+  .home-refined .featured { grid-column: auto; }
+  .home-refined .hero-intro { padding-top: 16px; }
+}
+@media (max-width: 1023px) {
+  .home-refined .hero { padding-top: 144px; padding-bottom: 64px; }
+  .home-refined .hero-title { max-width: 16em; }
+  .home-refined .featured-title { max-width: 22em; }
+}
+@media (max-width: 639px) {
+  .home-refined .hero { padding-top: 128px; padding-bottom: 48px; }
+  .home-refined .hero-grid { gap: 40px; }
+  .home-refined .hero-title { max-width: 11em; font-size: 32px; }
+  .home-refined .projects { padding-block: 48px; }
+  .home-refined .project-main { gap: 28px; }
+  .home-refined .photography { margin-block: 48px; }
+  .home-refined .photo-container { padding: 20px; }
+  .home-refined .photo-caption { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-refined *, .home-refined *::before, .home-refined *::after { animation: none !important; transition: none !important; }
+}
+
+/* The third chapter keeps the original home.css layout, type and colors. */
+.home-refined .essays-fragments {
+  --home-ink-secondary: #686661;
+  --color-ink-muted: #7a766f;
+}
+.home-refined .essays-fragments ::selection {
+  background: var(--color-accent);
+  color: var(--color-ink-inverse);
+}

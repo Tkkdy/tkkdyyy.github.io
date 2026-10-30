@@ -1,0 +1,43 @@
+# Google OIDC owner-email gateway. Local preparation only; no real client created.
+# Independent Google OAuth client; keep the existing inner GitHub App unchanged.
+provider = "oidc"
+provider_display_name = "Google"
+oidc_issuer_url = "https://accounts.google.com"
+insecure_oidc_skip_nonce = false
+insecure_oidc_allow_unverified_email = false
+skip_claims_from_profile_url = true
+client_id = "SEPARATE_OUTER_OAUTH_CLIENT_ID"
+client_secret_file = "/etc/editorial-studio/outer-client-secret"
+scope = "openid email profile"
+authenticated_emails_file = "/etc/editorial-studio/outer-allowed-emails"
+# Deliberately NO email_domains wildcard/domain; the file contains ONE exact email.
+redirect_url = "https://editor.boenbot.top/oauth2/callback"
+http_address = "127.0.0.1:19445"
+upstreams = ["http://127.0.0.1:19444/"]
+proxy_prefix = "/oauth2"
+reverse_proxy = false
+pass_host_header = true
+set_xauthrequest = true
+pass_user_headers = false
+pass_access_token = false
+pass_authorization_header = false
+set_authorization_header = false
+skip_auth_strip_headers = false
+skip_provider_button = true
+code_challenge_method = "S256"
+cookie_name = "__Host-editorial-gateway"
+cookie_secure = true
+cookie_httponly = true
+cookie_samesite = "lax"
+cookie_path = "/"
+cookie_expire = "8h"
+cookie_refresh = "15m"
+cookie_csrf_per_request = true
+cookie_csrf_expire = "10m"
+# cookie_secret is generated on VPS and appended to root-only config, never here.
+request_logging = false
+auth_logging = false
+standard_logging = true
+silence_ping_logging = true
+
+api_routes = ["^/api/"]

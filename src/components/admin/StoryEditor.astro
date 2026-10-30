@@ -22,7 +22,7 @@ const insertItems = [
 ] as const;
 ---
 
-<div class="editor-workspace" data-story={storyJson} data-base={base}>
+<div class="editor-workspace" inert data-story={storyJson} data-base={base}>
   <article class="writing-canvas">
     <div class="writing-inner">
       <textarea class="story-title-input" rows="1" placeholder="无标题内容" aria-label="内容标题">{story.title}</textarea>
