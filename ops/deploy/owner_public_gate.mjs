@@ -20,7 +20,7 @@ if(proxyValue){
 }
 const report={transport:proxy?'LOOPBACK_HTTP_PROXY':'DIRECT',gateSha256,scope:proposal.scope,token:proposal.token,candidateManifestSha256:sha(raw),passed:false};
 const site='https://tkkdy.me/',old='https://preview.boenbot.top/';
-const browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHANNEL==='chrome'?{channel:'chrome'}:{})});
+const browser=await chromium.launch({headless:true,...(!proxy?{args:['--no-proxy-server']}:{}),...(process.env.PLAYWRIGHT_CHANNEL==='chrome'?{channel:'chrome'}:{})});
 const context=await browser.newContext({ignoreHTTPSErrors:false,...(proxy?{proxy}:{})});
 const check=(ok,msg)=>{if(!ok)throw Error(msg);};
 const get=url=>context.request.get(url,{maxRedirects:0,timeout:30000});

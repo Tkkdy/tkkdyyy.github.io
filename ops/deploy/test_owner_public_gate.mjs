@@ -41,7 +41,12 @@ try{
    throw Error('Unexpected fixture host '+u.hostname);
   };
   const fakeChromium={launch:async opts=>{
-   const browser=await chromium.launch(opts);
+   const browser=await chromium.launch({...opts,args:[...(opts.args||[]),'--enable-automation']});
+   // Verify the real browser transport: DIRECT must not inherit Windows system proxy.
+   const cdp=await browser.newBrowserCDPSession();
+   const {arguments:browserArgs}=await cdp.send('Browser.getBrowserCommandLine');
+   await cdp.detach();
+   assert.equal(browserArgs.includes('--no-proxy-server'),!scenario.endsWith('-proxy'));
    return {close:()=>browser.close(),newContext:async options=>{
     assert.equal(options.ignoreHTTPSErrors,false);
     assert.equal(options.proxy?.server,scenario.endsWith('-proxy')?'http://127.0.0.1:9':undefined);

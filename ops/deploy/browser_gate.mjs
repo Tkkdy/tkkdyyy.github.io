@@ -16,7 +16,7 @@ if(proxyValue){
  if(u.protocol!=='http:'||!['127.0.0.1','[::1]'].includes(u.hostname)||!u.port||u.username||u.password||u.pathname!=='/'||u.search||u.hash)throw Error('PUBLIC_GATE_PROXY must be a credential-free loopback HTTP proxy');
  proxy={server:u.origin};
 }
-const browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHANNEL==='chrome'?{channel:'chrome'}:{})}),context=await browser.newContext({ignoreHTTPSErrors:false,...(proxy?{proxy}:{})}),tab=await context.newPage();
+const browser=await chromium.launch({headless:true,...(!proxy?{args:['--no-proxy-server']}:{}),...(process.env.PLAYWRIGHT_CHANNEL==='chrome'?{channel:'chrome'}:{})}),context=await browser.newContext({ignoreHTTPSErrors:false,...(proxy?{proxy}:{})}),tab=await context.newPage();
 const errors=[],failures=[];tab.on('pageerror',e=>errors.push(String(e)));tab.on('requestfailed',r=>{if(r.url().startsWith(site.href))failures.push({url:r.url(),error:r.failure()});});
 const report={transport:proxy?'LOOPBACK_HTTP_PROXY':'DIRECT',scope:['127.0.0.1','localhost'].includes(site.hostname)?'ISOLATED_LOOPBACK_BROWSER':'PUBLIC_HTTPS_BROWSER',site:site.href,query,passed:false};
 try{

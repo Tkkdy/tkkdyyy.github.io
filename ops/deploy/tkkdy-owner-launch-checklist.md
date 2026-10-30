@@ -65,7 +65,7 @@ before SHA256 `8622c073248a67f66cad920a5e746a9beb0b8ba3d83d2aab0df31b0b0fc9369b`
 
 实现提交5cee5cb的隔离CI40873578672已通过19项root-owned Linux事务/反例与原有回归。另补充1项批准草案/模块摘要一致性检查。公网观察器已用真实Chrome和精确现网候选做隔离网络集成：成功、字节篡改拒绝、缺失noindex拒绝三项通过；所有网络被夹具拦截、Google字体CSS被模拟，不代表公网TLS/字体服务验收。最终20项Linux测试与CI产物观察器集成以当前PR头部CI为准。生产owner dry-run/apply、候选公网HTTPS、Nginx新配置nginx -t/reload和真正收录切换尚未执行，需最终确认后才能验收。测试中的HTTPS/外部verdict替身不能算公网通过。
 
-固定LF工具TAR SHA256 `40102ab2cb43d74b73192552f2013b746d7f38afcf7588a9616484829afb21bf`。草案逐模块及观察器摘要与受审源码一致性由独立测试验证。精确现网候选再次重放116文件逐字节一致，manifest仍为d3b094b33d246ebebce03a897ded8b5970545e3a0413f862cd796165a54d823d。工具TAR、候选ZIP、原始manifest和批准文件应作为不同身份分别核对，不将工具提交SHA冒充内容源码SHA。
+当前直连修正版LF工具TAR SHA256 `26a93cb938ee2882e139c7fb9719110a759b8832d532a28339ec34f3417b123b`（旧0003/0004工具包40102ab2…保留，不覆盖）。草案逐模块及观察器摘要与受审源码一致性由独立测试验证。精确现网候选再次重放116文件逐字节一致，manifest仍为d3b094b33d246ebebce03a897ded8b5970545e3a0413f862cd796165a54d823d。工具TAR、候选ZIP、原始manifest和批准文件应作为不同身份分别核对，不将工具提交SHA冒充内容源码SHA。
 
 
 ## 公网传输修正与失败记录（2026-10-29）
@@ -78,4 +78,17 @@ attempt 2026102900000001在dry-run因Windows TAR保留0666暂存manifest权限�
 
 新的禁用草案固定attempt 2026102900000003和新观察器SHA，enabled=false/expiresEpoch=0；候选manifest、ZIP、旧基线、9个Python模块、生产policy/Variables均不变。新工具TAR须重新核对本清单摘要。这个草案未获新attempt上线授权，不能执行。
 
-未来经owner另行确认后，先用显式PUBLIC_GATE_PROXY=http://127.0.0.1:7897完成只读公网预检，再建立新的单次root入口；两阶段外部验收均显式使用该本机既有代理，最终TLS证书元数据检查也须走已声明的同一受控公网路径。root暂存工具/批准文件不可被组或其他用户写，release静态文件须保持Nginx可读。新工具不得覆盖安装目录或启用disabled生产policy。失败仍按原清单恢复noindex及旧current，并停止。
+【历史0003/0004方案，已被下方直连修正替代，不适用于新attempt】当时计划经owner另行确认后，先用显式PUBLIC_GATE_PROXY=http://127.0.0.1:7897完成只读公网预检，再建立新的单次root入口；两阶段外部验收均显式使用该本机既有代理，最终TLS证书元数据检查也须走已声明的同一受控公网路径。root暂存工具/批准文件不可被组或其他用户写，release静态文件须保持Nginx可读。新工具不得覆盖安装目录或启用disabled生产policy。失败仍按原清单恢复noindex及旧current，并停止。
+
+
+## attempt 0004 后的只读诊断与直连修正（未获新上线授权）
+
+0004 在 guarded 公网第73/116文件 `pagefind/fragment/zh-cn_e6f1379.pf_fragment` 超过30秒，真实 failed verdict 已回传，自动回滚PASS；未进入移除HTTP noindex阶段。current恢复原115文件release，Nginx全树、安装工具全树、policy、Variables均与原摘要相同。所有失败claim/release与证据保留。
+
+只读诊断：VPS本地同一文件严格TLS约0.06秒，新旧域Windows curl直连约1.1秒且618字节摘要正确；同批代理请求出现TLS握手失败。实际Mihomo目标连接命中Match兜底，经当前选中的美国节点；未修改它或系统代理。相同Playwright客户端14文件对照直连均约0.35秒（Logo约2.5秒），代理可成功但部分分片约7.6秒；间歇性代理路径异常已复现，不能据此宣称知道该节点内部故障。0004原请求是否到达Nginx仍等待受权限保护的定向日志，不能把推断写成已确认根因。
+
+直连当前原始115文件逐个读取、逐字节身份比对全部PASS，最大约15.8秒；原30秒和严格TLS未变。真实旧站浏览器直连图片、Pagefind GrokBot搜索与结果点击PASS，无JS错误/同源请求失败。Pages与朋友两站直连HTTPS200，编辑器302至Google。此为原现网只读诊断，不等于候选已上线或生产收录验收PASS。
+
+修正：DIRECT模式为两个受审浏览器工具显式加入Chrome `--no-proxy-server`，避免API直连而浏览器继承系统代理；PUBLIC_GATE_PROXY显式代理模式不变。正常公共DNS、固定域名、严格TLS、30秒、内容摘要、noindex、身份token、其他站回归及失败回滚全部保留，禁止自动切换路径或重试。隔离回归通过真实Chrome CDP检查启动参数，而非只检查变量或HTTP200。
+
+新的禁用草案为attempt `2026102900000005` / `releases/owner-tkkdy-d3b094b33d24-2026102900000005`；enabled=false/expiresEpoch=0。仅准备，不构成owner批准，未运行root发布。候选manifest/ZIP/9个Python模块/内容基线均不变。此前“未来必须使用本机代理”的操作建议在本次直接路径复核后不再作为新attempt方案；旧失败记录与观察器原摘要保持历史原貌。拟采用明确DIRECT，最终确认前需补齐定向日志与最终包身份审查，当前NO_GO。
