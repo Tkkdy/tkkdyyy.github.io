@@ -1,0 +1,9 @@
+{
+  "scope": "READ_ONLY_LIVE_PREVIEW_BASELINE",
+  "requestId": "public-baseline-20261029-01",
+  "expectedNode": "24.19.0",
+  "expectedPlaywright": "1.64.1",
+  "expectedChrome": "156.0.8078.4",
+  "baselineManifestSha256": "bdbd0dff0af30ac2b7c3631f22b3228ef501a0f5dcfe6203ed4055c3a5ebd6a0",
+  "candidatePromotion": false
+}
