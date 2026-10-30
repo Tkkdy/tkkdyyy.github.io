@@ -136,7 +136,9 @@ const sections = [
     if (!mobileMenu.contains(event.target as Node)) closeMenu();
   });
   // 菜单滚动位置不锁定页面；跨断点和历史恢复时清理临时状态。
-  window.addEventListener('pageshow', () => closeMenu());
+  window.addEventListener('pageshow', event => {
+    if (event.persisted) closeMenu();
+  });
   function syncViewport() {
     closeMenu();
     if (nav.classList.contains('is-searching')) closeSearchMode();
