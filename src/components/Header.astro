@@ -1,6 +1,6 @@
 ---
 // 全局顶部导航：紧凑 Liquid Glass 胶囊（全站唯一玻璃元素）。
-// 默认状态与 v0.2.6 一致；点击"搜索"原地进入 Search Mode（不跳页），
+// 桌面点击搜索原地进入 Search Mode；手机跳转搜索页，原生 details 保留无 JS 导航。
 // Pagefind 按需加载（首次搜索时才请求）；无 JS 时"搜索"仍是 /search/ 链接（渐进增强）。
 // 全部七个栏目已接通真实路由（项目/随笔/文章/碎片/影像/关于/搜索）。
 import { withBase } from '../lib/site-url';
@@ -14,6 +14,11 @@ const fragmentsUrl = withBase('fragments/');
 const imagesUrl = withBase('images/');
 const aboutUrl = withBase('about/');
 const searchUrl = withBase('search/');
+const sections = [
+  { href: projectsUrl, label: '项目' }, { href: essaysUrl, label: '随笔' },
+  { href: articlesUrl, label: '文章' }, { href: fragmentsUrl, label: '碎片' },
+  { href: imagesUrl, label: '影像' }, { href: aboutUrl, label: '关于' },
+];
 ---
 <header class="site-header" data-pagefind-ignore>
   <nav class="glass-nav" aria-label="主导航">
@@ -29,12 +34,9 @@ const searchUrl = withBase('search/');
       <div class="nav-divider" aria-hidden="true"></div>
 
       <ul class="nav-links">
-        <li><a href={projectsUrl} data-nav-interactive aria-current={isCurrentSection(projectsUrl) ? 'page' : undefined}>项目</a></li>
-        <li><a href={essaysUrl} data-nav-interactive aria-current={isCurrentSection(essaysUrl) ? 'page' : undefined}>随笔</a></li>
-        <li><a href={articlesUrl} data-nav-interactive aria-current={isCurrentSection(articlesUrl) ? 'page' : undefined}>文章</a></li>
-        <li><a href={fragmentsUrl} data-nav-interactive aria-current={isCurrentSection(fragmentsUrl) ? 'page' : undefined}>碎片</a></li>
-        <li><a href={imagesUrl} data-nav-interactive aria-current={isCurrentSection(imagesUrl) ? 'page' : undefined}>影像</a></li>
-        <li><a href={aboutUrl} data-nav-interactive aria-current={isCurrentSection(aboutUrl) ? 'page' : undefined}>关于</a></li>
+        {sections.map(({ href, label }) => (
+          <li><a href={href} data-nav-interactive aria-current={isCurrentSection(href) ? 'page' : undefined}>{label}</a></li>
+        ))}
       </ul>
 
       <div class="nav-divider" aria-hidden="true"></div>
@@ -69,6 +71,18 @@ const searchUrl = withBase('search/');
     </div>
   </nav>
 
+  <!-- 与玻璃胶囊同级，避免 overflow: hidden 裁剪；summary 原生支持无 JS 和键盘。 -->
+  <details class="mobile-menu" data-mobile-menu>
+    <summary aria-controls="mobile-navigation"><span>菜单</span><span class="mobile-menu-icon" aria-hidden="true"></span></summary>
+    <nav id="mobile-navigation" class="mobile-menu-panel" aria-label="移动端栏目">
+      <ul>
+        {sections.map(({ href, label }) => (
+          <li><a href={href} aria-current={isCurrentSection(href) ? 'page' : undefined}>{label}<span aria-hidden="true">↗</span></a></li>
+        ))}
+      </ul>
+    </nav>
+  </details>
+
   <!-- 搜索结果浮层（轻量，不遮满屏幕） -->
   <div class="nav-search-panel" data-search-panel hidden role="region" aria-label="搜索结果">
     <p class="nav-search-panel-status" data-search-panel-status aria-live="polite"></p>
@@ -98,9 +112,51 @@ const searchUrl = withBase('search/');
   const magneticPill = nav.querySelector('.nav-magnetic-pill') as HTMLElement;
   const navItems = [...nav.querySelectorAll<HTMLElement>('[data-nav-interactive]')];
 
+  const mobileMenu = document.querySelector('[data-mobile-menu]') as HTMLDetailsElement;
+  const menuToggle = mobileMenu.querySelector('summary') as HTMLElement;
+  const mobileViewport = window.matchMedia('(max-width: 767px)');
+  function closeMenu(restoreFocus = false) {
+    mobileMenu.open = false;
+    menuToggle.setAttribute('aria-expanded', 'false');
+    if (restoreFocus) menuToggle.focus();
+  }
+  menuToggle.setAttribute('aria-expanded', String(mobileMenu.open));
+  mobileMenu.addEventListener('toggle', () => menuToggle.setAttribute('aria-expanded', String(mobileMenu.open)));
+  mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => closeMenu()));
+  document.addEventListener('pointerdown', event => {
+    if (!mobileMenu.contains(event.target as Node)) closeMenu();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && mobileMenu.open) {
+      event.preventDefault();
+      closeMenu(true);
+    }
+  });
+  document.addEventListener('focusin', event => {
+    if (!mobileMenu.contains(event.target as Node)) closeMenu();
+  });
+  // 菜单滚动位置不锁定页面；跨断点和历史恢复时清理临时状态。
+  window.addEventListener('pageshow', event => {
+    if (event.persisted) closeMenu();
+  });
+  function syncViewport() {
+    closeMenu();
+    if (nav.classList.contains('is-searching')) closeSearchMode();
+    if (mobileViewport.matches) {
+      trigger.removeAttribute('aria-expanded');
+      trigger.removeAttribute('aria-haspopup');
+    } else {
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.setAttribute('aria-haspopup', 'true');
+    }
+  }
+  mobileViewport.addEventListener('change', syncViewport);
+  syncViewport();
+
   let timer: ReturnType<typeof setTimeout> | null = null;
 
   function openSearchMode() {
+    closeMenu();
     nav.classList.add('is-searching');
     navDefault.setAttribute('aria-hidden', 'true');
     searchMode.setAttribute('aria-hidden', 'false');
@@ -127,7 +183,8 @@ const searchUrl = withBase('search/');
   }
 
   trigger.addEventListener('click', (e) => {
-    // 渐进增强：无 JS 时保持 /search/ 链接行为
+    // 手机及修饰键点击保留普通链接；桌面搜索继续渐进增强。
+    if (mobileViewport.matches || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
     openSearchMode();
   });
