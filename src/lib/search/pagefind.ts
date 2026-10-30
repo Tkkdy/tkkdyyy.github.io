@@ -13,6 +13,8 @@
 // Pagefind 为运行时动态模块，无静态类型；保持最小 any 并限定使用面。
 let pagefindModulePromise: Promise<any> | null = null;
 
+import { searchWithChineseFallback } from './chinese-fallback.mjs';
+
 const base = import.meta.env.BASE_URL;
 
 /** 加载 Pagefind 模块（Promise 缓存，只加载一次；返回值就是模块自身） */
@@ -34,5 +36,5 @@ export async function search(query: string): Promise<any> {
   if (!pagefind || typeof pagefind.search !== 'function') {
     throw new TypeError(`Pagefind module invalid: ${typeof pagefind}`);
   }
-  return pagefind.search(query);
+  return searchWithChineseFallback(pagefind, query);
 }
