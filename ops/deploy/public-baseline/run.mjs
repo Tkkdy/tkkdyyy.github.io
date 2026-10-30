@@ -7,7 +7,7 @@ import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {installDiagnostics,requireCheck as check} from './diagnostics.mjs';
 const HERE=dirname(fileURLToPath(import.meta.url)),ROOT=resolve(HERE,'../../..'),OUT=resolve('public-baseline-results');mkdirSync(OUT,{recursive:true});
-const config=JSON.parse(readFileSync(resolve(ROOT,'.github/public-baseline-run.json'))),raw=readFileSync(resolve(HERE,'preview-manifest.json')).toString().replace(/\r\n/g,'\n');
+const config=JSON.parse(readFileSync(resolve(ROOT,'.github/public-baseline-run.json'))),raw=readFileSync(resolve(HERE,'preview-manifest.json'));
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const report={scope:'READ_ONLY_LIVE_PREVIEW_BASELINE',requestId:config.requestId,passed:false,publicationAccepted:false,transport:'DIRECT',retries:0,timeoutMs:30000,strictTls:true,steps:[],requests:[],browserNetwork:[],runtime:{node:process.version,openssl:process.versions.openssl,image:process.env.OBSERVER_IMAGE,runnerImage:process.env.ImageVersion,runId:process.env.GITHUB_RUN_ID,runAttempt:process.env.GITHUB_RUN_ATTEMPT,sourceSha:process.env.GITHUB_SHA},manifestSha256:sha(raw)};
 let browser,context,probe,currentStep='environment';

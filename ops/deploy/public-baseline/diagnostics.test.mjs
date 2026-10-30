@@ -26,3 +26,11 @@ test('passive channel records a real fresh socket without changing request',asyn
   assert.ok(report.requests[0].events.some(e=>e.phase==='httpHeaders'));
  } finally {probe.close();server.close();await once(server,'close');}
 });
+
+test('frozen manifest identity uses exact original bytes on every platform',async()=>{
+ const {readFile}=await import('node:fs/promises');
+ const {createHash}=await import('node:crypto');
+ const bytes=await readFile(new URL('./preview-manifest.json',import.meta.url));
+ assert.equal(createHash('sha256').update(bytes).digest('hex'),'bdbd0dff0af30ac2b7c3631f22b3228ef501a0f5dcfe6203ed4055c3a5ebd6a0');
+ assert.equal(JSON.parse(bytes).length,115);
+});
