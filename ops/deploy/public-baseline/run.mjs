@@ -86,7 +86,7 @@ try {
  });
  if(owner)await step('utility-noindex-and-certificate',async()=>{
   for(const path of ['search/index.html','404.html'])check(/<meta[^>]+name="robots"[^>]+content="[^"]*noindex/i.test(cache.get(path).toString()),'Utility HTML noindex '+path);
-  report.certificateNetwork=[];
+  report.certificateNetwork=[];report.certificateTimeoutMs=15000;
   report.certificate=await new Promise((resolve,reject)=>{
    const socket=tlsConnect({host:'tkkdy.me',port:443,servername:'tkkdy.me',rejectUnauthorized:true},()=>{
     try{const c=socket.getPeerCertificate();check(socket.authorized&&['tkkdy.me','www.tkkdy.me'].every(n=>c.subjectaltname?.split(', ').includes('DNS:'+n))&&Date.parse(c.valid_to)>Date.now()+30*86400000,'Certificate SAN/expiry');resolve({subjectaltname:c.subjectaltname,validFrom:c.valid_from,validTo:c.valid_to});}catch(e){reject(e);}finally{socket.end();}
@@ -94,7 +94,7 @@ try {
    socket.on('lookup',(e,address,family)=>report.certificateNetwork.push({phase:'dns',error:e?.code,address,family}));
    socket.on('connect',()=>report.certificateNetwork.push({phase:'tcpConnected',remoteAddress:socket.remoteAddress}));
    socket.on('secureConnect',()=>report.certificateNetwork.push({phase:'tlsConnected',authorized:socket.authorized,protocol:socket.getProtocol()}));
-   socket.setTimeout(30000,()=>socket.destroy(Error('TLS certificate deadline 30000ms')));socket.on('error',e=>{Object.assign(e,classify(report.certificateNetwork,e));reject(e)});
+   socket.setTimeout(15000,()=>socket.destroy(Error('TLS certificate deadline 15000ms')));socket.on('error',e=>{Object.assign(e,classify(report.certificateNetwork,e));reject(e)});
   });
   Object.assign(report,ownerSuccess(config));
  });
