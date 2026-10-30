@@ -1,0 +1,48 @@
+# Read-only public observation. No builds, deploy credentials, SSH or production writes.
+name: Owner Linux public observation
+on:
+  push:
+    branches: [codex/owner-linux-observer-0006]
+    paths: [.github/owner-observation-run.json]
+permissions:
+  contents: read
+concurrency:
+  group: owner-linux-public-observation
+  cancel-in-progress: false
+jobs:
+  observe:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    container:
+      image: mcr.microsoft.com/playwright@sha256:d65108d1a8095d8b0c4a5e32bf1807a40a5ce90ff0c78473e1116b1c243235e8
+      options: --ipc=host
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      PLAYWRIGHT_CHANNEL: chrome-for-testing
+      HTTP_PROXY: ''
+      HTTPS_PROXY: ''
+      ALL_PROXY: ''
+      NO_PROXY: ''
+      PUBLIC_GATE_PROXY: ''
+      NODE_USE_ENV_PROXY: '0'
+      OWNER_OBSERVATION_REQUEST: .github/owner-observation-run.json
+      OBSERVER_IMAGE: mcr.microsoft.com/playwright@sha256:d65108d1a8095d8b0c4a5e32bf1807a40a5ce90ff0c78473e1116b1c243235e8
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with: {persist-credentials: false, fetch-depth: 3}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with: {node-version: '24.19.0'}
+      - run: npm ci --ignore-scripts
+      - name: Focused observer diagnostics tests; no public requests
+        run: node --test ops/deploy/public-baseline/diagnostics.test.mjs
+      - name: One complete baseline, stop at first failure
+        run: node ops/deploy/public-baseline/run.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: owner-linux-${{ github.run_id }}-${{ github.run_attempt }}
+          path: public-baseline-results
+          if-no-files-found: warn
+          retention-days: 7

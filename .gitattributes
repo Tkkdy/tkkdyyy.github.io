@@ -13,3 +13,5 @@ public/admin/vendor/sveltia-cms-0.164.2.js -text
 
 # Preserve the frozen public baseline manifest exactly, including original CRLF.
 ops/deploy/public-baseline/preview-manifest.json -text
+
+ops/deploy/owner-linux/candidate-manifest.json -text
