@@ -1,10 +1,10 @@
-# Owner 0006 Linux observer preparation
+# Owner 0007 Linux observer preparation
 
-No production action is authorized by this branch. No .github/owner-observation-run.json exists yet, so pushing preparation code does not trigger observation. The original passing baseline run is 41013242173 at e6fe133e188f82b248b9aa13348bc6b8c00aa9e4.
+Preparation only; production requires new owner approval. Inherits 7133af6 Git identity repair unchanged, with the missing child_process spawnSync import restored for the existing final smoke. The initial branch push is skipped; only later marker pushes execute observation. No .github/owner-observation-run.json exists yet, so pushing preparation code does not trigger observation. The original passing baseline run is 41013242173 at e6fe133e188f82b248b9aa13348bc6b8c00aa9e4.
 
 Reuse: public-baseline/run.mjs + diagnostics, original browser_gate, identical pinned Linux image/Node24.19.0/Playwright1.64.1/full Chrome for Testing156.0.8078.4. The baseline preview profile is unchanged. Owner stages require the exact same reviewed live-derived116-file candidate, not a source build from main. The production owner Python modules, disabled policy and one-use claim checks are unchanged.
 
-After separate owner approval, root emits a local token. relay.py sends only its SHA256 in a unique public push marker, commits only that marker on codex/owner-linux-observer-0006, and observes one new run. The run independently checks its code diff against the approved observerCodeCommit and all original criteria, including both domains' complete bodies. No retries, reruns, route fallback, timeout extension, TLS bypass or mutable runtime defaults.
+After separate owner approval, root emits a local token. relay.py sends only its SHA256 in a unique public push marker, commits only that marker on codex/owner-linux-observer-0007, and observes one new run. The run independently checks its code diff against the approved observerCodeCommit and all original criteria, including both domains' complete bodies. No retries, reruns, route fallback, timeout extension, TLS bypass or mutable runtime defaults.
 
 Guarded: candidate HTML canonical/OG/sitemap/RSS use tkkdy.me, normal HTML has no noindex, but HTTP noindex must remain on both domains and all116files. Real Chrome checks desktop/mobile/images/search/navigation. Final: new-domain HTTP noindex must be absent, old-domain HTTP noindex must remain, search/404 HTML noindex remains; additionally original production browser_gate runs. Both phases include neighbours, full bodies and SAN/expiry.
 

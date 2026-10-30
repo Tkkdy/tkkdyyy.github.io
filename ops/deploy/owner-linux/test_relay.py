@@ -2,7 +2,7 @@ import copy,importlib.util,pathlib,time,unittest
 spec=importlib.util.spec_from_file_location('relay',pathlib.Path(__file__).with_name('relay.py'));m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 class BindingTests(unittest.TestCase):
  def fixture(self,phase='guarded'):
-  req={'phase':phase,'attemptId':'2026102900000006','requestId':'owner-0006-'+phase+'-'+'a'*24,'challengeSha256':'b'*64,'observerCodeCommit':'c'*40,'expiresEpoch':int(time.time())+600,'previousEvidence':None if phase=='guarded' else {'runId':12,'reportSha256':'d'*64}}
+  req={'phase':phase,'attemptId':'2026102900000007','requestId':'owner-0007-'+phase+'-'+'a'*24,'challengeSha256':'b'*64,'observerCodeCommit':'c'*40,'expiresEpoch':int(time.time())+600,'previousEvidence':None if phase=='guarded' else {'runId':12,'reportSha256':'d'*64}}
   run={'id':42,'head_sha':'e'*40,'head_branch':m.BRANCH,'event':'push','path':m.WORKFLOW,'run_attempt':1,'conclusion':'success','status':'completed','repository':{'full_name':m.REPO}}
   steps=['entries-and-neighbour-sites','full-original-content-both-domains','sitemap-rss-robots-original-identity','desktop:tkkdy.me','desktop:preview.boenbot.top','mobile:tkkdy.me','mobile:preview.boenbot.top','utility-noindex-and-certificate']
   if phase=='indexable':steps.insert(3,'existing-browser-gate-new-production')

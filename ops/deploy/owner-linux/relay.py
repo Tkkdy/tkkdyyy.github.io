@@ -3,7 +3,7 @@ Raw owner tokens stay local; Git sees SHA256 challenges only. No retry or fallba
 """
 import argparse,hashlib,io,json,pathlib,secrets,subprocess,time,urllib.request,urllib.error,zipfile
 REPO='Tkkdy/tkkdyyy.github.io'
-BRANCH='codex/owner-linux-observer-0006'
+BRANCH='codex/owner-linux-observer-0007'
 MARKER='.github/owner-observation-run.json'
 WORKFLOW='.github/workflows/owner-linux-observation.yml'
 IMAGE='mcr.microsoft.com/playwright@sha256:d65108d1a8095d8b0c4a5e32bf1807a40a5ce90ff0c78473e1116b1c243235e8'
@@ -58,12 +58,12 @@ def main():
  if phase=='guarded':need(proposal.get('target')==review['target'] and proposal.get('externalGateSha256')==review['gateSha256'],'Guarded identity mismatch')
  previous=json.loads(pathlib.Path(a.previous_evidence).read_bytes()) if a.previous_evidence else None
  need((phase=='guarded' and previous is None) or (phase=='indexable' and previous and previous['scope']=='OWNER_GUARDED_PUBLIC_ACCEPTANCE' and previous['passed'] is True),'Missing guarded chain')
- request={'enabled':True,'scope':'OWNER_LINUX_OBSERVATION','attemptId':'2026102900000006','phase':phase,'challengeSha256':sha(proposal['token'].encode()),'requestId':'owner-0006-'+phase+'-'+secrets.token_hex(12),'candidateManifestSha256':CANDIDATE,'observerCodeCommit':review['observerCodeCommit'],'expiresEpoch':int(time.time())+720,'expectedNode':'24.19.0','expectedPlaywright':'1.64.1','expectedChrome':'156.0.8078.4','previousEvidence':({'runId':previous['linuxEvidence']['runId'],'reportSha256':previous['linuxEvidence']['reportSha256']} if previous else None)}
+ request={'enabled':True,'scope':'OWNER_LINUX_OBSERVATION','attemptId':'2026102900000007','phase':phase,'challengeSha256':sha(proposal['token'].encode()),'requestId':'owner-0007-'+phase+'-'+secrets.token_hex(12),'candidateManifestSha256':CANDIDATE,'observerCodeCommit':review['observerCodeCommit'],'expiresEpoch':int(time.time())+720,'expectedNode':'24.19.0','expectedPlaywright':'1.64.1','expectedChrome':'156.0.8078.4','previousEvidence':({'runId':previous['linuxEvidence']['runId'],'reportSha256':previous['linuxEvidence']['reportSha256']} if previous else None)}
  out=pathlib.Path(a.out);need(not out.exists(),'Output exists; never rerun');out.mkdir(parents=True)
  verdict={'scope':proposal['scope'],'token':proposal['token'],'candidateManifestSha256':CANDIDATE,'gateSha256':review['gateSha256'],'passed':False}
  try:
   pathlib.Path(MARKER).write_text(json.dumps(request,indent=2)+'\n',encoding='utf-8',newline='\n');subprocess.run(['git','add','--',MARKER],check=True)
-  need(git('diff','--cached','--name-only')==MARKER,'Unexpected staged files');subprocess.run(['git','commit','-m','ci: observe owner 0006 '+phase+' once'],check=True);source=git('rev-parse','HEAD')
+  need(git('diff','--cached','--name-only')==MARKER,'Unexpected staged files');subprocess.run(['git','commit','-m','ci: observe owner 0007 '+phase+' once'],check=True);source=git('rev-parse','HEAD')
   need(git('diff','--name-only',review['observerCodeCommit'],'HEAD')==MARKER,'Observer code drift')
   subprocess.run(['git','push','origin',BRANCH],check=True)
   api=Api();deadline=time.monotonic()+600;run=None

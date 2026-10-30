@@ -2,7 +2,7 @@
 name: Owner Linux public observation
 on:
   push:
-    branches: [codex/owner-linux-observer-0006]
+    branches: [codex/owner-linux-observer-0007]
     paths: [.github/owner-observation-run.json]
 permissions:
   contents: read
@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   observe:
-    if: github.run_attempt == 1
+    if: github.run_attempt == 1 && github.event.before != '0000000000000000000000000000000000000000'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     container:

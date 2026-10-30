@@ -4,6 +4,7 @@ import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {spawnSync} from 'node:child_process';
 import {verifyObserverCode} from './git-identity.mjs';
 import {profile,ownerSuccess,IMAGE} from '../owner-linux/profile.mjs';
 import {connect as tlsConnect} from 'node:tls';

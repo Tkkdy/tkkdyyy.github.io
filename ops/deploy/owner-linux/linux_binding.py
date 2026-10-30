@@ -12,7 +12,7 @@ def validate(value,proposal,approval,guarded=None):
  need(type(e.get('runId')) is int and e['runId']>0 and e.get('runAttempt')==1,'run identity/rerun')
  need(e.get('url')=='https://github.com/Tkkdy/tkkdyyy.github.io/actions/runs/'+str(e['runId']),'run URL')
  for key,n in [('sourceSha',40),('artifactSha256',64),('reportSha256',64)]:need(re.fullmatch('[a-f0-9]{'+str(n)+'}',e.get(key,'')),'invalid '+key)
- need(re.fullmatch('owner-0006-'+phase+'-[a-f0-9]{24}',e.get('requestId','')),'request ID')
+ need(re.fullmatch('owner-0007-'+phase+'-[a-f0-9]{24}',e.get('requestId','')),'request ID')
  r=e.get('runtime',{});expected={'node':'v24.19.0','openssl':'3.5.7','image':IMAGE,'browser':'156.0.8078.4','browserChannel':'chrome-for-testing','directFlagVerified':True,'runId':str(e['runId']),'runAttempt':'1','sourceSha':e['sourceSha']}
  need(all(r.get(k)==v for k,v in expected.items()),'runtime identity')
  need(value.get('newDomainNoindex')==(phase=='guarded') and value.get('indexable')==(phase=='indexable'),'indexing stage')

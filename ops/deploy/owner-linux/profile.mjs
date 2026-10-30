@@ -3,8 +3,8 @@ export const IMAGE='mcr.microsoft.com/playwright@sha256:d65108d1a8095d8b0c4a5e32
 export const CANDIDATE='d3b094b33d246ebebce03a897ded8b5970545e3a0413f862cd796165a54d823d';
 export function profile(config,owner){
  if(!owner)return {scope:'READ_ONLY_LIVE_PREVIEW_BASELINE',count:115,manifestHash:config.baselineManifestSha256,canonical:'https://preview.boenbot.top/',htmlNoindex:true,httpNoindex:()=>true,smoke:true};
- check(config.enabled===true&&config.scope==='OWNER_LINUX_OBSERVATION'&&config.attemptId==='2026102900000006','Disabled or invalid owner request','IDENTITY_FAILURE');
- check(['guarded','indexable'].includes(config.phase)&&/^[a-f0-9]{64}$/.test(config.challengeSha256||'')&&/^owner-0006-(guarded|indexable)-[a-f0-9]{24}$/.test(config.requestId||'')&&config.requestId.includes('-'+config.phase+'-'),'Invalid challenge/phase','IDENTITY_FAILURE');
+ check(config.enabled===true&&config.scope==='OWNER_LINUX_OBSERVATION'&&config.attemptId==='2026102900000007','Disabled or invalid owner request','IDENTITY_FAILURE');
+ check(['guarded','indexable'].includes(config.phase)&&/^[a-f0-9]{64}$/.test(config.challengeSha256||'')&&/^owner-0007-(guarded|indexable)-[a-f0-9]{24}$/.test(config.requestId||'')&&config.requestId.includes('-'+config.phase+'-'),'Invalid challenge/phase','IDENTITY_FAILURE');
  check(config.candidateManifestSha256===CANDIDATE&&/^[a-f0-9]{40}$/.test(config.observerCodeCommit||''),'Invalid candidate/code identity','IDENTITY_FAILURE');
  check(config.expectedNode==='24.19.0'&&config.expectedPlaywright==='1.64.1'&&config.expectedChrome==='156.0.8078.4','Runtime expectation drift','IDENTITY_FAILURE');
  check(Number.isInteger(config.expiresEpoch)&&Date.now()/1000<config.expiresEpoch&&config.expiresEpoch<=Date.now()/1000+3600,'Expired owner observation','IDENTITY_FAILURE');

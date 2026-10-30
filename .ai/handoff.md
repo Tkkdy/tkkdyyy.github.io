@@ -1,15 +1,11 @@
-# tkkdy.me production indexing migration
+# tkkdy.me production migration
 
-State: READY_FOR_REVIEW. Role: EXECUTOR. Next: HUMAN_PRODUCT_OWNER for one-use owner launch scope approval. PR #22 draft, no merge/current/policy/Nginx/Variables activation authorized in this phase.
+State: READY_FOR_REVIEW; prepared owner attempt 2026102900000007, awaiting fresh owner approval before root apply. PR #22 stays Draft and untouched. No main content, policy/Variables/autodeploy changes.
 
-Latest contract: implement and validate an exact-live-content owner path, honest artifact identity and precise config diff. Keep all ordinary CI/receiver gates and exclude unapproved main content. Production legacy bridge was completed in the preceding phase; this phase only reads production.
+Actual current and 115-file live content verified; 0006 consumed, failed guarded before public checks, real rollback PASS. 0007 branch/release/records were absent. Protected tree and Variables hashes unchanged. Cached original payload and candidate ZIP verified; reuse candidate bytes, never 0006 approval/claim/verdict.
 
-Owner path: root-only default dry-run, root-owned disabled/expired approval DRAFT, <=24h enabled approval plus exact digest required for later apply; expected-current, old bridge/original manifest/source, candidate/derivation, all runtime modules/external gate, policy/Nginx tree/installed tools tree frozen. Exact replay from actual baseline before write; original lock; one-use claim; exclusive new release; atomic switch; dual-host strict HTTPS + external token-bound browser verdict before honest OWNER_DERIVED_STATIC record (ciAccepted=false). Failure restores old current; all attempts retained. No automatic Nginx/indexing activation.
+Observer: inherit all 7133af6 helper/test/run integration, restore missing spawnSync import; update exact attempt/branch/request bindings to 0007; remove consumed marker. Initial branch push skips observation. Fixed Linux image/runtime, TLS, original timeouts, sole-marker code gate and rollback remain. Reuse Linux 7/7 run 41099557325; no repeated build.
 
-Live-only candidate unchanged:116files/40HTML/38sitemapURLs,44 SEO/marker changes, no body/assets/Pagefind/RSS payload/GUID/route change. Main changes excluded. Manifest d3b094b33d246ebebce03a897ded8b5970545e3a0413f862cd796165a54d823d; repeated actual-snapshot replay116files exact.
+Preparation evidence and final approval checklist: C:/Users/PsyDuck/Desktop/tkkdy-domain-20261028/owner-launch-linux-0007/. Root dry-run/apply and actual candidate two-stage public acceptance remain NOT_RUN.
 
-Implementation5cee5cb CI40873578672 all4jobs PASS, including19 actual root Linux owner tests plus existing regression; logs inspected. Added20th draft/module hash check and real Chrome observer integration: actual frozen candidate, intercepted network, success/byte tamper/noindex absence allPASS locally. Final head CI must also pass. Public TLS in transaction unit tests mocked; Chromium observer integration has no real public DNS/TLS and mocks Google font CSS. Never claim production apply/public candidate acceptance.
-
-Exact later config diff: only remove new-domain X-Robots-Tag noindex line AFTER guarded public acceptance. Nginx before8622c073... afterb1dce4ad...; old domain noindex remains. Existing policy, receiver, forced command, Variables/REVIEWED_PIPELINE_SHA/autodeploy, Pages/editor/friends/certs zero diff. New files only isolated root tools/approval/new release/evidence. The disabled draft is not an activation instruction.
-
-Full executable parameter shapes, external proposal/verdict handoff, exact identities/config hashes, rollback sequencing and final confirmation scope: [owner launch checklist](../ops/deploy/tkkdy-owner-launch-checklist.md). Original migration history: [migration](../ops/deploy/tkkdy-production-migration.md). PR https://github.com/Tkkdy/tkkdyyy.github.io/pull/22. No agents delegated; original user worktree unchanged.
+Validation: current 18/18 profile+diagnostics, 10/10 root+relay, five intercepted local Chrome scenarios PASS; inherited helper/test bytes and fixed Linux 7/7 logs verified. Entry-only HTTPS/redirects/Pages/friends/editor checks passed; certificate SAN+TLS verified. These are not actual candidate public acceptance.
