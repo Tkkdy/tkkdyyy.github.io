@@ -1,0 +1,29 @@
+# Fixture-only Git identity repair validation. No public gate, SSH or deployment.
+name: Observer Git identity isolated validation
+on:
+  push:
+    branches: [codex/observer-git-identity-fix]
+    paths:
+      - ops/deploy/public-baseline/git-identity*
+      - ops/deploy/public-baseline/run.mjs
+      - .github/workflows/observer-git-identity-validation.yml
+permissions:
+  contents: read
+jobs:
+  identity:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    container:
+      image: mcr.microsoft.com/playwright@sha256:d65108d1a8095d8b0c4a5e32bf1807a40a5ce90ff0c78473e1116b1c243235e8
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with: {persist-credentials: false, fetch-depth: 3}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with: {node-version: '24.19.0'}
+      - name: Require pinned Linux runtime and real root ownership fixture
+        run: |
+          node -e "if(process.platform!=='linux'||process.getuid()!==0||process.version!=='v24.19.0')process.exit(1)"
+          git --version
+      - name: Git identity regression only; no public requests
+        run: node --test ops/deploy/public-baseline/git-identity.test.mjs

@@ -4,7 +4,7 @@ import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {spawnSync} from 'node:child_process';
+import {verifyObserverCode} from './git-identity.mjs';
 import {profile,ownerSuccess,IMAGE} from '../owner-linux/profile.mjs';
 import {connect as tlsConnect} from 'node:tls';
 import {installDiagnostics,classify,requireCheck as check} from './diagnostics.mjs';
@@ -26,8 +26,7 @@ try {
  check(report.manifestSha256===expected.manifestHash&&manifest.length===expected.count,'Baseline identity mismatch','IDENTITY_FAILURE');
  if(owner){
   check(process.env.OBSERVER_IMAGE===IMAGE,'Container drift','ENVIRONMENT_FAILURE');
-  const delta=spawnSync('git',['diff','--name-only',config.observerCodeCommit,'HEAD'],{cwd:ROOT,encoding:'utf8'});
-  check(delta.status===0&&delta.stdout.trim()==='.github/owner-observation-run.json','Unreviewed observer code changes','IDENTITY_FAILURE');
+  verifyObserverCode({root:ROOT,base:config.observerCodeCommit,report});
   report.challengeSha256=config.challengeSha256;report.phase=config.phase;
  }
  const pw=JSON.parse(readFileSync(resolve(ROOT,'node_modules/playwright/package.json')));check(pw.version===config.expectedPlaywright,'Playwright mismatch','ENVIRONMENT_FAILURE');
@@ -100,4 +99,4 @@ try {
  });
  report.passed=true;
 }catch(e){report.failure={step:currentStep,stage:e.stage,category:e.category||report.requests.findLast(x=>x.error)?.category||(/Timeout|net::/i.test(String(e))?'CLIENT_TRANSPORT_INCONCLUSIVE':'BASELINE_ACCEPTANCE_FAILURE'),error:String(e)};process.exitCode=1;}
-finally{probe?.close();await context?.close();await browser?.close();report.completedUtc=new Date().toISOString();writeFileSync(resolve(OUT,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({scope:report.scope,passed:report.passed,failure:report.failure,steps:report.steps,runtime:report.runtime}));}
+finally{probe?.close();await context?.close();await browser?.close();report.completedUtc=new Date().toISOString();writeFileSync(resolve(OUT,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({scope:report.scope,passed:report.passed,failure:report.failure,steps:report.steps,runtime:report.runtime,gitIdentity:report.gitIdentity}));}
