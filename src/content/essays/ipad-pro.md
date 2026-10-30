@@ -1,5 +1,5 @@
 ---
-{ slug: ipad-pro, publishedAt: 2026-10-29, status: published, tags: [ feelings, 回忆 ], homepage: { show: false }, title: 吃灰的 iPad Pro, summary: 小时候的梦想, categories: [ 随笔 ] }
+{ slug: ipad-pro, publishedAt: 2026-10-30, status: published, tags: [ feelings, 回忆 ], homepage: { show: false }, title: 吃灰的 iPad Pro, summary: 小时候的梦想, categories: [ 随笔 ] }
 ---
 
 我有一条很喜欢的视频，是皮蛋粥加辣的《iPad的一年，我的十年》。
