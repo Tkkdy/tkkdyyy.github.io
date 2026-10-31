@@ -72,13 +72,6 @@ jobs:
     needs: [check, profiles]
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    env:
-      VPS_PREVIEW_DIR: ${{ runner.temp }}/builds/preview
-      VPS_PRODUCTION_DIR: ${{ runner.temp }}/builds/production
-      VPS_PREVIEW_BUNDLE: ${{ runner.temp }}/bundles/preview/bundle.zip
-      VPS_PRODUCTION_BUNDLE: ${{ runner.temp }}/bundles/production/bundle.zip
-      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/playwright
-      TRANSITION_EVIDENCE_DIR: ${{ runner.temp }}/evidence/transition
     steps:
       - uses: actions/checkout@v7
         with:
@@ -109,7 +102,15 @@ jobs:
         with:
           name: bundle-production
           path: ${{ runner.temp }}/bundles/production
-      - run: mkdir -p "$RUNNER_TEMP/evidence"
+      - name: Isolated paths
+        run: |
+          mkdir -p "$RUNNER_TEMP/evidence"
+          echo "VPS_PREVIEW_DIR=$RUNNER_TEMP/builds/preview" >> "$GITHUB_ENV"
+          echo "VPS_PRODUCTION_DIR=$RUNNER_TEMP/builds/production" >> "$GITHUB_ENV"
+          echo "VPS_PREVIEW_BUNDLE=$RUNNER_TEMP/bundles/preview/bundle.zip" >> "$GITHUB_ENV"
+          echo "VPS_PRODUCTION_BUNDLE=$RUNNER_TEMP/bundles/production/bundle.zip" >> "$GITHUB_ENV"
+          echo "PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/playwright" >> "$GITHUB_ENV"
+          echo "TRANSITION_EVIDENCE_DIR=$RUNNER_TEMP/evidence/transition" >> "$GITHUB_ENV"
       - name: Validate real outputs and negative SEO cases
         run: |
           python3 -B ops/deploy/audit_profiles.py "$RUNNER_TEMP/builds" --report "$RUNNER_TEMP/evidence/profiles.json"
