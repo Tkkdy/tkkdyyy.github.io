@@ -2,14 +2,17 @@
   "enabled": true,
   "scope": "OWNER_LINUX_OBSERVATION",
   "attemptId": "2026102900000007",
-  "phase": "guarded",
-  "challengeSha256": "71f5af7dc723652039a22ee59c6629fe32c09945b57b6c44ab8f32fe1cd5a18c",
-  "requestId": "owner-0007-guarded-222f30b24e1815645c7c3a60",
+  "phase": "indexable",
+  "challengeSha256": "b42d726d0a1bea96d82824dd4f38810187deda19b90accc27076bdf72edcbee3",
+  "requestId": "owner-0007-indexable-476a65c56e79804d10442c4a",
   "candidateManifestSha256": "d3b094b33d246ebebce03a897ded8b5970545e3a0413f862cd796165a54d823d",
   "observerCodeCommit": "67d40e4022ac4a12fd440a68d63dc8e1452090ce",
-  "expiresEpoch": 1793423527,
+  "expiresEpoch": 1793423811,
   "expectedNode": "24.19.0",
   "expectedPlaywright": "1.64.1",
   "expectedChrome": "156.0.8078.4",
-  "previousEvidence": null
+  "previousEvidence": {
+    "runId": 41170802221,
+    "reportSha256": "55c1c6eec0cd68a5cb09b73f3a5222c961be672528b40747b09538013a376ca9"
+  }
 }
