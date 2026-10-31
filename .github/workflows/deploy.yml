@@ -58,6 +58,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
+      PUBLIC_ADMIN_ORIGIN: ${{ vars.PUBLIC_ADMIN_ORIGIN }}
       SITE_URL: ${{ vars.VPS_SITE_URL }}
       VPS_INDEXING_PROFILE: ${{ vars.VPS_INDEXING_PROFILE || 'preview' }}
       SOURCE_SHA: ${{ github.sha }}

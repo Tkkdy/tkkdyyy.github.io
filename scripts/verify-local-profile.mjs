@@ -41,7 +41,11 @@ try{
   await page.waitForFunction(()=>document.querySelector('#search-status')?.textContent.includes('GrokBot')&&!!document.querySelector('#search-results a'),null,{timeout:20000});
   const target=await page.locator('#search-results a').first().getAttribute('href');await page.locator('#search-results a').first().click();await page.waitForURL(new URL(target,site).href,{timeout:20000});
   if(!await page.locator('h1').count())throw Error('Mobile click');
-  writeFileSync(`local-${mode}.json`,JSON.stringify({scope:'ISOLATED_LOOPBACK_ONLY',passed:true,mode,mobile:true,images:true,searchAndClick:true,canonical,sharedHttpNoindex:mode==='shared-preview'},null,2));
+  await page.goto(new URL('search/',site).href,{waitUntil:'networkidle',timeout:30000});
+  await page.locator('#search-input').fill('P1 编辑发布链路验收草稿');
+  await page.waitForFunction(()=>document.querySelector('#search-status')?.textContent.includes('没有找到与「P1 编辑发布链路验收草稿」'),null,{timeout:20000});
+  if(await page.locator('#search-results a').count())throw Error('Draft leaked to Pagefind');
+  writeFileSync(`local-${mode}.json`,JSON.stringify({scope:'ISOLATED_LOOPBACK_ONLY',passed:true,mode,mobile:true,images:true,searchAndClick:true,draftExcluded:true,canonical,sharedHttpNoindex:mode==='shared-preview'},null,2));
   await context.close();
  }finally{await browser.close();}
 }finally{server.close();}

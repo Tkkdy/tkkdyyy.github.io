@@ -72,6 +72,8 @@ jobs:
             bundle.zip.sha256
           if-no-files-found: error
   isolated-acceptance:
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
     needs: [check, profiles]
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -114,8 +116,35 @@ jobs:
           echo "VPS_PRODUCTION_BUNDLE=$RUNNER_TEMP/bundles/production/bundle.zip" >> "$GITHUB_ENV"
           echo "PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/playwright" >> "$GITHUB_ENV"
           echo "TRANSITION_EVIDENCE_DIR=$RUNNER_TEMP/evidence/transition" >> "$GITHUB_ENV"
+      - name: Freeze proposed changes without applying them
+        run: |
+          python3 -B <<'PY'
+          import os,json,hashlib
+          from pathlib import Path
+          d=Path(os.environ['RUNNER_TEMP'])/'evidence'
+          plan=json.loads(Path('docs/dual-site-change-plan.json').read_text().replace('FROZEN_REVIEWED_PR_HEAD',os.environ['SOURCE_SHA']))
+          plan['reviewedCodeCommit']=os.environ['SOURCE_SHA']
+          plan['oneTimeToolSha256']=hashlib.sha256(Path('ops/deploy/seal_owner_completion.py').read_bytes()).hexdigest()
+          for field in ['policyStagedDisabled','policyForControlledRelease']:
+              raw=json.dumps(plan[field],sort_keys=True,indent=2).encode()
+              (d/(field+'.json')).write_bytes(raw)
+              plan[field+'Sha256']=hashlib.sha256(raw).hexdigest()
+          for module in plan['modules']:
+              raw=Path('ops/deploy',module['file']).read_bytes()
+              assert hashlib.sha256(raw).hexdigest()==module.get('repositorySha256',module['afterSha256']),module['file']
+          (d/'frozen-change-plan.json').write_text(json.dumps(plan,indent=2))
+          print('Exact PR head, tool/module bytes and proposed policy hashes frozen; applied=false')
+          PY
       - name: Validate real outputs and negative SEO cases
         run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import {vpsIndexingProfile as profile} from './scripts/vps-indexing-profile.mjs';
+          assert.equal(profile({}),'preview');
+          assert.equal(profile({VPS_INDEXING_PROFILE:'production',SITE_URL:'https://tkkdy.me'}),'production');
+          for(const env of [{VPS_INDEXING_PROFILE:''},{VPS_INDEXING_PROFILE:'prod'},...['http://tkkdy.me','https://preview.boenbot.top','https://tkkdy.me/path','https://tkkdy.me/?x=1','https://user@tkkdy.me','https://tkkdy.me/#x'].map(SITE_URL=>({VPS_INDEXING_PROFILE:'production',SITE_URL}))])assert.throws(()=>profile(env));
+          console.log('Build profile fail-closed combinations PASS');
+          NODE
           python3 -B ops/deploy/audit_profiles.py "$RUNNER_TEMP/builds" --report "$RUNNER_TEMP/evidence/profiles.json"
           python3 -B -m unittest discover -s ops/deploy -p test_indexing_profile.py -v 2>&1 | tee "$RUNNER_TEMP/evidence/profile-tests.log"
           VPS_BUNDLE_FILE="$VPS_PREVIEW_BUNDLE" python3 -B -m unittest discover -s ops/deploy -p test_publish_client.py -v

@@ -1,7 +1,7 @@
-# 双站正式内容同步
+# 双站生产同步审查候选
 
-State: IN_PROGRESS. Base main 4dd98aee17264fefd4399afd550264696afd2902. Branch codex/dual-site-production-sync; new Draft PR required. Production changes NOT authorized. Stage A confirmed 0007/current/content/Nginx/policy/Variables/installed tools unchanged. Keep 0007 consumed, no 0008, no main merge, no editor/private-data or OAuth changes.
+State: READY_FOR_REVIEW; production NO_GO. Draft PR #29 on codex/dual-site-production-sync, base main 4dd98aee17264fefd4399afd550264696afd2902. Review: docs/DUAL_SITE_SYNC_REVIEW.md; exact proposed production and content inventories: docs/dual-site-change-plan.json and docs/dual-site-initial-content.json. Latest exact-head CI artifacts freeze actual source/tool/module/policy SHA; require raw test logs, not just green outer status. Prior fully inspected run 41175825554 passed 13 profile +18 real nonroot transition +7 rollback tests and actual local browser gates. This head adds fail-closed build combinations, draft exclusion, root seal denial cases; latest matching CI must pass.
 
-Contract: C:/Users/PsyDuck/Downloads/tkkdy-dual-site-sync-codex-task-20261031.md. Scope: profile/SEO/RSS and minimal receiver lineage support; preserve existing CI/forced SSH/browser/rollback. PR22 reference only; no owner deployment scaffolding. Evidence: C:/Users/PsyDuck/Desktop/tkkdy-dual-site-sync-20261031/.
+No production changes, merge or content publication authorized this turn. Current remains owner-tkkdy-d3b094b33d24-2026102900000007. No 0007 replay/0008, editor/private data/SSH/Nginx changes. Minimal ACL + durable completion + formal policy/Variables need later exact approval. Initial content includes previously deferred re and Development fixtures: not automatically approved. Deployment secrets/environment/forced SSH and current contentAutoMergeEnabled are UNVERIFIED. Continuous publishing remains false and requires a separate decision after first controlled release.
 
-Need root/nonroot isolated CI for owner-derived -> CI, exact main content inventory, precise production diff/rollback proposal and owner GO/NO_GO checklist. Stop before any production installation, policy/Variables/current change or actual publication.
+Local evidence: C:/Users/PsyDuck/Desktop/tkkdy-dual-site-sync-20261031/. Stop at this review boundary; do not deploy merely because CI passes.

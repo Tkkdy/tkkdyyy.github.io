@@ -26,6 +26,9 @@ def worker(root,mode):
         if mode=='read':
             from release_records import read_record
             value=read_record(root,Path(os.readlink(root/'current')).name);print(json.dumps({'phase':'READ_OK','recordType':value['recordType']}),flush=True)
+        elif mode=='seal':
+            from seal_owner_completion import seal
+            seal(root,root/'root-result.json','a'*64,'b'*64,GID,True)
         elif mode=='rollback':
             import rollback_release as rollback
             rollback.https_body=r.https_body
@@ -138,6 +141,15 @@ class OwnerTransitionTests(unittest.TestCase):
     def test_missing_final_seal_fails(self):(self.root/'records'/('owner-completion-'+self.rid+'.json')).unlink();self.reject()
     def test_unreadable_final_seal_fails(self):(self.root/'records'/('owner-completion-'+self.rid+'.json')).chmod(0o600);self.reject()
     def test_forged_indexable_evidence_fails(self):v=copy.deepcopy(self.completion);v['finalAcceptance']['linuxEvidence']['previousEvidence']['runId']=999;self.write('records/owner-completion-'+self.rid+'.json',v,0o640);self.reject()
+    def test_seal_wrong_pin_does_not_write(self):
+        from seal_owner_completion import seal
+        output=self.root/'records'/('owner-completion-'+self.rid+'.json');output.unlink()
+        for result_pin,record_pin in [('a'*64,sha(self.record.read_bytes())),(sha(self.result.read_bytes()),'b'*64)]:
+            with self.assertRaisesRegex(ValueError,'pin differs'):seal(self.root,self.result,result_pin,record_pin,GID,True)
+            self.assertFalse(output.exists())
+    def test_nonroot_cannot_seal(self):
+        p=self.start('seal');p.stdin.close();p.stdin=None;out,err=p.communicate(timeout=20)
+        self.assertNotEqual(p.returncode,0);self.assertIn(b'completion seal requires root owner',out)
     def test_seal_replay_is_rejected(self):
         from seal_owner_completion import seal
         with self.assertRaisesRegex(ValueError,'overwritten'):seal(self.root,self.result,sha(self.result.read_bytes()),sha(self.record.read_bytes()),GID,True)
