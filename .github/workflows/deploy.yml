@@ -130,7 +130,7 @@ jobs:
           artifact_name: pages-${{ github.run_id }}-${{ github.run_attempt }}
   vps-deploy:
     needs: vps-build
-    if: github.ref == 'refs/heads/main' && (vars.VPS_AUTODEPLOY_ENABLED == 'true' || (github.event_name == 'workflow_dispatch' && inputs.controlled_vps_release && inputs.approved_source_sha == github.sha))
+    if: github.ref == 'refs/heads/main' && ((github.event_name == 'push' && vars.VPS_AUTODEPLOY_ENABLED == 'true') || (github.event_name == 'workflow_dispatch' && inputs.controlled_vps_release && inputs.approved_source_sha == github.sha))
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     concurrency:

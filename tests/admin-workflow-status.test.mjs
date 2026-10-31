@@ -32,6 +32,8 @@ test('production target labels and isolated dependencies match the strict broker
  assert.equal(evaluate('refs/heads/main','workflow_dispatch','false',false,sha),false);
  assert.equal(evaluate('refs/heads/other','workflow_dispatch','false',true,sha),false);
  assert.equal(evaluate('refs/heads/main','push','true',false,''),true);
+ assert.equal(evaluate('refs/heads/main','workflow_dispatch','true',false,''),false);
+ assert.equal(evaluate('refs/heads/main','workflow_dispatch','true',true,'b'.repeat(40)),false);
  for(const target of ['pages','vps'])assert(!workflow.jobs[target+'-build'].needs);
  for(const [id,j] of Object.entries(workflow.jobs))if(id!=='vps-deploy')assert(!JSON.stringify(j).includes('secrets.'));
  assert.deepEqual(workflow.permissions,{contents:'read'});
