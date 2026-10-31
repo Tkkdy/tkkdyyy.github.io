@@ -2,7 +2,7 @@
 GitHub authority and server-side HTTPS are isolated test doubles, never production.
 One full protocol run also invokes the actual Chrome browser gate over loopback.
 """
-import copy,hashlib,io,json,os,select,stat,struct,subprocess,sys,tempfile,time,unittest,zipfile
+import copy,hashlib,io,json,os,select,shutil,stat,struct,subprocess,sys,tempfile,time,unittest,zipfile
 from pathlib import Path
 from unittest.mock import patch
 from release_bundle import sha
@@ -45,6 +45,9 @@ class OwnerTransitionTests(unittest.TestCase):
         return self.write('records/manifest-'+Path(target).name+'.json',raw)
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory(prefix='dual-site-uid-');self.addCleanup(self.temp.cleanup);self.root=Path(self.temp.name);self.root.chmod(0o755)
+        runtime=self.root/'runtime';runtime.mkdir(mode=0o755)
+        for code in Path(__file__).resolve().parent.glob('*.py'):
+            shutil.copyfile(code,runtime/code.name);(runtime/code.name).chmod(0o644)
         self.bundle=Path(os.environ['VPS_PRODUCTION_BUNDLE']).read_bytes()
         with zipfile.ZipFile(io.BytesIO(self.bundle)) as z:self.meta=json.loads(z.read('release.json'))
         self.source=self.meta['sourceSha'];self.baseline='8'*40;self.new='releases/'+self.meta['releaseId']
@@ -90,9 +93,12 @@ class OwnerTransitionTests(unittest.TestCase):
         return value
     def start(self,mode='normal'):
         def drop():os.setgroups([]);os.setgid(GID);os.setuid(UID)
-        return subprocess.Popen([sys.executable,'-B',str(Path(__file__).resolve()),'worker',str(self.root),mode],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,bufsize=0,preexec_fn=drop)
+        return subprocess.Popen([sys.executable,'-B',str(self.root/'runtime/test_owner_transition.py'),'worker',str(self.root),mode],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,bufsize=0,preexec_fn=drop)
     def line(self,p):
-        self.assertTrue(select.select([p.stdout],[],[],45)[0],'fixture process deadline');raw=p.stdout.readline();self.assertTrue(raw,'fixture unexpected EOF');return json.loads(raw)
+        self.assertTrue(select.select([p.stdout],[],[],45)[0],'fixture process deadline');raw=p.stdout.readline()
+        if not raw:
+            p.stdin.close();p.stdin=None;out,err=p.communicate(timeout=10);self.fail('fixture unexpected EOF: '+err.decode(errors='replace'))
+        return json.loads(raw)
     def run_receiver(self,mode='normal',passed=True,browser=False):
         p=self.start(mode);events=[];first=self.line(p);events.append(first)
         if first['phase']=='READY_FOR_BUNDLE':
@@ -103,6 +109,7 @@ class OwnerTransitionTests(unittest.TestCase):
                     evidence=Path(os.environ.get('TRANSITION_EVIDENCE_DIR',str(self.root/'browser')));evidence.mkdir(parents=True,exist_ok=True)
                     command=['node',str(REPO/'scripts/verify-local-profile.mjs'),str(self.root/'current'),'production']
                     r=subprocess.run(command,cwd=evidence,capture_output=True,timeout=180);(evidence/'browser.stdout.log').write_bytes(r.stdout);(evidence/'browser.stderr.log').write_bytes(r.stderr);self.assertEqual(r.returncode,0,r.stderr.decode(errors='replace'))
+                    command[-1]='shared-preview';r=subprocess.run(command,cwd=evidence,capture_output=True,timeout=180);(evidence/'shared-preview.stdout.log').write_bytes(r.stdout);(evidence/'shared-preview.stderr.log').write_bytes(r.stderr);self.assertEqual(r.returncode,0,r.stderr.decode(errors='replace'))
                 if mode!='timeout':p.stdin.write((json.dumps({'token':item['token'],'passed':passed})+'\n').encode());p.stdin.flush()
         p.stdin.close();p.stdin=None;out,err=p.communicate(timeout=60);events.extend(json.loads(x) for x in out.splitlines() if x);self.assertIn(b'ACTUAL_FIXTURE_UID=997 GID=987',err)
         print(json.dumps({'case':self._testMethodName,'uid':UID,'gid':GID,'receiverExit':p.returncode,'phases':[x['phase'] for x in events],'current':os.readlink(self.root/'current'),'stderr':err.decode(errors='replace')[:400]}),flush=True)
