@@ -1,22 +1,169 @@
 name: Pull request checks
-
 on:
   pull_request:
-
 permissions:
   contents: read
-
+defaults:
+  run:
+    shell: bash
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: 24.19.0
           cache: npm
       - run: npm ci
       - run: npm run check
       - run: npm run build
+        env:
+          PUBLIC_ADMIN_ORIGIN: https://editor.boenbot.top
+      - run: python3 -B ops/deploy/write_version.py --source . --dist dist --target pages --workflow "$SOURCE_SHA"
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
       - run: npx playwright install --with-deps chromium
       - run: npm run test:search
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-pages
+          path: dist/
+          if-no-files-found: error
+  profiles:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [preview, production]
+    env:
+      VPS_INDEXING_PROFILE: ${{ matrix.profile }}
+      SITE_URL: ${{ matrix.profile == 'production' && 'https://tkkdy.me' || 'https://preview.boenbot.top' }}
+      PUBLIC_ADMIN_ORIGIN: https://editor.boenbot.top
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.19.0
+          cache: npm
+      - run: npm ci
+      - run: npm run build:vps
+      - run: python3 -B ops/deploy/write_version.py --source . --dist dist --target vps --workflow "$SOURCE_SHA" --profile "$VPS_INDEXING_PROFILE"
+      - run: python3 -B ops/deploy/release_bundle.py --source . --output bundle.zip --site "$SITE_URL" --source-sha "$SOURCE_SHA" --workflow-sha "$SOURCE_SHA" --run-id "$GITHUB_RUN_ID" --attempt "$GITHUB_RUN_ATTEMPT" --profile "$VPS_INDEXING_PROFILE"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.profile }}
+          path: dist/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle-${{ matrix.profile }}
+          path: |
+            bundle.zip
+            bundle.zip.sha256
+          if-no-files-found: error
+  isolated-acceptance:
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+    needs: [check, profiles]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.19.0
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-pages
+          path: ${{ runner.temp }}/builds/pages
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-preview
+          path: ${{ runner.temp }}/builds/preview
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-production
+          path: ${{ runner.temp }}/builds/production
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundle-preview
+          path: ${{ runner.temp }}/bundles/preview
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundle-production
+          path: ${{ runner.temp }}/bundles/production
+      - name: Isolated paths
+        run: |
+          mkdir -p "$RUNNER_TEMP/evidence"
+          echo "VPS_PREVIEW_DIR=$RUNNER_TEMP/builds/preview" >> "$GITHUB_ENV"
+          echo "VPS_PRODUCTION_DIR=$RUNNER_TEMP/builds/production" >> "$GITHUB_ENV"
+          echo "VPS_PREVIEW_BUNDLE=$RUNNER_TEMP/bundles/preview/bundle.zip" >> "$GITHUB_ENV"
+          echo "VPS_PRODUCTION_BUNDLE=$RUNNER_TEMP/bundles/production/bundle.zip" >> "$GITHUB_ENV"
+          echo "PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/playwright" >> "$GITHUB_ENV"
+          echo "TRANSITION_EVIDENCE_DIR=$RUNNER_TEMP/evidence/transition" >> "$GITHUB_ENV"
+      - name: Freeze proposed changes without applying them
+        run: |
+          python3 -B <<'PY'
+          import os,json,hashlib
+          from pathlib import Path
+          d=Path(os.environ['RUNNER_TEMP'])/'evidence'
+          plan=json.loads(Path('docs/dual-site-change-plan.json').read_text().replace('FROZEN_REVIEWED_PR_HEAD',os.environ['SOURCE_SHA']))
+          plan['reviewedCodeCommit']=os.environ['SOURCE_SHA']
+          plan['oneTimeToolSha256']=hashlib.sha256(Path('ops/deploy/seal_owner_completion.py').read_bytes()).hexdigest()
+          for field in ['policyStagedDisabled','policyForControlledRelease']:
+              raw=json.dumps(plan[field],sort_keys=True,indent=2).encode()
+              (d/(field+'.json')).write_bytes(raw)
+              plan[field+'Sha256']=hashlib.sha256(raw).hexdigest()
+          for module in plan['modules']:
+              raw=Path('ops/deploy',module['file']).read_bytes()
+              assert hashlib.sha256(raw).hexdigest()==module.get('repositorySha256',module['afterSha256']),module['file']
+          (d/'frozen-change-plan.json').write_text(json.dumps(plan,indent=2))
+          print('Exact PR head, tool/module bytes and proposed policy hashes frozen; applied=false')
+          PY
+      - name: Validate real outputs and negative SEO cases
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import {vpsIndexingProfile as profile} from './scripts/vps-indexing-profile.mjs';
+          assert.equal(profile({}),'preview');
+          assert.equal(profile({VPS_INDEXING_PROFILE:'production',SITE_URL:'https://tkkdy.me'}),'production');
+          for(const env of [{VPS_INDEXING_PROFILE:''},{VPS_INDEXING_PROFILE:'prod'},...['http://tkkdy.me','https://preview.boenbot.top','https://tkkdy.me/path','https://tkkdy.me/?x=1','https://user@tkkdy.me','https://tkkdy.me/#x'].map(SITE_URL=>({VPS_INDEXING_PROFILE:'production',SITE_URL}))])assert.throws(()=>profile(env));
+          console.log('Build profile fail-closed combinations PASS');
+          NODE
+          python3 -B ops/deploy/audit_profiles.py "$RUNNER_TEMP/builds" --report "$RUNNER_TEMP/evidence/profiles.json"
+          python3 -B -m unittest discover -s ops/deploy -p test_indexing_profile.py -v 2>&1 | tee "$RUNNER_TEMP/evidence/profile-tests.log"
+          VPS_BUNDLE_FILE="$VPS_PREVIEW_BUNDLE" python3 -B -m unittest discover -s ops/deploy -p test_publish_client.py -v
+          VPS_BUNDLE_FILE="$VPS_PRODUCTION_BUNDLE" python3 -B -m unittest discover -s ops/deploy -p test_publish_client.py -v
+      - name: Install browser and isolated ACL tools
+        run: |
+          npx playwright install --with-deps chromium
+          command -v setfacl || (sudo apt-get update && sudo apt-get install -y acl)
+          chmod -R a+rX "$PLAYWRIGHT_BROWSERS_PATH"
+      - name: Real root/nonroot protocol, browser, failure paths and rollback
+        run: |
+          sudo env VPS_PRODUCTION_BUNDLE="$VPS_PRODUCTION_BUNDLE" VPS_PREVIEW_BUNDLE="$VPS_PREVIEW_BUNDLE" PLAYWRIGHT_BROWSERS_PATH="$PLAYWRIGHT_BROWSERS_PATH" TRANSITION_EVIDENCE_DIR="$TRANSITION_EVIDENCE_DIR" python3 -B -m unittest discover -s ops/deploy -p test_owner_transition.py -v 2>&1 | tee "$RUNNER_TEMP/evidence/transition-tests.log"
+          sudo python3 -B -m unittest discover -s ops/deploy -p test_domain_rollback.py -v 2>&1 | tee "$RUNNER_TEMP/evidence/rollback-tests.log"
+      - name: Independent preview browser gate
+        working-directory: ${{ runner.temp }}/evidence
+        run: node "$GITHUB_WORKSPACE/scripts/verify-local-profile.mjs" "$VPS_PREVIEW_DIR" preview
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: isolated-acceptance
+          path: ${{ runner.temp }}/evidence/
+          retention-days: 30

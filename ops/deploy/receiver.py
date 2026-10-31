@@ -33,7 +33,7 @@ def activate_transaction(root,new,previous,critical,data,old_hash,metadata,heade
         line=stream.readline(4097);require(0<len(line)<=4096,'invalid verdict size')
         verdict=json.loads(line);require(verdict.get('token')==token and verdict.get('passed') is True,'public verification failed')
         require(os.readlink(root/'current')==new,'current drift after public acceptance')
-        record={**metadata,'archiveSha256':header['archiveSha256'],'manifestSha256':sha(json.dumps(manifest,sort_keys=True).encode()),'previousCurrent':previous,'current':new,'publicAcceptance':verdict,'utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())}
+        record={**metadata,'recordType':'CI_ACCEPTED','ciAccepted':True,'archiveSha256':header['archiveSha256'],'manifestSha256':sha(json.dumps(manifest,sort_keys=True).encode()),'previousCurrent':previous,'current':new,'publicAcceptance':verdict,'utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())}
         exclusive(root/'records'/('deploy-'+rid+'.json'),json.dumps(record,indent=2).encode())
         committed=True;signal.alarm(0);emit(phase='COMMITTED',record=record)
     except BaseException:
@@ -74,7 +74,7 @@ def main(policy_path=None):
         stream=sys.stdin.buffer;emit(phase='READY_FOR_BUNDLE',current=release_target(os.readlink(root/'current')));size=struct.unpack('!I',exact(stream,4))[0];require(0<size<=16384,'header limit')
         header=json.loads(exact(stream,size));size=header['archiveBytes'];require(type(size)==int and 0<size<=LIMIT,'archive limit')
         previous=release_target(header['expectedCurrent']);require(os.readlink(root/'current')==previous,'approved current differs')
-        metadata,manifest,data=load_bundle(exact(stream,size),header['archiveSha256'],site,config['reviewedWorkflowSha'])
+        metadata,manifest,data=load_bundle(exact(stream,size),header['archiveSha256'],site,config['reviewedWorkflowSha'],config.get('indexingProfile','preview'))
         authorize_source(metadata,config,root,previous)
         rid=metadata['releaseId'];new=release_target('releases/'+rid);candidate=root/new
         require(not (root/'records'/('deploy-'+rid+'.json')).exists(),'existing record')

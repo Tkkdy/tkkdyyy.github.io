@@ -10,6 +10,8 @@ import { getPublishedArticles } from '../lib/content/articles';
 import { getPublishedEssays } from '../lib/content/essays';
 import { SITE } from '../config';
 import { withBase } from '../lib/site-url';
+import { rssGuidData } from '../lib/rss-guid.mjs';
+import guidBaseline from '../data/vps-rss-guids.json';
 
 export async function GET(_context: APIContext) {
   const [articles, essays] = await Promise.all([
@@ -22,6 +24,7 @@ export async function GET(_context: APIContext) {
     description: article.data.description,
     pubDate: article.data.publishedAt,
     link: withBase(`articles/${article.data.slug}/`),
+    customData: rssGuidData(`/articles/${article.data.slug}/`, import.meta.env.VPS_PREVIEW === true, SITE.url, guidBaseline),
   }));
 
   const essayItems = essays.map((essay) => ({
@@ -29,6 +32,7 @@ export async function GET(_context: APIContext) {
     description: essay.data.summary ?? undefined,
     pubDate: essay.data.publishedAt,
     link: withBase(`essays/${essay.data.slug}/`),
+    customData: rssGuidData(`/essays/${essay.data.slug}/`, import.meta.env.VPS_PREVIEW === true, SITE.url, guidBaseline),
   }));
 
   const items = [...articleItems, ...essayItems].sort(

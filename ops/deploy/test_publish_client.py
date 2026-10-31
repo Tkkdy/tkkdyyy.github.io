@@ -27,6 +27,7 @@ class ClientArtifactTests(unittest.TestCase):
         shutil.copyfile(str(self.bundle) + '.sha256', 'bundle.zip.sha256')
         self.environment = {
             'SITE_URL': self.metadata['site'],
+            'VPS_INDEXING_PROFILE': self.metadata.get('indexingProfile','preview'),
             'SOURCE_SHA': self.source,
             'REVIEWED_WORKFLOW_SHA': self.workflow,
             'GITHUB_RUN_ID': self.run_id,

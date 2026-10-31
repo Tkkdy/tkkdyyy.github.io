@@ -1,0 +1,154 @@
+{
+  "scope": "PROPOSED_ONLY_NO_PRODUCTION_AUTHORIZATION",
+  "productionBefore": {
+    "current": "releases/owner-tkkdy-d3b094b33d24-2026102900000007",
+    "manifestSha256": "d3b094b33d246ebebce03a897ded8b5970545e3a0413f862cd796165a54d823d",
+    "policySha256": "4d08942872df7b95454d389453c41b7b3b7399720272049dc556cf5d50461bbc",
+    "nginxTreeSha256": "49c91c4592f7991a11c75515a5b6cd72bafe6bb5df5a1683a53441e6d9eaf2a7",
+    "formalConfigSha256": "b1dce4addfa6963a4b48f8b8bc3c370cb6ebb0f2a0270e0877b87401576d7f24",
+    "installedTreeSha256": "0f30235c99cd2175e01ee7b7ba99d0042fe79826c3831234a8a744f9a9765f1d",
+    "variablesSha256": "2743b557e998bb385f9d54ff88ea94e9fbb917fb5748a8f36e474b5234faa1ce"
+  },
+  "modules": [
+    {
+      "file": "import_manual_release.py",
+      "beforeSha256": "7aabb2bd9674aaa6e3b22dc40e874de3390faab6494499fb6fa9faf33c95bdf3",
+      "afterSha256": "cae29bc631135a39aa9f864d879bd6057df3da17be2a42fb9f5f10b1b77bac1c",
+      "action": "REPLACE"
+    },
+    {
+      "file": "receiver.py",
+      "beforeSha256": "7fb3be8a3094ede6a7332a0ca1b0dcf1f374e932dfde93cd42acde04f1b0ea49",
+      "afterSha256": "af09ef2caeb3f002bc7cc25232139b708a544014ab28bb1bf11853d7826fd1bb",
+      "action": "REPLACE"
+    },
+    {
+      "file": "release_bundle.py",
+      "beforeSha256": "56f9d048d9eb4a5f87b6266c5c9f77bbcffbdffb29784a3b9390b9bb92552117",
+      "afterSha256": "7d918a36af8d16ac159e13d5acdaa5afe76ade8ab588f28667ee3a6e1f436bc5",
+      "action": "REPLACE"
+    },
+    {
+      "file": "release_records.py",
+      "beforeSha256": "a29f8ac934135f97adaca7c02de5341c3e8b5dd0710d4bee9013cef4ae203c27",
+      "afterSha256": "597a6f3c210e31e4082e5eacfee3ac6420a808f840de21692b80b3e5f3c4eeb8",
+      "action": "REPLACE"
+    },
+    {
+      "file": "rollback_release.py",
+      "beforeSha256": "349bc3b1d41f0c76dcaf9a26ce70d1ebd60f85c1cb470fbc531bd2cc42b9c8b1",
+      "afterSha256": "6032c95a413b0f43035fd163a62089a72b191d5733770dc6e212f830d2642358",
+      "action": "REPLACE"
+    },
+    {
+      "file": "source_authority.py",
+      "beforeSha256": "c3adf08cc5b79a3bb666d29c5de1b2fbc82995ee7f0933e89da2ee60c834bf86",
+      "afterSha256": "c3adf08cc5b79a3bb666d29c5de1b2fbc82995ee7f0933e89da2ee60c834bf86",
+      "action": "RETAIN_INSTALLED",
+      "repositorySha256": "933bcf31d6f6141c25f2302b2e4ef0474df989b2be424d01e665c45a6eab6793",
+      "reason": "Same Python source after newline normalization; avoid needless installed-file replacement."
+    },
+    {
+      "file": "indexing_profile.py",
+      "beforeSha256": null,
+      "afterSha256": "a083ce31cf13d2388b0a8ec7974c97f45e9d8c9bbdd811c38a56bf033f92dee1",
+      "action": "ADD"
+    },
+    {
+      "file": "owner_records.py",
+      "beforeSha256": null,
+      "afterSha256": "63cee668e0a367c36104abf3ec39f8213d39cd864b73764a1438b5edb9e97a18",
+      "action": "ADD"
+    }
+  ],
+  "policyBefore": {
+    "approvedSourceShas": [],
+    "bootstrapSourceSha": "88ac30aa31d4c806e6af9a71b955db2f0dd16967",
+    "enabled": false,
+    "repository": "Tkkdy/tkkdyyy.github.io",
+    "reviewedWorkflowSha": "NOT_CONFIGURED",
+    "root": "/srv/www/preview.boenbot.top",
+    "site": "https://preview.boenbot.top",
+    "sourceAuthority": "github-main"
+  },
+  "policyStagedDisabled": {
+    "approvedSourceShas": [],
+    "bootstrapSourceSha": "88ac30aa31d4c806e6af9a71b955db2f0dd16967",
+    "enabled": false,
+    "repository": "Tkkdy/tkkdyyy.github.io",
+    "reviewedWorkflowSha": "FROZEN_REVIEWED_PR_HEAD",
+    "root": "/srv/www/preview.boenbot.top",
+    "site": "https://tkkdy.me",
+    "sourceAuthority": "github-main",
+    "indexingProfile": "production"
+  },
+  "policyForControlledRelease": {
+    "approvedSourceShas": [],
+    "bootstrapSourceSha": "88ac30aa31d4c806e6af9a71b955db2f0dd16967",
+    "enabled": true,
+    "repository": "Tkkdy/tkkdyyy.github.io",
+    "reviewedWorkflowSha": "FROZEN_REVIEWED_PR_HEAD",
+    "root": "/srv/www/preview.boenbot.top",
+    "site": "https://tkkdy.me",
+    "sourceAuthority": "github-main",
+    "indexingProfile": "production"
+  },
+  "variablesBefore": {
+    "PAGES_SITE_URL": "https://tkkdy.github.io/tkkdyyy.github.io/",
+    "PUBLIC_ADMIN_ORIGIN": "https://editor.boenbot.top",
+    "REVIEWED_PIPELINE_SHA": "a337bc59eeba7256e220a88aac1c7e6941290729",
+    "VPS_AUTODEPLOY_ENABLED": "false",
+    "VPS_SITE_URL": "https://preview.boenbot.top"
+  },
+  "variablesProposed": {
+    "PAGES_SITE_URL": "https://tkkdy.github.io/tkkdyyy.github.io/",
+    "PUBLIC_ADMIN_ORIGIN": "https://editor.boenbot.top",
+    "REVIEWED_PIPELINE_SHA": "FROZEN_REVIEWED_PR_HEAD",
+    "VPS_AUTODEPLOY_ENABLED": "false",
+    "VPS_SITE_URL": "https://tkkdy.me",
+    "VPS_INDEXING_PROFILE": "production",
+    "VPS_SSH_HOST": "203.55.176.11",
+    "VPS_SSH_USER": "preview-deploy"
+  },
+  "nginxChanges": [],
+  "sshConfigChanges": [],
+  "aclChangesRequiringApproval": [
+    {
+      "path": "/srv/www/preview.boenbot.top",
+      "namedUser": "preview-deploy",
+      "permissions": "rwx"
+    },
+    {
+      "path": "/srv/www/preview.boenbot.top/releases",
+      "namedUser": "preview-deploy",
+      "permissions": "rwx"
+    },
+    {
+      "path": "/srv/www/preview.boenbot.top/records",
+      "namedUser": "preview-deploy",
+      "permissions": "rwx"
+    },
+    {
+      "path": "/srv/www/preview.boenbot.top/records/.ci.lock",
+      "namedUser": "preview-deploy",
+      "permissions": "rw"
+    }
+  ],
+  "completionSeal": {
+    "source": "/var/tmp/owner-launch-linux-0007.status.json",
+    "sourceSha256": "3438dab0bf2e3e9ccfcaf1d80384e78f13e909ab5483f73e40b35df2662025f4",
+    "manualRecordSha256": "1af8c7384c7ba71ce21923065f09010034d2e9451e5691d0b60082225ba60984",
+    "destination": "/srv/www/preview.boenbot.top/records/owner-completion-owner-tkkdy-d3b094b33d24-2026102900000007.json",
+    "uid": 0,
+    "gid": 987,
+    "mode": "0640",
+    "overwrite": false
+  },
+  "unverified": [
+    "contentAutoMergeEnabled current boolean and private session effect; sudo -n read-only flag extraction denied password",
+    "vps-preview environment endpoint HTTP404; required reviewer protection not verified",
+    "repository deployment secret names absent; environment secret endpoint HTTP404; credential readiness NOT VERIFIED",
+    "existing forced SSH deploy-key handshake NOT RUN; no key/security modifications authorized"
+  ],
+  "automaticPublishingEnabledByThisPlan": false
+}

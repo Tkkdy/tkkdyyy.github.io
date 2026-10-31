@@ -12,6 +12,9 @@ def read_record(root,rid):
         require(p.name.startswith('deploy-'),'legacy/manual provenance ambiguous')
         return read_legacy_bridge(root,rid,p)
     value=json.loads(p.read_text())
+    if p.name.startswith('manual-') and value.get('recordType')=='OWNER_DERIVED_STATIC':
+        from owner_records import validate_record
+        return validate_record(root,rid,value)
     if p.name.startswith('manual-'):
         require(value.get('recordType')=='OWNER_IMPORTED_MANUAL' and value.get('fullManifestVerified') is True and value.get('publicCriticalVerified') is True,'manual verification missing')
         require(value.get('ciAccepted') is False,'manual record cannot claim CI acceptance')
