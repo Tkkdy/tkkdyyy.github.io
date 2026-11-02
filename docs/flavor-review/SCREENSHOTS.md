@@ -117,3 +117,5 @@
 | [music-stage-1920.webp](screenshots/music-stage-1920.webp) | 最新放大卡片及分阶段动效的最终状态 |
 | [music-stage-320.webp](screenshots/music-stage-320.webp) | 最新放大卡片及分阶段动效的最终状态 |
 | [music-stage-390.webp](screenshots/music-stage-390.webp) | 最新放大卡片及分阶段动效的最终状态 |
+| [music-proportion-1920.webp](screenshots/music-proportion-1920.webp) | 最新比例调整：桌面440×200，末段上移0.4秒 |
+| [music-proportion-390.webp](screenshots/music-proportion-390.webp) | 最新比例调整：桌面440×200，末段上移0.4秒 |

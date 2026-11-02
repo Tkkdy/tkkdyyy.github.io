@@ -1,0 +1,25 @@
+{
+  "checks": [
+    {
+      "viewport": 1920,
+      "title": 1600,
+      "controls": 400,
+      "delay": 1200,
+      "width": 440,
+      "height": 200,
+      "bottomSpace": 41,
+      "overflow": false
+    },
+    {
+      "viewport": 390,
+      "title": 1600,
+      "controls": 400,
+      "delay": 1200,
+      "width": 342,
+      "height": 190,
+      "bottomSpace": 44,
+      "overflow": false
+    }
+  ],
+  "state": "PASS"
+}
