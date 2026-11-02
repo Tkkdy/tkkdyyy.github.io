@@ -29,7 +29,7 @@ async function shot(page,name){const path=`docs/flavor-review/screenshots/${targ
 async function playing(page){await page.waitForFunction(()=>{const a=document.querySelector('audio');return a&&!a.paused&&a.currentTime>0;});}
 async function samples(page){
  const values=[];for(let i=0;i<15;i++){values.push(await page.locator('audio').evaluate(a=>({volume:a.volume,time:a.currentTime,paused:a.paused})));await page.waitForTimeout(200);}
- assert(values.some(v=>v.volume>0.02&&v.volume<0.55),'intermediate fade volume');assert(Math.abs(values.at(-1).volume-0.6)<0.01,'target volume');
+ assert(values.some(v=>v.volume>0.02&&v.volume<0.3),'intermediate fade volume');assert(Math.abs(values.at(-1).volume-0.35)<0.01,'target volume');
  for(let i=1;i<values.length;i++)assert(values[i].volume>=values[i-1].volume,'monotonic fade');return values;
 }
 try{
@@ -42,13 +42,13 @@ try{
   assert.equal(await page.locator('[data-music-state]').innerText(),'正在播放');await shot(page,`music-click-fade-${width}`);
   await page.locator('audio').evaluate(a=>a.pause());const paused=await page.locator('audio').evaluate(a=>a.volume);await page.waitForTimeout(300);assert.equal(await page.locator('audio').evaluate(a=>a.volume),paused);
   assert.equal(await page.locator('[data-music-state]').innerText(),'已暂停');
-  report.checks.push({test:`${width}: fresh visit blocked without media request; native click fades over 2.4s to 60%; pause works`,fade});await c.close();
+  report.checks.push({test:`${width}: fresh visit blocked without media request; native click fades over 2.4s to 35%; pause works`,fade});await c.close();
  }
  for(const width of [1440,390]){
   const {c,page}=await context(width);await page.goto(url);if(width<768)await page.locator("[data-mobile-menu] summary").click();await page.locator(`a[href="${base}about/"]:visible`).first().click();await playing(page);const fade=await samples(page);await shot(page,`music-entry-autofade-${width}`);
   // Pause during a second fade, then ensure its animation cannot change volume in the background.
   await page.locator('audio').evaluate(a=>a.pause());await page.locator('audio').click({position:{x:24,y:26}});await playing(page);await page.waitForTimeout(300);await page.locator('audio').evaluate(a=>a.pause());
-  const paused=await page.locator('audio').evaluate(a=>({volume:a.volume,time:a.currentTime}));assert(paused.volume<0.6);await page.waitForTimeout(450);assert.deepEqual(await page.locator('audio').evaluate(a=>({volume:a.volume,time:a.currentTime})),paused);
+  const paused=await page.locator('audio').evaluate(a=>({volume:a.volume,time:a.currentTime}));assert(paused.volume<0.35);await page.waitForTimeout(450);assert.deepEqual(await page.locator('audio').evaluate(a=>({volume:a.volume,time:a.currentTime})),paused);
   // User volume adjustment wins over a running fade.
   await page.locator('audio').click({position:{x:24,y:26}});await playing(page);await page.locator('audio').evaluate(a=>{a.volume=0.22;});await page.waitForTimeout(400);assert.equal(await page.locator('audio').evaluate(a=>a.volume),0.22);
   // Capture the actual old audio element state after navigation's real pagehide event.

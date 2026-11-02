@@ -12,7 +12,7 @@ const directAudio = /\.mp3(?:[?#]|$)/i.test(music.source);
   const audio = document.querySelector<HTMLAudioElement>('[data-music]');
   const status = document.querySelector<HTMLElement>('[data-music-state]');
   if (audio && status) {
-    const targetVolume = 0.6;
+    const targetVolume = 0.35;
     const fadeDuration = 2400;
     let unavailable = false;
     let leaving = false;

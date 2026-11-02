@@ -2,106 +2,106 @@
 > tkkdy-personal-website@0.1.0 build:vps
 > astro build --config astro.config.vps.mjs && node scripts/normalize-public-urls.mjs vps && node scripts/prune-vps-admin.mjs && pagefind --site dist && node scripts/write-vps-profile.mjs
 
-04:36:20 [content] Syncing content
-04:36:20 [content] Astro config changed
-04:36:20 [content] Clearing content store
-04:36:20 [content] Synced content
-04:36:20 [types] Generated 665ms
-04:36:20 [build] output: "static"
-04:36:20 [build] mode: "static"
-04:36:20 [build] directory: C:\Users\PsyDuck\.codex\worktrees\tkkdy-flavor-20261102\dist\
-04:36:20 [build] Collecting build info...
-04:36:20 [build] ✓ Completed in 714ms.
-04:36:21 [build] Building static entrypoints...
-04:36:21 [vite] ✓ built in 426ms
-04:36:21 [WARN] [vite] [plugin builtin:vite-reporter]
+06:40:52 [content] Syncing content
+06:40:52 [content] Astro config changed
+06:40:52 [content] Clearing content store
+06:40:52 [content] Synced content
+06:40:52 [types] Generated 1.00s
+06:40:52 [build] output: "static"
+06:40:52 [build] mode: "static"
+06:40:52 [build] directory: C:\Users\PsyDuck\.codex\worktrees\tkkdy-flavor-20261102\dist\
+06:40:52 [build] Collecting build info...
+06:40:52 [build] ✓ Completed in 1.10s.
+06:40:52 [build] Building static entrypoints...
+06:40:53 [vite] ✓ built in 733ms
+06:40:53 [WARN] [vite] [plugin builtin:vite-reporter]
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-04:36:21 [vite] ✓ built in 232ms
-04:36:21 [build] Rearranging server assets...
+06:40:53 [vite] ✓ built in 421ms
+06:40:53 [build] Rearranging server assets...
 
  generating static routes
-04:36:21   ├─ /404.html (+11ms)
-04:36:21   ├─ /about/index.html (+5ms)
-04:36:21   ├─ /admin/content/index.html (+19ms)
-04:36:21   ├─ /admin/drafts/index.html (+5ms)
-04:36:21   ├─ /admin/preview/index.html (+5ms)
-04:36:21   ├─ /admin/proposals/index.html (+4ms)
-04:36:21   ├─ /admin/settings/index.html (+3ms)
-04:36:21   ├─ /admin/stories/new/index.html (+4ms)
-04:36:21   ├─ /admin/stories/essay-ipad-pro/index.html (+3ms)
-04:36:21   ├─ /admin/stories/article-context-is-the-new-interface/index.html (+2ms)
-04:36:21   ├─ /admin/stories/essay-games/index.html (+2ms)
-04:36:21   ├─ /admin/stories/essay-p1-editor-migration-verification-20261027/index.html (+2ms)
-04:36:21   ├─ /admin/stories/essay-chances/index.html (+1ms)
-04:36:21   ├─ /admin/stories/essay-agency/index.html (+2ms)
-04:36:21   ├─ /admin/stories/essay-re/index.html (+3ms)
-04:36:21   ├─ /admin/stories/essay-grokchrome/index.html (+3ms)
-04:36:21   ├─ /admin/stories/essay-mmqm/index.html (+3ms)
-04:36:21   ├─ /admin/stories/essay-wonderland/index.html (+3ms)
-04:36:21   ├─ /admin/stories/essay-tingge/index.html (+2ms)
-04:36:22   ├─ /admin/stories/essay-swatow/index.html (+2ms)
-04:36:22   ├─ /admin/stories/essay-qing/index.html (+2ms)
-04:36:22   ├─ /admin/stories/essay-gfw/index.html (+3ms)
-04:36:22   ├─ /admin/stories/essay-story-2026-09-12/index.html (+3ms)
-04:36:22   ├─ /admin/stories/fragment-2026-08-05-context-compounds/index.html (+2ms)
-04:36:22   ├─ /admin/stories/essay-i-only-wanted-to-watch-youtube/index.html (+2ms)
-04:36:22   ├─ /admin/stories/index.html (+6ms)
-04:36:22   ├─ /admin/index.html (+4ms)
-04:36:22   ├─ /articles/context-is-the-new-interface/index.html (+22ms)
-04:36:22   ├─ /articles/index.html (+6ms)
-04:36:22   ├─ /categories/随笔/index.html (+5ms)
-04:36:22   ├─ /categories/思考/index.html (+4ms)
-04:36:22   ├─ /categories/歌/index.html (+3ms)
-04:36:22   ├─ /categories/技术/index.html (+2ms)
-04:36:22   ├─ /categories/index.html (+5ms)
-04:36:22   ├─ /essays/ipad-pro/index.html (+5ms)
-04:36:22   ├─ /essays/games/index.html (+7ms)
-04:36:22   ├─ /essays/chances/index.html (+4ms)
-04:36:22   ├─ /essays/agency/index.html (+2ms)
-04:36:22   ├─ /essays/re/index.html (+5ms)
-04:36:22   ├─ /essays/grokchrome/index.html (+5ms)
-04:36:22   ├─ /essays/mmqm/index.html (+2ms)
-04:36:22   ├─ /essays/wonderland/index.html (+3ms)
-04:36:22   ├─ /essays/tingge/index.html (+2ms)
-04:36:22   ├─ /essays/swatow/index.html (+3ms)
-04:36:22   ├─ /essays/qing/index.html (+3ms)
-04:36:22   ├─ /essays/gfw/index.html (+2ms)
-04:36:22   ├─ /essays/story-2026-09-12/index.html (+3ms)
-04:36:22   ├─ /essays/i-only-wanted-to-watch-youtube/index.html (+3ms)
-04:36:22   ├─ /essays/index.html (+8ms)
-04:36:22   ├─ /fragments/index.html (+6ms)
-04:36:22   ├─ /images/photo-main-landscape/index.html (+2ms)
-04:36:22   ├─ /images/photo-portrait/index.html (+2ms)
-04:36:22   ├─ /images/photo-square/index.html (+1ms)
-04:36:22   ├─ /images/index.html (+8ms)
-04:36:22   ├─ /projects/morning-radar/index.html (+4ms)
-04:36:22   ├─ /projects/c-console-games/index.html (+3ms)
-04:36:22   ├─ /projects/codex-reconnect-proxy-fix/index.html (+3ms)
-04:36:22   ├─ /projects/esp32-led-experiments/index.html (+3ms)
-04:36:22   ├─ /projects/girlfriend-desktop-pet/index.html (+2ms)
-04:36:22   ├─ /projects/tkkdy-personal-website/index.html (+3ms)
-04:36:22   ├─ /projects/index.html (+5ms)
-04:36:22   ├─ /robots.txt (+4ms)
-04:36:22   ├─ /rss.xml (+58ms)
-04:36:22   ├─ /search/index.html (+6ms)
-04:36:22   ├─ /tags/回忆/index.html (+2ms)
-04:36:22   ├─ /tags/feelings/index.html (+2ms)
-04:36:22   ├─ /tags/ai/index.html (+2ms)
-04:36:22   ├─ /tags/互联网/index.html (+1ms)
-04:36:22   ├─ /tags/批判/index.html (+2ms)
-04:36:22   ├─ /tags/个人助理/index.html (+2ms)
-04:36:22   ├─ /tags/上下文/index.html (+2ms)
-04:36:22   ├─ /tags/index.html (+4ms)
-04:36:22   ├─ /index.html (+5ms)
-04:36:22 ✓ Completed in 489ms.
+06:40:53   ├─ /404.html (+32ms)
+06:40:53   ├─ /about/index.html (+9ms)
+06:40:53   ├─ /admin/content/index.html (+7ms)
+06:40:53   ├─ /admin/drafts/index.html (+7ms)
+06:40:53   ├─ /admin/preview/index.html (+7ms)
+06:40:53   ├─ /admin/proposals/index.html (+7ms)
+06:40:53   ├─ /admin/settings/index.html (+7ms)
+06:40:53   ├─ /admin/stories/new/index.html (+9ms)
+06:40:53   ├─ /admin/stories/essay-ipad-pro/index.html (+6ms)
+06:40:53   ├─ /admin/stories/article-context-is-the-new-interface/index.html (+4ms)
+06:40:53   ├─ /admin/stories/essay-games/index.html (+4ms)
+06:40:53   ├─ /admin/stories/essay-p1-editor-migration-verification-20261027/index.html (+4ms)
+06:40:53   ├─ /admin/stories/essay-chances/index.html (+4ms)
+06:40:53   ├─ /admin/stories/essay-agency/index.html (+3ms)
+06:40:53   ├─ /admin/stories/essay-re/index.html (+3ms)
+06:40:53   ├─ /admin/stories/essay-grokchrome/index.html (+3ms)
+06:40:53   ├─ /admin/stories/essay-mmqm/index.html (+4ms)
+06:40:53   ├─ /admin/stories/essay-wonderland/index.html (+4ms)
+06:40:53   ├─ /admin/stories/essay-tingge/index.html (+4ms)
+06:40:53   ├─ /admin/stories/essay-swatow/index.html (+5ms)
+06:40:53   ├─ /admin/stories/essay-qing/index.html (+5ms)
+06:40:53   ├─ /admin/stories/essay-gfw/index.html (+5ms)
+06:40:54   ├─ /admin/stories/essay-story-2026-09-12/index.html (+5ms)
+06:40:54   ├─ /admin/stories/fragment-2026-08-05-context-compounds/index.html (+5ms)
+06:40:54   ├─ /admin/stories/essay-i-only-wanted-to-watch-youtube/index.html (+5ms)
+06:40:54   ├─ /admin/stories/index.html (+12ms)
+06:40:54   ├─ /admin/index.html (+8ms)
+06:40:54   ├─ /articles/context-is-the-new-interface/index.html (+31ms)
+06:40:54   ├─ /articles/index.html (+5ms)
+06:40:54   ├─ /categories/随笔/index.html (+4ms)
+06:40:54   ├─ /categories/思考/index.html (+3ms)
+06:40:54   ├─ /categories/歌/index.html (+2ms)
+06:40:54   ├─ /categories/技术/index.html (+2ms)
+06:40:54   ├─ /categories/index.html (+5ms)
+06:40:54   ├─ /essays/ipad-pro/index.html (+6ms)
+06:40:54   ├─ /essays/games/index.html (+7ms)
+06:40:54   ├─ /essays/chances/index.html (+3ms)
+06:40:54   ├─ /essays/agency/index.html (+6ms)
+06:40:54   ├─ /essays/re/index.html (+4ms)
+06:40:54   ├─ /essays/grokchrome/index.html (+4ms)
+06:40:54   ├─ /essays/mmqm/index.html (+4ms)
+06:40:54   ├─ /essays/wonderland/index.html (+4ms)
+06:40:54   ├─ /essays/tingge/index.html (+3ms)
+06:40:54   ├─ /essays/swatow/index.html (+2ms)
+06:40:54   ├─ /essays/qing/index.html (+3ms)
+06:40:54   ├─ /essays/gfw/index.html (+2ms)
+06:40:54   ├─ /essays/story-2026-09-12/index.html (+2ms)
+06:40:54   ├─ /essays/i-only-wanted-to-watch-youtube/index.html (+2ms)
+06:40:54   ├─ /essays/index.html (+10ms)
+06:40:54   ├─ /fragments/index.html (+9ms)
+06:40:54   ├─ /images/photo-main-landscape/index.html (+5ms)
+06:40:54   ├─ /images/photo-portrait/index.html (+2ms)
+06:40:54   ├─ /images/photo-square/index.html (+3ms)
+06:40:54   ├─ /images/index.html (+8ms)
+06:40:54   ├─ /projects/morning-radar/index.html (+3ms)
+06:40:54   ├─ /projects/c-console-games/index.html (+3ms)
+06:40:54   ├─ /projects/codex-reconnect-proxy-fix/index.html (+2ms)
+06:40:54   ├─ /projects/esp32-led-experiments/index.html (+2ms)
+06:40:54   ├─ /projects/girlfriend-desktop-pet/index.html (+2ms)
+06:40:54   ├─ /projects/tkkdy-personal-website/index.html (+2ms)
+06:40:54   ├─ /projects/index.html (+5ms)
+06:40:54   ├─ /robots.txt (+3ms)
+06:40:54   ├─ /rss.xml (+67ms)
+06:40:54   ├─ /search/index.html (+4ms)
+06:40:54   ├─ /tags/回忆/index.html (+2ms)
+06:40:54   ├─ /tags/feelings/index.html (+2ms)
+06:40:54   ├─ /tags/ai/index.html (+2ms)
+06:40:54   ├─ /tags/互联网/index.html (+2ms)
+06:40:54   ├─ /tags/批判/index.html (+3ms)
+06:40:54   ├─ /tags/个人助理/index.html (+2ms)
+06:40:54   ├─ /tags/上下文/index.html (+3ms)
+06:40:54   ├─ /tags/index.html (+4ms)
+06:40:54   ├─ /index.html (+5ms)
+06:40:54 ✓ Completed in 652ms.
 
-04:36:22 [build] ✓ Completed in 1.27s.
-04:36:22 [@astrojs/sitemap] `sitemap-index.xml` created at `dist`
-04:36:22 [build] 71 page(s) built in 2.04s
-04:36:22 [build] Complete!
+06:40:54 [build] ✓ Completed in 1.89s.
+06:40:54 [@astrojs/sitemap] `sitemap-index.xml` created at `dist`
+06:40:54 [build] 71 page(s) built in 3.08s
+06:40:54 [build] Complete!
 {"step":"normalize-public-urls","target":"vps","htmlFiles":74,"rewrittenAttributes":0}
 {"step":"vps-admin-before-removal","files":["config.yml","content/index.html","drafts/index.html","index.html","preview/index.html","proposals/index.html","settings/index.html","stories/article-context-is-the-new-interface/index.html","stories/essay-agency/index.html","stories/essay-chances/index.html","stories/essay-games/index.html","stories/essay-gfw/index.html","stories/essay-grokchrome/index.html","stories/essay-i-only-wanted-to-watch-youtube/index.html","stories/essay-ipad-pro/index.html","stories/essay-mmqm/index.html","stories/essay-p1-editor-migration-verification-20261027/index.html","stories/essay-qing/index.html","stories/essay-re/index.html","stories/essay-story-2026-09-12/index.html","stories/essay-swatow/index.html","stories/essay-tingge/index.html","stories/essay-wonderland/index.html","stories/fragment-2026-08-05-context-compounds/index.html","stories/index.html","stories/new/index.html","sveltia-loader.js","sveltia-proposal.css","sveltia-proposal.html","sveltia-proposal.js","sveltia-workspace.html","sveltia.html","vendor/MATERIAL-SYMBOLS-LICENSE.txt","vendor/SVELTIA-LICENSE.txt","vendor/cms-fonts.css","vendor/fonts-provenance.json","vendor/material-symbols-3ae08513a063.woff2","vendor/provenance.json","vendor/sveltia-cms-0.164.2.js"]}
 [build:vps] Removed dist/admin/ (39 files) before Pagefind indexing.
@@ -134,4 +134,4 @@ Search will still work, but will not match across root words.
 Note: Pagefind doesn't support stemming for the language zh-cn.
 Search will still work, but will not match across root words.
 
-Finished in 0.193 seconds
+Finished in 0.233 seconds

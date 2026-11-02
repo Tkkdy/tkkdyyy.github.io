@@ -27,7 +27,7 @@ Owner 后续明确要求“打开关于页面就直接淡入音乐”，覆盖�
 | `src/pages/admin/settings.astro` / `src/lib/admin/site-settings-client.ts` / `AdminSidebar.astro` | 设置入口读取精确 Git blob；沿用云端私有草稿/CAS、IME 保护、备份、文字内容预览和现有 PR 提案流程。无前端管理员令牌；未知写入结果不自动重试。没有增加数据库或认证体系。 |
 | `ops/admin-broker/content-reader.mjs` / `policy.mjs` | 仅增加 `src/content/site/settings.json` 精确读写路径；拒绝任意 JSON、无效 URL、超长/未知字段和删除设置文件。没有修改线上权限、自动合并配置或发布工作流。 |
 | `src/lib/admin/resource-editor-client.ts` / `photo-upload.ts` | 在现有影像编辑页增加 window 的选择/短句字段。新上传照片通过浏览器像素缓冲区移除 EXIF/GPS、最长边 4096px WebP；其他项目上传流程不改。若直接通过 Git 添加原图，仍应先清除原图元数据；窗口衍生图的去元数据不能替代原文件处理。 |
-| `src/components/MusicCard.astro` / `src/pages/about.astro` / `media/music/*.mp3` | 仅关于页，进入后自动尝试从 1% 音量以 2.4 秒淡入至 60%；浏览器拦截时显示原生点击播放入口，点击后同样淡入。保留原生暂停/音量操作，手动音量优先，离页停止并归零；失效来源显示失败，无来源保留文字并隐藏操作。Artist 按 Owner 提供文件名 Angelika Vee，不另行指定录音版本/封面。音源使用本轮授权素材已推送版本的固定 HTTPS Raw URL；MP3 留在 media/，不进入静态发布包。 |
+| `src/components/MusicCard.astro` / `src/pages/about.astro` / `media/music/*.mp3` | 仅关于页，进入后自动尝试从 1% 音量以 2.4 秒淡入至 35%；浏览器拦截时显示原生点击播放入口，点击后同样淡入。保留原生暂停/音量操作，手动音量优先，离页停止并归零；失效来源显示失败，无来源保留文字并隐藏操作。Artist 按 Owner 提供文件名 Angelika Vee，不另行指定录音版本/封面。音源使用本轮授权素材已推送版本的固定 HTTPS Raw URL；MP3 留在 media/，不进入静态发布包。 |
 | `package.json` / lock | 将 Astro 已带有的 sharp 0.35.5 声明为直接依赖，供图片解码/去元数据/多尺寸构建；没有引入轮播库、后台或额外运行服务。 |
 
 4. **验收证据**
@@ -41,7 +41,7 @@ Owner 后续明确要求“打开关于页面就直接淡入音乐”，覆盖�
 | `ADMIN_SITE_URL=http://127.0.0.1:19544 npm run build:admin` | 私有编辑台本地构建成功，[build-admin.txt](build-admin.txt) |
 | `node scripts/build-flavor-fixtures.mjs` | 临时创建带醒目标注的测试像素/文案，构建 fixture-pages/fixture-vps/no-source，finally 恢复真实配置并删除临时内容。日志 `build-fixture-*.txt`。 |
 | `node tests/flavor.browser.mjs`（已按新要求复验） | 双站 1440/1024/390/320、原模块顺序、0/1/多图、手动不立即重复/会话保持、无 JS、键盘/减少动效、缺图和音源 404、合法附件 MP3 点击播放/暂停/离页、无源卡、独立留空字段均通过。67 张公开页面截图（另含 4 张编辑台、3 张线上只读、1 张实际 HTTPS 音源截图），[browser-results.json](browser-results.json)。本地 UI 测试以附件原始字节模拟 CDN 响应；实际 HTTPS 音源另行真实验证（下行）。证明解码/播放行为，未声称真人听感验收。 |
-| `node tests/flavor-music.browser.mjs`（新增） | 最新 Pages 与 VPS 产物、1440/390px 真 Chromium：首次访问自动播放被拦截且无媒体请求、原生点击后单调渐入、经真实站内点击进入后自动渐入、2.4 秒到 60%、中途暂停取消动画、手动音量优先、真实 pagehide 停止并归零、自动播放遇 404 均通过。未使用自动播放策略放行参数；CDN 以授权原始字节本地响应。见 [Pages](music-autofade-pages.json)、[VPS](music-autofade-vps.json)。未验收实体手机、Safari 或真人听感；iOS 可能由系统控制音量。 |
+| `node tests/flavor-music.browser.mjs`（新增） | 最新 Pages 与 VPS 产物、1440/390px 真 Chromium：首次访问自动播放被拦截且无媒体请求、原生点击后单调渐入、经真实站内点击进入后自动渐入、2.4 秒到 35%、中途暂停取消动画、手动音量优先、真实 pagehide 停止并归零、自动播放遇 404 均通过。未使用自动播放策略放行参数；CDN 以授权原始字节本地响应。见 [Pages](music-autofade-pages.json)、[VPS](music-autofade-vps.json)。未验收实体手机、Safari 或真人听感；iOS 可能由系统控制音量。 |
 | `node tests/flavor-audio-source.browser.mjs` | 实际固定 HTTPS 音源 200、5,105,577 字节/附件 SHA256 一致；真实 Chromium 不预加载、点击后播放/暂停通过，时长 124.233 秒。见 [audio-https-results.json](audio-https-results.json)。 |
 | 凌晨边界 | 上海和洛杉矶本地 23:59/00:00/04:59/05:00 全通过；准确文字“这么晚还不睡，早点睡觉哦。”。同一页面跨 05:00 只收起问候，不切照片。 |
 | `node tests/flavor-season.browser.mjs` | 两个浏览器时区 8/31→9/1 的季节/加权选择实际通过，[season-browser-results.json](season-browser-results.json)。 |
