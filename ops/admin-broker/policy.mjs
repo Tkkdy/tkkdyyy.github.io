@@ -2,10 +2,11 @@
 import {parse,Kind,valueFromASTUntyped,visit} from 'graphql';
 import {parseFragment} from 'parse5';
 import YAML from 'yaml';
+import { SETTINGS_PATH, validateSiteSettings } from '../../src/lib/site-settings.mjs';
 export function requirePolicy(ok,message){if(!ok)throw Object.assign(Error(message),{status:403});}
 const CONTENT=/^src\/content\/(articles|essays|fragments|projects|images)\/[\p{L}\p{N}][\p{L}\p{N}_.-]{0,180}\.md$/u;
 const MEDIA=/^public\/uploads\/(?:[\p{L}\p{N}][\p{L}\p{N}_.-]*\/)*[\p{L}\p{N}][\p{L}\p{N}_.-]{0,180}\.(png|jpe?g|gif|webp|avif|svg)$/iu;
-export function permittedPath(path){return typeof path==='string'&&path.length<250&&(CONTENT.test(path)||MEDIA.test(path));}
+export function permittedPath(path){return typeof path==='string'&&path.length<250&&(CONTENT.test(path)||MEDIA.test(path)||path===SETTINGS_PATH);}
 function decodeContents(value){
  requirePolicy(typeof value==='string'&&value.length<=11_000_000&&/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(value),'文件内容不是受支持的base64。');
  const data=Buffer.from(value,'base64');requirePolicy(data.length<=8_000_000,'单文件不得超过8MB。');return data;
@@ -31,7 +32,10 @@ export function validateSvg(text){
 export function validateAddition({path,contents}){
  requirePolicy(permittedPath(path),'只能修改内容集合和上传图片。');const body=decodeContents(contents);
  requirePolicy(!/-----BEGIN (?:[A-Z ]*PRIVATE KEY)|github_pat_[A-Za-z0-9_]{30,}|gh[pousr]_[A-Za-z0-9]{30,}|sk-proj-[A-Za-z0-9_-]{30,}/.test(body.toString('utf8')),'内容可能含私钥或Token，已拒绝发布。');
- if(CONTENT.test(path)){
+ if(path===SETTINGS_PATH){
+  requirePolicy(body.length<=16000,'站点设置过大。');
+  try{validateSiteSettings(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(body)));}catch{requirePolicy(false,'站点设置格式或音源无效。');}
+ }else if(CONTENT.test(path)){
   requirePolicy(body.length<=1_000_000,'Markdown文件过大。');const text=new TextDecoder('utf-8',{fatal:true}).decode(body),front=text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
   requirePolicy(front&&front[1].length<=32_000,'缺少有效frontmatter。');const doc=YAML.parseDocument(front[1]);requirePolicy(!doc.errors.length,'frontmatter格式错误。');const data=doc.toJS({maxAliasCount:0});
   requirePolicy(data&&typeof data==='object'&&!Array.isArray(data),'frontmatter须为对象。');
@@ -63,6 +67,7 @@ export function validateCommit(input,config){
  requirePolicy(typeof input.message?.headline==='string'&&input.message.headline.trim()&&input.message.headline.length<=200,'提交说明错误。');
  const additions=input.fileChanges?.additions??[],deletions=input.fileChanges?.deletions??[];
  requirePolicy(Array.isArray(additions)&&Array.isArray(deletions)&&additions.length+deletions.length>0&&additions.length+deletions.length<=64,'文件变更数量错误。');
+ requirePolicy(!deletions.some(file=>file.path===SETTINGS_PATH),'站点设置只能更新，不可删除。');
  const paths=new Set();let total=0;
  for(const file of [...additions,...deletions]){requirePolicy(permittedPath(file.path)&&!paths.has(file.path),'重复文件或不允许的路径。');paths.add(file.path);}
  for(const file of additions)total+=validateAddition(file);requirePolicy(total<=20_000_000,'本次发布资源总量超过20MB。');

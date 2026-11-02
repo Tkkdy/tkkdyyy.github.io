@@ -206,6 +206,12 @@ const images = defineCollection({
     orientation: z.enum(['landscape', 'portrait', 'square']).optional(),
     featured: z.boolean().optional(),
     homepage: homepageSchema.optional(),
+    window: z.object({
+      enabled: z.boolean().default(false),
+      timeOfDay: z.preprocess(value => Array.isArray(value) ? value.filter(item => ['late-night', 'morning', 'daytime', 'dusk', 'night'].includes(item)) : [], z.array(z.string())).default([]),
+      seasons: z.preprocess(value => Array.isArray(value) ? value.filter(item => ['spring', 'summer', 'autumn', 'winter'].includes(item)) : [], z.array(z.string())).default([]),
+      note: z.string().max(240).optional(),
+    }).optional(),
     status: statusSchema,
   }),
 });

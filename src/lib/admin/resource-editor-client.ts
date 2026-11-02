@@ -1,4 +1,5 @@
 import YAML from 'yaml';
+import {photoUploadDataUrl} from './photo-upload';
 import {marked} from 'marked';
 import {sanitizeAdminHtml} from './safe-preview.mjs';
 import {createCloudDraftClient} from './cloud-drafts.mjs';
@@ -36,12 +37,28 @@ export async function initializeResourceEditor(){
    control.name=field.name;control.required=field.required!==false&&field.widget!=='boolean';label.append(control);controls.set(field.name,control);
    if(field.widget==='image'){
     const file=document.createElement('input');file.type='file';file.accept='image/png,image/jpeg,image/webp,image/gif,image/avif';file.setAttribute('aria-label','上传'+field.label);
-    file.addEventListener('change',()=>{const image=file.files?.[0];if(!image)return;if(image.size>8_000_000){message.textContent='图片不得超过8 MB。';return;}const reader=new FileReader();reader.onload=()=>{control.value=String(reader.result);schedule();};reader.readAsDataURL(image);});label.append(file);
+    file.addEventListener('change',async()=>{const image=file.files?.[0];if(!image)return;if(image.size>8_000_000){message.textContent='图片不得超过8 MB。';return;}
+     try{if(source.includes('/images/')){control.value=await photoUploadDataUrl(image);schedule();}else{const reader=new FileReader();reader.onload=()=>{control.value=String(reader.result);schedule();};reader.readAsDataURL(image);}}catch(error){message.textContent=error instanceof Error?error.message:'照片处理失败，未保存。';}
+    });label.append(file);
+    if(source.includes('/images/')){const hint=document.createElement('small');hint.textContent='上传照片会去除 EXIF / GPS 元数据，转换为最长边不超过 4096px 的 WebP。';label.append(hint);}
    }
    container.append(label);
   }
+  // One narrowly scoped nested object; preserve all unrelated project/image metadata.
+  if(source.includes('/images/')){
+   const box=document.createElement('fieldset'),legend=document.createElement('legend');legend.textContent='一扇窗（仅原创且可公开的照片）';box.append(legend);
+   for(const [name,label,widget] of [['window.enabled','允许用于首页窗口','boolean'],['window.timeOfDay','时段：late-night / morning / daytime / dusk / night（每行一项）','list'],['window.seasons','季节：spring / summer / autumn / winter（每行一项）','list'],['window.note','窗边短句','text']]){
+    const field={name,label,widget,required:false};fields.push(field);const row=document.createElement('label');row.textContent=label;
+    const control=widget==='boolean'?document.createElement('input'):document.createElement('textarea');
+    const value=data.window?.[name.split('.')[1]];
+    if(control instanceof HTMLInputElement){control.type='checkbox';control.checked=value===true;}else control.value=Array.isArray(value)?value.join('\n'):String(value??'');
+    control.name=name;row.append(control);controls.set(name,control);box.append(row);
+   }
+   container.append(box);
+  }
   function snapshot(){
    for(const field of fields){const control=controls.get(field.name);if(!control)continue;let value:unknown=control instanceof HTMLInputElement&&control.type==='checkbox'?control.checked:field.widget==='list'?control.value.split('\n').map(s=>s.trim()).filter(Boolean):field.widget==='number'&&control.value?Number(control.value):control.value;
+    if(field.name.startsWith('window.')){doc.setIn(field.name.split('.'),value);continue;}
     if(value===''&&field.required===false){doc.delete(field.name);delete data[field.name];}else{doc.set(field.name,value);data[field.name]=value;}
    }
    return {id:'resource-'+data.slug,title:data.name||data.title||data.slug,type:resource.type,sourcePath:source!,sourceBlobSha,rawContent:'---\n'+doc.toString()+'---\n'+body.value};

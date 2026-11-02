@@ -1,0 +1,7 @@
+---
+import { siteSettings } from '../lib/content/site-settings';
+import '../styles/flavor.css';
+const labels = { doing: '在做什么', listening: '在听什么', thinking: '在想什么' };
+const rows = Object.entries(siteSettings.recent).filter(([, value]) => value);
+---
+{rows.length > 0 && <section class="recent-notes" aria-labelledby="recent-heading"><h2 id="recent-heading">最近</h2><dl>{rows.map(([key, value]) => <div><dt>{labels[key as keyof typeof labels]}</dt><dd>{value}</dd></div>)}</dl></section>}

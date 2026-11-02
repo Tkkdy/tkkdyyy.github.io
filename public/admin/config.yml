@@ -169,3 +169,13 @@ collections:
           - { label: Show, name: show, widget: boolean, default: false }
           - { label: Order, name: order, widget: number, required: false, value_type: int, min: 1 }
       - { label: Status, name: status, widget: select, default: draft, options: [draft, published, archived] }
+
+      - label: 一扇窗
+        name: window
+        widget: object
+        required: false
+        fields:
+          - { label: 允许用于首页窗口（仅原创且可公开的照片）, name: enabled, widget: boolean, default: false }
+          - { label: 拍摄时段（显式标注）, name: timeOfDay, widget: select, multiple: true, required: false, options: [late-night, morning, daytime, dusk, night] }
+          - { label: 季节, name: seasons, widget: select, multiple: true, required: false, options: [spring, summer, autumn, winter] }
+          - { label: 窗边短句, name: note, widget: string, required: false }
