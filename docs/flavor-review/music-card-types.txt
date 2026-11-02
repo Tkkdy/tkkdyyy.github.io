@@ -21,4 +21,3 @@ Result (105 files):
 - 0 errors
 - 0 warnings
 - 3 hints
-
