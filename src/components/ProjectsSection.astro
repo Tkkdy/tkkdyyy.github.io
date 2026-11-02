@@ -1,6 +1,6 @@
 ---
 // 项目区：全宽深色带（#1C1B19）。
-// 主导项目来自 Content Collections（projects）；两个待定槽位是无虚构内容的结构占位，保持硬编码。
+// 主导项目来自 Content Collections（projects），不输出空槽位。
 // 状态文案与查询共用 src/lib/content/projects.ts；githubUrl 存在才显示 GitHub 入口。
 import type { CollectionEntry } from 'astro:content';
 import { PROJECT_STATUS_LABELS } from '../lib/content/projects';
@@ -21,20 +21,13 @@ const [mainProject] = projects;
       <span>项目与实验</span>
     </div>
 
-    <!-- 主导项目 -->
+    <!-- 已公开项目及真实 Console 素材 -->
     <div class="project-main">
       <div class="project-visual-col">
         <a class="project-visual-link group" href={withBase(`projects/${mainProject.data.slug}/`)}>
-          <div class="css-placeholder scale-inner scale-transition project-visual">
-            <span>Project Interface</span>
-            <span class="ratio">1:1</span>
-
-            <!-- 占位图内嵌技术标签 -->
-            <div class="project-tags">
-              {mainProject.data.techStack?.map((tech) => <span class="tech-tag">{tech}</span>)}
-            </div>
-          </div>
+          {mainProject.data.cover && <img class="project-real-image scale-transition" src={withBase(mainProject.data.cover)} alt={mainProject.data.coverAlt} loading="lazy" />}
         </a>
+        {mainProject.data.screenshots?.[0]?.caption && <p class="project-media-caption">{mainProject.data.screenshots[0].caption}</p>}
       </div>
 
       <div class="project-info">
@@ -45,6 +38,7 @@ const [mainProject] = projects;
 
         <h3 class="project-title">{mainProject.data.name}</h3>
 
+        {mainProject.data.statusNote && <p class="project-status-note">{mainProject.data.statusNote}</p>}
         <p class="project-desc">{mainProject.data.description}</p>
 
         <div class="project-actions">
@@ -63,20 +57,5 @@ const [mainProject] = projects;
       </div>
     </div>
 
-    <!-- 待定槽位（结构占位，无虚构内容） -->
-    <div class="project-slots">
-      <div class="project-slot" aria-hidden="true">
-        <div class="slot-label">Project Slot Pending</div>
-        <div class="skeleton-lines">
-          <span></span><span></span><span></span>
-        </div>
-      </div>
-      <div class="project-slot" aria-hidden="true">
-        <div class="slot-label">Project Slot Pending</div>
-        <div class="skeleton-lines short">
-          <span></span><span></span>
-        </div>
-      </div>
-    </div>
   </div>
 </section>

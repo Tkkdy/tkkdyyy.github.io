@@ -11,6 +11,7 @@ import ProjectsSection from '../components/ProjectsSection.astro';
 import EssaysFragmentsSection from '../components/EssaysFragmentsSection.astro';
 import PhotographySection from '../components/PhotographySection.astro';
 
+import { getPublishedEssays } from '../lib/content/essays';
 import { getHomepageContent } from '../lib/content/homepage';
 
 import '../styles/tokens.css';
@@ -18,7 +19,11 @@ import '../styles/global.css';
 import '../styles/home.css';
 import '../styles/home-refinements.css';
 
-const { articles, essays, fragments, images, projects } = await getHomepageContent();
+const { fragments, images, projects } = await getHomepageContent();
+const publishedEssays = await getPublishedEssays();
+const featured = publishedEssays.find((essay) => essay.data.slug === 'wonderland');
+// Third-screen review choice only; Owner has not approved its final curation.
+const essays = publishedEssays.filter((essay) => essay.data.slug === 'agency');
 ---
 
 <!doctype html>
@@ -43,13 +48,13 @@ const { articles, essays, fragments, images, projects } = await getHomepageConte
     <Header />
     <main>
       <!-- 空状态保护（CONTENT_MODEL §12）：对应 Collection 没有首页内容时隐藏区块而不是崩溃。
-           保留所有图片区与待定槽位。 -->
-      {articles[0] && <FeaturedSection article={articles[0]} />}
+           无公开照片时显示文字空状态。 -->
+      {featured && <FeaturedSection article={featured} />}
       {projects[0] && <ProjectsSection projects={projects} />}
       {essays[0] && fragments[0] && (
         <EssaysFragmentsSection essays={essays} fragments={fragments} />
       )}
-      {images.length >= 3 && <PhotographySection images={images} />}
+      <PhotographySection images={images} />
     </main>
     <Footer />
   </body>

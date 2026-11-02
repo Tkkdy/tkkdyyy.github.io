@@ -1,5 +1,4 @@
-/* Approved homepage refinements: preserve all media and pending slots.
-   The third chapter (essays/fragments) retains the original design. */
+/* Homepage refinements: preserve typography, split hero and chapter colors. */
 body.home-refined {
   --refined-content: 1200px;
   --refined-gutter: clamp(24px, 5vw, 72px);
@@ -29,7 +28,7 @@ body.home-refined {
 }
 .home-refined .hero-links { gap: 28px; font-size: 14px; }
 .home-refined .hero-links a { display: inline-flex; align-items: center; min-height: 44px; gap: 8px; }
-/* Preserve the original feature image area and its contents. */
+/* Featured typography applies to real covers and text-only selections. */
 .home-refined .featured { margin-top: 0; }
 .home-refined .featured-card { padding-bottom: 8px; }
 .home-refined .featured-body { gap: 20px; }
@@ -58,7 +57,7 @@ body.home-refined {
 .home-refined .project-actions { flex-wrap: wrap; gap: 20px; }
 .home-refined .project-actions a { min-height: 44px; }
 .home-refined .btn-link-inverse { color: #c5c1b9; }
-/* Preserve project and fragment slots for a complete content comparison. */
+/* Photography keeps the asymmetric editorial flow. */
 .home-refined .photography { max-width: var(--refined-content); margin-block: 80px; padding-inline: var(--refined-gutter); }
 .home-refined .photo-container { padding: clamp(24px, 4vw, 56px); }
 .home-refined .photography-header { margin-bottom: 40px; }
@@ -102,3 +101,31 @@ body.home-refined {
   background: var(--color-accent);
   color: var(--color-ink-inverse);
 }
+
+/* Content repair: retain the split hero, dark project band and literary paper. */
+.home-refined .featured-text-only { border-bottom: 1px solid var(--home-rule); padding: 28px 0 32px; }
+.home-refined .featured-text-only .featured-body { min-height: 300px; justify-content: center; }
+.home-refined .featured-text-only .featured-title { font-size: clamp(32px, 3vw, 42px); }
+.home-refined .featured-text-only .featured-summary { max-width: 27em; }
+.home-refined .project-visual-link { aspect-ratio: auto; }
+.home-refined .project-real-image { display: block; width: 100%; height: auto; }
+.home-refined .project-status-note { color: #c5c1b9; font-size: 12px; line-height: 1.8; margin-bottom: 20px; }
+.home-refined .essay-card { padding-block: 24px; border-block: 1px solid var(--home-literary-rule); }
+.home-refined .essay-card img, .home-refined .featured-media img { display: block; width: 100%; height: auto; }
+.home-refined .fragment-stack { padding-top: 24px; }
+.home-refined .photo-real-link { aspect-ratio: auto; }
+.home-refined .photo-real-link img { display: block; width: 100%; height: auto; }
+.home-refined .photo-flow figure { margin-bottom: 32px; }
+.home-refined .photo-flow .is-portrait { max-width: 60%; }
+.home-refined .photo-empty { padding: 24px 0 40px; line-height: 2; color: var(--home-ink-secondary); }
+.home-refined .photo-empty a { display: inline-block; margin-top: 24px; font-size: 14px; }
+@media (min-width: 768px) {
+  /* Natural ratios can be very wide or tall: stagger without covering a photo. */
+  .home-refined .photo-portrait, .home-refined .photo-square { margin-top: 24px; }
+}
+@media (max-width: 639px) {
+  .home-refined .featured-text-only .featured-body { min-height: 240px; }
+  .home-refined .photo-flow .is-portrait { max-width: 85%; }
+}
+
+.home-refined .project-media-caption { margin-top: 14px; font-size: 12px; line-height: 1.8; color: #bcb8af; }
