@@ -82,6 +82,10 @@ async function verifySite(label, root, base, { before = false, candidate = false
             assert.equal(await page.locator('.featured-card').getAttribute('href'), base + 'essays/wonderland/');
             assert.equal(await page.locator('.essays-fragments .essay-title').innerText(), '生活的主语');
             assert.equal(await page.locator('.featured-media').count(), 0);
+            for (const selector of ['.hero', '.projects', '.essays-fragments', '.photography']) {
+              const chapter = await page.locator(selector).boundingBox();
+              assert.ok(chapter.height >= page.viewportSize().height - 1, `${label}/${selector}@${width} is shorter than viewport`);
+            }
           }
           if (route === 'images/') assert.ok(state.text.includes('公开影像正在慢慢出现'));
         }

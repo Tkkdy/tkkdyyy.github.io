@@ -8,7 +8,7 @@
       "documentWidth": 1440,
       "broken": [],
       "images": [],
-      "screenshot": "before-home-1440.webp"
+      "screenshot": "before-home-1440.png"
     },
     {
       "label": "before",
@@ -17,7 +17,7 @@
       "documentWidth": 390,
       "broken": [],
       "images": [],
-      "screenshot": "before-home-390.webp"
+      "screenshot": "before-home-390.png"
     },
     {
       "label": "before",
@@ -26,7 +26,7 @@
       "documentWidth": 320,
       "broken": [],
       "images": [],
-      "screenshot": "before-home-320.webp"
+      "screenshot": "before-home-320.png"
     },
     {
       "label": "pages",
@@ -41,7 +41,7 @@
           "height": 3000
         }
       ],
-      "screenshot": "pages-home-1440.webp"
+      "screenshot": "pages-home-1440.png"
     },
     {
       "label": "pages",
@@ -71,7 +71,7 @@
           "height": 844
         }
       ],
-      "screenshot": "pages-projects-1440.webp"
+      "screenshot": "pages-projects-1440.png"
     },
     {
       "label": "pages",
@@ -91,7 +91,7 @@
           "height": 2024
         }
       ],
-      "screenshot": "pages-projects-attention-router-1440.webp"
+      "screenshot": "pages-projects-attention-router-1440.png"
     },
     {
       "label": "pages",
@@ -100,7 +100,7 @@
       "documentWidth": 1440,
       "broken": [],
       "images": [],
-      "screenshot": "pages-images-1440.webp"
+      "screenshot": "pages-images-1440.png"
     },
     {
       "label": "pages",
@@ -109,7 +109,7 @@
       "documentWidth": 1440,
       "broken": [],
       "images": [],
-      "screenshot": "pages-search-1440.webp"
+      "screenshot": "pages-search-1440.png"
     },
     {
       "label": "pages",
@@ -124,7 +124,7 @@
           "height": 3000
         }
       ],
-      "screenshot": "pages-home-390.webp"
+      "screenshot": "pages-home-390.png"
     },
     {
       "label": "pages",
@@ -154,7 +154,7 @@
           "height": 844
         }
       ],
-      "screenshot": "pages-projects-390.webp"
+      "screenshot": "pages-projects-390.png"
     },
     {
       "label": "pages",
@@ -174,7 +174,7 @@
           "height": 2024
         }
       ],
-      "screenshot": "pages-projects-attention-router-390.webp"
+      "screenshot": "pages-projects-attention-router-390.png"
     },
     {
       "label": "pages",
@@ -183,7 +183,7 @@
       "documentWidth": 390,
       "broken": [],
       "images": [],
-      "screenshot": "pages-images-390.webp"
+      "screenshot": "pages-images-390.png"
     },
     {
       "label": "pages",
@@ -192,7 +192,7 @@
       "documentWidth": 390,
       "broken": [],
       "images": [],
-      "screenshot": "pages-search-390.webp"
+      "screenshot": "pages-search-390.png"
     },
     {
       "label": "pages",
@@ -207,7 +207,7 @@
           "height": 3000
         }
       ],
-      "screenshot": "pages-home-320.webp"
+      "screenshot": "pages-home-320.png"
     },
     {
       "label": "pages",
@@ -237,7 +237,7 @@
           "height": 844
         }
       ],
-      "screenshot": "pages-projects-320.webp"
+      "screenshot": "pages-projects-320.png"
     },
     {
       "label": "pages",
@@ -257,7 +257,7 @@
           "height": 2024
         }
       ],
-      "screenshot": "pages-projects-attention-router-320.webp"
+      "screenshot": "pages-projects-attention-router-320.png"
     },
     {
       "label": "pages",
@@ -266,7 +266,7 @@
       "documentWidth": 320,
       "broken": [],
       "images": [],
-      "screenshot": "pages-images-320.webp"
+      "screenshot": "pages-images-320.png"
     },
     {
       "label": "pages",
@@ -275,7 +275,7 @@
       "documentWidth": 320,
       "broken": [],
       "images": [],
-      "screenshot": "pages-search-320.webp"
+      "screenshot": "pages-search-320.png"
     },
     {
       "label": "vps",
@@ -290,7 +290,7 @@
           "height": 3000
         }
       ],
-      "screenshot": "vps-home-1440.webp"
+      "screenshot": "vps-home-1440.png"
     },
     {
       "label": "vps",
@@ -320,7 +320,7 @@
           "height": 844
         }
       ],
-      "screenshot": "vps-projects-1440.webp"
+      "screenshot": "vps-projects-1440.png"
     },
     {
       "label": "vps",
@@ -340,7 +340,7 @@
           "height": 2024
         }
       ],
-      "screenshot": "vps-projects-attention-router-1440.webp"
+      "screenshot": "vps-projects-attention-router-1440.png"
     },
     {
       "label": "vps",
@@ -349,7 +349,7 @@
       "documentWidth": 1440,
       "broken": [],
       "images": [],
-      "screenshot": "vps-images-1440.webp"
+      "screenshot": "vps-images-1440.png"
     },
     {
       "label": "vps",
@@ -358,7 +358,7 @@
       "documentWidth": 1440,
       "broken": [],
       "images": [],
-      "screenshot": "vps-search-1440.webp"
+      "screenshot": "vps-search-1440.png"
     },
     {
       "label": "vps",
@@ -373,7 +373,7 @@
           "height": 3000
         }
       ],
-      "screenshot": "vps-home-390.webp"
+      "screenshot": "vps-home-390.png"
     },
     {
       "label": "vps",
@@ -403,7 +403,7 @@
           "height": 844
         }
       ],
-      "screenshot": "vps-projects-390.webp"
+      "screenshot": "vps-projects-390.png"
     },
     {
       "label": "vps",
@@ -423,7 +423,7 @@
           "height": 2024
         }
       ],
-      "screenshot": "vps-projects-attention-router-390.webp"
+      "screenshot": "vps-projects-attention-router-390.png"
     },
     {
       "label": "vps",
@@ -432,7 +432,7 @@
       "documentWidth": 390,
       "broken": [],
       "images": [],
-      "screenshot": "vps-images-390.webp"
+      "screenshot": "vps-images-390.png"
     },
     {
       "label": "vps",
@@ -441,7 +441,7 @@
       "documentWidth": 390,
       "broken": [],
       "images": [],
-      "screenshot": "vps-search-390.webp"
+      "screenshot": "vps-search-390.png"
     },
     {
       "label": "vps",
@@ -456,7 +456,7 @@
           "height": 3000
         }
       ],
-      "screenshot": "vps-home-320.webp"
+      "screenshot": "vps-home-320.png"
     },
     {
       "label": "vps",
@@ -486,7 +486,7 @@
           "height": 844
         }
       ],
-      "screenshot": "vps-projects-320.webp"
+      "screenshot": "vps-projects-320.png"
     },
     {
       "label": "vps",
@@ -506,7 +506,7 @@
           "height": 2024
         }
       ],
-      "screenshot": "vps-projects-attention-router-320.webp"
+      "screenshot": "vps-projects-attention-router-320.png"
     },
     {
       "label": "vps",
@@ -515,7 +515,7 @@
       "documentWidth": 320,
       "broken": [],
       "images": [],
-      "screenshot": "vps-images-320.webp"
+      "screenshot": "vps-images-320.png"
     },
     {
       "label": "vps",
@@ -524,7 +524,7 @@
       "documentWidth": 320,
       "broken": [],
       "images": [],
-      "screenshot": "vps-search-320.webp"
+      "screenshot": "vps-search-320.png"
     }
   ],
   "profiles": {
@@ -937,7 +937,5 @@
     "format": "png",
     "bytesUnchanged": true
   },
-  "pass": true,
-  "screenshotEncoding": "Original browser PNGs converted to WebP losslessly; decoded RGBA byte equality verified.",
-  "pagesAdminDraftRoutes404": true
+  "pass": true
 }

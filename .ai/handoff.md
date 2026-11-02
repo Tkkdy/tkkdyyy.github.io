@@ -5,6 +5,7 @@ Task contract: Owner original request + supplement 01 (Wonderland, hardware prim
 Review and file inventory: docs/content-home-review/README.md. Machine results/screenshots: docs/content-home-review/acceptance.json and SCREENSHOTS.md.
 Local: check 183 pass / 2 existing skips; build/build:vps and 33 browser screenshots PASS; count/viewport matrix 9/9; Pages and VPS search PASS; private editor draft retention PASS.
 Featured: Wonderland final choice. Third screen: agency review preview; final selection outstanding. Photography: no published works; waiting for Owner files, not an engineering failure.
+Owner preview follow-up: viewport-height home chapters; Router dossier reuses Radar visual language, with unchanged real evidence and limitations.
 Material fixes: real images + byte equality/provenance, public Pages admin draft exclusion, 320px long-SHA wrap, old website screenshot placeholder replacement. No deployment-system changes.
 Draft PR: https://github.com/Tkkdy/tkkdyyy.github.io/pull/31 (Draft, no auto-merge). Next actor: Owner visual reviewer. Do not merge or deploy automatically.
 

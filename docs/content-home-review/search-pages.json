@@ -70,7 +70,7 @@
     "Stringified filters to {}",
     "Loaded necessary chunks to run search",
     "Got the raw search result: {\"filtered_counts\":{},\"total_counts\":{},\"results\":[],\"unfiltered_total\":0}",
-    "Found 0 results for \"云 端\" in 2ms (78ms realtime)"
+    "Found 0 results for \"云 端\" in 2ms (68ms realtime)"
   ],
   "minimal": {
     "language": "zh-CN",

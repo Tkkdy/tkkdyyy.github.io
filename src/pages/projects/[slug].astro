@@ -6,6 +6,7 @@
 import ProjectLayout from '../../layouts/ProjectLayout.astro';
 import GenericProjectDetail from '../../components/projects/GenericProjectDetail.astro';
 import MorningRadarDetail from '../../components/projects/MorningRadarDetail.astro';
+import AttentionRouterDetail from '../../components/projects/AttentionRouterDetail.astro';
 import { getPublishedProjects } from '../../lib/content/projects';
 
 export async function getStaticPaths() {
@@ -19,13 +20,14 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { data } = project;
 const isMorningRadar = data.slug === 'morning-radar';
+const isAttentionRouter = data.slug === 'attention-router';
 ---
 
 <ProjectLayout
   title={`${data.name} — tkkdy`}
   description={data.description}
-  bodyClass={isMorningRadar ? 'morning-radar-detail-page' : undefined}
-  showFooter={!isMorningRadar}
+  bodyClass={isMorningRadar ? 'morning-radar-detail-page' : isAttentionRouter ? 'morning-radar-detail-page attention-router-detail-page' : undefined}
+  showFooter={!isMorningRadar && !isAttentionRouter}
 >
-  {isMorningRadar ? <MorningRadarDetail project={project} /> : <GenericProjectDetail project={project} />}
+  {isMorningRadar ? <MorningRadarDetail project={project} /> : isAttentionRouter ? <AttentionRouterDetail project={project} /> : <GenericProjectDetail project={project} />}
 </ProjectLayout>

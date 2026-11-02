@@ -9,12 +9,18 @@
 - 两篇测试文字设为 `draft` / `homepage.show: false`。保留正文与其余元数据；其余公开文章和随笔的正文、发布状态不变。
 - 首屏精选使用 `wonderland` 原标题《开源 Wonderland》、原摘要和原日期；无封面时采用完整文字排版，链接按部署 base 生成。
 - 第三屏保留真实碎片，随笔暂用已公开《生活的主语》（`agency`）作为审核预览，不重复 Wonderland；未修改它的正文或发布状态。最终选文仍待 Owner 决定。
-- Attention Router 成为首页主项目，项目列表新增真实记录，详情复用既有通用组件。真机图为主，详情先真机后 Console。说明区分已实现、实验集成、未来计划；注明源码 Release、迁移失败、公开固件真机验收及离线中文限制。
+- Attention Router 成为首页主项目，项目列表新增真实记录，详情复用 Morning Radar 的技术档案字体、元数据和模块视觉，使用轻量专属组件。真机图为主，Console 为次级证据。说明区分已实现、实验集成、未来计划；注明源码 Release、迁移失败、公开固件真机验收及离线中文限制。
 - Morning Radar 只关闭首页策展开关，原项目、正文、生命周期状态和详情页保留。
 - 移除首页开发假图与空槽。网站项目既有桌面/手机截图也更新为本轮真实本地截图，避免其旧图片继续露出 Article Visual。
 - 三条摄影 fixture 转草稿。首页支持 1/2/3 张本地真实文件与自然比例；当前无公开作品，首页及 `/images/` 显示正常文字空状态。
 - 图片路径、格式与实际解码校验统一使用 sharp；将 Astro 原有的 sharp 版本声明为直接依赖，锁定版本未升级。公开影像缺失或损坏会使构建失败，避免发布坏图或假图。
 - 补齐 Pages 的草稿隔离：原静态 `/admin/` 会嵌入草稿正文；公共构建的后台查询现在只取已发布文字。私有编辑器保留草稿能力，未修改部署或生产配置。
+
+## Owner 预览反馈修正
+
+- 首页四个主要板块至少占满一个浏览器视口；使用最小高度，长内容自然展开，不裁切也不锁定滚动。
+- Attention Router 改用 Radar 同系列技术档案布局，分开真机证据、路由原则、系统路径、版本说明和 Console。保留完整原图与全部原始能力限制，移动端自然堆叠。
+- 三屏宽的双路径浏览器验收增加每个首页板块高度断言；截图索引更新为本次修正后的实际渲染。摄影数量矩阵与私有编辑器证据复用前轮未受影响结果。
 
 ## 真实验证
 
@@ -79,6 +85,7 @@
 | `public/projects/tkkdy-home-mobile.png` | 真实新手机截图替换旧占位截图。 |
 | `package.json` / `package-lock.json` | 显式声明既有 sharp 版本。 |
 | `tests/image-file.test.mjs` | 缺失/损坏/伪扩展名/外部/遍历拒绝，实际格式解码。 |
+| `src/components/projects/AttentionRouterDetail.astro` / `src/styles/attention-router-detail.css` | 复用 Radar 视觉的 Router 档案；完整实拍及演示图、版本边界。 |
 | `tests/content-home.browser.mjs` | 双路径、三宽度、草稿泄露、素材保留、摄影矩阵及截图验收。 |
 | `tests/pagefind-chinese.browser.mjs` | 保留中文回归，改用真实内容并验证草稿排除。 |
 | `.ai/handoff.md` | 更新当前交接，历史交接原文保留。 |
