@@ -18,7 +18,7 @@
 [7m363[0m   window.addEventListener('beforeunload',event=>{if(cloud&&(dirty||pendingSaves)){event.preventDefault();event.returnValue='';}});
 [7m   [0m [93m                                                                                                               ~~~~~~~~~~~[0m
 
-Result (92 files): 
+Result (92 files):
 - 0 errors
 - 0 warnings
 - 2 hints

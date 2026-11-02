@@ -36,7 +36,7 @@
 
 本地浏览器为 Chrome/Playwright。33 张全页及指定局部均来自本地真实构建；Agent 已查看桌面、小屏、第三屏、照片、Console、摄影空状态与搜索结果。**这些证据不替代 Owner 视觉审核，也不证明生产或硬件验收成功。**
 
-证据：[验收 JSON](acceptance.json)、[完整 check 输出](check.txt)、[Pages 构建输出](build-pages.txt)、[VPS 构建输出](build-vps.txt)、[Pages 搜索](search-pages.json)、[VPS 搜索](search-vps.json)、[全部截图](SCREENSHOTS.md)。截图转无损 WebP 时逐一比对解码 RGBA，像素完全一致。
+证据：[验收 JSON](acceptance.json)、[完整 check 输出](check.txt)、[Pages 构建输出](build-pages.txt)、[VPS 构建输出](build-vps.txt)、[Pages 搜索](search-pages.json)、[VPS 搜索](search-vps.json)、[全部截图](SCREENSHOTS.md)。截图转无损 WebP 时逐一比对解码 RGBA，像素完全一致。提交的命令日志仅清理行尾空白，原始日志保留在本地证据中。
 
 ## 项目素材来源
 
