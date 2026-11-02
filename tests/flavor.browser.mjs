@@ -46,14 +46,14 @@ try{
   assert(await page.locator('audio').evaluate(a=>a.paused));assert.equal(await page.locator('audio').getAttribute('preload'),'none');await shot(page,`${target}-about-${width}`);await c.close();
  }
  report.checks.push('Pages project base and VPS root base: 1440/1024/390/320, actual 0-photo/empty-recent fallback, existing home/gallery/about routes and music card, no horizontal overflow.');
- // Fresh Chromium visits block audible autoplay; native controls provide the fallback.
+ // Fresh Chromium visits block audible autoplay; custom controls provide the fallback.
  // Allowed entry/fade and pagehide are independently covered by flavor-music.browser.mjs.
  for(const target of ['pages','vps']){
   const {c,page}=await context();const media=[];page.on('request',r=>{if(r.url().endsWith('.mp3'))media.push(r.url());});await page.goto(url(target,'about/'));await page.waitForTimeout(300);assert.equal(media.length,0);
-  const audio=page.locator('audio');await audio.click({position:{x:24,y:26}});await page.waitForFunction(()=>{const a=document.querySelector('audio');return !a.paused&&a.currentTime>0&&Number.isFinite(a.duration);});
-  assert(media.length>0);assert.equal(await page.locator('[data-music-state]').innerText(),'正在播放');await shot(page,`${target}-music-playing`);
+  const audio=page.locator('audio');await page.locator('[data-music-toggle]').click();await page.waitForFunction(()=>{const a=document.querySelector('audio');return !a.paused&&a.currentTime>0&&Number.isFinite(a.duration);});
+  assert(media.length>0);assert.equal(await page.locator('[data-music-state]').textContent(),'正在播放');await shot(page,`${target}-music-playing`);
   const state=await audio.evaluate(a=>({duration:a.duration,time:a.currentTime,paused:a.paused}));report.checks.push({test:`${target}: fresh visit blocks autoplay; supplied MP3 decodes after fallback click; no listening-quality claim`,...state});
-  await audio.click({position:{x:24,y:26}});await page.waitForFunction(()=>document.querySelector('audio').paused);assert.equal(await page.locator('[data-music-state]').innerText(),'已暂停');
+  await page.locator('[data-music-toggle]').click();await page.waitForFunction(()=>document.querySelector('audio').paused);assert.equal(await page.locator('[data-music-state]').textContent(),'已暂停');
   await page.goto(url(target));assert.equal(await page.locator('audio').count(),0);await c.close();
  }
  // Clearly synthetic full layouts, responsive aspect-ratio containment and original module order.
@@ -100,7 +100,7 @@ try{
   const {c,page}=await context();await page.clock.setFixedTime(new Date('2026-11-01T16:00:00Z'));await page.route('**/window/*.webp',route=>route.abort());await page.goto(url('fixture-pages'));await page.waitForFunction(()=>document.querySelector('[data-window]').hidden);assert.equal(await page.locator('[data-window-greeting]').isVisible(),false);await shot(page,'all-photo-resources-failed');await c.close();
  }
  {
-  const {c,page}=await context();await page.route('**/*.mp3',route=>route.fulfill({status:404,body:''}));await page.goto(url('pages','about/'));await page.locator('audio').click({position:{x:24,y:26}});await page.getByText('这首歌暂时无法播放。',{exact:true}).waitFor();assert.equal(await page.locator('audio').isVisible(),false);await shot(page,'audio-resource-404');await c.close();
+  const {c,page}=await context();await page.route('**/*.mp3',route=>route.fulfill({status:404,body:''}));await page.goto(url('pages','about/'));await page.locator('[data-music-toggle]').click();await page.getByText('这首歌暂时无法播放。',{exact:true}).waitFor();assert.equal(await page.locator('audio').isVisible(),false);await shot(page,'audio-resource-404');await c.close();
  }
  if(await stat(resolve('.flavor-builds/fixture-no-source')).catch(()=>null)){
   const {c,page}=await context();await page.goto(url('fixture-no-source'));await ready(page);assert.equal(await page.locator('.recent-notes dl>div').count(),1);await page.goto(url('fixture-no-source','about/'));assert(await page.locator('.music-card').isVisible());assert.equal(await page.locator('audio,.music-listen').count(),0);await shot(page,'music-no-source');await c.close();

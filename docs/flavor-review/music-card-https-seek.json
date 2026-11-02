@@ -1,0 +1,13 @@
+{
+  "scope": "Real immutable HTTPS source and actual custom card, no media mocking. Local Chromium desktop viewport, not a physical phone or listening-quality/in-app-browser claim.",
+  "source": "https://raw.githubusercontent.com/Tkkdy/tkkdyyy.github.io/b2fcd540fc8db229b0839a28c43a56e76e03410a/public/music/angelika-vee-you-are-my-sunshine.mp3",
+  "url": "http://127.0.0.1:4321/tkkdyyy.github.io/about/",
+  "media": {
+    "duration": 124.233333,
+    "time": 62.123215,
+    "seekableEnd": 124.233333,
+    "paused": false,
+    "source": "https://raw.githubusercontent.com/Tkkdy/tkkdyyy.github.io/b2fcd540fc8db229b0839a28c43a56e76e03410a/public/music/angelika-vee-you-are-my-sunshine.mp3"
+  },
+  "state": "PASS"
+}

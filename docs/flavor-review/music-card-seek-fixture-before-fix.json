@@ -1,0 +1,339 @@
+{
+  "target": "pages",
+  "scope": "Real Edge/Chromium default autoplay policy; allowed path uses a real same-origin navigation click, no policy override flags. MP3 fulfilled with authorized owner bytes; viewport emulation, no physical phone/listening-quality claim.",
+  "checks": [
+    {
+      "test": "1440: fresh visit blocked without media request; custom play click fades over 2.4s to 35%; pause works",
+      "fade": [
+        {
+          "volume": 0.0399200000000528,
+          "time": 0.00579,
+          "paused": false
+        },
+        {
+          "volume": 0.07002416666671947,
+          "time": 0.196763,
+          "paused": false
+        },
+        {
+          "volume": 0.10072333333338611,
+          "time": 0.401022,
+          "paused": false
+        },
+        {
+          "volume": 0.13082750000005275,
+          "time": 0.617669,
+          "paused": false
+        },
+        {
+          "volume": 0.16329750000005275,
+          "time": 0.844493,
+          "paused": false
+        },
+        {
+          "volume": 0.19280666666671942,
+          "time": 1.056109,
+          "paused": false
+        },
+        {
+          "volume": 0.22350583333338608,
+          "time": 1.277561,
+          "paused": false
+        },
+        {
+          "volume": 0.2542050000000527,
+          "time": 1.485773,
+          "paused": false
+        },
+        {
+          "volume": 0.28490416666671947,
+          "time": 1.70066,
+          "paused": false
+        },
+        {
+          "volume": 0.3156033333333861,
+          "time": 1.913227,
+          "paused": false
+        },
+        {
+          "volume": 0.3468833333333861,
+          "time": 2.135501,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.352373,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.572811,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.789397,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.009948,
+          "paused": false
+        }
+      ]
+    },
+    {
+      "test": "390: fresh visit blocked without media request; custom play click fades over 2.4s to 35%; pause works",
+      "fade": [
+        {
+          "volume": 0.014759999999947225,
+          "time": 0.008807,
+          "paused": false
+        },
+        {
+          "volume": 0.04486416666661389,
+          "time": 0.191047,
+          "paused": false
+        },
+        {
+          "volume": 0.07615833333328056,
+          "time": 0.399369,
+          "paused": false
+        },
+        {
+          "volume": 0.10685749999994719,
+          "time": 0.617572,
+          "paused": false
+        },
+        {
+          "volume": 0.1375424999999472,
+          "time": 0.837163,
+          "paused": false
+        },
+        {
+          "volume": 0.16824166666661391,
+          "time": 1.059195,
+          "paused": false
+        },
+        {
+          "volume": 0.1983741666666139,
+          "time": 1.275076,
+          "paused": false
+        },
+        {
+          "volume": 0.22962583333328054,
+          "time": 1.482935,
+          "paused": false
+        },
+        {
+          "volume": 0.26032499999994724,
+          "time": 1.699973,
+          "paused": false
+        },
+        {
+          "volume": 0.29102416666661385,
+          "time": 1.918215,
+          "paused": false
+        },
+        {
+          "volume": 0.32172333333328057,
+          "time": 2.137202,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.356369,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.573711,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.785557,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.003345,
+          "paused": false
+        }
+      ]
+    },
+    {
+      "test": "1440: same-origin navigation automatically fades; pause cancels fade; manual volume retained; actual pagehide pauses and resets audio",
+      "fade": [
+        {
+          "volume": 0.021418333333333334,
+          "time": 0.023607,
+          "paused": false
+        },
+        {
+          "volume": 0.0515225,
+          "time": 0.232392,
+          "paused": false
+        },
+        {
+          "volume": 0.08162666666666665,
+          "time": 0.445226,
+          "paused": false
+        },
+        {
+          "volume": 0.11290666666666664,
+          "time": 0.66629,
+          "paused": false
+        },
+        {
+          "volume": 0.14302499999999999,
+          "time": 0.880857,
+          "paused": false
+        },
+        {
+          "volume": 0.17312916666666667,
+          "time": 1.09056,
+          "paused": false
+        },
+        {
+          "volume": 0.20382833333333333,
+          "time": 1.308027,
+          "paused": false
+        },
+        {
+          "volume": 0.23510833333333334,
+          "time": 1.529568,
+          "paused": false
+        },
+        {
+          "volume": 0.26638833333333334,
+          "time": 1.748406,
+          "paused": false
+        },
+        {
+          "volume": 0.2965208333333333,
+          "time": 1.962892,
+          "paused": false
+        },
+        {
+          "volume": 0.3278008333333333,
+          "time": 2.185125,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.402719,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.620916,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.836001,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.055109,
+          "paused": false
+        }
+      ]
+    },
+    {
+      "test": "390: same-origin navigation automatically fades; pause cancels fade; manual volume retained; actual pagehide pauses and resets audio",
+      "fade": [
+        {
+          "volume": 0.019859999999788897,
+          "time": 0.020453,
+          "paused": false
+        },
+        {
+          "volume": 0.05054499999978889,
+          "time": 0.230168,
+          "paused": false
+        },
+        {
+          "volume": 0.08125833333312223,
+          "time": 0.449341,
+          "paused": false
+        },
+        {
+          "volume": 0.11194333333312222,
+          "time": 0.664401,
+          "paused": false
+        },
+        {
+          "volume": 0.14322333333312223,
+          "time": 0.885167,
+          "paused": false
+        },
+        {
+          "volume": 0.17274666666645558,
+          "time": 1.091744,
+          "paused": false
+        },
+        {
+          "volume": 0.20344583333312222,
+          "time": 1.307652,
+          "paused": false
+        },
+        {
+          "volume": 0.23354999999978887,
+          "time": 1.523657,
+          "paused": false
+        },
+        {
+          "volume": 0.26424916666645554,
+          "time": 1.741072,
+          "paused": false
+        },
+        {
+          "volume": 0.2949483333331222,
+          "time": 1.953147,
+          "paused": false
+        },
+        {
+          "volume": 0.3256474999997888,
+          "time": 2.171732,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.388826,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.603068,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.823439,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.036785,
+          "paused": false
+        }
+      ]
+    },
+    "Autoplay-permitted path with MP3 404 keeps failure text and hides invalid controls."
+  ],
+  "errors": [],
+  "screenshots": [
+    "docs/flavor-review/screenshots/pages-music-autoplay-blocked-1440.webp",
+    "docs/flavor-review/screenshots/pages-music-click-fade-1440.webp",
+    "docs/flavor-review/screenshots/pages-music-autoplay-blocked-390.webp",
+    "docs/flavor-review/screenshots/pages-music-click-fade-390.webp",
+    "docs/flavor-review/screenshots/pages-music-entry-autofade-1440.webp",
+    "docs/flavor-review/screenshots/pages-music-entry-autofade-390.webp",
+    "docs/flavor-review/screenshots/pages-music-autoplay-404.webp"
+  ],
+  "state": "FAIL",
+  "failure": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(await page.locator('audio').evaluate(a=>a.currentTime>0.1))\n\n    at file:///C:/Users/PsyDuck/.codex/worktrees/tkkdy-flavor-20261102/tests/flavor-music.browser.mjs:79:138"
+}

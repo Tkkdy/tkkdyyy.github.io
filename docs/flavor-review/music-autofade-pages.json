@@ -3,161 +3,161 @@
   "scope": "Real Edge/Chromium default autoplay policy; allowed path uses a real same-origin navigation click, no policy override flags. MP3 fulfilled with authorized owner bytes; viewport emulation, no physical phone/listening-quality claim.",
   "checks": [
     {
-      "test": "1440: fresh visit blocked without media request; native click fades over 2.4s to 35%; pause works",
+      "test": "1440: fresh visit blocked without media request; custom play click fades over 2.4s to 35%; pause works",
       "fade": [
         {
-          "volume": 0.040684999999999985,
-          "time": 0.005176,
+          "volume": 0.03814916666671946,
+          "time": 0.005605,
           "paused": false
         },
         {
-          "volume": 0.07136999999999996,
-          "time": 0.200352,
+          "volume": 0.06944333333338606,
+          "time": 0.200462,
           "paused": false
         },
         {
-          "volume": 0.10267833333333329,
-          "time": 0.408955,
+          "volume": 0.10014250000005277,
+          "time": 0.416415,
           "paused": false
         },
         {
-          "volume": 0.13336333333333333,
-          "time": 0.62686,
+          "volume": 0.13082750000005275,
+          "time": 0.633677,
           "paused": false
         },
         {
-          "volume": 0.16346750000000002,
-          "time": 0.840749,
+          "volume": 0.16094583333338608,
+          "time": 0.844457,
           "paused": false
         },
         {
-          "volume": 0.19474749999999996,
-          "time": 1.06112,
+          "volume": 0.1916450000000528,
+          "time": 1.063305,
           "paused": false
         },
         {
-          "volume": 0.2254608333333333,
-          "time": 1.277396,
+          "volume": 0.2223300000000527,
+          "time": 1.280732,
           "paused": false
         },
         {
-          "volume": 0.25615999999999994,
-          "time": 1.495443,
+          "volume": 0.25362416666671944,
+          "time": 1.499228,
           "paused": false
         },
         {
-          "volume": 0.2868308333333333,
-          "time": 1.70781,
+          "volume": 0.2837283333333861,
+          "time": 1.715828,
           "paused": false
         },
         {
-          "volume": 0.3175441666666666,
-          "time": 1.927081,
+          "volume": 0.3150083333333861,
+          "time": 1.933892,
           "paused": false
         },
         {
-          "volume": 0.3476625,
-          "time": 2.140236,
-          "paused": false
-        },
-        {
-          "volume": 0.35,
-          "time": 2.356747,
+          "volume": 0.3457216666667194,
+          "time": 2.148684,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.577306,
+          "time": 2.362926,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.795351,
+          "time": 2.58593,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 3.014762,
+          "time": 2.801158,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.022328,
           "paused": false
         }
       ]
     },
     {
-      "test": "390: fresh visit blocked without media request; native click fades over 2.4s to 35%; pause works",
+      "test": "390: fresh visit blocked without media request; custom play click fades over 2.4s to 35%; pause works",
       "fade": [
         {
-          "volume": 0.016077499999999998,
-          "time": 0.011458,
+          "volume": 0.01595000000021111,
+          "time": 0.003151,
           "paused": false
         },
         {
-          "volume": 0.04677666666666667,
-          "time": 0.198921,
+          "volume": 0.04662083333354444,
+          "time": 0.198887,
           "paused": false
         },
         {
-          "volume": 0.07807083333333331,
-          "time": 0.418532,
+          "volume": 0.07730583333354442,
+          "time": 0.404127,
           "paused": false
         },
         {
-          "volume": 0.108175,
-          "time": 0.63513,
+          "volume": 0.10800500000021106,
+          "time": 0.622779,
           "paused": false
         },
         {
-          "volume": 0.13885999999999998,
-          "time": 0.84769,
+          "volume": 0.1393133333335444,
+          "time": 0.842916,
           "paused": false
         },
         {
-          "volume": 0.1701825,
-          "time": 1.068784,
+          "volume": 0.16999833333354444,
+          "time": 1.060987,
           "paused": false
         },
         {
-          "volume": 0.1996775,
-          "time": 1.279193,
+          "volume": 0.20069750000021108,
+          "time": 1.276751,
           "paused": false
         },
         {
-          "volume": 0.23037666666666665,
-          "time": 1.496387,
+          "volume": 0.23080166666687776,
+          "time": 1.487783,
           "paused": false
         },
         {
-          "volume": 0.26107583333333334,
-          "time": 1.709799,
+          "volume": 0.2615008333335444,
+          "time": 1.703839,
           "paused": false
         },
         {
-          "volume": 0.2923558333333333,
-          "time": 1.929949,
+          "volume": 0.29160500000021106,
+          "time": 1.918635,
           "paused": false
         },
         {
-          "volume": 0.323055,
-          "time": 2.146777,
-          "paused": false
-        },
-        {
-          "volume": 0.35,
-          "time": 2.365312,
+          "volume": 0.3223041666668777,
+          "time": 2.135599,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.587678,
+          "time": 2.35724,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.804336,
+          "time": 2.574208,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 3.021238,
+          "time": 2.781931,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.996544,
           "paused": false
         }
       ]
@@ -166,78 +166,78 @@
       "test": "1440: same-origin navigation automatically fades; pause cancels fade; manual volume retained; actual pagehide pauses and resets audio",
       "fade": [
         {
-          "volume": 0.018967500000052772,
-          "time": 0.01938,
+          "volume": 0.019052499999841675,
+          "time": 0.011129,
           "paused": false
         },
         {
-          "volume": 0.049057500000052774,
-          "time": 0.210743,
+          "volume": 0.04918499999984167,
+          "time": 0.217887,
           "paused": false
         },
         {
-          "volume": 0.0797708333333861,
-          "time": 0.428851,
+          "volume": 0.07926083333317499,
+          "time": 0.430955,
           "paused": false
         },
         {
-          "volume": 0.1110508333333861,
-          "time": 0.649988,
+          "volume": 0.11055499999984165,
+          "time": 0.649149,
           "paused": false
         },
         {
-          "volume": 0.14175000000005275,
-          "time": 0.867086,
+          "volume": 0.14123999999984166,
+          "time": 0.867716,
           "paused": false
         },
         {
-          "volume": 0.17243500000005277,
-          "time": 1.08347,
+          "volume": 0.171953333333175,
+          "time": 1.08494,
           "paused": false
         },
         {
-          "volume": 0.2031483333333861,
-          "time": 1.302227,
+          "volume": 0.20207166666650833,
+          "time": 1.300071,
           "paused": false
         },
         {
-          "volume": 0.2344283333333861,
-          "time": 1.520139,
+          "volume": 0.23274249999984167,
+          "time": 1.512155,
           "paused": false
         },
         {
-          "volume": 0.26512750000005275,
-          "time": 1.738818,
+          "volume": 0.264050833333175,
+          "time": 1.732016,
           "paused": false
         },
         {
-          "volume": 0.2958125000000527,
-          "time": 1.951511,
+          "volume": 0.294735833333175,
+          "time": 1.949407,
           "paused": false
         },
         {
-          "volume": 0.32651166666671944,
-          "time": 2.171296,
-          "paused": false
-        },
-        {
-          "volume": 0.35,
-          "time": 2.387606,
+          "volume": 0.32483999999984164,
+          "time": 2.165337,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.605654,
+          "time": 2.381612,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.822944,
+          "time": 2.598054,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 3.036644,
+          "time": 2.809974,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.027969,
           "paused": false
         }
       ]
@@ -246,83 +246,144 @@
       "test": "390: same-origin navigation automatically fades; pause cancels fade; manual volume retained; actual pagehide pauses and resets audio",
       "fade": [
         {
-          "volume": 0.020752499999894446,
-          "time": 0.020561,
+          "volume": 0.021120833333175007,
+          "time": 0.023777,
           "paused": false
         },
         {
-          "volume": 0.050870833333227776,
-          "time": 0.232345,
+          "volume": 0.051210833333175006,
+          "time": 0.235477,
           "paused": false
         },
         {
-          "volume": 0.08155583333322777,
-          "time": 0.44847,
+          "volume": 0.08132916666650834,
+          "time": 0.447251,
           "paused": false
         },
         {
-          "volume": 0.11165999999989444,
-          "time": 0.662064,
+          "volume": 0.11143333333317501,
+          "time": 0.660747,
           "paused": false
         },
         {
-          "volume": 0.1423591666665611,
-          "time": 0.878736,
+          "volume": 0.14213249999984168,
+          "time": 0.879553,
           "paused": false
         },
         {
-          "volume": 0.1730583333332278,
-          "time": 1.093826,
+          "volume": 0.17281749999984167,
+          "time": 1.092501,
           "paused": false
         },
         {
-          "volume": 0.20374333333322778,
-          "time": 1.309646,
+          "volume": 0.203530833333175,
+          "time": 1.309153,
           "paused": false
         },
         {
-          "volume": 0.23445666666656112,
-          "time": 1.528384,
+          "volume": 0.23481083333317498,
+          "time": 1.53029,
           "paused": false
         },
         {
-          "volume": 0.2651416666665611,
-          "time": 1.745105,
+          "volume": 0.2655099999998417,
+          "time": 1.747674,
           "paused": false
         },
         {
-          "volume": 0.2952458333332278,
-          "time": 1.960005,
+          "volume": 0.2962091666665083,
+          "time": 1.964664,
           "paused": false
         },
         {
-          "volume": 0.3259591666665611,
-          "time": 2.172627,
-          "paused": false
-        },
-        {
-          "volume": 0.35,
-          "time": 2.3906,
+          "volume": 0.3268941666665083,
+          "time": 2.183252,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.608247,
+          "time": 2.402353,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.825864,
+          "time": 2.612249,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 3.041823,
+          "time": 2.835611,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.060132,
           "paused": false
         }
       ]
     },
-    "Autoplay-permitted path with MP3 404 keeps failure text and hides invalid controls."
+    "Autoplay-permitted path with MP3 404 keeps failure text and hides invalid controls.",
+    {
+      "test": "1440: chosen style, 1s left-edge entry, keyboard play/seek/volume, mute, pause/resume preserves selected volume, no overflow",
+      "design": {
+        "background": "rgb(234, 242, 248)",
+        "font": "Georgia, \"Times New Roman\", \"Noto Serif SC\", \"Source Han Serif SC\", serif",
+        "duration": 1000,
+        "start": -192,
+        "midway": 57.77459716796875,
+        "end": 192,
+        "titleY": 538.171875,
+        "playX": 220,
+        "playY": 488.78125,
+        "playRight": 272,
+        "titleX": 288,
+        "titleTop": 491.375,
+        "cardX": 192,
+        "overflow": false,
+        "artist": false
+      }
+    },
+    {
+      "test": "390: chosen style, 1s left-edge entry, keyboard play/seek/volume, mute, pause/resume preserves selected volume, no overflow",
+      "design": {
+        "background": "rgb(234, 242, 248)",
+        "font": "Georgia, \"Times New Roman\", \"Noto Serif SC\", \"Source Han Serif SC\", serif",
+        "duration": 1000,
+        "start": 0,
+        "midway": -22.52130889892578,
+        "end": 24,
+        "titleY": 521.15625,
+        "playX": 42,
+        "playY": 483.5625,
+        "playRight": 86,
+        "titleX": 98,
+        "titleTop": 489.96875,
+        "cardX": 24,
+        "overflow": false,
+        "artist": false
+      }
+    },
+    {
+      "test": "320: chosen style, 1s left-edge entry, keyboard play/seek/volume, mute, pause/resume preserves selected volume, no overflow",
+      "design": {
+        "background": "rgb(234, 242, 248)",
+        "font": "Georgia, \"Times New Roman\", \"Noto Serif SC\", \"Source Han Serif SC\", serif",
+        "duration": 1000,
+        "start": 0,
+        "midway": -13.623786926269531,
+        "end": 24,
+        "titleY": 545.9375,
+        "playX": 42,
+        "playY": 492.75,
+        "playRight": 86,
+        "titleX": 98,
+        "titleTop": 483.5625,
+        "cardX": 24,
+        "overflow": false,
+        "artist": false
+      }
+    },
+    "Reduced motion disables entrance; without JS the native audio controls remain visible and usable."
   ],
   "errors": [],
   "screenshots": [
@@ -332,7 +393,12 @@
     "docs/flavor-review/screenshots/pages-music-click-fade-390.webp",
     "docs/flavor-review/screenshots/pages-music-entry-autofade-1440.webp",
     "docs/flavor-review/screenshots/pages-music-entry-autofade-390.webp",
-    "docs/flavor-review/screenshots/pages-music-autoplay-404.webp"
+    "docs/flavor-review/screenshots/pages-music-autoplay-404.webp",
+    "docs/flavor-review/screenshots/pages-music-card-design-1440.webp",
+    "docs/flavor-review/screenshots/pages-music-card-design-390.webp",
+    "docs/flavor-review/screenshots/pages-music-card-design-320.webp",
+    "docs/flavor-review/screenshots/pages-music-card-reduced-motion.webp",
+    "docs/flavor-review/screenshots/pages-music-card-nojs.webp"
   ],
   "state": "PASS"
 }

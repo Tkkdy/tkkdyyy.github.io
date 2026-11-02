@@ -1,6 +1,8 @@
 # 截图索引
 
-有图布局截图含醒目标注的测试像素，不代表 Owner 已提供原创照片。手机是 Chromium 视口模拟，非实体手机。为消除网络字体波动，本地截图阻断 Google Fonts 请求，使用原站 fallback 字体。
+有图布局截图含醒目标注的测试像素，不代表 Owner 已提供原创照片。手机是 Chromium 视口模拟，非实体手机。音乐卡最终样式见 `pages-music-card-design-*` / `vps-music-card-design-*`；早期 `*-about-*` 截图保留历史样式。
+
+为消除网络字体波动，本地截图阻断 Google Fonts 请求，使用原站 fallback 字体。
 
 | 截图 | 证据范围 |
 | --- | --- |
@@ -93,3 +95,14 @@
 | [vps-music-autoplay-404.webp](screenshots/vps-music-autoplay-404.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/音源失败；CDN 以授权附件字节响应 |
 | [vps-music-autoplay-blocked-1440.webp](screenshots/vps-music-autoplay-blocked-1440.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/音源失败；CDN 以授权附件字节响应 |
 | [vps-music-autoplay-blocked-390.webp](screenshots/vps-music-autoplay-blocked-390.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/音源失败；CDN 以授权附件字节响应 |
+| [music-card-actual-https-seek.webp](screenshots/music-card-actual-https-seek.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
+| [pages-music-card-design-1440.webp](screenshots/pages-music-card-design-1440.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
+| [pages-music-card-design-320.webp](screenshots/pages-music-card-design-320.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
+| [pages-music-card-design-390.webp](screenshots/pages-music-card-design-390.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
+| [pages-music-card-nojs.webp](screenshots/pages-music-card-nojs.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
+| [pages-music-card-reduced-motion.webp](screenshots/pages-music-card-reduced-motion.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
+| [vps-music-card-design-1440.webp](screenshots/vps-music-card-design-1440.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
+| [vps-music-card-design-320.webp](screenshots/vps-music-card-design-320.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
+| [vps-music-card-design-390.webp](screenshots/vps-music-card-design-390.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
+| [vps-music-card-nojs.webp](screenshots/vps-music-card-nojs.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
+| [vps-music-card-reduced-motion.webp](screenshots/vps-music-card-reduced-motion.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
