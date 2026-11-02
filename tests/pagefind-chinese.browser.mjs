@@ -102,19 +102,27 @@ try {
     if (entry === 'navigation') await page.locator('[data-search-trigger]').click();
     const input = page.locator(entry === 'page' ? '#search-input' : '[data-search-input]');
     const results = entry === 'page' ? '#search-results' : '[data-search-panel-results]';
-    for (const query of ['云端', '上下文', 'Development', '云端 App', '云端一键发布验收', '云端']) {
+    for (const [query, path] of [['Attention', 'projects/attention-router/'], ['Wonderland', 'essays/wonderland/'], ['选择之前', 'essays/chances/'], ['上下文', 'fragments/']]) {
+      await input.fill(query);
+      const result = page.locator(`${results} a[href*="/${path}"]`).first();
+      await result.waitFor({ state: 'visible' });
+      assert.equal(new URL(await result.getAttribute('href'), origin).pathname, base + path);
+      assert.equal(await page.locator(`${results} a[href*="context-is-the-new-interface"], ${results} a[href*="i-only-wanted-to-watch-youtube"]`).count(), 0);
+      report.checks.push({ entry, query, publicResultFound: true });
+    }
+    for (const query of ['Development', '"初中时，我只是想看 YouTube"']) {
       await input.fill(query);
       await page.waitForFunction(({ entry, query }) => entry === 'page'
-        ? document.querySelector('#search-status')?.textContent.includes(`「${query}」`) && !!document.querySelector('#search-results a')
-        : document.querySelector('[data-search-panel-all]')?.getAttribute('href')?.endsWith(`?q=${encodeURIComponent(query)}`), { entry, query });
-      const article = page.locator(`${results} a[href*="/articles/context-is-the-new-interface/"]`);
-      await article.waitFor({ state: 'visible' });
-      assert.equal(new URL(await article.getAttribute('href'), origin).pathname, base + 'articles/context-is-the-new-interface/');
-      report.checks.push({ entry, query, articleFound: true });
+        ? document.querySelector('#search-status')?.textContent.includes(`「${query}」`)
+        : document.querySelector('[data-search-panel-status]')?.textContent.includes(`没有找到与「${query}」`) || (!document.querySelector('[data-search-panel-all]')?.hidden && document.querySelector('[data-search-panel-all]')?.getAttribute('href')?.endsWith(`?q=${encodeURIComponent(query)}`)), { entry, query });
+      assert.equal(await page.locator(`${results} a[href*="context-is-the-new-interface"], ${results} a[href*="i-only-wanted-to-watch-youtube"], ${results} a[href*="photo-main-landscape"], ${results} a[href*="photo-portrait"], ${results} a[href*="photo-square"]`).count(), 0);
+      if (query !== 'Development') assert.equal(await page.locator(`${results} a`).count(), 0);
+      report.checks.push({ entry, query, draftExcluded: true });
     }
-    await page.locator(`${results} a[href*="/articles/context-is-the-new-interface/"]`).click();
-    await page.waitForURL(origin + base + 'articles/context-is-the-new-interface/');
-    assert.ok((await page.locator('body').innerText()).includes('云端一键发布验收'));
+    await input.fill('Attention');
+    await page.locator(`${results} a[href*="/projects/attention-router/"]`).first().click();
+    await page.waitForURL(origin + base + 'projects/attention-router/');
+    assert.ok((await page.locator('body').innerText()).includes('v0.1.0'));
     await context.close();
   }
   assert.deepEqual(report.pageErrors, []);

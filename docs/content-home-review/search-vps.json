@@ -1,0 +1,109 @@
+{
+  "checks": [
+    {
+      "entry": "page",
+      "query": "Attention",
+      "publicResultFound": true
+    },
+    {
+      "entry": "page",
+      "query": "Wonderland",
+      "publicResultFound": true
+    },
+    {
+      "entry": "page",
+      "query": "选择之前",
+      "publicResultFound": true
+    },
+    {
+      "entry": "page",
+      "query": "上下文",
+      "publicResultFound": true
+    },
+    {
+      "entry": "page",
+      "query": "Development",
+      "draftExcluded": true
+    },
+    {
+      "entry": "page",
+      "query": "\"初中时，我只是想看 YouTube\"",
+      "draftExcluded": true
+    },
+    {
+      "entry": "navigation",
+      "query": "Attention",
+      "publicResultFound": true
+    },
+    {
+      "entry": "navigation",
+      "query": "Wonderland",
+      "publicResultFound": true
+    },
+    {
+      "entry": "navigation",
+      "query": "选择之前",
+      "publicResultFound": true
+    },
+    {
+      "entry": "navigation",
+      "query": "上下文",
+      "publicResultFound": true
+    },
+    {
+      "entry": "navigation",
+      "query": "Development",
+      "draftExcluded": true
+    },
+    {
+      "entry": "navigation",
+      "query": "\"初中时，我只是想看 YouTube\"",
+      "draftExcluded": true
+    }
+  ],
+  "pageErrors": [],
+  "failedIndexRequests": [],
+  "minimalLogs": [
+    "Starting search on /__fixture/pagefind/",
+    "Normalized search term to 云 端",
+    "Stringified sort to ",
+    "Stringified filters to {}",
+    "Loaded necessary chunks to run search",
+    "Got the raw search result: {\"filtered_counts\":{},\"total_counts\":{},\"results\":[],\"unfiltered_total\":0}",
+    "Found 0 results for \"云 端\" in 3ms (74ms realtime)"
+  ],
+  "minimal": {
+    "language": "zh-CN",
+    "entry": {
+      "version": "1.5.2",
+      "languages": {
+        "zh-cn": {
+          "hash": "zh-cn_e841309821a22",
+          "wasm": null,
+          "page_count": 4
+        }
+      },
+      "include_characters": [
+        "_",
+        "‿",
+        "⁀",
+        "⁔",
+        "︳",
+        "︴",
+        "﹍",
+        "﹎",
+        "﹏",
+        "＿"
+      ]
+    },
+    "originalCount": 0,
+    "cloud": [
+      "/__fixture/fixture/"
+    ],
+    "mixed": [
+      "/__fixture/fixture/"
+    ],
+    "englishCount": 2
+  },
+  "pass": true
+}

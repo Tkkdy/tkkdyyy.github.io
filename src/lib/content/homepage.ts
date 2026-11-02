@@ -11,6 +11,7 @@
 // 首页显示哪种状态由组件决定，查询层只按发布状态过滤。
 
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { getPublishedImages } from './images';
 
 type HomepageEntry = CollectionEntry<'articles'> | CollectionEntry<'essays'> | CollectionEntry<'fragments'> | CollectionEntry<'projects'> | CollectionEntry<'images'>;
 
@@ -82,7 +83,7 @@ export async function getHomepageFragments(): Promise<CollectionEntry<'fragments
 }
 
 export async function getHomepageImages(): Promise<CollectionEntry<'images'>[]> {
-  const entries = (await getCollection('images'))
+  const entries = (await getPublishedImages())
     .filter((e) => isPublished(e) && isShownOnHomepage(e))
     .sort(byHomepageOrder);
   assertUniqueHomepageOrder(entries, 'images');

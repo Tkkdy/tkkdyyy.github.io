@@ -787,3 +787,14 @@
   .projects-flip-shell.is-flipped .projects-flip-back,
   .projects-flip-shell.is-hovered .projects-flip-back { display: block; }
 }
+
+/* Reuse the archive stage for Attention Router's actual Console capture. */
+.attention-console-evidence { grid-column: 3; min-width: 0; align-self: center; }
+.attention-console-evidence img { display: block; width: 100%; height: auto; }
+.attention-console-evidence figcaption { font-size: 12px; line-height: 1.8; margin-top: 12px; }
+@media (max-width: 720px) { .attention-console-evidence { grid-column: 1 / -1; } }
+
+.projects-attention-stage { padding-block: 64px; }
+.project-detail .prose { overflow-wrap: anywhere; }
+.project-detail .prose :not(pre) > code { white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 720px) { .projects-attention-stage { padding-block: 36px; row-gap: 24px; } }

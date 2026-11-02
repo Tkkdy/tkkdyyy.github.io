@@ -94,7 +94,13 @@ export async function getEditorialStories(): Promise<EditorialStory[]> {
     })),
   ];
 
-  return stories.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  // Public Pages artifacts must not embed unpublished bodies in static admin HTML.
+  // The existing root/private build flag keeps the private editor intact; VPS
+  // already removes admin output before indexing. Local development stays editable.
+  const includeUnpublished = import.meta.env.DEV || import.meta.env.VPS_PREVIEW === true;
+  return stories
+    .filter((story) => includeUnpublished || story.status === 'published')
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
 
 export function getEditorialTaxonomy(stories: EditorialStory[]): EditorialTaxonomy {

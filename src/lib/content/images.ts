@@ -1,8 +1,6 @@
 // tkkdy 影像查询层（栏目页与单张详情页共用）
 
-import { existsSync } from 'node:fs';
-import { resolve, relative } from 'node:path';
-import { publicAssetPath } from '../content-url.mjs';
+import { localImageFile, validateImageFile } from './image-file.mjs';
 import { getCollection, type CollectionEntry } from 'astro:content';
 
 export type ImageOrientation = 'landscape' | 'portrait' | 'square';
@@ -11,8 +9,9 @@ export type PublishedImage = CollectionEntry<'images'>;
 /** 公开影像列表：status = published，按 publishedAt 倒序，slug 稳定排序 */
 export async function getPublishedImages(): Promise<PublishedImage[]> {
   const entries = await getCollection('images');
-  return entries
-    .filter((entry) => entry.data.status === 'published')
+  const published = entries.filter((entry) => entry.data.status === 'published');
+  await Promise.all(published.map((entry) => validateImageFile(entry.data.image)));
+  return published
     .sort((a, b) => {
       const byDate = b.data.publishedAt.getTime() - a.data.publishedAt.getTime();
       if (byDate !== 0) return byDate;
@@ -22,17 +21,10 @@ export async function getPublishedImages(): Promise<PublishedImage[]> {
 
 /**
  * 检查图片文件是否真实存在于 public/ 目录。
- * 当前 image 条目指向的 /images/photos/*.jpg 尚不存在（Stage 2 fixture），
- * 文件不存在时页面保留 Placeholder，不生成 broken <img>。
+ * 只接受支持的本地文件；公开集合在构建时完整解码，缺失或损坏即失败。
  */
 export function imageFileExists(imagePath: string): boolean {
-  try {
-    const asset = publicAssetPath(imagePath);
-    if (asset === null) return /^https?:\/\//i.test(imagePath);
-    const root = resolve('public'), file = resolve(root, '.' + asset);
-    if (relative(root, file).startsWith('..')) return false;
-    return existsSync(file);
-  } catch { return false; }
+  return localImageFile(imagePath) !== null;
 }
 
 /** 展示比例：优先使用内容字段，其次从 slug / 路径推断，默认 landscape */

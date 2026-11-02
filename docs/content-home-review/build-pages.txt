@@ -1,0 +1,120 @@
+
+> tkkdy-personal-website@0.1.0 build
+> astro build && node scripts/normalize-public-urls.mjs pages && pagefind --site dist
+
+19:58:29 [content] Syncing content
+19:58:29 [content] Astro config changed
+19:58:29 [content] Clearing content store
+19:58:29 [content] Synced content
+19:58:29 [types] Generated 634ms
+19:58:29 [build] output: "static"
+19:58:29 [build] mode: "static"
+19:58:29 [build] directory: C:\Users\PsyDuck\Documents\Codex\tkkdy-content-home-20261101\dist\
+19:58:29 [build] Collecting build info...
+19:58:29 [build] ✓ Completed in 687ms.
+19:58:29 [build] Building static entrypoints...
+19:58:30 [vite] ✓ built in 475ms
+19:58:30 [WARN] [vite] [plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+19:58:30 [vite] ✓ built in 232ms
+19:58:30 [build] Rearranging server assets...
+
+ generating static routes
+19:58:30   ├─ /404.html (+9ms)
+19:58:30   ├─ /about/index.html (+16ms)
+19:58:30   ├─ /admin/content/index.html (+5ms)
+19:58:30   ├─ /admin/drafts/index.html (+5ms)
+19:58:30   ├─ /admin/preview/index.html (+4ms)
+19:58:30   ├─ /admin/proposals/index.html (+5ms)
+19:58:30   ├─ /admin/stories/new/index.html (+6ms)
+19:58:30   ├─ /admin/stories/essay-ipad-pro/index.html (+3ms)
+19:58:30   ├─ /admin/stories/essay-games/index.html (+2ms)
+19:58:30   ├─ /admin/stories/essay-chances/index.html (+2ms)
+19:58:30   ├─ /admin/stories/essay-agency/index.html (+2ms)
+19:58:30   ├─ /admin/stories/essay-re/index.html (+2ms)
+19:58:30   ├─ /admin/stories/essay-grokchrome/index.html (+2ms)
+19:58:30   ├─ /admin/stories/essay-mmqm/index.html (+1ms)
+19:58:30   ├─ /admin/stories/essay-wonderland/index.html (+1ms)
+19:58:30   ├─ /admin/stories/essay-tingge/index.html (+2ms)
+19:58:30   ├─ /admin/stories/essay-swatow/index.html (+2ms)
+19:58:30   ├─ /admin/stories/essay-qing/index.html (+2ms)
+19:58:30   ├─ /admin/stories/essay-gfw/index.html (+2ms)
+19:58:30   ├─ /admin/stories/essay-story-2026-09-12/index.html (+2ms)
+19:58:30   ├─ /admin/stories/fragment-2026-08-05-context-compounds/index.html (+2ms)
+19:58:30   ├─ /admin/stories/index.html (+4ms)
+19:58:30   ├─ /admin/index.html (+3ms)
+19:58:30   ├─ /articles/index.html (+3ms)
+19:58:30   ├─ /categories/随笔/index.html (+2ms)
+19:58:30   ├─ /categories/思考/index.html (+2ms)
+19:58:30   ├─ /categories/歌/index.html (+2ms)
+19:58:30   ├─ /categories/技术/index.html (+1ms)
+19:58:30   ├─ /categories/index.html (+3ms)
+19:58:30   ├─ /essays/ipad-pro/index.html (+12ms)
+19:58:30   ├─ /essays/games/index.html (+4ms)
+19:58:30   ├─ /essays/chances/index.html (+3ms)
+19:58:30   ├─ /essays/agency/index.html (+2ms)
+19:58:30   ├─ /essays/re/index.html (+2ms)
+19:58:30   ├─ /essays/grokchrome/index.html (+4ms)
+19:58:30   ├─ /essays/mmqm/index.html (+2ms)
+19:58:30   ├─ /essays/wonderland/index.html (+2ms)
+19:58:30   ├─ /essays/tingge/index.html (+1ms)
+19:58:30   ├─ /essays/swatow/index.html (+1ms)
+19:58:30   ├─ /essays/qing/index.html (+1ms)
+19:58:30   ├─ /essays/gfw/index.html (+1ms)
+19:58:30   ├─ /essays/story-2026-09-12/index.html (+3ms)
+19:58:30   ├─ /essays/index.html (+8ms)
+19:58:30   ├─ /fragments/index.html (+5ms)
+19:58:30   ├─ /images/index.html (+3ms)
+19:58:30   ├─ /projects/morning-radar/index.html (+2ms)
+19:58:30   ├─ /projects/attention-router/index.html (+2ms)
+19:58:30   ├─ /projects/c-console-games/index.html (+2ms)
+19:58:30   ├─ /projects/codex-reconnect-proxy-fix/index.html (+1ms)
+19:58:30   ├─ /projects/esp32-led-experiments/index.html (+1ms)
+19:58:30   ├─ /projects/girlfriend-desktop-pet/index.html (+1ms)
+19:58:30   ├─ /projects/tkkdy-personal-website/index.html (+1ms)
+19:58:30   ├─ /projects/index.html (+2ms)
+19:58:30   ├─ /robots.txt (+2ms)
+19:58:30   ├─ /rss.xml (+32ms)
+19:58:30   ├─ /search/index.html (+2ms)
+19:58:30   ├─ /tags/feelings/index.html (+3ms)
+19:58:30   ├─ /tags/回忆/index.html (+2ms)
+19:58:30   ├─ /tags/批判/index.html (+2ms)
+19:58:30   ├─ /tags/ai/index.html (+2ms)
+19:58:30   ├─ /tags/互联网/index.html (+2ms)
+19:58:30   ├─ /tags/index.html (+4ms)
+19:58:30   ├─ /index.html (+5ms)
+19:58:30 ✓ Completed in 340ms.
+
+19:58:31 [build] ✓ Completed in 1.33s.
+19:58:31 [@astrojs/sitemap] `sitemap-index.xml` created at `dist`
+19:58:31 [build] 61 page(s) built in 2.53s
+19:58:31 [build] Complete!
+{"step":"normalize-public-urls","target":"pages","htmlFiles":64,"rewrittenAttributes":1}
+
+Running Pagefind v1.5.2 (Extended)
+Running from: "C:\\Users\\PsyDuck\\Documents\\Codex\\tkkdy-content-home-20261101"
+Source:       "dist"
+Output:       "dist\\pagefind"
+
+[Walking source directory]
+Found 64 files matching **/*.{html}
+
+[Parsing files]
+Found a data-pagefind-body element on the site.
+↳ Ignoring pages without this tag.
+
+[Reading languages]
+Discovered 1 language: zh-cn
+
+[Building search indexes]
+Total:
+  Indexed 1 language
+  Indexed 37 pages
+  Indexed 3349 words
+  Indexed 0 filters
+  Indexed 0 sorts
+
+Finished in 0.199 seconds

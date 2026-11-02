@@ -10,6 +10,7 @@ interface Props {
 const { projects } = Astro.props;
 const projectBySlug = new Map(projects.map((project) => [project.data.slug, project]));
 
+const attention = projectBySlug.get('attention-router');
 const radar = projectBySlug.get('morning-radar');
 const website = projectBySlug.get('tkkdy-personal-website');
 const codex = projectBySlug.get('codex-reconnect-proxy-fix');
@@ -60,6 +61,21 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
   </section>
 
   <div class="projects-stages" aria-label="项目档案">
+    {attention && <article class="projects-stage projects-attention-stage projects-page-grid" aria-labelledby="attention-title">
+      <div class="projects-stage-index projects-mono" aria-hidden="true">ATTENTION / SOURCE RELEASE</div>
+      <header class="projects-stage-meta">
+        <p class="projects-status projects-mono">{lifecycle(attention)}</p>
+        <h2 id="attention-title"><a href={withBase(`projects/${attention.data.slug}/`)}>{attention.data.name}</a></h2>
+        <p class="projects-stage-lede">{attention.data.tagline}</p>
+        <p class="projects-stage-lede">{attention.data.description}</p>
+        <p class="projects-stack projects-mono">{attention.data.techStack?.join(' · ')}</p>
+      </header>
+      {attention.data.cover && <figure class="projects-evidence-frame attention-console-evidence">
+        <img src={withBase(attention.data.cover)} alt={attention.data.coverAlt} loading="lazy" />
+        <figcaption>原型真机实拍 / 屏幕状态原样保留 / 非公开固件验收证据</figcaption>
+      </figure>}
+    </article>}
+
     {radar && (
       <article class="projects-stage projects-radar-stage projects-page-grid" aria-labelledby="radar-title">
         <div class="projects-stage-index projects-mono" aria-hidden="true">01 / CURRENT WORK</div>
