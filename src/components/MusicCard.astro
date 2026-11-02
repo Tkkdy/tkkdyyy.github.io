@@ -3,10 +3,10 @@ import { siteSettings, musicSourceAvailable } from '../lib/content/site-settings
 import { withBase } from '../lib/site-url';
 import '../styles/flavor.css';
 const { music } = siteSettings;
-const local = music.source.startsWith('/music/');
+const directAudio = /\.mp3(?:[?#]|$)/i.test(music.source);
 ---
 {music.title && <section class="music-card" aria-labelledby="music-title"><span class="music-kicker">想分享的一首歌</span><h2 id="music-title">{music.title}</h2>{music.artist && <p class="music-artist">{music.artist}</p>}{music.note && <p>{music.note}</p>}
-  {musicSourceAvailable && (local ? <><audio controls preload="none" aria-label={`聆听 ${music.title}`} data-music><source src={withBase(music.source)} type="audio/mpeg" /></audio><p class="music-state" role="status" data-music-state>点击播放，听一会儿。</p></> : <a class="music-listen" href={music.source} target="_blank" rel="noopener noreferrer">聆听 <span aria-hidden="true">↗</span></a>)}
+  {musicSourceAvailable && (directAudio ? <><audio controls preload="none" aria-label={`聆听 ${music.title}`} data-music><source src={withBase(music.source)} type="audio/mpeg" /></audio><p class="music-state" role="status" data-music-state>点击播放，听一会儿。</p></> : <a class="music-listen" href={music.source} target="_blank" rel="noopener noreferrer">聆听 <span aria-hidden="true">↗</span></a>)}
 </section>}
 <script>
   const audio = document.querySelector<HTMLAudioElement>('[data-music]');

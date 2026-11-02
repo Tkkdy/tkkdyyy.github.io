@@ -5,6 +5,7 @@
 | 截图 | 证据范围 |
 | --- | --- |
 | [all-photo-resources-failed.webp](screenshots/all-photo-resources-failed.webp) | 隔离测试素材，非真实摄影/近况 |
+| [audio-actual-https-source.webp](screenshots/audio-actual-https-source.webp) | 实际 HTTPS 授权音源；非正式站页面 |
 | [audio-resource-404.webp](screenshots/audio-resource-404.webp) | 真实配置的本地构建 |
 | [boundary-America-Los_Angeles-0000.webp](screenshots/boundary-America-Los_Angeles-0000.webp) | 隔离测试素材，非真实摄影/近况 |
 | [boundary-America-Los_Angeles-0459.webp](screenshots/boundary-America-Los_Angeles-0459.webp) | 隔离测试素材，非真实摄影/近况 |

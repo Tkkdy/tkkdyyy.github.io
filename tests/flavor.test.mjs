@@ -25,8 +25,8 @@ test('weighted random retains all-pool freedom and excludes the previous photo',
 });
 test('site content defaults are honest; strict fields and safe music URLs',()=>{
  assert.deepEqual(validateSiteSettings(raw).recent,{doing:'',listening:'',thinking:''});
- for(const url of ['', 'https://music.example/song','/music/angelika-vee-you-are-my-sunshine.mp3'])assert(validMusicSource(url));
- for(const url of ['javascript:alert(1)','data:audio/mp3,x','http://example.com/','https://user:secret@example.com','//example.com','/music/../secret.mp3'])assert(!validMusicSource(url));
+ for(const url of ['', 'https://music.example/song','https://media.example/authorized.mp3'])assert(validMusicSource(url));
+ for(const url of ['/music/angelika-vee-you-are-my-sunshine.mp3','javascript:alert(1)','data:audio/mp3,x','http://example.com/','https://user:secret@example.com','//example.com','/music/../secret.mp3'])assert(!validMusicSource(url));
  for(const value of [{...raw,unknown:1},{...raw,recent:{...raw.recent,mood:'invented'}},{...raw,recent:{...raw.recent,doing:'x'.repeat(241)}}])assert.throws(()=>validateSiteSettings(value));
  assert.doesNotThrow(()=>validateSiteSettings({...raw,music:{...raw.music,source:''}}));
 });

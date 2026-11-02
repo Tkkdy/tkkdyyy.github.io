@@ -6,7 +6,7 @@ import { resolve,extname,sep } from 'node:path';
 import { chromium } from 'playwright';
 import { LATE_GREETING } from '../src/lib/flavor-selection.mjs';
 const evidence=resolve('docs/flavor-review'),screens=resolve(evidence,'screenshots');await mkdir(screens,{recursive:true});
-const report={scope:'Real local Chromium, desktop/mobile viewport emulation; synthetic photo metadata clearly labeled; no physical phone or owner photo acceptance',checks:[],pageErrors:[],screenshots:[]};
+const report={scope:'Real local Chromium, desktop/mobile viewport emulation; CDN response locally fulfilled with exact owner audio bytes (real HTTPS CDN accepted separately); synthetic photo metadata clearly labeled; no physical phone or owner photo acceptance',checks:[],pageErrors:[],screenshots:[]};
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.mp3':'audio/mpeg','.wasm':'application/wasm','.json':'application/json','.svg':'image/svg+xml'};
 // Each target needs its own origin: asset BASE_URL is absolute within the origin.
 const servers=[];
@@ -28,6 +28,7 @@ async function context(options={}){
  const c=await browser.newContext({viewport:{width:1440,height:1000},timezoneId:'Asia/Shanghai',...options});
  // Avoid variable external font availability; screenshots use the site's existing fallback stack.
  await c.route('https://fonts.googleapis.com/**',r=>r.abort());await c.route('https://fonts.gstatic.com/**',r=>r.abort());
+ await c.route('https://raw.githubusercontent.com/**/*.mp3',async route=>route.fulfill({status:200,contentType:'audio/mpeg',body:await readFile('media/music/angelika-vee-you-are-my-sunshine.mp3')}));
  const page=await c.newPage();page.on('pageerror',e=>report.pageErrors.push(e.message));return{c,page};
 }
 async function shot(page,name){await page.screenshot({path:resolve(screens,name+'.webp'),type:'webp',fullPage:false});report.screenshots.push(name+'.webp');}

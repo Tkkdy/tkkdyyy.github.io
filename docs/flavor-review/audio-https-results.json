@@ -1,0 +1,11 @@
+{
+  "source": "https://raw.githubusercontent.com/Tkkdy/tkkdyyy.github.io/b2fcd540fc8db229b0839a28c43a56e76e03410a/public/music/angelika-vee-you-are-my-sunshine.mp3",
+  "scope": "Real HTTPS GitHub Raw source, exact-byte hash and real Chromium native click playback; audio muted for test, no listening-quality claim",
+  "state": "PASS",
+  "status": 200,
+  "sha256": "adc173db8379532b145a498b995549f58eea29b97caffe3d31525f331fdd8213",
+  "bytes": 5105577,
+  "duration": 124.233333,
+  "currentTime": 0.007305,
+  "paused": false
+}

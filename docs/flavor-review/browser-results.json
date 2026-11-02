@@ -1,17 +1,17 @@
 {
-  "scope": "Real local Chromium, desktop/mobile viewport emulation; synthetic photo metadata clearly labeled; no physical phone or owner photo acceptance",
+  "scope": "Real local Chromium, desktop/mobile viewport emulation; CDN response locally fulfilled with exact owner audio bytes (real HTTPS CDN accepted separately); synthetic photo metadata clearly labeled; no physical phone or owner photo acceptance",
   "checks": [
     "Pages project base and VPS root base: 1440/1024/390/320, actual 0-photo/empty-recent fallback, existing home/gallery/about routes and music card, no horizontal overflow.",
     {
       "test": "pages: supplied MP3 decodes and plays only after native control click; muted for test, no listening-quality claim",
       "duration": 124.233333,
-      "time": 0.06332,
+      "time": 0.065394,
       "paused": false
     },
     {
       "test": "vps: supplied MP3 decodes and plays only after native control click; muted for test, no listening-quality claim",
       "duration": 124.233333,
-      "time": 0.064471,
+      "time": 0.085985,
       "paused": false
     },
     "Isolated 3-photo fixture: 2 deployment bases x 4 viewports; original section order retained; unknown tags ignored, draft/missing images excluded; swap avoids immediate repeat, reload persists selection, correct existing details and gallery linkage.",
