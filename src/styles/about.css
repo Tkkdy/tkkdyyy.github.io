@@ -6,7 +6,7 @@
  */
 
 .about-page {
-  max-width: var(--max-width-content);
+  max-width: 720px;
   margin-inline: auto;
   padding: 128px 24px 96px;
 }
@@ -32,7 +32,8 @@
 
 /* 内容区：窄列，安静 */
 .about-body {
-  max-width: 42rem;
+  max-width: 624px;
+  margin-inline: auto;
 }
 
 .about-lead {
@@ -98,4 +99,21 @@
 .about-list a:hover {
   color: var(--color-accent);
   border-color: var(--color-accent);
+}
+
+/* About-only player rail: narrow screens keep the player in normal document flow. */
+.about-music{margin-bottom:40px}
+.about-music .music-card{margin:0}
+.about-page-header{max-width:624px;margin-inline:auto}
+@media(min-width:1280px){
+  .about-music{position:fixed;top:128px;left:24px;width:clamp(220px,calc((100vw - 720px)/2 - 48px),320px);margin:0;z-index:5}
+  .about-music .music-card{padding:22px 18px}
+  .about-music .music-heading{gap:12px}
+  .about-music .music-card h2{font-size:24px}
+  .about-music .music-play{width:44px;height:44px}
+  .about-music .music-controls{grid-template-columns:minmax(0,1fr) 80px;gap:12px;margin:8px 0 0}
+  .about-music .music-volume{gap:4px}
+  .about-music .music-mute{width:28px}
+  .about-music .music-mute svg{width:19px;height:19px}
+  .about-music .music-volume .music-range{width:48px}
 }

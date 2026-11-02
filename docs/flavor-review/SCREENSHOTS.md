@@ -106,3 +106,9 @@
 | [vps-music-card-design-390.webp](screenshots/vps-music-card-design-390.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
 | [vps-music-card-nojs.webp](screenshots/vps-music-card-nojs.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
 | [vps-music-card-reduced-motion.webp](screenshots/vps-music-card-reduced-motion.webp) | 最新音乐卡本地真实构建；HTTPS 音源实测图见文件名 actual-https，其余音乐专项使用附件字节的 Range 响应；手机为视口模拟 |
+| [music-rail-1024.webp](screenshots/music-rail-1024.webp) | 最新左上侧播放器和收窄正文的位置验收 |
+| [music-rail-1280.webp](screenshots/music-rail-1280.webp) | 最新左上侧播放器和收窄正文的位置验收 |
+| [music-rail-1440.webp](screenshots/music-rail-1440.webp) | 最新左上侧播放器和收窄正文的位置验收 |
+| [music-rail-1920.webp](screenshots/music-rail-1920.webp) | 最新左上侧播放器和收窄正文的位置验收 |
+| [music-rail-320.webp](screenshots/music-rail-320.webp) | 最新左上侧播放器和收窄正文的位置验收 |
+| [music-rail-390.webp](screenshots/music-rail-390.webp) | 最新左上侧播放器和收窄正文的位置验收 |

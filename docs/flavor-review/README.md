@@ -82,3 +82,5 @@ Owner 后续明确要求“打开关于页面就直接淡入音乐”，覆盖�
 - 未合并前关闭 Draft PR 即可放弃候选，生产无须回退。将来如已批准合入，需要独立生成 revert PR 并验证；不直接重写 main。音乐可将 source 清空退回纯文字卡；窗口可关闭全部 enabled。编辑台若将来发布，应继续沿用其不可变版本回退机制，禁止改动生产私有草稿数据库。
 
 复现：先安装锁定依赖，执行 check / build / build:vps / build:admin；将各正常构建保留于 `.flavor-builds/pages` 与 `.flavor-builds/vps`，然后运行 fixture 构建器及相关 `flavor*.browser.mjs`。新增音乐专项默认使用 `dist` 的 Pages 构建；VPS 复现设置 `FLAVOR_MUSIC_ROOT=.flavor-builds/vps FLAVOR_MUSIC_BASE=/`。fixture 构建器只生成在本地，不应向生产发布 fixture 产物。所有测试服务器只监听回环地址，脚本结束自动停止。实际 HTTPS 音源测试使用当前环境代理；源本身是本轮已授权素材的固定版本。
+
+最新位置调整：桌面宽度 >=1280px 时音乐卡固定于左上侧（left 24px / top 128px），正文居中、最大 624px；窄屏播放器移至正文上方正常文档流。仅调整 about 模板和样式，播放逻辑不变；Pages 构建通过，1920/1440/1280/1024/390/320 六视口无重叠或横向溢出，见 `music-rail-layout.json` 和 `music-rail-*.webp`。此记录覆盖先前嵌在正文中的位置截图；未新增动效，待 Owner 讨论。
