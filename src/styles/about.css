@@ -101,19 +101,33 @@
   border-color: var(--color-accent);
 }
 
-/* About-only player rail: narrow screens keep the player in normal document flow. */
+/* The card background is present immediately; only its contents enter. */
 .about-music{margin-bottom:40px}
-.about-music .music-card{margin:0}
+.about-music .music-card{margin:0;min-height:260px;padding:28px;animation:none}
+.about-music .music-heading{gap:16px}
+.about-music .music-card h2{font-size:30px}
+.about-music .music-controls{grid-template-columns:minmax(0,1fr) 100px;gap:18px;margin:24px 0 0}
+.about-music .music-volume{gap:4px}
+.about-music .music-mute{width:28px}
+.about-music .music-volume .music-range{width:64px}
 .about-page-header{max-width:624px;margin-inline:auto}
-@media(min-width:1280px){
-  .about-music{position:fixed;top:128px;left:24px;width:clamp(220px,calc((100vw - 720px)/2 - 48px),320px);margin:0;z-index:5}
-  .about-music .music-card{padding:22px 18px}
-  .about-music .music-heading{gap:12px}
-  .about-music .music-card h2{font-size:24px}
+.about-music [data-music-ready] h2{animation:music-title-stage 2s both}
+.about-music [data-music-ready] :is(.music-play,.music-controls){animation:music-controls-stage .8s 1.2s cubic-bezier(.22,.61,.36,1) both}
+.music-play:active{scale:.97}
+@keyframes music-title-stage{
+  0%{clip-path:inset(0 100% 0 0);transform:translate(var(--music-title-x,0px),var(--music-title-y,60px))}
+  45%,60%{clip-path:inset(0);transform:translate(var(--music-title-x,0px),var(--music-title-y,60px))}
+  100%{clip-path:inset(0);transform:translate(0,0)}
+}
+@keyframes music-controls-stage{from{opacity:0;transform:translateY(var(--music-title-y,60px))}to{opacity:1;transform:translateY(0)}}
+@media(min-width:1440px){
+  .about-music{position:fixed;top:128px;left:24px;width:clamp(340px,calc((100vw - 720px)/2 - 36px),440px);margin:0;z-index:5}
+}
+@media(max-width:600px){
+  .about-music .music-card{padding:24px 18px;min-height:240px}
+  .about-music .music-card h2{font-size:25px}
   .about-music .music-play{width:44px;height:44px}
-  .about-music .music-controls{grid-template-columns:minmax(0,1fr) 80px;gap:12px;margin:8px 0 0}
-  .about-music .music-volume{gap:4px}
-  .about-music .music-mute{width:28px}
-  .about-music .music-mute svg{width:19px;height:19px}
+  .about-music .music-controls{grid-template-columns:minmax(0,1fr) 80px;gap:12px}
   .about-music .music-volume .music-range{width:48px}
 }
+@media(prefers-reduced-motion:reduce){.about-music [data-music-ready] :is(h2,.music-play,.music-controls){animation:none}.music-play:active{scale:1}}

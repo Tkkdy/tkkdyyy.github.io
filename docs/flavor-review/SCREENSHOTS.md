@@ -112,3 +112,8 @@
 | [music-rail-1920.webp](screenshots/music-rail-1920.webp) | 最新左上侧播放器和收窄正文的位置验收 |
 | [music-rail-320.webp](screenshots/music-rail-320.webp) | 最新左上侧播放器和收窄正文的位置验收 |
 | [music-rail-390.webp](screenshots/music-rail-390.webp) | 最新左上侧播放器和收窄正文的位置验收 |
+| [music-stage-1280.webp](screenshots/music-stage-1280.webp) | 最新放大卡片及分阶段动效的最终状态 |
+| [music-stage-1440.webp](screenshots/music-stage-1440.webp) | 最新放大卡片及分阶段动效的最终状态 |
+| [music-stage-1920.webp](screenshots/music-stage-1920.webp) | 最新放大卡片及分阶段动效的最终状态 |
+| [music-stage-320.webp](screenshots/music-stage-320.webp) | 最新放大卡片及分阶段动效的最终状态 |
+| [music-stage-390.webp](screenshots/music-stage-390.webp) | 最新放大卡片及分阶段动效的最终状态 |

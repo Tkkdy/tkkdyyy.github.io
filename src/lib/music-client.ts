@@ -105,6 +105,15 @@ if (card && audio && status && controls && toggle && seek && elapsed && duration
   // Keep native controls usable without JS; replace only after the custom controls are bound.
   controls.hidden = false; toggle.hidden = false; audio.hidden = true;
   syncPlayback(); syncProgress(); syncVolume();
+  const title = card.querySelector('h2');
+  if (title && card.closest('.about-music')) {
+    const box = card.getBoundingClientRect(), text = title.getBoundingClientRect();
+    card.style.setProperty('--music-title-x', `${box.left + box.width / 2 - text.left - text.width / 2}px`);
+    card.style.setProperty('--music-title-y', `${box.top + box.height / 2 - text.top - text.height / 2}px`);
+    card.dataset.musicReady = 'true';
+    card.addEventListener('focusin', () => { for (const animation of card.getAnimations({ subtree: true })) animation.finish(); });
+  }
+
   const start = () => {
     leaving = false; status.textContent = '准备轻轻播放…';
     setVolume(Math.min(0.01, preferredVolume));
