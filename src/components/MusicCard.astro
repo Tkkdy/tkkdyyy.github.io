@@ -12,11 +12,52 @@ const directAudio = /\.mp3(?:[?#]|$)/i.test(music.source);
   const audio = document.querySelector<HTMLAudioElement>('[data-music]');
   const status = document.querySelector<HTMLElement>('[data-music-state]');
   if (audio && status) {
+    const targetVolume = 0.6;
+    const fadeDuration = 2400;
     let unavailable = false;
-    for (const [event, text] of [['playing', '正在播放'], ['pause', '已暂停'], ['ended', '播放结束']]) audio.addEventListener(event, () => { if (!unavailable) status.textContent = text; });
-    const failed = () => { unavailable = true; audio.pause(); audio.hidden = true; status.textContent = '这首歌暂时无法播放。'; };
+    let leaving = false;
+    let frame = 0;
+    let lastVolume = 0.01;
+    const cancelFade = () => { cancelAnimationFrame(frame); frame = 0; };
+    const setVolume = (value: number) => { lastVolume = value; audio.volume = value; };
+    audio.addEventListener('play', () => { cancelFade(); setVolume(0.01); });
+    audio.addEventListener('playing', () => {
+      if (unavailable || leaving) return;
+      status.textContent = '正在播放';
+      cancelFade();
+      const started = performance.now();
+      const from = audio.volume;
+      const fade = (now: number) => {
+        if (audio.paused || unavailable || leaving) return;
+        if (Math.abs(audio.volume - lastVolume) > 0.001) { cancelFade(); return; }
+        const progress = Math.min(1, (now - started) / fadeDuration);
+        setVolume(from + (targetVolume - from) * progress);
+        frame = progress < 1 ? requestAnimationFrame(fade) : 0;
+      };
+      frame = requestAnimationFrame(fade);
+    });
+    // A visitor's volume adjustment takes priority over the fade.
+    audio.addEventListener('volumechange', () => { if (Math.abs(audio.volume - lastVolume) > 0.001) cancelFade(); });
+    for (const [event, text] of [['pause', '已暂停'], ['ended', '播放结束']]) audio.addEventListener(event, () => {
+      cancelFade();
+      if (!unavailable) status.textContent = text;
+    });
+    const failed = () => { unavailable = true; cancelFade(); audio.pause(); audio.hidden = true; status.textContent = '这首歌暂时无法播放。'; };
     audio.addEventListener('error', failed);
     audio.querySelector('source')?.addEventListener('error', failed);
-    window.addEventListener('pagehide', () => { audio.pause(); audio.currentTime = 0; });
+    const start = () => {
+      leaving = false;
+      status.textContent = '准备轻轻播放…';
+      setVolume(0.01);
+      // Request audible playback normally; respect the browser's autoplay policy.
+      void audio.play().catch(() => {
+        if (unavailable || leaving) return;
+        if (audio.error) failed();
+        else status.textContent = '浏览器暂未允许自动播放，点击播放，音乐会轻轻淡入。';
+      });
+    };
+    window.addEventListener('pagehide', () => { leaving = true; cancelFade(); audio.pause(); audio.currentTime = 0; });
+    window.addEventListener('pageshow', event => { if (event.persisted) start(); });
+    start();
   }
 </script>

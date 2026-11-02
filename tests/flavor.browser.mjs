@@ -46,12 +46,13 @@ try{
   assert(await page.locator('audio').evaluate(a=>a.paused));assert.equal(await page.locator('audio').getAttribute('preload'),'none');await shot(page,`${target}-about-${width}`);await c.close();
  }
  report.checks.push('Pages project base and VPS root base: 1440/1024/390/320, actual 0-photo/empty-recent fallback, existing home/gallery/about routes and music card, no horizontal overflow.');
- // All real-media requests wait for a user action. Native controls play the supplied MP3.
+ // Fresh Chromium visits block audible autoplay; native controls provide the fallback.
+ // Allowed entry/fade and pagehide are independently covered by flavor-music.browser.mjs.
  for(const target of ['pages','vps']){
   const {c,page}=await context();const media=[];page.on('request',r=>{if(r.url().endsWith('.mp3'))media.push(r.url());});await page.goto(url(target,'about/'));await page.waitForTimeout(300);assert.equal(media.length,0);
-  const audio=page.locator('audio');await audio.evaluate(a=>{a.volume=0;});await audio.click({position:{x:24,y:26}});await page.waitForFunction(()=>{const a=document.querySelector('audio');return !a.paused&&a.currentTime>0&&Number.isFinite(a.duration);});
+  const audio=page.locator('audio');await audio.click({position:{x:24,y:26}});await page.waitForFunction(()=>{const a=document.querySelector('audio');return !a.paused&&a.currentTime>0&&Number.isFinite(a.duration);});
   assert(media.length>0);assert.equal(await page.locator('[data-music-state]').innerText(),'正在播放');await shot(page,`${target}-music-playing`);
-  const state=await audio.evaluate(a=>({duration:a.duration,time:a.currentTime,paused:a.paused}));report.checks.push({test:`${target}: supplied MP3 decodes and plays only after native control click; muted for test, no listening-quality claim`,...state});
+  const state=await audio.evaluate(a=>({duration:a.duration,time:a.currentTime,paused:a.paused}));report.checks.push({test:`${target}: fresh visit blocks autoplay; supplied MP3 decodes after fallback click; no listening-quality claim`,...state});
   await audio.click({position:{x:24,y:26}});await page.waitForFunction(()=>document.querySelector('audio').paused);assert.equal(await page.locator('[data-music-state]').innerText(),'已暂停');
   await page.goto(url(target));assert.equal(await page.locator('audio').count(),0);await c.close();
  }
@@ -104,7 +105,7 @@ try{
  if(await stat(resolve('.flavor-builds/fixture-no-source')).catch(()=>null)){
   const {c,page}=await context();await page.goto(url('fixture-no-source'));await ready(page);assert.equal(await page.locator('.recent-notes dl>div').count(),1);await page.goto(url('fixture-no-source','about/'));assert(await page.locator('.music-card').isVisible());assert.equal(await page.locator('audio,.music-listen').count(),0);await shot(page,'music-no-source');await c.close();
  }
- report.checks.push('Single photo, denied storage, keyboard Enter/Tab, reduced motion, all photo requests failed and MP3 404 handled; no autoplay or ghost player after navigation.');
+ report.checks.push('Single photo, denied storage, keyboard Enter/Tab, reduced motion, all photo requests failed and MP3 404 handled; blocked-autoplay fallback and no ghost player after navigation.');
  assert.deepEqual(report.pageErrors,[]);report.state='PASS';
 }catch(error){report.state='FAIL';report.failure=error.stack;throw error;}
 finally{await browser?.close();for(const s of servers)await new Promise(r=>s.close(r));await writeFile(resolve(evidence,'browser-results.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({state:report.state,checks:report.checks.length,screenshots:report.screenshots.length}));}

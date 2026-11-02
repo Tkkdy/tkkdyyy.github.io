@@ -79,3 +79,17 @@
 | [vps-actual-images-390.webp](screenshots/vps-actual-images-390.webp) | 真实配置的本地构建 |
 | [vps-music-playing.webp](screenshots/vps-music-playing.webp) | 真实配置的本地构建 |
 | [vps-no-js-320.webp](screenshots/vps-no-js-320.webp) | 真实配置的本地构建 |
+| [pages-music-click-fade-1440.webp](screenshots/pages-music-click-fade-1440.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/点击降级；CDN 以授权附件字节响应 |
+| [pages-music-click-fade-390.webp](screenshots/pages-music-click-fade-390.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/点击降级；CDN 以授权附件字节响应 |
+| [pages-music-entry-autofade-1440.webp](screenshots/pages-music-entry-autofade-1440.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/点击降级；CDN 以授权附件字节响应 |
+| [pages-music-entry-autofade-390.webp](screenshots/pages-music-entry-autofade-390.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/点击降级；CDN 以授权附件字节响应 |
+| [vps-music-click-fade-1440.webp](screenshots/vps-music-click-fade-1440.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/点击降级；CDN 以授权附件字节响应 |
+| [vps-music-click-fade-390.webp](screenshots/vps-music-click-fade-390.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/点击降级；CDN 以授权附件字节响应 |
+| [vps-music-entry-autofade-1440.webp](screenshots/vps-music-entry-autofade-1440.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/点击降级；CDN 以授权附件字节响应 |
+| [vps-music-entry-autofade-390.webp](screenshots/vps-music-entry-autofade-390.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/点击降级；CDN 以授权附件字节响应 |
+| [pages-music-autoplay-404.webp](screenshots/pages-music-autoplay-404.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/音源失败；CDN 以授权附件字节响应 |
+| [pages-music-autoplay-blocked-1440.webp](screenshots/pages-music-autoplay-blocked-1440.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/音源失败；CDN 以授权附件字节响应 |
+| [pages-music-autoplay-blocked-390.webp](screenshots/pages-music-autoplay-blocked-390.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/音源失败；CDN 以授权附件字节响应 |
+| [vps-music-autoplay-404.webp](screenshots/vps-music-autoplay-404.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/音源失败；CDN 以授权附件字节响应 |
+| [vps-music-autoplay-blocked-1440.webp](screenshots/vps-music-autoplay-blocked-1440.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/音源失败；CDN 以授权附件字节响应 |
+| [vps-music-autoplay-blocked-390.webp](screenshots/vps-music-autoplay-blocked-390.webp) | 最新真实配置本地构建：音乐淡入/浏览器拦截/音源失败；CDN 以授权附件字节响应 |

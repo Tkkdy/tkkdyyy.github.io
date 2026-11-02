@@ -1,0 +1,338 @@
+{
+  "target": "vps",
+  "scope": "Real Edge/Chromium default autoplay policy; allowed path uses a real same-origin navigation click, no policy override flags. MP3 fulfilled with authorized owner bytes; viewport emulation, no physical phone/listening-quality claim.",
+  "checks": [
+    {
+      "test": "1440: fresh visit blocked without media request; native click fades over 2.4s to 60%; pause works",
+      "fade": [
+        {
+          "volume": 0.0591912499999542,
+          "time": 0.003297,
+          "paused": false
+        },
+        {
+          "volume": 0.11143083333328752,
+          "time": 0.193874,
+          "paused": false
+        },
+        {
+          "volume": 0.16470291666662087,
+          "time": 0.401502,
+          "paused": false
+        },
+        {
+          "volume": 0.21797499999995418,
+          "time": 0.619124,
+          "paused": false
+        },
+        {
+          "volume": 0.2722795833332875,
+          "time": 0.838795,
+          "paused": false
+        },
+        {
+          "volume": 0.32451916666662084,
+          "time": 1.059659,
+          "paused": false
+        },
+        {
+          "volume": 0.3777912499999543,
+          "time": 1.279283,
+          "paused": false
+        },
+        {
+          "volume": 0.43003083333328757,
+          "time": 1.481524,
+          "paused": false
+        },
+        {
+          "volume": 0.4843108333332875,
+          "time": 1.701053,
+          "paused": false
+        },
+        {
+          "volume": 0.5375829166666208,
+          "time": 1.919739,
+          "paused": false
+        },
+        {
+          "volume": 0.5908549999999542,
+          "time": 2.138515,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.3562,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.576059,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.787107,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 3.009271,
+          "paused": false
+        }
+      ]
+    },
+    {
+      "test": "390: fresh visit blocked without media request; native click fades over 2.4s to 60%; pause works",
+      "fade": [
+        {
+          "volume": 0.02108708333319596,
+          "time": 0.018823,
+          "paused": false
+        },
+        {
+          "volume": 0.07435916666652928,
+          "time": 0.204729,
+          "paused": false
+        },
+        {
+          "volume": 0.12763124999986264,
+          "time": 0.420903,
+          "paused": false
+        },
+        {
+          "volume": 0.18090333333319594,
+          "time": 0.639345,
+          "paused": false
+        },
+        {
+          "volume": 0.2341754166665293,
+          "time": 0.857007,
+          "paused": false
+        },
+        {
+          "volume": 0.28742291666652925,
+          "time": 1.069462,
+          "paused": false
+        },
+        {
+          "volume": 0.34069499999986264,
+          "time": 1.289427,
+          "paused": false
+        },
+        {
+          "volume": 0.39396708333319597,
+          "time": 1.506688,
+          "paused": false
+        },
+        {
+          "volume": 0.4472145833331959,
+          "time": 1.7248,
+          "paused": false
+        },
+        {
+          "volume": 0.5015191666665292,
+          "time": 1.945185,
+          "paused": false
+        },
+        {
+          "volume": 0.5547912499998626,
+          "time": 2.161868,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.380489,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.591646,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.809725,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 3.029028,
+          "paused": false
+        }
+      ]
+    },
+    {
+      "test": "1440: same-origin navigation automatically fades; pause cancels fade; manual volume retained; actual pagehide pauses and resets audio",
+      "fade": [
+        {
+          "volume": 0.02986333333342491,
+          "time": 0.020759,
+          "paused": false
+        },
+        {
+          "volume": 0.0841433333334249,
+          "time": 0.242759,
+          "paused": false
+        },
+        {
+          "volume": 0.13741541666675824,
+          "time": 0.454767,
+          "paused": false
+        },
+        {
+          "volume": 0.1907120833334249,
+          "time": 0.673968,
+          "paused": false
+        },
+        {
+          "volume": 0.2439595833334249,
+          "time": 0.89101,
+          "paused": false
+        },
+        {
+          "volume": 0.29723166666675827,
+          "time": 1.10629,
+          "paused": false
+        },
+        {
+          "volume": 0.34846333333342494,
+          "time": 1.311219,
+          "paused": false
+        },
+        {
+          "volume": 0.40171083333342494,
+          "time": 1.528534,
+          "paused": false
+        },
+        {
+          "volume": 0.45500750000009155,
+          "time": 1.748485,
+          "paused": false
+        },
+        {
+          "volume": 0.5092875000000915,
+          "time": 1.967447,
+          "paused": false
+        },
+        {
+          "volume": 0.5615025000000915,
+          "time": 2.182169,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.399976,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.612837,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.832289,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 3.04699,
+          "paused": false
+        }
+      ]
+    },
+    {
+      "test": "390: same-origin navigation automatically fades; pause cancels fade; manual volume retained; actual pagehide pauses and resets audio",
+      "fade": [
+        {
+          "volume": 0.029715833333287534,
+          "time": 0.022976,
+          "paused": false
+        },
+        {
+          "volume": 0.08195541666662086,
+          "time": 0.232445,
+          "paused": false
+        },
+        {
+          "volume": 0.13525208333328756,
+          "time": 0.449042,
+          "paused": false
+        },
+        {
+          "volume": 0.18849958333328753,
+          "time": 0.666802,
+          "paused": false
+        },
+        {
+          "volume": 0.24277958333328753,
+          "time": 0.888144,
+          "paused": false
+        },
+        {
+          "volume": 0.29605166666662086,
+          "time": 1.105021,
+          "paused": false
+        },
+        {
+          "volume": 0.3493483333332875,
+          "time": 1.32275,
+          "paused": false
+        },
+        {
+          "volume": 0.4025958333332875,
+          "time": 1.54275,
+          "paused": false
+        },
+        {
+          "volume": 0.4568758333332875,
+          "time": 1.761422,
+          "paused": false
+        },
+        {
+          "volume": 0.5101479166666208,
+          "time": 1.975858,
+          "paused": false
+        },
+        {
+          "volume": 0.5634199999999542,
+          "time": 2.193271,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.411824,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.63079,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.846671,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 3.063981,
+          "paused": false
+        }
+      ]
+    },
+    "Autoplay-permitted path with MP3 404 keeps failure text and hides invalid controls."
+  ],
+  "errors": [],
+  "screenshots": [
+    "docs/flavor-review/screenshots/vps-music-autoplay-blocked-1440.webp",
+    "docs/flavor-review/screenshots/vps-music-click-fade-1440.webp",
+    "docs/flavor-review/screenshots/vps-music-autoplay-blocked-390.webp",
+    "docs/flavor-review/screenshots/vps-music-click-fade-390.webp",
+    "docs/flavor-review/screenshots/vps-music-entry-autofade-1440.webp",
+    "docs/flavor-review/screenshots/vps-music-entry-autofade-390.webp",
+    "docs/flavor-review/screenshots/vps-music-autoplay-404.webp"
+  ],
+  "state": "PASS"
+}

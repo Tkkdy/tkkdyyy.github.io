@@ -3,21 +3,21 @@
   "checks": [
     "Pages project base and VPS root base: 1440/1024/390/320, actual 0-photo/empty-recent fallback, existing home/gallery/about routes and music card, no horizontal overflow.",
     {
-      "test": "pages: supplied MP3 decodes and plays only after native control click; muted for test, no listening-quality claim",
+      "test": "pages: fresh visit blocks autoplay; supplied MP3 decodes after fallback click; no listening-quality claim",
       "duration": 124.233333,
-      "time": 0.065394,
+      "time": 0.077572,
       "paused": false
     },
     {
-      "test": "vps: supplied MP3 decodes and plays only after native control click; muted for test, no listening-quality claim",
+      "test": "vps: fresh visit blocks autoplay; supplied MP3 decodes after fallback click; no listening-quality claim",
       "duration": 124.233333,
-      "time": 0.085985,
+      "time": 0.102997,
       "paused": false
     },
     "Isolated 3-photo fixture: 2 deployment bases x 4 viewports; original section order retained; unknown tags ignored, draft/missing images excluded; swap avoids immediate repeat, reload persists selection, correct existing details and gallery linkage.",
     "Exact 23:59/00:00/04:59/05:00 greeting boundary passes independently in Asia/Shanghai and America/Los_Angeles device timezones.",
     "No JS: basic home content and static photo/detail link remain usable; inactive swap and local-time greeting stay hidden; real empty library produces no photo frame or isolated greeting.",
-    "Single photo, denied storage, keyboard Enter/Tab, reduced motion, all photo requests failed and MP3 404 handled; no autoplay or ghost player after navigation."
+    "Single photo, denied storage, keyboard Enter/Tab, reduced motion, all photo requests failed and MP3 404 handled; blocked-autoplay fallback and no ghost player after navigation."
   ],
   "pageErrors": [],
   "screenshots": [
