@@ -1,0 +1,25 @@
+{
+  "scope": "REAL local Chromium + broker + SQLite; SYNTHETIC OAuth and GitHub API; production editor not modified or authenticated",
+  "checks": [
+    "Anonymous denied; exact settings read from pinned Git blob; actual SQLite autosave and independent-cookie-session restore; text-only preview; desktop/390px no overflow; no upstream write while drafting.",
+    "Preview does not execute HTML; stale session receives real SQLite revision conflict and cannot overwrite another device.",
+    "Invalid source rejected before save; downloadable input recovery; user-clicked proposal passes real broker validators, writes ONLY settings JSON on server-generated feature branch, uses exact base SHA, stops without merge or deployment. GitHub API is synthetic.",
+    "Existing image editor, 320px: nested window opt-in/time/note persist privately; real JPEG with synthetic GPS/device tags uploads through browser canvas as WebP with no EXIF."
+  ],
+  "upstreamWrites": [
+    {
+      "path": "/repos/Tkkdy/tkkdyyy.github.io/git/refs",
+      "method": "POST"
+    },
+    {
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "path": "/repos/Tkkdy/tkkdyyy.github.io/pulls",
+      "method": "POST"
+    }
+  ],
+  "pageErrors": [],
+  "state": "PASS"
+}

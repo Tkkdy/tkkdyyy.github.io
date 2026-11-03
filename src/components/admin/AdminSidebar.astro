@@ -3,7 +3,7 @@ import AdminIcon from './AdminIcon.astro';
 import type { EditorialStory } from '../../lib/admin/stories';
 
 interface Props {
-  active?: 'stories' | 'media' | 'projects' | 'homepage' | 'taxonomy' | 'site' | 'settings';
+  active?: 'stories' | 'media' | 'projects' | 'homepage' | 'taxonomy' | 'site' | 'settings' | 'photos' | 'recent';
   stories: EditorialStory[];
 }
 
@@ -12,7 +12,8 @@ const base = import.meta.env.BASE_URL;
 const recent = stories.slice(0, 3);
 const nav = [
   { id: 'stories', label: '内容', icon: 'stories', href: `${base}admin/stories/` },
-  { id: 'media', label: '媒体', icon: 'media' },
+  { id: 'photos', label: '照片', icon: 'media', href: `${base}admin/photos/` },
+  { id: 'recent', label: '近况', icon: 'home', href: `${base}admin/recent/` },
   { id: 'projects', label: '项目', icon: 'projects', href: `${base}admin/stories/` },
   { id: 'homepage', label: '首页', icon: 'home' },
   { id: 'taxonomy', label: '分类与标签', icon: 'tag' },
