@@ -3,6 +3,8 @@
 // 基于 v0.2.6 的已确认首页微调；第三屏随笔／碎片保持原版。
 // 首页具体内容来自 Content Collections（Markdown），经 homepage.ts 查询层获取。
 // 首页样式仅在 body.home / .home-refined 生效，不影响子页面。
+import WindowPhoto from '../components/WindowPhoto.astro';
+import RecentNotes from '../components/RecentNotes.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SeoHead from '../components/SeoHead.astro';
@@ -42,6 +44,8 @@ const { articles, essays, fragments, images, projects } = await getHomepageConte
   <body class="home home-refined">
     <Header />
     <main>
+      <WindowPhoto />
+      <RecentNotes />
       <!-- 空状态保护（CONTENT_MODEL §12）：对应 Collection 没有首页内容时隐藏区块而不是崩溃。
            保留所有图片区与待定槽位。 -->
       {articles[0] && <FeaturedSection article={articles[0]} />}

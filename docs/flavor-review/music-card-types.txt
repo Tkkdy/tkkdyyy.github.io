@@ -1,0 +1,23 @@
+07:15:51 [content] Syncing content
+07:15:51 [content] Synced content
+07:15:51 [types] Generated 637ms
+07:15:51 [check] Getting diagnostics for Astro files in C:\Users\PsyDuck\.codex\worktrees\tkkdy-flavor-20261102...
+[96msrc/lib/admin/resource-editor-client.ts[0m:[93m70[0m:[93m77[0m - [93mwarning[0m[90m ts(6385): [0m'returnValue' is deprecated.
+
+[7m70[0m   window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
+[7m  [0m [93m                                                                            ~~~~~~~~~~~[0m
+
+[96msrc/lib/admin/site-settings-client.ts[0m:[93m29[0m:[93m99[0m - [93mwarning[0m[90m ts(6385): [0m'returnValue' is deprecated.
+
+[7m29[0m     window.addEventListener('beforeunload', event => { if (dirty) { event.preventDefault(); event.returnValue = ''; } });
+[7m  [0m [93m                                                                                                  ~~~~~~~~~~~[0m
+
+[96msrc/lib/admin/story-editor-client.ts[0m:[93m363[0m:[93m112[0m - [93mwarning[0m[90m ts(6385): [0m'returnValue' is deprecated.
+
+[7m363[0m   window.addEventListener('beforeunload',event=>{if(cloud&&(dirty||pendingSaves)){event.preventDefault();event.returnValue='';}});
+[7m   [0m [93m                                                                                                               ~~~~~~~~~~~[0m
+
+Result (105 files):
+- 0 errors
+- 0 warnings
+- 3 hints

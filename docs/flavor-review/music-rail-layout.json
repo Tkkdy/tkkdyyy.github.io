@@ -1,0 +1,78 @@
+{
+  "scope": "About-only layout, actual Chromium viewports; playback unchanged",
+  "checks": [
+    {
+      "width": 1920,
+      "position": "fixed",
+      "left": 24,
+      "right": 344,
+      "top": 128,
+      "bottom": 279,
+      "bodyLeft": 648,
+      "bodyWidth": 624,
+      "headerTop": 192,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "position": "fixed",
+      "left": 24,
+      "right": 336,
+      "top": 128,
+      "bottom": 279,
+      "bodyLeft": 408,
+      "bodyWidth": 624,
+      "headerTop": 192,
+      "overflow": false
+    },
+    {
+      "width": 1280,
+      "position": "fixed",
+      "left": 24,
+      "right": 256,
+      "top": 128,
+      "bottom": 297.375,
+      "bodyLeft": 328,
+      "bodyWidth": 624,
+      "headerTop": 192,
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "position": "static",
+      "left": 184,
+      "right": 840,
+      "top": 192,
+      "bottom": 363,
+      "bodyLeft": 200,
+      "bodyWidth": 624,
+      "headerTop": 403,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "position": "static",
+      "left": 24,
+      "right": 366,
+      "top": 128,
+      "bottom": 278,
+      "bodyLeft": 24,
+      "bodyWidth": 342,
+      "headerTop": 318,
+      "overflow": false
+    },
+    {
+      "width": 320,
+      "position": "static",
+      "left": 24,
+      "right": 296,
+      "top": 128,
+      "bottom": 296.375,
+      "bodyLeft": 24,
+      "bodyWidth": 272,
+      "headerTop": 336.375,
+      "overflow": false
+    }
+  ],
+  "state": "PASS"
+}

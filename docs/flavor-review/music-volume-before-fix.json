@@ -1,0 +1,176 @@
+{
+  "target": "pages",
+  "scope": "Real Edge/Chromium default autoplay policy; allowed path uses a real same-origin navigation click, no policy override flags. MP3 fulfilled with authorized owner bytes; viewport emulation, no physical phone/listening-quality claim.",
+  "checks": [
+    {
+      "test": "1440: fresh visit blocked without media request; native click fades over 2.4s to 60%; pause works",
+      "fade": [
+        {
+          "volume": 0.06223958333337912,
+          "time": 0.008802,
+          "paused": false
+        },
+        {
+          "volume": 0.11551166666671245,
+          "time": 0.199429,
+          "paused": false
+        },
+        {
+          "volume": 0.16777583333337912,
+          "time": 0.400257,
+          "paused": false
+        },
+        {
+          "volume": 0.22205583333337914,
+          "time": 0.619669,
+          "paused": false
+        },
+        {
+          "volume": 0.2742954166667125,
+          "time": 0.836326,
+          "paused": false
+        },
+        {
+          "volume": 0.3286000000000458,
+          "time": 1.058173,
+          "paused": false
+        },
+        {
+          "volume": 0.3829291666667125,
+          "time": 1.279853,
+          "paused": false
+        },
+        {
+          "volume": 0.4361520833333792,
+          "time": 1.495364,
+          "paused": false
+        },
+        {
+          "volume": 0.48939958333337913,
+          "time": 1.709586,
+          "paused": false
+        },
+        {
+          "volume": 0.5426716666667124,
+          "time": 1.9265,
+          "paused": false
+        },
+        {
+          "volume": 0.5969762500000457,
+          "time": 2.145929,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.361828,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.583314,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.800602,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 3.016861,
+          "paused": false
+        }
+      ]
+    },
+    {
+      "test": "390: fresh visit blocked without media request; native click fades over 2.4s to 60%; pause works",
+      "fade": [
+        {
+          "volume": 0.019341666666666667,
+          "time": 0.017811,
+          "paused": false
+        },
+        {
+          "volume": 0.07465416666666666,
+          "time": 0.211476,
+          "paused": false
+        },
+        {
+          "volume": 0.12689375,
+          "time": 0.426075,
+          "paused": false
+        },
+        {
+          "volume": 0.18016583333333336,
+          "time": 0.64502,
+          "paused": false
+        },
+        {
+          "volume": 0.2334379166666667,
+          "time": 0.861836,
+          "paused": false
+        },
+        {
+          "volume": 0.28670999999999996,
+          "time": 1.079521,
+          "paused": false
+        },
+        {
+          "volume": 0.34101458333333334,
+          "time": 1.297685,
+          "paused": false
+        },
+        {
+          "volume": 0.3932541666666666,
+          "time": 1.509458,
+          "paused": false
+        },
+        {
+          "volume": 0.4465016666666667,
+          "time": 1.727495,
+          "paused": false
+        },
+        {
+          "volume": 0.49977375000000007,
+          "time": 1.943285,
+          "paused": false
+        },
+        {
+          "volume": 0.55302125,
+          "time": 2.16016,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.376217,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.602856,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 2.817262,
+          "paused": false
+        },
+        {
+          "volume": 0.6,
+          "time": 3.037194,
+          "paused": false
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "screenshots": [
+    "docs/flavor-review/screenshots/pages-music-autoplay-blocked-1440.webp",
+    "docs/flavor-review/screenshots/pages-music-click-fade-1440.webp",
+    "docs/flavor-review/screenshots/pages-music-autoplay-blocked-390.webp",
+    "docs/flavor-review/screenshots/pages-music-click-fade-390.webp",
+    "docs/flavor-review/screenshots/pages-music-entry-autofade-1440.webp"
+  ],
+  "state": "FAIL",
+  "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 0.11263541666652938\n- 0.22\n\n    at file:///C:/Users/PsyDuck/.codex/worktrees/tkkdy-flavor-20261102/tests/flavor-music.browser.mjs:53:177"
+}

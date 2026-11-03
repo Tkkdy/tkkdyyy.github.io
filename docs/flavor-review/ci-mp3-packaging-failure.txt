@@ -1,0 +1,411 @@
+2026-11-02T09:22:22.6207071Z Current runner version: '2.338.2'
+2026-11-02T09:22:22.6222892Z ##[group]Runner Image Provisioner
+2026-11-02T09:22:22.6223552Z Hosted Compute Agent
+2026-11-02T09:22:22.6224159Z Version: 20261021.618
+2026-11-02T09:22:22.6224646Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-02T09:22:22.6225147Z Build Date: 2026-10-21T00:45:21Z
+2026-11-02T09:22:22.6225610Z Worker ID: {70706042-9a34-446c-bf6a-0dee0c0712a1}
+2026-11-02T09:22:22.6226093Z Region: centralus
+2026-11-02T09:22:22.6226494Z Cloud: Azure
+2026-11-02T09:22:22.6226850Z ##[endgroup]
+2026-11-02T09:22:22.6227888Z ##[group]Operating System
+2026-11-02T09:22:22.6228305Z Ubuntu
+2026-11-02T09:22:22.6228658Z 24.04.5
+2026-11-02T09:22:22.6229035Z LTS
+2026-11-02T09:22:22.6229389Z ##[endgroup]
+2026-11-02T09:22:22.6229800Z ##[group]Runner Image
+2026-11-02T09:22:22.6230203Z Image: ubuntu-24.04
+2026-11-02T09:22:22.6230585Z Version: 20261025.353.1
+2026-11-02T09:22:22.6231477Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-02T09:22:22.6232536Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-02T09:22:22.6233184Z ##[endgroup]
+2026-11-02T09:22:22.6233950Z ##[group]GITHUB_TOKEN Permissions
+2026-11-02T09:22:22.6235930Z Contents: read
+2026-11-02T09:22:22.6236341Z Metadata: read
+2026-11-02T09:22:22.6236724Z ##[endgroup]
+2026-11-02T09:22:22.6238206Z Secret source: Actions
+2026-11-02T09:22:22.6238889Z Cache mode: write
+2026-11-02T09:22:22.6239570Z Prepare workflow directory
+2026-11-02T09:22:22.6616189Z Prepare all required actions
+2026-11-02T09:22:22.6652824Z Getting action download info
+2026-11-02T09:22:22.9184695Z Download action repository 'actions/checkout@v7' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-02T09:22:23.0190328Z Download action repository 'actions/setup-node@v6' (SHA:249970729cb0ef3589644e2896645e5dc5ba9c38)
+2026-11-02T09:22:23.1414976Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-11-02T09:22:23.3247190Z Complete job name: profiles (production)
+2026-11-02T09:22:23.3803225Z ##[group]Run actions/checkout@v7
+2026-11-02T09:22:23.3803861Z with:
+2026-11-02T09:22:23.3804607Z   ref: b2fcd540fc8db229b0839a28c43a56e76e03410a
+2026-11-02T09:22:23.3805097Z   persist-credentials: false
+2026-11-02T09:22:23.3805543Z   repository: Tkkdy/tkkdyyy.github.io
+2026-11-02T09:22:23.3808475Z   token: ***
+2026-11-02T09:22:23.3808862Z   ssh-strict: true
+2026-11-02T09:22:23.3809246Z   ssh-user: git
+2026-11-02T09:22:23.3809601Z   clean: true
+2026-11-02T09:22:23.3809976Z   sparse-checkout-cone-mode: true
+2026-11-02T09:22:23.3810435Z   fetch-depth: 1
+2026-11-02T09:22:23.3810771Z   fetch-tags: false
+2026-11-02T09:22:23.3811170Z   show-progress: true
+2026-11-02T09:22:23.3811530Z   lfs: false
+2026-11-02T09:22:23.3811870Z   submodules: false
+2026-11-02T09:22:23.3812245Z   set-safe-directory: true
+2026-11-02T09:22:23.3812665Z   allow-unsafe-pr-checkout: false
+2026-11-02T09:22:23.3813252Z env:
+2026-11-02T09:22:23.3813627Z   VPS_INDEXING_PROFILE: production
+2026-11-02T09:22:23.3814380Z   SITE_URL: https://tkkdy.me
+2026-11-02T09:22:23.3814881Z   PUBLIC_ADMIN_ORIGIN: https://editor.boenbot.top
+2026-11-02T09:22:23.3815436Z   SOURCE_SHA: b2fcd540fc8db229b0839a28c43a56e76e03410a
+2026-11-02T09:22:23.3815906Z ##[endgroup]
+2026-11-02T09:22:23.6147114Z Syncing repository: Tkkdy/tkkdyyy.github.io
+2026-11-02T09:22:23.6149112Z ##[group]Getting Git version info
+2026-11-02T09:22:23.6149815Z Working directory is '/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io'
+2026-11-02T09:22:23.6150995Z [command]/usr/bin/git version
+2026-11-02T09:22:23.6220223Z git version 2.56.0
+2026-11-02T09:22:23.6235561Z ##[endgroup]
+2026-11-02T09:22:23.6245837Z Temporarily overriding HOME='/home/runner/work/_temp/ef4508c2-c41d-4d10-8fe7-b59f96bfb4c0' before making global git config changes
+2026-11-02T09:22:23.6247062Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T09:22:23.6247955Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io
+2026-11-02T09:22:23.6295005Z Deleting the contents of '/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io'
+2026-11-02T09:22:23.6296301Z ##[group]Determining repository object format
+2026-11-02T09:22:23.6297267Z ##[endgroup]
+2026-11-02T09:22:23.6298142Z ##[group]Initializing the repository
+2026-11-02T09:22:23.6300146Z [command]/usr/bin/git init /home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io
+2026-11-02T09:22:23.6380836Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-02T09:22:23.6382138Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-02T09:22:23.6383636Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-02T09:22:23.6384846Z hint: call:
+2026-11-02T09:22:23.6385771Z hint:
+2026-11-02T09:22:23.6386633Z hint: 	git config --global init.defaultBranch <name>
+2026-11-02T09:22:23.6387265Z hint:
+2026-11-02T09:22:23.6387932Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-02T09:22:23.6388875Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-02T09:22:23.6389663Z hint:
+2026-11-02T09:22:23.6390215Z hint: 	git branch -m <name>
+2026-11-02T09:22:23.6390606Z hint:
+2026-11-02T09:22:23.6391104Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-02T09:22:23.6392319Z Initialized empty Git repository in /home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/.git/
+2026-11-02T09:22:23.6415790Z [command]/usr/bin/git remote add origin https://github.com/Tkkdy/tkkdyyy.github.io
+2026-11-02T09:22:23.6495809Z ##[endgroup]
+2026-11-02T09:22:23.6497032Z ##[group]Disabling automatic garbage collection
+2026-11-02T09:22:23.6497950Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-02T09:22:23.6530557Z ##[endgroup]
+2026-11-02T09:22:23.6531657Z ##[group]Setting up auth
+2026-11-02T09:22:23.6532254Z Removing SSH command configuration
+2026-11-02T09:22:23.6562916Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T09:22:23.6575993Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T09:22:23.6829900Z Removing HTTP extra header
+2026-11-02T09:22:23.6830648Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T09:22:23.6878163Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T09:22:23.7032796Z Removing includeIf entries pointing to credentials config files
+2026-11-02T09:22:23.7036903Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T09:22:23.7059014Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T09:22:23.7204339Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-c690e0ad-b4af-46b9-b2ee-af2005db45fe.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-02T09:22:23.7230626Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/.git.path /home/runner/work/_temp/git-credentials-c690e0ad-b4af-46b9-b2ee-af2005db45fe.config
+2026-11-02T09:22:23.7255401Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-c690e0ad-b4af-46b9-b2ee-af2005db45fe.config
+2026-11-02T09:22:23.7279650Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-c690e0ad-b4af-46b9-b2ee-af2005db45fe.config
+2026-11-02T09:22:23.7304690Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-c690e0ad-b4af-46b9-b2ee-af2005db45fe.config
+2026-11-02T09:22:23.7327272Z ##[endgroup]
+2026-11-02T09:22:23.7328101Z ##[group]Fetching the repository
+2026-11-02T09:22:23.7332427Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin b2fcd540fc8db229b0839a28c43a56e76e03410a
+2026-11-02T09:22:25.0672275Z From https://github.com/Tkkdy/tkkdyyy.github.io
+2026-11-02T09:22:25.0675532Z  * branch            b2fcd540fc8db229b0839a28c43a56e76e03410a -> FETCH_HEAD
+2026-11-02T09:22:25.0681048Z [command]/usr/bin/git rev-parse --verify --quiet b2fcd540fc8db229b0839a28c43a56e76e03410a^{object}
+2026-11-02T09:22:25.0707723Z b2fcd540fc8db229b0839a28c43a56e76e03410a
+2026-11-02T09:22:25.0717023Z ##[endgroup]
+2026-11-02T09:22:25.0718527Z ##[group]Determining the checkout info
+2026-11-02T09:22:25.0719752Z ##[endgroup]
+2026-11-02T09:22:25.0720453Z [command]/usr/bin/git sparse-checkout disable
+2026-11-02T09:22:25.0760312Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-02T09:22:25.0787553Z ##[group]Checking out the ref
+2026-11-02T09:22:25.0789238Z [command]/usr/bin/git checkout --progress --force b2fcd540fc8db229b0839a28c43a56e76e03410a
+2026-11-02T09:22:25.3328604Z Note: switching to 'b2fcd540fc8db229b0839a28c43a56e76e03410a'.
+2026-11-02T09:22:25.3329168Z
+2026-11-02T09:22:25.3329602Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-02T09:22:25.3330416Z changes and commit them, and you can discard any commits you make in this
+2026-11-02T09:22:25.3331343Z state without impacting any branches by switching back to a branch.
+2026-11-02T09:22:25.3331801Z
+2026-11-02T09:22:25.3332193Z If you want to create a new branch to retain commits you create, you may
+2026-11-02T09:22:25.3333046Z do so (now or later) by using -c with the switch command. Example:
+2026-11-02T09:22:25.3333503Z
+2026-11-02T09:22:25.3333866Z   git switch -c <new-branch-name>
+2026-11-02T09:22:25.3334597Z
+2026-11-02T09:22:25.3335105Z Or undo this operation with:
+2026-11-02T09:22:25.3335506Z
+2026-11-02T09:22:25.3335701Z   git switch -
+2026-11-02T09:22:25.3335979Z
+2026-11-02T09:22:25.3336340Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-02T09:22:25.3336831Z
+2026-11-02T09:22:25.3337491Z HEAD is now at b2fcd54 Add quiet photo window, recent notes and about-page music
+2026-11-02T09:22:25.3342173Z ##[endgroup]
+2026-11-02T09:22:25.3375284Z [command]/usr/bin/git log -1 --format=%H
+2026-11-02T09:22:25.3395701Z b2fcd540fc8db229b0839a28c43a56e76e03410a
+2026-11-02T09:22:25.3405549Z ##[group]Removing auth
+2026-11-02T09:22:25.3405983Z Removing SSH command configuration
+2026-11-02T09:22:25.3408032Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T09:22:25.3434313Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T09:22:25.3603634Z Removing HTTP extra header
+2026-11-02T09:22:25.3606228Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T09:22:25.3632766Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T09:22:25.3790787Z Removing includeIf entries pointing to credentials config files
+2026-11-02T09:22:25.3793290Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T09:22:25.3816031Z includeif.gitdir:/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/.git.path
+2026-11-02T09:22:25.3817213Z includeif.gitdir:/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/.git/worktrees/*.path
+2026-11-02T09:22:25.3817867Z includeif.gitdir:/github/workspace/.git.path
+2026-11-02T09:22:25.3818608Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T09:22:25.3826522Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/.git.path
+2026-11-02T09:22:25.3845137Z /home/runner/work/_temp/git-credentials-c690e0ad-b4af-46b9-b2ee-af2005db45fe.config
+2026-11-02T09:22:25.3853038Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-c690e0ad\-b4af\-46b9\-b2ee\-af2005db45fe\.config
+2026-11-02T09:22:25.3882305Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/.git/worktrees/*.path
+2026-11-02T09:22:25.3902326Z /home/runner/work/_temp/git-credentials-c690e0ad-b4af-46b9-b2ee-af2005db45fe.config
+2026-11-02T09:22:25.3908662Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-c690e0ad\-b4af\-46b9\-b2ee\-af2005db45fe\.config
+2026-11-02T09:22:25.3938898Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-02T09:22:25.3958320Z /github/runner_temp/git-credentials-c690e0ad-b4af-46b9-b2ee-af2005db45fe.config
+2026-11-02T09:22:25.3964157Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-c690e0ad\-b4af\-46b9\-b2ee\-af2005db45fe\.config
+2026-11-02T09:22:25.4019413Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-02T09:22:25.4037517Z /github/runner_temp/git-credentials-c690e0ad-b4af-46b9-b2ee-af2005db45fe.config
+2026-11-02T09:22:25.4041825Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-c690e0ad\-b4af\-46b9\-b2ee\-af2005db45fe\.config
+2026-11-02T09:22:25.4069341Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T09:22:25.4220229Z Removing credentials config '/home/runner/work/_temp/git-credentials-c690e0ad-b4af-46b9-b2ee-af2005db45fe.config'
+2026-11-02T09:22:25.4229055Z ##[endgroup]
+2026-11-02T09:22:25.4429830Z ##[group]Run actions/setup-node@v6
+2026-11-02T09:22:25.4430232Z with:
+2026-11-02T09:22:25.4430553Z   node-version: 24.19.0
+2026-11-02T09:22:25.4430894Z   cache: npm
+2026-11-02T09:22:25.4431220Z   check-latest: false
+2026-11-02T09:22:25.4433591Z   token: ***
+2026-11-02T09:22:25.4433923Z   package-manager-cache: true
+2026-11-02T09:22:25.4434630Z env:
+2026-11-02T09:22:25.4434938Z   VPS_INDEXING_PROFILE: production
+2026-11-02T09:22:25.4435329Z   SITE_URL: https://tkkdy.me
+2026-11-02T09:22:25.4435702Z   PUBLIC_ADMIN_ORIGIN: https://editor.boenbot.top
+2026-11-02T09:22:25.4436120Z   SOURCE_SHA: b2fcd540fc8db229b0839a28c43a56e76e03410a
+2026-11-02T09:22:25.4436576Z ##[endgroup]
+2026-11-02T09:22:25.5399126Z Attempting to download 24.19.0...
+2026-11-02T09:22:26.3169734Z Acquiring 24.19.0 - x64 from https://github.com/actions/node-versions/releases/download/24.19.0-30872449280/node-24.19.0-linux-x64.tar.gz
+2026-11-02T09:22:26.8371055Z Extracting ...
+2026-11-02T09:22:26.8473855Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/bbe8b88d-fdaf-49c3-9599-61b383572944 -f /home/runner/work/_temp/19b368cf-6706-4b7f-8317-9d81591d1c37
+2026-11-02T09:22:27.8492546Z Adding to the cache ...
+2026-11-02T09:22:30.5176402Z ##[group]Environment details
+2026-11-02T09:22:30.6825890Z node: v24.19.0
+2026-11-02T09:22:30.6826356Z npm: 11.17.0
+2026-11-02T09:22:30.6826559Z yarn: 1.22.22
+2026-11-02T09:22:30.6827004Z ##[endgroup]
+2026-11-02T09:22:30.6841467Z [command]/opt/hostedtoolcache/node/24.19.0/x64/bin/npm config get cache
+2026-11-02T09:22:30.7479277Z /home/runner/.npm
+2026-11-02T09:22:30.8655384Z npm cache is not found
+2026-11-02T09:22:30.8790873Z ##[group]Run npm ci
+2026-11-02T09:22:30.8791175Z [36;1mnpm ci[0m
+2026-11-02T09:22:30.8808273Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-02T09:22:30.8808607Z env:
+2026-11-02T09:22:30.8808939Z   VPS_INDEXING_PROFILE: production
+2026-11-02T09:22:30.8809230Z   SITE_URL: https://tkkdy.me
+2026-11-02T09:22:30.8809501Z   PUBLIC_ADMIN_ORIGIN: https://editor.boenbot.top
+2026-11-02T09:22:30.8809835Z   SOURCE_SHA: b2fcd540fc8db229b0839a28c43a56e76e03410a
+2026-11-02T09:22:30.8810130Z ##[endgroup]
+2026-11-02T09:22:36.0206200Z
+2026-11-02T09:22:36.0212898Z added 346 packages, and audited 347 packages in 5s
+2026-11-02T09:22:36.0213237Z
+2026-11-02T09:22:36.0213519Z 130 packages are looking for funding
+2026-11-02T09:22:36.0213811Z   run `npm fund` for details
+2026-11-02T09:22:36.0222996Z
+2026-11-02T09:22:36.0223442Z 1 moderate severity vulnerability
+2026-11-02T09:22:36.0223804Z
+2026-11-02T09:22:36.0224077Z To address all issues, run:
+2026-11-02T09:22:36.0224512Z   npm audit fix
+2026-11-02T09:22:36.0224703Z
+2026-11-02T09:22:36.0224835Z Run `npm audit` for details.
+2026-11-02T09:22:36.0229678Z npm warn allow-scripts 1 package has install scripts not yet covered by allowScripts:
+2026-11-02T09:22:36.0230286Z npm warn allow-scripts   esbuild@0.28.1 (postinstall: node install.js)
+2026-11-02T09:22:36.0230663Z npm warn allow-scripts
+2026-11-02T09:22:36.0231174Z npm warn allow-scripts Run `npm approve-scripts --allow-scripts-pending` to review, or `npm approve-scripts <pkg>` to allow.
+2026-11-02T09:22:36.0529032Z ##[group]Run npm run build:vps
+2026-11-02T09:22:36.0529359Z [36;1mnpm run build:vps[0m
+2026-11-02T09:22:36.0540514Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-02T09:22:36.0540838Z env:
+2026-11-02T09:22:36.0541073Z   VPS_INDEXING_PROFILE: production
+2026-11-02T09:22:36.0541387Z   SITE_URL: https://tkkdy.me
+2026-11-02T09:22:36.0541665Z   PUBLIC_ADMIN_ORIGIN: https://editor.boenbot.top
+2026-11-02T09:22:36.0541972Z   SOURCE_SHA: b2fcd540fc8db229b0839a28c43a56e76e03410a
+2026-11-02T09:22:36.0542272Z ##[endgroup]
+2026-11-02T09:22:36.1211512Z
+2026-11-02T09:22:36.1212073Z > tkkdy-personal-website@0.1.0 build:vps
+2026-11-02T09:22:36.1213122Z > astro build --config astro.config.vps.mjs && node scripts/normalize-public-urls.mjs vps && node scripts/prune-vps-admin.mjs && pagefind --site dist && node scripts/write-vps-profile.mjs
+2026-11-02T09:22:36.1213598Z
+2026-11-02T09:22:37.1041118Z [2m09:22:37[22m [34m[content][39m Syncing content
+2026-11-02T09:22:37.2378296Z [2m09:22:37[22m [34m[content][39m Synced content
+2026-11-02T09:22:37.2388115Z [2m09:22:37[22m [34m[types][39m Generated [2m545ms[22m
+2026-11-02T09:22:37.2389878Z [2m09:22:37[22m [34m[build][39m output: [34m"static"[39m
+2026-11-02T09:22:37.2390731Z [2m09:22:37[22m [34m[build][39m mode: [34m"static"[39m
+2026-11-02T09:22:37.2391735Z [2m09:22:37[22m [34m[build][39m directory: [34m/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/dist/[39m
+2026-11-02T09:22:37.2392608Z [2m09:22:37[22m [34m[build][39m Collecting build info...
+2026-11-02T09:22:37.2394879Z [2m09:22:37[22m [34m[build][39m [32m✓ Completed in 586ms.[39m
+2026-11-02T09:22:37.2405281Z [2m09:22:37[22m [34m[build][39m Building static entrypoints...
+2026-11-02T09:22:37.5306959Z [2m09:22:37[22m [34m[vite][39m [32m✓ built in 273ms[39m
+2026-11-02T09:22:37.7218095Z [33m[1m09:22:37[22m [WARN] [vite][39m [33m[plugin builtin:vite-reporter]
+2026-11-02T09:22:37.7218696Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-11-02T09:22:37.7219117Z - Using dynamic import() to code-split the application
+2026-11-02T09:22:37.7219964Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-11-02T09:22:37.7220658Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-11-02T09:22:37.7221277Z [2m09:22:37[22m [34m[vite][39m [32m✓ built in 188ms[39m
+2026-11-02T09:22:37.7264204Z [2m09:22:37[22m [34m[build][39m Rearranging server assets...
+2026-11-02T09:22:37.7366972Z
+2026-11-02T09:22:37.7367701Z [42m[30m generating static routes [39m[49m
+2026-11-02T09:22:37.7864864Z [2m09:22:37[22m   [34m├─[39m [2m/404.html[22m [2m(+7ms)[22m
+2026-11-02T09:22:37.7890036Z [2m09:22:37[22m   [34m├─[39m [2m/about/index.html[22m [2m(+3ms)[22m
+2026-11-02T09:22:37.7916796Z [2m09:22:37[22m   [34m├─[39m [2m/admin/content/index.html[22m [2m(+3ms)[22m
+2026-11-02T09:22:37.7937166Z [2m09:22:37[22m   [34m├─[39m [2m/admin/drafts/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.7952247Z [2m09:22:37[22m   [34m├─[39m [2m/admin/preview/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.7971099Z [2m09:22:37[22m   [34m├─[39m [2m/admin/proposals/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.7990499Z [2m09:22:37[22m   [34m├─[39m [2m/admin/settings/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.8018807Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/new/index.html[22m [2m(+3ms)[22m
+2026-11-02T09:22:37.8040437Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-ipad-pro/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.8055078Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/article-context-is-the-new-interface/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8066214Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-games/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8077126Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-p1-editor-migration-verification-20261027/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8089362Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-chances/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8101383Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-agency/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8112120Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-re/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8123756Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-grokchrome/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8134666Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-mmqm/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8145022Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-wonderland/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8154437Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-tingge/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8166694Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-swatow/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8180458Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-qing/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8190307Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-gfw/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8200362Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-story-2026-09-12/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8209400Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/fragment-2026-08-05-context-compounds/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8221668Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/essay-i-only-wanted-to-watch-youtube/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8245947Z [2m09:22:37[22m   [34m├─[39m [2m/admin/stories/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.8264967Z [2m09:22:37[22m   [34m├─[39m [2m/admin/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.8429322Z [2m09:22:37[22m   [34m├─[39m [2m/articles/context-is-the-new-interface/index.html[22m [2m(+16ms)[22m
+2026-11-02T09:22:37.8445700Z [2m09:22:37[22m   [34m├─[39m [2m/articles/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.8755222Z [2m09:22:37[22m   [34m├─[39m [2m/categories/随笔/index.html[22m [2m(+28ms)[22m
+2026-11-02T09:22:37.8957856Z [2m09:22:37[22m   [34m├─[39m [2m/categories/思考/index.html[22m [2m(+23ms)[22m
+2026-11-02T09:22:37.8967614Z [2m09:22:37[22m   [34m├─[39m [2m/categories/歌/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8978223Z [2m09:22:37[22m   [34m├─[39m [2m/categories/技术/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.8994335Z [2m09:22:37[22m   [34m├─[39m [2m/categories/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.9014435Z [2m09:22:37[22m   [34m├─[39m [2m/essays/ipad-pro/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.9036389Z [2m09:22:37[22m   [34m├─[39m [2m/essays/games/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.9051524Z [2m09:22:37[22m   [34m├─[39m [2m/essays/chances/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9068961Z [2m09:22:37[22m   [34m├─[39m [2m/essays/agency/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.9084753Z [2m09:22:37[22m   [34m├─[39m [2m/essays/re/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.9106801Z [2m09:22:37[22m   [34m├─[39m [2m/essays/grokchrome/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.9127964Z [2m09:22:37[22m   [34m├─[39m [2m/essays/mmqm/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.9140159Z [2m09:22:37[22m   [34m├─[39m [2m/essays/wonderland/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9150812Z [2m09:22:37[22m   [34m├─[39m [2m/essays/tingge/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9160230Z [2m09:22:37[22m   [34m├─[39m [2m/essays/swatow/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9171332Z [2m09:22:37[22m   [34m├─[39m [2m/essays/qing/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9180184Z [2m09:22:37[22m   [34m├─[39m [2m/essays/gfw/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9190950Z [2m09:22:37[22m   [34m├─[39m [2m/essays/story-2026-09-12/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9203423Z [2m09:22:37[22m   [34m├─[39m [2m/essays/i-only-wanted-to-watch-youtube/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9240781Z [2m09:22:37[22m   [34m├─[39m [2m/essays/index.html[22m [2m(+4ms)[22m
+2026-11-02T09:22:37.9256720Z [2m09:22:37[22m   [34m├─[39m [2m/fragments/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.9272679Z [2m09:22:37[22m   [34m├─[39m [2m/images/photo-main-landscape/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.9281391Z [2m09:22:37[22m   [34m├─[39m [2m/images/photo-portrait/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9289387Z [2m09:22:37[22m   [34m├─[39m [2m/images/photo-square/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9309130Z [2m09:22:37[22m   [34m├─[39m [2m/images/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.9322396Z [2m09:22:37[22m   [34m├─[39m [2m/projects/morning-radar/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9333673Z [2m09:22:37[22m   [34m├─[39m [2m/projects/c-console-games/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9342512Z [2m09:22:37[22m   [34m├─[39m [2m/projects/codex-reconnect-proxy-fix/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9350664Z [2m09:22:37[22m   [34m├─[39m [2m/projects/esp32-led-experiments/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9358858Z [2m09:22:37[22m   [34m├─[39m [2m/projects/girlfriend-desktop-pet/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9367312Z [2m09:22:37[22m   [34m├─[39m [2m/projects/tkkdy-personal-website/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9384846Z [2m09:22:37[22m   [34m├─[39m [2m/projects/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.9395459Z [2m09:22:37[22m   [34m├─[39m [2m/robots.txt[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9595127Z [2m09:22:37[22m   [34m├─[39m [2m/rss.xml[22m [2m(+20ms)[22m
+2026-11-02T09:22:37.9607426Z [2m09:22:37[22m   [34m├─[39m [2m/search/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9619476Z [2m09:22:37[22m   [34m├─[39m [2m/tags/回忆/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9628744Z [2m09:22:37[22m   [34m├─[39m [2m/tags/feelings/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9637655Z [2m09:22:37[22m   [34m├─[39m [2m/tags/ai/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9646622Z [2m09:22:37[22m   [34m├─[39m [2m/tags/互联网/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9655669Z [2m09:22:37[22m   [34m├─[39m [2m/tags/批判/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9665419Z [2m09:22:37[22m   [34m├─[39m [2m/tags/个人助理/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9674346Z [2m09:22:37[22m   [34m├─[39m [2m/tags/上下文/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9689153Z [2m09:22:37[22m   [34m├─[39m [2m/tags/index.html[22m [2m(+1ms)[22m
+2026-11-02T09:22:37.9711733Z [2m09:22:37[22m   [34m├─[39m [2m/index.html[22m [2m(+2ms)[22m
+2026-11-02T09:22:37.9715476Z [2m09:22:37[22m [32m✓ Completed in 244ms.
+2026-11-02T09:22:37.9715979Z [39m
+2026-11-02T09:22:37.9732065Z [2m09:22:37[22m [34m[build][39m [32m✓ Completed in 733ms.[39m
+2026-11-02T09:22:37.9813712Z [2m09:22:37[22m [34m[@astrojs/sitemap][39m `sitemap-index.xml` created at `dist`
+2026-11-02T09:22:37.9814650Z [2m09:22:37[22m [34m[build][39m 71 page(s) built in [1m1.33s[22m
+2026-11-02T09:22:37.9815308Z [2m09:22:37[22m [34m[build][39m [1mComplete![22m
+2026-11-02T09:22:38.1148434Z {"step":"normalize-public-urls","target":"vps","htmlFiles":74,"rewrittenAttributes":0}
+2026-11-02T09:22:38.1386459Z {"step":"vps-admin-before-removal","files":["config.yml","content/index.html","drafts/index.html","index.html","preview/index.html","proposals/index.html","settings/index.html","stories/article-context-is-the-new-interface/index.html","stories/essay-agency/index.html","stories/essay-chances/index.html","stories/essay-games/index.html","stories/essay-gfw/index.html","stories/essay-grokchrome/index.html","stories/essay-i-only-wanted-to-watch-youtube/index.html","stories/essay-ipad-pro/index.html","stories/essay-mmqm/index.html","stories/essay-p1-editor-migration-verification-20261027/index.html","stories/essay-qing/index.html","stories/essay-re/index.html","stories/essay-story-2026-09-12/index.html","stories/essay-swatow/index.html","stories/essay-tingge/index.html","stories/essay-wonderland/index.html","stories/fragment-2026-08-05-context-compounds/index.html","stories/index.html","stories/new/index.html","sveltia-loader.js","sveltia-proposal.css","sveltia-proposal.html","sveltia-proposal.js","sveltia-workspace.html","sveltia.html","vendor/MATERIAL-SYMBOLS-LICENSE.txt","vendor/SVELTIA-LICENSE.txt","vendor/cms-fonts.css","vendor/fonts-provenance.json","vendor/material-symbols-3ae08513a063.woff2","vendor/provenance.json","vendor/sveltia-cms-0.164.2.js"]}
+2026-11-02T09:22:38.1442803Z [build:vps] Removed dist/admin/ (39 files) before Pagefind indexing.
+2026-11-02T09:22:38.1510213Z {"step":"vps-unused-bundles-removed","files":["DraftTransfer.astro_astro_type_script_index_0_lang.BNqC2tZx.js","StoryEditor.astro_astro_type_script_index_0_lang.BHoE9jtt.js","cloud-drafts.gOlkUcSx.js","content.astro_astro_type_script_index_0_lang.wAJKQwjK.js","draft-storage.CPvf4vOB.js","drafts.astro_astro_type_script_index_0_lang.4O4Y4bwj.js","github-content.8qW0Q1mh.js","preview-data.CfDv6O1_.js","preview.astro_astro_type_script_index_0_lang.lS5WuZQe.js","proposal-history.CwStPgWG.js","proposals.astro_astro_type_script_index_0_lang.BJBCgA8Z.js","publish-story.vsgm9vj5.js","safe-preview.NUjMKd8n.js","settings.astro_astro_type_script_index_0_lang.CPuQZc2C.js","stories.j45WLvuC.css"]}
+2026-11-02T09:22:38.1737023Z
+2026-11-02T09:22:38.1737356Z Running Pagefind v1.5.2 (Extended)
+2026-11-02T09:22:38.1737875Z Running from: "/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io"
+2026-11-02T09:22:38.1738214Z Source:       "dist"
+2026-11-02T09:22:38.1738462Z Output:       "dist/pagefind"
+2026-11-02T09:22:38.1738623Z
+2026-11-02T09:22:38.1738731Z [Walking source directory]
+2026-11-02T09:22:38.1746786Z Found 46 files matching **/*.{html}
+2026-11-02T09:22:38.1746967Z
+2026-11-02T09:22:38.1747127Z [Parsing files]
+2026-11-02T09:22:38.3692446Z Found a data-pagefind-body element on the site.
+2026-11-02T09:22:38.3693017Z ↳ Ignoring pages without this tag.
+2026-11-02T09:22:38.3693449Z
+2026-11-02T09:22:38.3693553Z [Reading languages]
+2026-11-02T09:22:38.3705871Z Discovered 1 language: zh-cn
+2026-11-02T09:22:38.3706096Z
+2026-11-02T09:22:38.3706276Z [Building search indexes]
+2026-11-02T09:22:38.3801422Z Total:
+2026-11-02T09:22:38.3801756Z   Indexed 1 language
+2026-11-02T09:22:38.3802210Z   Indexed 43 pages
+2026-11-02T09:22:38.3802556Z   Indexed 3304 words
+2026-11-02T09:22:38.3803344Z   Indexed 0 filters
+2026-11-02T09:22:38.3803702Z   Indexed 0 sorts
+2026-11-02T09:22:38.3804479Z Note: Pagefind doesn't support stemming for the language zh-cn.
+2026-11-02T09:22:38.3805083Z Search will still work, but will not match across root words.
+2026-11-02T09:22:38.3805625Z Note: Pagefind doesn't support stemming for the language zh-cn.
+2026-11-02T09:22:38.3806197Z Search will still work, but will not match across root words.
+2026-11-02T09:22:38.4141916Z
+2026-11-02T09:22:38.4142453Z Finished in 0.240 seconds
+2026-11-02T09:22:38.4452196Z ##[group]Run python3 -B ops/deploy/write_version.py --source . --dist dist --target vps --workflow "$SOURCE_SHA" --profile "$VPS_INDEXING_PROFILE"
+2026-11-02T09:22:38.4452907Z [36;1mpython3 -B ops/deploy/write_version.py --source . --dist dist --target vps --workflow "$SOURCE_SHA" --profile "$VPS_INDEXING_PROFILE"[0m
+2026-11-02T09:22:38.4463971Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-02T09:22:38.4464471Z env:
+2026-11-02T09:22:38.4464692Z   VPS_INDEXING_PROFILE: production
+2026-11-02T09:22:38.4464971Z   SITE_URL: https://tkkdy.me
+2026-11-02T09:22:38.4465261Z   PUBLIC_ADMIN_ORIGIN: https://editor.boenbot.top
+2026-11-02T09:22:38.4465556Z   SOURCE_SHA: b2fcd540fc8db229b0839a28c43a56e76e03410a
+2026-11-02T09:22:38.4465897Z ##[endgroup]
+2026-11-02T09:22:38.6904432Z {"schema": 1, "sourceSha": "b2fcd540fc8db229b0839a28c43a56e76e03410a", "target": "vps", "pipelineSha": "b2fcd540fc8db229b0839a28c43a56e76e03410a", "configSha256": "3a36c1e98a1ed9fb38b29d9a8557a5a2f98defce94b46cfe6d91096c95acb85a", "lockfileSha256": "a2d59418c7399dcc4023c6e3565864620abad02dedcb2dbb0713bac69197acdc", "indexingProfile": "production"}
+2026-11-02T09:22:38.6978032Z ##[group]Run python3 -B ops/deploy/release_bundle.py --source . --output bundle.zip --site "$SITE_URL" --source-sha "$SOURCE_SHA" --workflow-sha "$SOURCE_SHA" --run-id "$GITHUB_RUN_ID" --attempt "$GITHUB_RUN_ATTEMPT" --profile "$VPS_INDEXING_PROFILE"
+2026-11-02T09:22:38.6979097Z [36;1mpython3 -B ops/deploy/release_bundle.py --source . --output bundle.zip --site "$SITE_URL" --source-sha "$SOURCE_SHA" --workflow-sha "$SOURCE_SHA" --run-id "$GITHUB_RUN_ID" --attempt "$GITHUB_RUN_ATTEMPT" --profile "$VPS_INDEXING_PROFILE"[0m
+2026-11-02T09:22:38.6988998Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-02T09:22:38.6989275Z env:
+2026-11-02T09:22:38.6989526Z   VPS_INDEXING_PROFILE: production
+2026-11-02T09:22:38.6989800Z   SITE_URL: https://tkkdy.me
+2026-11-02T09:22:38.6990104Z   PUBLIC_ADMIN_ORIGIN: https://editor.boenbot.top
+2026-11-02T09:22:38.6990408Z   SOURCE_SHA: b2fcd540fc8db229b0839a28c43a56e76e03410a
+2026-11-02T09:22:38.6990665Z ##[endgroup]
+2026-11-02T09:22:38.8367284Z Traceback (most recent call last):
+2026-11-02T09:22:38.8368150Z   File "/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/ops/deploy/release_bundle.py", line 131, in <module>
+2026-11-02T09:22:38.8369206Z     a=p.parse_args();pack(a.source,a.output,a.site,a.source_sha,a.workflow_sha,a.run_id,a.attempt,a.profile)
+2026-11-02T09:22:38.8370454Z                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-02T09:22:38.8371621Z   File "/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/ops/deploy/release_bundle.py", line 115, in pack
+2026-11-02T09:22:38.8372574Z     validate_site(data,site,profile)
+2026-11-02T09:22:38.8373555Z   File "/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/ops/deploy/release_bundle.py", line 40, in validate_site
+2026-11-02T09:22:38.8374448Z     require(p.suffix.lower() in EXT,'nonstatic extension '+name)
+2026-11-02T09:22:38.8375267Z   File "/home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io/ops/deploy/release_bundle.py", line 10, in require
+2026-11-02T09:22:38.8376093Z     if not ok:raise ValueError(msg)
+2026-11-02T09:22:38.8376444Z               ^^^^^^^^^^^^^^^^^^^^^
+2026-11-02T09:22:38.8376997Z ValueError: nonstatic extension music/angelika-vee-you-are-my-sunshine.mp3
+2026-11-02T09:22:38.8509437Z ##[error]Process completed with exit code 1.
+2026-11-02T09:22:38.8629187Z Post job cleanup.
+2026-11-02T09:22:38.9286888Z [command]/usr/bin/git version
+2026-11-02T09:22:38.9319890Z git version 2.56.0
+2026-11-02T09:22:38.9350097Z Temporarily overriding HOME='/home/runner/work/_temp/bc34cb7c-87de-4da0-89ee-f8edb67ab974' before making global git config changes
+2026-11-02T09:22:38.9350779Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-02T09:22:38.9356446Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/tkkdyyy.github.io/tkkdyyy.github.io
+2026-11-02T09:22:38.9379307Z Removing SSH command configuration
+2026-11-02T09:22:38.9385226Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-02T09:22:38.9409763Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-02T09:22:38.9571552Z Removing HTTP extra header
+2026-11-02T09:22:38.9575934Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-02T09:22:38.9598594Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-02T09:22:38.9747269Z Removing includeIf entries pointing to credentials config files
+2026-11-02T09:22:38.9752209Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-02T09:22:38.9773764Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-02T09:22:39.0044590Z Cleaning up orphan processes

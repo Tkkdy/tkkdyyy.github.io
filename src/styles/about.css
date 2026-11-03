@@ -6,7 +6,7 @@
  */
 
 .about-page {
-  max-width: var(--max-width-content);
+  max-width: 720px;
   margin-inline: auto;
   padding: 128px 24px 96px;
 }
@@ -32,7 +32,8 @@
 
 /* 内容区：窄列，安静 */
 .about-body {
-  max-width: 42rem;
+  max-width: 624px;
+  margin-inline: auto;
 }
 
 .about-lead {
@@ -99,3 +100,34 @@
   color: var(--color-accent);
   border-color: var(--color-accent);
 }
+
+/* The card background is present immediately; only its contents enter. */
+.about-music{margin-bottom:40px}
+.about-music .music-card{margin:0;min-height:250px;padding:28px;animation:none;display:flex;flex-direction:column;justify-content:center}
+.about-music .music-heading{gap:16px}
+.about-music .music-card h2{font-size:30px}
+.about-music .music-controls{grid-template-columns:minmax(0,1fr) 100px;gap:18px;margin:24px 0 0}
+.about-music .music-volume{gap:4px}
+.about-music .music-mute{width:28px}
+.about-music .music-volume .music-range{width:64px}
+.about-page-header{max-width:624px;margin-inline:auto}
+.about-music [data-music-ready] h2{animation:music-title-stage 1.6s both}
+.about-music [data-music-ready] :is(.music-play,.music-controls){animation:music-controls-stage .4s 1.2s cubic-bezier(.22,.61,.36,1) both}
+.music-play:active{scale:.97}
+@keyframes music-title-stage{
+  0%{clip-path:inset(0 100% 0 0);transform:translate(var(--music-title-x,0px),var(--music-title-y,60px))}
+  56.25%,75%{clip-path:inset(0);transform:translate(var(--music-title-x,0px),var(--music-title-y,60px))}
+  100%{clip-path:inset(0);transform:translate(0,0)}
+}
+@keyframes music-controls-stage{from{opacity:0;transform:translateY(var(--music-title-y,60px))}to{opacity:1;transform:translateY(0)}}
+@media(min-width:1440px){
+  .about-music{position:fixed;top:128px;left:24px;width:clamp(340px,calc((100vw - 720px)/2 - 36px),440px);margin:0;z-index:5}
+}
+@media(max-width:600px){
+  .about-music .music-card{padding:24px 18px;min-height:230px}
+  .about-music .music-card h2{font-size:25px}
+  .about-music .music-play{width:44px;height:44px}
+  .about-music .music-controls{grid-template-columns:minmax(0,1fr) 80px;gap:12px}
+  .about-music .music-volume .music-range{width:48px}
+}
+@media(prefers-reduced-motion:reduce){.about-music [data-music-ready] :is(h2,.music-play,.music-controls){animation:none}.music-play:active{scale:1}}

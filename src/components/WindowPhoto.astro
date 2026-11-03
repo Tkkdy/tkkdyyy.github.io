@@ -1,0 +1,24 @@
+---
+import { getWindowPhotos } from '../lib/content/window';
+import '../styles/flavor.css';
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
+const photos = await getWindowPhotos();
+const first = photos[0];
+---
+{first && <section class:list={['life-window', { 'life-window-compact': compact }]} aria-label={compact ? '此刻的照片' : '一扇窗'} data-window data-photos={JSON.stringify(photos)}>
+  <div class="window-heading"><span>{compact ? '此刻的照片' : '一扇窗'}</span><span aria-hidden="true">A moment, here.</span></div>
+  <figure>
+    <a class="window-image-link" href={first.href} aria-label="查看这张影像" data-window-link>
+      <img src={first.src} srcset={first.srcset} sizes={compact ? '(min-width: 768px) 720px, 92vw' : '(min-width: 1200px) 1056px, 90vw'} width={first.width} height={first.height} alt={first.alt} loading={compact ? 'lazy' : 'eager'} fetchpriority={compact ? 'auto' : 'high'} decoding="async" data-window-image />
+    </a>
+    <figcaption>
+      <div class="window-caption"><p data-window-note hidden={!first.note}>{first.note}</p><div class="window-meta"><time data-window-date datetime={first.date} hidden={!first.date}>{first.date}</time><span data-window-location hidden={!first.location}>{first.location}</span></div><p class="window-greeting" data-window-greeting hidden></p></div>
+      <div class="window-actions"><button type="button" data-window-next hidden>换一张 <span aria-hidden="true">↻</span></button><a href={first.href} data-window-link>去影像 <span aria-hidden="true">↗</span></a></div>
+    </figcaption>
+  </figure>
+</section>}
+<script>
+  import { initializeWindows } from '../lib/window-client';
+  initializeWindows();
+</script>

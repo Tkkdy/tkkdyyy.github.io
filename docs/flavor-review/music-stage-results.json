@@ -1,0 +1,75 @@
+{
+  "checks": [
+    {
+      "width": 440,
+      "initial": {
+        "opacity": "1",
+        "transform": "none",
+        "clip": "inset(0px 100% 0px 0px)",
+        "controlsOpacity": "0"
+      },
+      "centerDelta": 0,
+      "height": 260,
+      "overlap": false,
+      "overflow": false,
+      "viewportWidth": 1920
+    },
+    {
+      "width": 340,
+      "initial": {
+        "opacity": "1",
+        "transform": "none",
+        "clip": "inset(0px 100% 0px 0px)",
+        "controlsOpacity": "0"
+      },
+      "centerDelta": 0,
+      "height": 260,
+      "overlap": false,
+      "overflow": false,
+      "viewportWidth": 1440
+    },
+    {
+      "width": 656,
+      "initial": {
+        "opacity": "1",
+        "transform": "none",
+        "clip": "inset(0px 100% 0px 0px)",
+        "controlsOpacity": "0"
+      },
+      "centerDelta": 0,
+      "height": 260,
+      "overlap": false,
+      "overflow": false,
+      "viewportWidth": 1280
+    },
+    {
+      "width": 342,
+      "initial": {
+        "opacity": "1",
+        "transform": "none",
+        "clip": "inset(0px 100% 0px 0px)",
+        "controlsOpacity": "0"
+      },
+      "centerDelta": 0,
+      "height": 240,
+      "overlap": false,
+      "overflow": false,
+      "viewportWidth": 390
+    },
+    {
+      "width": 272,
+      "initial": {
+        "opacity": "1",
+        "transform": "none",
+        "clip": "inset(0px 100% 0px 0px)",
+        "controlsOpacity": "0"
+      },
+      "centerDelta": 0,
+      "height": 240,
+      "overlap": false,
+      "overflow": false,
+      "viewportWidth": 320
+    }
+  ],
+  "state": "PASS"
+}

@@ -1,0 +1,36 @@
+{
+  "scope": "Real browser device-local dates in two timezones; northern meteorological season display convention",
+  "checks": [
+    {
+      "timezoneId": "Asia/Shanghai",
+      "august31toSeptember1": [
+        {
+          "time": "night",
+          "season": "summer",
+          "selected": "summer"
+        },
+        {
+          "time": "late-night",
+          "season": "autumn",
+          "selected": "autumn"
+        }
+      ]
+    },
+    {
+      "timezoneId": "America/Los_Angeles",
+      "august31toSeptember1": [
+        {
+          "time": "night",
+          "season": "summer",
+          "selected": "summer"
+        },
+        {
+          "time": "late-night",
+          "season": "autumn",
+          "selected": "autumn"
+        }
+      ]
+    }
+  ],
+  "state": "PASS"
+}

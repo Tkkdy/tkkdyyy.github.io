@@ -22,3 +22,8 @@ Desktop.ini
 
 # Private authenticated Admin artifact
 dist-admin/
+
+# Local flavor acceptance builds and scratch logs
+.flavor-builds/
+baseline-check.txt
+flavor-typecheck.txt

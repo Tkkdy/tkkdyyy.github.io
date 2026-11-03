@@ -4,6 +4,7 @@
 // 内容全部来自项目中已有的公开信息（PRODUCT.md / 首页与页脚文案），
 // 只使用公开身份 tkkdy，不虚构任何个人信息。
 // 当前无真实公开联系方式 URL，因此不显示联系方式区块。
+import MusicCard from '../components/MusicCard.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SeoHead from '../components/SeoHead.astro';
@@ -38,6 +39,7 @@ import '../styles/about.css';
       <meta name="pagefind-meta" data-pagefind-meta="title: 关于" />
       <meta name="pagefind-meta" data-pagefind-meta="type: 关于" />
       <section class="about-page">
+        <aside class="about-music" aria-label="音乐播放器"><MusicCard /></aside>
         <header class="about-page-header">
           <div class="section-header">
             <span>About</span>
@@ -51,6 +53,7 @@ import '../styles/about.css';
             tkkdy 是一个属于技术创作者的个人网站。这里是 tkkdy
             的公开个人空间，记录正在进行的构建、长时间的思考以及沿途捕捉的切片。
           </p>
+
 
           <section class="about-section">
             <h2>What I do</h2>

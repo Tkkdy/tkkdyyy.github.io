@@ -1,6 +1,7 @@
 ---
 // 影像栏目 /images
 // 编辑式摄影档案流：横 / 竖 / 方图按原比例交错，而不是统一卡片网格。
+import WindowPhoto from '../../components/WindowPhoto.astro';
 import ImageLayout from '../../layouts/ImageLayout.astro';
 import ImageFrame from '../../components/images/ImageFrame.astro';
 import {
@@ -24,6 +25,8 @@ const images = await getPublishedImages();
         单张照片组成的安静记录。比例保留，信息克制，不做成相册目录。
       </p>
     </header>
+
+    <WindowPhoto compact />
 
     {
       images.length === 0 ? (

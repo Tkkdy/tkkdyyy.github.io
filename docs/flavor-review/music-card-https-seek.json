@@ -1,0 +1,14 @@
+{
+  "scope": "Real same-origin static audio source and actual custom card, no media mocking. Local Chromium desktop viewport, not a physical phone or listening-quality/in-app-browser claim.",
+  "source": "http://127.0.0.1:4323/tkkdyyy.github.io/music/angelika-vee-you-are-my-sunshine.mp3",
+  "url": "http://127.0.0.1:4323/tkkdyyy.github.io/about/",
+  "clickToPlayingMs": 397,
+  "media": {
+    "duration": 124.233333,
+    "time": 62.116666,
+    "seekableEnd": 124.233333,
+    "paused": false,
+    "source": "http://127.0.0.1:4323/tkkdyyy.github.io/music/angelika-vee-you-are-my-sunshine.mp3"
+  },
+  "state": "PASS"
+}

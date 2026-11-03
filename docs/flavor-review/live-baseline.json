@@ -1,0 +1,55 @@
+{
+  "checkedAt": "2026-11-02T09:11:55.655Z",
+  "mode": "anonymous read-only",
+  "pages": [
+    {
+      "url": "https://tkkdy.me/",
+      "status": 200,
+      "title": "tkkdy",
+      "fixturePlaceholders": 6,
+      "visibleImages": 2,
+      "editorAuthenticated": false
+    },
+    {
+      "url": "https://tkkdy.me/images/",
+      "status": 200,
+      "title": "影像 — tkkdy",
+      "fixturePlaceholders": 3,
+      "visibleImages": 2,
+      "editorAuthenticated": false
+    },
+    {
+      "url": "https://editor.boenbot.top/",
+      "status": 200,
+      "title": "登录 - Google 账号",
+      "fixturePlaceholders": 0,
+      "visibleImages": 2,
+      "editorAuthenticated": false
+    },
+    {
+      "url": "https://tkkdy.me/deployment.json",
+      "status": 200,
+      "version": {
+        "configSha256": "3a36c1e98a1ed9fb38b29d9a8557a5a2f98defce94b46cfe6d91096c95acb85a",
+        "indexingProfile": "production",
+        "lockfileSha256": "bacc5033be9c64a89d73a2fa6bedf538f2966a0856acfd2c03346c7b3646b760",
+        "pipelineSha": "5fa75755fbdc5a270963014209ffb8288c6dc01a",
+        "schema": 1,
+        "sourceSha": "033eda7d83b8bcf408d8d4a0b48a6e912f8f783f",
+        "target": "vps"
+      }
+    },
+    {
+      "url": "https://tkkdy.github.io/tkkdyyy.github.io/deployment.json",
+      "status": 200,
+      "version": {
+        "configSha256": "691393f80900a3acb9c535e0cecbdf2c7ef53cb88a493e6eba1c0a44d62cb9a0",
+        "lockfileSha256": "bacc5033be9c64a89d73a2fa6bedf538f2966a0856acfd2c03346c7b3646b760",
+        "pipelineSha": "5fa75755fbdc5a270963014209ffb8288c6dc01a",
+        "schema": 1,
+        "sourceSha": "033eda7d83b8bcf408d8d4a0b48a6e912f8f783f",
+        "target": "pages"
+      }
+    }
+  ]
+}
