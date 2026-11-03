@@ -55,6 +55,7 @@ if (card && audio && status && controls && toggle && seek && elapsed && duration
   audio.addEventListener('play', () => { cancelFade(); setVolume(Math.min(0.01, preferredVolume)); syncPlayback(); });
   audio.addEventListener('playing', () => {
     if (unavailable || leaving) return;
+    card.dataset.playback = 'playing';
     status.textContent = '正在播放';
     syncPlayback();
     cancelFade();
@@ -71,19 +72,26 @@ if (card && audio && status && controls && toggle && seek && elapsed && duration
   });
   for (const [event, text] of [['pause', '已暂停'], ['ended', '播放结束']]) audio.addEventListener(event, () => {
     cancelFade(); syncPlayback();
-    if (!unavailable) status.textContent = text;
+    if (!unavailable) { card.dataset.playback = 'paused'; status.textContent = text; }
   });
   for (const event of ['loadedmetadata', 'durationchange', 'timeupdate', 'seeked']) audio.addEventListener(event, syncProgress);
   const failed = () => {
-    unavailable = true; cancelFade(); audio.pause(); audio.hidden = true; controls.hidden = true; toggle.hidden = true;
+    unavailable = true; card.dataset.playback = 'error'; cancelFade(); audio.pause(); audio.hidden = true; controls.hidden = true; toggle.hidden = true;
     status.classList.add('music-state-error'); status.textContent = '这首歌暂时无法播放。';
   };
+  audio.addEventListener('waiting', () => {
+    if (!unavailable && !audio.paused) { card.dataset.playback = 'loading'; status.textContent = '音乐正在缓冲…'; }
+  });
   const play = () => {
+    card.dataset.playback = 'loading'; status.textContent = '音乐正在加载…';
     void audio.play().catch((error: unknown) => {
       if (unavailable || leaving) return;
       if (error instanceof DOMException && error.name === 'AbortError') return;
       if (audio.error) failed();
-      else status.textContent = '浏览器暂未允许自动播放，点击播放，音乐会轻轻淡入。';
+      else if (error instanceof DOMException && error.name === 'NotAllowedError') {
+        card.dataset.playback = 'blocked';
+        status.textContent = '浏览器暂未允许自动播放，点击播放，音乐会轻轻淡入。';
+      } else { card.dataset.playback = 'paused'; status.textContent = '暂未开始播放，请再点一次播放。'; }
       syncPlayback();
     });
   };
@@ -125,5 +133,6 @@ if (card && audio && status && controls && toggle && seek && elapsed && duration
   };
   window.addEventListener('pagehide', () => { leaving = true; cancelFade(); audio.pause(); audio.currentTime = 0; });
   window.addEventListener('pageshow', event => { if (event.persisted) start(); });
-  start();
+  if (audio.error || audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) failed();
+  else start();
 }

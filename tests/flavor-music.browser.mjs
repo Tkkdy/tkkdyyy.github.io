@@ -7,26 +7,24 @@ import {chromium} from 'playwright';
 const root=resolve(process.env.FLAVOR_MUSIC_ROOT||'dist');
 const base=process.env.FLAVOR_MUSIC_BASE||'/tkkdyyy.github.io/';
 const target=base==='/'?'vps':'pages';
-const types={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.webp':'image/webp','.png':'image/png'};
+const types={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.webp':'image/webp','.png':'image/png','.mp3':'audio/mpeg'};
 const server=createServer(async(req,res)=>{try{
  const path=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
  if(!path.startsWith(base))throw Error('base');
  const file=resolve(root,path.slice(base.length)+(path.endsWith('/')?'index.html':''));
  if(!file.startsWith(root+sep))throw Error('path');
- const bytes=await readFile(file);res.writeHead(200,{'Content-Type':types[extname(file)]||'application/octet-stream'});res.end(bytes);
+ const bytes=await readFile(file);
+ const range=req.headers.range?.match(/^bytes=(\d+)-(\d*)$/);
+ if(extname(file)==='.mp3' && range){const start=Number(range[1]),end=range[2]?Math.min(Number(range[2]),bytes.length-1):bytes.length-1;res.writeHead(206,{'Content-Type':'audio/mpeg','Accept-Ranges':'bytes','Content-Range':`bytes ${start}-${end}/${bytes.length}`});return res.end(bytes.subarray(start,end+1));}
+ res.writeHead(200,{'Content-Type':types[extname(file)]||'application/octet-stream'});res.end(bytes);
 }catch{res.writeHead(404);res.end();}});
 await new Promise(r=>server.listen(19645,'127.0.0.1',r));
 const origin='http://127.0.0.1:19645',url=origin+base;
-const report={target,scope:'Real Edge/Chromium default autoplay policy; allowed path uses a real same-origin navigation click, no policy override flags. MP3 fulfilled with authorized owner bytes; viewport emulation, no physical phone/listening-quality claim.',checks:[],errors:[],screenshots:[]};
+const report={target,scope:'Real Edge/Chromium default autoplay policy; allowed path uses a real same-origin navigation click, no policy override flags. MP3 served from the actual static build with byte ranges; viewport emulation, no physical phone/listening-quality claim.',checks:[],errors:[],screenshots:[]};
 let browser;
 async function context(width=1440){
  const c=await browser.newContext({viewport:{width,height:width<600?844:1000}});
  await c.route('https://fonts.googleapis.com/**',r=>r.abort());await c.route('https://fonts.gstatic.com/**',r=>r.abort());
- await c.route('https://raw.githubusercontent.com/**/*.mp3',async r=>{
-  const bytes=await readFile('media/music/angelika-vee-you-are-my-sunshine.mp3');const range=r.request().headers().range?.match(/^bytes=(\d+)-(\d*)$/);
-  if(range){const start=Number(range[1]),end=range[2]?Math.min(Number(range[2]),bytes.length-1):bytes.length-1;await r.fulfill({status:206,contentType:'audio/mpeg',headers:{'accept-ranges':'bytes','content-range':`bytes ${start}-${end}/${bytes.length}`},body:bytes.subarray(start,end+1)});}
-  else await r.fulfill({status:200,contentType:'audio/mpeg',headers:{'accept-ranges':'bytes'},body:bytes});
- });
  const page=await c.newPage();page.on('pageerror',e=>report.errors.push(e.message));return {c,page};
 }
 async function shot(page,name){const path=`docs/flavor-review/screenshots/${target}-${name}.webp`;await page.locator('.music-card').scrollIntoViewIfNeeded();await page.screenshot({path,type:'webp'});report.screenshots.push(path);}
@@ -41,12 +39,12 @@ try{
  for(const width of [1440,390]){
   const {c,page}=await context(width);const requests=[];page.on('request',r=>{if(r.url().endsWith('.mp3'))requests.push(r.url());});
   await page.goto(url+'about/');await page.getByText('浏览器暂未允许自动播放，点击播放，音乐会轻轻淡入。',{exact:true}).waitFor({state:'attached'});
-  assert(await page.locator('audio').evaluate(a=>a.paused));assert.equal(requests.length,0);await shot(page,`music-autoplay-blocked-${width}`);
+  assert(await page.locator('audio').evaluate(a=>a.paused));assert.equal(await page.locator('audio').getAttribute('preload'),'auto');assert(await page.locator('[data-music-state]').isVisible());await shot(page,`music-autoplay-blocked-${width}`);
   await page.locator('[data-music-toggle]').click();await playing(page);const fade=await samples(page);
   assert.equal(await page.locator('[data-music-state]').textContent(),'正在播放');await shot(page,`music-click-fade-${width}`);
   await page.locator('audio').evaluate(a=>a.pause());const paused=await page.locator('audio').evaluate(a=>a.volume);await page.waitForTimeout(300);assert.equal(await page.locator('audio').evaluate(a=>a.volume),paused);
   assert.equal(await page.locator('[data-music-state]').textContent(),'已暂停');
-  report.checks.push({test:`${width}: fresh visit blocked without media request; custom play click fades over 2.4s to 35%; pause works`,fade});await c.close();
+  report.checks.push({test:`${width}: fresh visit autoplay blocked with eager buffering and visible feedback; custom play click fades over 2.4s to 35%; pause works`,fade});await c.close();
  }
  for(const width of [1440,390]){
   const {c,page}=await context(width);await page.goto(url);if(width<768)await page.locator("[data-mobile-menu] summary").click();await page.locator(`a[href="${base}about/"]:visible`).first().click();await playing(page);const fade=await samples(page);await shot(page,`music-entry-autofade-${width}`);

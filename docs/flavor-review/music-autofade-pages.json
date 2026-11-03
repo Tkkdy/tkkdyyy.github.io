@@ -1,163 +1,163 @@
 {
   "target": "pages",
-  "scope": "Real Edge/Chromium default autoplay policy; allowed path uses a real same-origin navigation click, no policy override flags. MP3 fulfilled with authorized owner bytes; viewport emulation, no physical phone/listening-quality claim.",
+  "scope": "Real Edge/Chromium default autoplay policy; allowed path uses a real same-origin navigation click, no policy override flags. MP3 served from the actual static build with byte ranges; viewport emulation, no physical phone/listening-quality claim.",
   "checks": [
     {
-      "test": "1440: fresh visit blocked without media request; custom play click fades over 2.4s to 35%; pause works",
+      "test": "1440: fresh visit autoplay blocked with eager buffering and visible feedback; custom play click fades over 2.4s to 35%; pause works",
       "fade": [
         {
-          "volume": 0.042469999999155586,
-          "time": 0.018689,
+          "volume": 0.029323333332911122,
+          "time": 0.002647,
           "paused": false
         },
         {
-          "volume": 0.07488333333248894,
-          "time": 0.221249,
+          "volume": 0.06473999999957777,
+          "time": 0.253733,
           "paused": false
         },
         {
-          "volume": 0.10558249999915557,
-          "time": 0.441334,
+          "volume": 0.09720999999957781,
+          "time": 0.47365,
           "paused": false
         },
         {
-          "volume": 0.13686249999915562,
-          "time": 0.663067,
+          "volume": 0.12731416666624448,
+          "time": 0.696611,
           "paused": false
         },
         {
-          "volume": 0.16696666666582227,
-          "time": 0.872809,
+          "volume": 0.15801333333291112,
+          "time": 0.91314,
           "paused": false
         },
         {
-          "volume": 0.1976658333324889,
-          "time": 1.089441,
+          "volume": 0.18811749999957778,
+          "time": 1.1167,
           "paused": false
         },
         {
-          "volume": 0.2289599999991556,
-          "time": 1.310827,
+          "volume": 0.21881666666624444,
+          "time": 1.332738,
           "paused": false
         },
         {
-          "volume": 0.2602399999991556,
-          "time": 1.531111,
+          "volume": 0.24951583333291114,
+          "time": 1.559667,
           "paused": false
         },
         {
-          "volume": 0.2903441666658223,
-          "time": 1.744535,
+          "volume": 0.2807958333329111,
+          "time": 1.778214,
           "paused": false
         },
         {
-          "volume": 0.32163833333248887,
-          "time": 1.964965,
+          "volume": 0.31092833333291114,
+          "time": 1.995275,
           "paused": false
         },
         {
-          "volume": 0.35,
-          "time": 2.171496,
-          "paused": false
-        },
-        {
-          "volume": 0.35,
-          "time": 2.388218,
+          "volume": 0.3415991666662444,
+          "time": 2.199162,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.607563,
+          "time": 2.413601,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.821483,
+          "time": 2.635181,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 3.032638,
+          "time": 2.859072,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.076041,
           "paused": false
         }
       ]
     },
     {
-      "test": "390: fresh visit blocked without media request; custom play click fades over 2.4s to 35%; pause works",
+      "test": "390: fresh visit autoplay blocked with eager buffering and visible feedback; custom play click fades over 2.4s to 35%; pause works",
       "fade": [
         {
-          "volume": 0.015850833331644536,
-          "time": 0.010257,
+          "volume": 0.014150833334177729,
+          "time": 0.019446,
           "paused": false
         },
         {
-          "volume": 0.04654999999831119,
-          "time": 0.199972,
+          "volume": 0.04424083333417773,
+          "time": 0.203218,
           "paused": false
         },
         {
-          "volume": 0.07724916666497786,
-          "time": 0.416149,
+          "volume": 0.0755350000008444,
+          "time": 0.423463,
           "paused": false
         },
         {
-          "volume": 0.10794833333164452,
-          "time": 0.627615,
+          "volume": 0.10623416666751105,
+          "time": 0.638988,
           "paused": false
         },
         {
-          "volume": 0.13863333333164454,
-          "time": 0.845326,
+          "volume": 0.1369475000008444,
+          "time": 0.85871,
           "paused": false
         },
         {
-          "volume": 0.16933249999831118,
-          "time": 1.064147,
+          "volume": 0.16703750000084439,
+          "time": 1.068098,
           "paused": false
         },
         {
-          "volume": 0.20003166666497785,
-          "time": 1.28068,
+          "volume": 0.19831750000084442,
+          "time": 1.288836,
           "paused": false
         },
         {
-          "volume": 0.23132583333164453,
-          "time": 1.500992,
+          "volume": 0.22843583333417772,
+          "time": 1.503407,
           "paused": false
         },
         {
-          "volume": 0.2614299999983112,
-          "time": 1.714642,
+          "volume": 0.2597158333341777,
+          "time": 1.724538,
           "paused": false
         },
         {
-          "volume": 0.29211499999831114,
-          "time": 1.929196,
+          "volume": 0.2904150000008444,
+          "time": 1.942081,
           "paused": false
         },
         {
-          "volume": 0.3222333333316445,
-          "time": 2.142815,
-          "paused": false
-        },
-        {
-          "volume": 0.35,
-          "time": 2.358694,
+          "volume": 0.32056166666751107,
+          "time": 2.150728,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.576536,
+          "time": 2.369316,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.794425,
+          "time": 2.586131,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 3.012632,
+          "time": 2.799891,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.018128,
           "paused": false
         }
       ]
@@ -166,78 +166,78 @@
       "test": "1440: same-origin navigation automatically fades; pause cancels fade; manual volume retained; actual pagehide pauses and resets audio",
       "fade": [
         {
-          "volume": 0.019675833333755534,
-          "time": 0.016978,
+          "volume": 0.028515833332066733,
+          "time": 0.023615,
           "paused": false
         },
         {
-          "volume": 0.05095583333375553,
-          "time": 0.232202,
+          "volume": 0.0592149999987334,
+          "time": 0.23665,
           "paused": false
         },
         {
-          "volume": 0.08106000000042218,
-          "time": 0.445331,
+          "volume": 0.0898999999987334,
+          "time": 0.453913,
           "paused": false
         },
         {
-          "volume": 0.1135300000004222,
-          "time": 0.673287,
+          "volume": 0.11942333333206673,
+          "time": 0.665552,
           "paused": false
         },
         {
-          "volume": 0.14541916666708887,
-          "time": 0.901931,
+          "volume": 0.1507174999987334,
+          "time": 0.885984,
           "paused": false
         },
         {
-          "volume": 0.17552333333375553,
-          "time": 1.114915,
+          "volume": 0.18201166666540006,
+          "time": 1.106932,
           "paused": false
         },
         {
-          "volume": 0.2062225000004222,
-          "time": 1.331491,
+          "volume": 0.21210166666540006,
+          "time": 1.321561,
           "paused": false
         },
         {
-          "volume": 0.23690750000042218,
-          "time": 1.547398,
+          "volume": 0.2433958333320667,
+          "time": 1.542229,
           "paused": false
         },
         {
-          "volume": 0.2670258333337555,
-          "time": 1.761155,
+          "volume": 0.27409499999873344,
+          "time": 1.753964,
           "paused": false
         },
         {
-          "volume": 0.2977108333337555,
-          "time": 1.973297,
+          "volume": 0.3041991666654001,
+          "time": 1.969569,
           "paused": false
         },
         {
-          "volume": 0.32842416666708885,
-          "time": 2.192403,
-          "paused": false
-        },
-        {
-          "volume": 0.35,
-          "time": 2.409272,
+          "volume": 0.33488416666540005,
+          "time": 2.184421,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.624699,
+          "time": 2.395843,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.841726,
+          "time": 2.617483,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 3.055651,
+          "time": 2.834088,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.05076,
           "paused": false
         }
       ]
@@ -246,78 +246,78 @@
       "test": "390: same-origin navigation automatically fades; pause cancels fade; manual volume retained; actual pagehide pauses and resets audio",
       "fade": [
         {
-          "volume": 0.018599166665822273,
-          "time": 0.002896,
+          "volume": 0.02718416666666667,
+          "time": 0.031975,
           "paused": false
         },
         {
-          "volume": 0.048703333332488934,
-          "time": 0.204929,
+          "volume": 0.059059166666666656,
+          "time": 0.255466,
           "paused": false
         },
         {
-          "volume": 0.07940249999915558,
-          "time": 0.419106,
+          "volume": 0.08975833333333333,
+          "time": 0.474291,
           "paused": false
         },
         {
-          "volume": 0.11010166666582226,
-          "time": 0.638756,
+          "volume": 0.12105250000000001,
+          "time": 0.697002,
           "paused": false
         },
         {
-          "volume": 0.14020583333248893,
-          "time": 0.846393,
+          "volume": 0.15350833333333333,
+          "time": 0.916245,
           "paused": false
         },
         {
-          "volume": 0.1709049999991556,
-          "time": 1.064246,
+          "volume": 0.1848025,
+          "time": 1.136879,
           "paused": false
         },
         {
-          "volume": 0.20100916666582225,
-          "time": 1.279893,
+          "volume": 0.21550166666666665,
+          "time": 1.352385,
           "paused": false
         },
         {
-          "volume": 0.23053249999915557,
-          "time": 1.482797,
+          "volume": 0.24620083333333329,
+          "time": 1.570646,
           "paused": false
         },
         {
-          "volume": 0.26123166666582226,
-          "time": 1.699789,
+          "volume": 0.27748083333333334,
+          "time": 1.791034,
           "paused": false
         },
         {
-          "volume": 0.2919166666658223,
-          "time": 1.918037,
+          "volume": 0.30818,
+          "time": 2.008063,
           "paused": false
         },
         {
-          "volume": 0.3226158333324889,
-          "time": 2.134752,
-          "paused": false
-        },
-        {
-          "volume": 0.35,
-          "time": 2.352146,
+          "volume": 0.3388791666666666,
+          "time": 2.224465,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.577442,
+          "time": 2.443319,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.784355,
+          "time": 2.659555,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.998762,
+          "time": 2.877403,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.087924,
           "paused": false
         }
       ]

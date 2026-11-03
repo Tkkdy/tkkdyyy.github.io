@@ -28,7 +28,7 @@ async function context(options={}){
  const c=await browser.newContext({viewport:{width:1440,height:1000},timezoneId:'Asia/Shanghai',...options});
  // Avoid variable external font availability; screenshots use the site's existing fallback stack.
  await c.route('https://fonts.googleapis.com/**',r=>r.abort());await c.route('https://fonts.gstatic.com/**',r=>r.abort());
- await c.route('https://raw.githubusercontent.com/**/*.mp3',async route=>route.fulfill({status:200,contentType:'audio/mpeg',body:await readFile('media/music/angelika-vee-you-are-my-sunshine.mp3')}));
+ await c.route('https://raw.githubusercontent.com/**/*.mp3',async route=>route.fulfill({status:200,contentType:'audio/mpeg',body:await readFile('public/music/angelika-vee-you-are-my-sunshine.mp3')}));
  const page=await c.newPage();page.on('pageerror',e=>report.pageErrors.push(e.message));return{c,page};
 }
 async function shot(page,name){await page.screenshot({path:resolve(screens,name+'.webp'),type:'webp',fullPage:false});report.screenshots.push(name+'.webp');}
@@ -49,7 +49,7 @@ try{
  // Fresh Chromium visits block audible autoplay; custom controls provide the fallback.
  // Allowed entry/fade and pagehide are independently covered by flavor-music.browser.mjs.
  for(const target of ['pages','vps']){
-  const {c,page}=await context();const media=[];page.on('request',r=>{if(r.url().endsWith('.mp3'))media.push(r.url());});await page.goto(url(target,'about/'));await page.waitForTimeout(300);assert.equal(media.length,0);
+  const {c,page}=await context();const media=[];page.on('request',r=>{if(r.url().endsWith('.mp3'))media.push(r.url());});await page.goto(url(target,'about/'));await page.waitForTimeout(300);assert.equal(await page.locator('audio').getAttribute('preload'),'auto');
   const audio=page.locator('audio');await page.locator('[data-music-toggle]').click();await page.waitForFunction(()=>{const a=document.querySelector('audio');return !a.paused&&a.currentTime>0&&Number.isFinite(a.duration);});
   assert(media.length>0);assert.equal(await page.locator('[data-music-state]').textContent(),'正在播放');await shot(page,`${target}-music-playing`);
   const state=await audio.evaluate(a=>({duration:a.duration,time:a.currentTime,paused:a.paused}));report.checks.push({test:`${target}: fresh visit blocks autoplay; supplied MP3 decodes after fallback click; no listening-quality claim`,...state});

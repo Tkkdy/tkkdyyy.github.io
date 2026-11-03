@@ -10,7 +10,7 @@ const stories = await getEditorialStories();
     <p role="status" data-settings-message>正在读取受保护的站点设置……</p>
     <form data-settings-form hidden>
       <fieldset><legend>最近</legend><label>在做什么<textarea name="doing" maxlength="240" rows="2"></textarea></label><label>在听什么<textarea name="listening" maxlength="240" rows="2"></textarea></label><label>在想什么<textarea name="thinking" maxlength="240" rows="2"></textarea></label></fieldset>
-      <fieldset><legend>关于页音乐卡</legend><label>歌曲名<input name="title" maxlength="240" /></label><label>歌手（可留空）<input name="artist" maxlength="240" /></label><label>一句短话<textarea name="note" maxlength="240" rows="2"></textarea></label><label>已授权音源 / 合法平台链接<input name="source" maxlength="2048" /></label><small>只接受 HTTPS 平台链接或经授权的直接音频链接；无来源时保留文字卡。本页不上传音乐。</small></fieldset>
+      <fieldset><legend>关于页音乐卡</legend><label>歌曲名<input name="title" maxlength="240" /></label><label>歌手（可留空）<input name="artist" maxlength="240" /></label><label>一句短话<textarea name="note" maxlength="240" rows="2"></textarea></label><label>已授权音源 / 合法平台链接<input name="source" maxlength="2048" /></label><small>接受 HTTPS 平台链接、经授权的直接音频链接或已审核的站内音频路径；无来源时保留文字卡。本页不上传音乐。</small></fieldset>
       <div class="settings-actions"><button type="button" data-settings-save>保存私有草稿</button><button type="button" data-settings-preview>预览</button><button type="submit">发起发布提案</button><button type="button" data-settings-download>下载备份</button></div>
     </form>
     <section data-settings-preview-body hidden aria-label="未发布的内容预览"></section>

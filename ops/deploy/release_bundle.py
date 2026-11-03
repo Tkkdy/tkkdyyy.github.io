@@ -37,7 +37,8 @@ def validate_site(data,site,profile='preview'):
     for name,body in data.items():
         safe_name(name);p=PurePosixPath(name)
         require(p.parts[0].lower()!='admin' and p.name.lower() not in ('config.yml','config.yaml','package.json','package-lock.json','sveltia.html'),'admin/config exposure')
-        require(p.suffix.lower() in EXT,'nonstatic extension '+name)
+        approved_audio = name == 'music/angelika-vee-you-are-my-sunshine.mp3' and sha(body) == 'adc173db8379532b145a498b995549f58eea29b97caffe3d31525f331fdd8213'
+        require(p.suffix.lower() in EXT or approved_audio,'nonstatic extension '+name)
         require(not re.search(rb'-----BEGIN (?:[A-Z ]*PRIVATE KEY)|github_pat_[A-Za-z0-9_]{30,}|gh[pousr]_[A-Za-z0-9]{30,}|sk-proj-[A-Za-z0-9_-]{30,}',body),'possible secret '+name)
         if p.suffix!='.html':continue
         h=HTML();h.feed(body.decode())

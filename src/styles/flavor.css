@@ -57,3 +57,8 @@ main:has(>.life-window:not([hidden]))>.recent-notes{padding-top:0}
 [data-music-volume]::-moz-range-track{height:4px;background:linear-gradient(to right,#5c4a38 var(--music-fill),#c4b094 var(--music-fill)) top/100% 1px no-repeat,linear-gradient(to right,#5c4a38 var(--music-fill),#c4b094 var(--music-fill)) bottom/100% 1px no-repeat}
 [data-music-volume]::-webkit-slider-thumb{width:7px;height:16px;margin-top:-6px;border-radius:4px;border:1px solid #5c4a38;background:#faf7f0}
 [data-music-volume]::-moz-range-thumb{width:5px;height:14px;border-radius:4px;border:1px solid #5c4a38;background:#faf7f0}
+
+/* Keep buffering/autoplay feedback visible without moving the approved controls. */
+.music-card{position:relative}
+.music-card:is([data-playback="loading"],[data-playback="blocked"]) .music-state{position:absolute;left:28px;right:28px;bottom:12px;width:auto;height:auto;padding:0;margin:0;overflow:visible;clip-path:none;white-space:normal;font-size:11px;line-height:1.4;color:#8c7b67}
+@media(max-width:600px){.music-card:is([data-playback="loading"],[data-playback="blocked"]) .music-state{left:18px;right:18px;bottom:10px}}

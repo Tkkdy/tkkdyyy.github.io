@@ -25,6 +25,12 @@ class BundleTests(unittest.TestCase):
     def test_real_accepted_artifact(self):
         raw=self.bundle();m,manifest,data=self.check(raw,workflow='b'*40)
         self.assertEqual(len(data),len(self.data));self.assertEqual(len(manifest),len(self.data))
+    def test_only_exact_reviewed_audio_bytes_and_path(self):
+        name='music/angelika-vee-you-are-my-sunshine.mp3'
+        audio=(R.parent.parent/'public'/name).read_bytes()
+        self.check(self.bundle(data={**self.data,name:audio}))
+        for invalid in [{**self.data,name:audio+b'changed'},{**self.data,'music/other.mp3':audio}]:
+            with self.assertRaises(ValueError):self.check(self.bundle(data=invalid))
     def test_public_identity_must_match_archive_provenance(self):
         d=copy.deepcopy(self.data);identity=json.loads(d['deployment.json']);identity['sourceSha']='e'*40;d['deployment.json']=json.dumps(identity).encode()
         with self.assertRaises(ValueError):self.check(self.bundle(data=d))

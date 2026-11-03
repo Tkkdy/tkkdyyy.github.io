@@ -125,3 +125,5 @@
 - [桌面 1920px](screenshots/music-oatmeal-1920.webp)
 - [手机视口 390px](screenshots/music-oatmeal-390.webp)
 - [专项原始结果](music-autofade-pages.json)
+
+2026-11-03：pages/vps-music-* 专项截图已更新为同站预缓冲音源；首次拦截提示可见，见 music-autofade-pages.json / music-autofade-vps.json。music-card-actual-https-seek.webp 与 music-card-entry.webm 现为 4323 同站音源实测，文件名为历史兼容。

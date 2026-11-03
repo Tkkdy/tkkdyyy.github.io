@@ -14,7 +14,7 @@ const directAudio = /\.mp3(?:[?#]|$)/i.test(music.source);
     <h2 id="music-title">{music.title}</h2>
   </div>
   {musicSourceAvailable && (directAudio ? <>
-    <audio controls preload="none" aria-label={`聆听 ${music.title}`} data-music><source src={withBase(music.source)} type="audio/mpeg" /></audio>
+    <audio controls preload="auto" aria-label={`聆听 ${music.title}`} data-music><source src={withBase(music.source)} type="audio/mpeg" /></audio>
     <div class="music-controls" data-music-controls hidden>
       <div class="music-progress">
         <input class="music-range" type="range" min="0" max="100" step="0.1" value="0" aria-label="播放进度" aria-valuetext="0:00 / --:--" data-music-seek disabled />
