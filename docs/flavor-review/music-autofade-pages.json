@@ -6,78 +6,78 @@
       "test": "1440: fresh visit blocked without media request; custom play click fades over 2.4s to 35%; pause works",
       "fade": [
         {
-          "volume": 0.03814916666671946,
-          "time": 0.005605,
+          "volume": 0.042469999999155586,
+          "time": 0.018689,
           "paused": false
         },
         {
-          "volume": 0.06944333333338606,
-          "time": 0.200462,
+          "volume": 0.07488333333248894,
+          "time": 0.221249,
           "paused": false
         },
         {
-          "volume": 0.10014250000005277,
-          "time": 0.416415,
+          "volume": 0.10558249999915557,
+          "time": 0.441334,
           "paused": false
         },
         {
-          "volume": 0.13082750000005275,
-          "time": 0.633677,
+          "volume": 0.13686249999915562,
+          "time": 0.663067,
           "paused": false
         },
         {
-          "volume": 0.16094583333338608,
-          "time": 0.844457,
+          "volume": 0.16696666666582227,
+          "time": 0.872809,
           "paused": false
         },
         {
-          "volume": 0.1916450000000528,
-          "time": 1.063305,
+          "volume": 0.1976658333324889,
+          "time": 1.089441,
           "paused": false
         },
         {
-          "volume": 0.2223300000000527,
-          "time": 1.280732,
+          "volume": 0.2289599999991556,
+          "time": 1.310827,
           "paused": false
         },
         {
-          "volume": 0.25362416666671944,
-          "time": 1.499228,
+          "volume": 0.2602399999991556,
+          "time": 1.531111,
           "paused": false
         },
         {
-          "volume": 0.2837283333333861,
-          "time": 1.715828,
+          "volume": 0.2903441666658223,
+          "time": 1.744535,
           "paused": false
         },
         {
-          "volume": 0.3150083333333861,
-          "time": 1.933892,
-          "paused": false
-        },
-        {
-          "volume": 0.3457216666667194,
-          "time": 2.148684,
+          "volume": 0.32163833333248887,
+          "time": 1.964965,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.362926,
+          "time": 2.171496,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.58593,
+          "time": 2.388218,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.801158,
+          "time": 2.607563,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 3.022328,
+          "time": 2.821483,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.032638,
           "paused": false
         }
       ]
@@ -86,78 +86,78 @@
       "test": "390: fresh visit blocked without media request; custom play click fades over 2.4s to 35%; pause works",
       "fade": [
         {
-          "volume": 0.01595000000021111,
-          "time": 0.003151,
+          "volume": 0.015850833331644536,
+          "time": 0.010257,
           "paused": false
         },
         {
-          "volume": 0.04662083333354444,
-          "time": 0.198887,
+          "volume": 0.04654999999831119,
+          "time": 0.199972,
           "paused": false
         },
         {
-          "volume": 0.07730583333354442,
-          "time": 0.404127,
+          "volume": 0.07724916666497786,
+          "time": 0.416149,
           "paused": false
         },
         {
-          "volume": 0.10800500000021106,
-          "time": 0.622779,
+          "volume": 0.10794833333164452,
+          "time": 0.627615,
           "paused": false
         },
         {
-          "volume": 0.1393133333335444,
-          "time": 0.842916,
+          "volume": 0.13863333333164454,
+          "time": 0.845326,
           "paused": false
         },
         {
-          "volume": 0.16999833333354444,
-          "time": 1.060987,
+          "volume": 0.16933249999831118,
+          "time": 1.064147,
           "paused": false
         },
         {
-          "volume": 0.20069750000021108,
-          "time": 1.276751,
+          "volume": 0.20003166666497785,
+          "time": 1.28068,
           "paused": false
         },
         {
-          "volume": 0.23080166666687776,
-          "time": 1.487783,
+          "volume": 0.23132583333164453,
+          "time": 1.500992,
           "paused": false
         },
         {
-          "volume": 0.2615008333335444,
-          "time": 1.703839,
+          "volume": 0.2614299999983112,
+          "time": 1.714642,
           "paused": false
         },
         {
-          "volume": 0.29160500000021106,
-          "time": 1.918635,
+          "volume": 0.29211499999831114,
+          "time": 1.929196,
           "paused": false
         },
         {
-          "volume": 0.3223041666668777,
-          "time": 2.135599,
-          "paused": false
-        },
-        {
-          "volume": 0.35,
-          "time": 2.35724,
+          "volume": 0.3222333333316445,
+          "time": 2.142815,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.574208,
+          "time": 2.358694,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.781931,
+          "time": 2.576536,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.996544,
+          "time": 2.794425,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.012632,
           "paused": false
         }
       ]
@@ -166,78 +166,78 @@
       "test": "1440: same-origin navigation automatically fades; pause cancels fade; manual volume retained; actual pagehide pauses and resets audio",
       "fade": [
         {
-          "volume": 0.019052499999841675,
-          "time": 0.011129,
+          "volume": 0.019675833333755534,
+          "time": 0.016978,
           "paused": false
         },
         {
-          "volume": 0.04918499999984167,
-          "time": 0.217887,
+          "volume": 0.05095583333375553,
+          "time": 0.232202,
           "paused": false
         },
         {
-          "volume": 0.07926083333317499,
-          "time": 0.430955,
+          "volume": 0.08106000000042218,
+          "time": 0.445331,
           "paused": false
         },
         {
-          "volume": 0.11055499999984165,
-          "time": 0.649149,
+          "volume": 0.1135300000004222,
+          "time": 0.673287,
           "paused": false
         },
         {
-          "volume": 0.14123999999984166,
-          "time": 0.867716,
+          "volume": 0.14541916666708887,
+          "time": 0.901931,
           "paused": false
         },
         {
-          "volume": 0.171953333333175,
-          "time": 1.08494,
+          "volume": 0.17552333333375553,
+          "time": 1.114915,
           "paused": false
         },
         {
-          "volume": 0.20207166666650833,
-          "time": 1.300071,
+          "volume": 0.2062225000004222,
+          "time": 1.331491,
           "paused": false
         },
         {
-          "volume": 0.23274249999984167,
-          "time": 1.512155,
+          "volume": 0.23690750000042218,
+          "time": 1.547398,
           "paused": false
         },
         {
-          "volume": 0.264050833333175,
-          "time": 1.732016,
+          "volume": 0.2670258333337555,
+          "time": 1.761155,
           "paused": false
         },
         {
-          "volume": 0.294735833333175,
-          "time": 1.949407,
+          "volume": 0.2977108333337555,
+          "time": 1.973297,
           "paused": false
         },
         {
-          "volume": 0.32483999999984164,
-          "time": 2.165337,
-          "paused": false
-        },
-        {
-          "volume": 0.35,
-          "time": 2.381612,
+          "volume": 0.32842416666708885,
+          "time": 2.192403,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.598054,
+          "time": 2.409272,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.809974,
+          "time": 2.624699,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 3.027969,
+          "time": 2.841726,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 3.055651,
           "paused": false
         }
       ]
@@ -246,138 +246,141 @@
       "test": "390: same-origin navigation automatically fades; pause cancels fade; manual volume retained; actual pagehide pauses and resets audio",
       "fade": [
         {
-          "volume": 0.021120833333175007,
-          "time": 0.023777,
+          "volume": 0.018599166665822273,
+          "time": 0.002896,
           "paused": false
         },
         {
-          "volume": 0.051210833333175006,
-          "time": 0.235477,
+          "volume": 0.048703333332488934,
+          "time": 0.204929,
           "paused": false
         },
         {
-          "volume": 0.08132916666650834,
-          "time": 0.447251,
+          "volume": 0.07940249999915558,
+          "time": 0.419106,
           "paused": false
         },
         {
-          "volume": 0.11143333333317501,
-          "time": 0.660747,
+          "volume": 0.11010166666582226,
+          "time": 0.638756,
           "paused": false
         },
         {
-          "volume": 0.14213249999984168,
-          "time": 0.879553,
+          "volume": 0.14020583333248893,
+          "time": 0.846393,
           "paused": false
         },
         {
-          "volume": 0.17281749999984167,
-          "time": 1.092501,
+          "volume": 0.1709049999991556,
+          "time": 1.064246,
           "paused": false
         },
         {
-          "volume": 0.203530833333175,
-          "time": 1.309153,
+          "volume": 0.20100916666582225,
+          "time": 1.279893,
           "paused": false
         },
         {
-          "volume": 0.23481083333317498,
-          "time": 1.53029,
+          "volume": 0.23053249999915557,
+          "time": 1.482797,
           "paused": false
         },
         {
-          "volume": 0.2655099999998417,
-          "time": 1.747674,
+          "volume": 0.26123166666582226,
+          "time": 1.699789,
           "paused": false
         },
         {
-          "volume": 0.2962091666665083,
-          "time": 1.964664,
+          "volume": 0.2919166666658223,
+          "time": 1.918037,
           "paused": false
         },
         {
-          "volume": 0.3268941666665083,
-          "time": 2.183252,
-          "paused": false
-        },
-        {
-          "volume": 0.35,
-          "time": 2.402353,
+          "volume": 0.3226158333324889,
+          "time": 2.134752,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.612249,
+          "time": 2.352146,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 2.835611,
+          "time": 2.577442,
           "paused": false
         },
         {
           "volume": 0.35,
-          "time": 3.060132,
+          "time": 2.784355,
+          "paused": false
+        },
+        {
+          "volume": 0.35,
+          "time": 2.998762,
           "paused": false
         }
       ]
     },
     "Autoplay-permitted path with MP3 404 keeps failure text and hides invalid controls.",
     {
-      "test": "1440: chosen style, 1s left-edge entry, keyboard play/seek/volume, mute, pause/resume preserves selected volume, no overflow",
+      "test": "1440: chosen style, 1.6s staged title/control entry, keyboard play/seek/volume, mute, pause/resume preserves selected volume, no overflow",
       "design": {
-        "background": "rgb(234, 242, 248)",
+        "background": "rgb(238, 231, 218)",
         "font": "Georgia, \"Times New Roman\", \"Noto Serif SC\", \"Source Han Serif SC\", serif",
-        "duration": 1000,
-        "start": -192,
-        "midway": 57.77459716796875,
-        "end": 192,
-        "titleY": 538.171875,
-        "playX": 220,
-        "playY": 488.78125,
-        "playRight": 272,
-        "titleX": 288,
-        "titleTop": 491.375,
-        "cardX": 192,
-        "overflow": false,
-        "artist": false
-      }
-    },
-    {
-      "test": "390: chosen style, 1s left-edge entry, keyboard play/seek/volume, mute, pause/resume preserves selected volume, no overflow",
-      "design": {
-        "background": "rgb(234, 242, 248)",
-        "font": "Georgia, \"Times New Roman\", \"Noto Serif SC\", \"Source Han Serif SC\", serif",
-        "duration": 1000,
-        "start": 0,
-        "midway": -22.52130889892578,
+        "fontStyle": "italic",
+        "duration": 1600,
+        "start": 364,
+        "midway": 24,
         "end": 24,
-        "titleY": 521.15625,
-        "playX": 42,
-        "playY": 483.5625,
-        "playRight": 86,
-        "titleX": 98,
-        "titleTop": 489.96875,
+        "titleY": 252.5,
+        "playX": 52,
+        "playY": 187.5,
+        "playRight": 104,
+        "titleX": 120,
+        "titleTop": 174.5,
         "cardX": 24,
         "overflow": false,
         "artist": false
       }
     },
     {
-      "test": "320: chosen style, 1s left-edge entry, keyboard play/seek/volume, mute, pause/resume preserves selected volume, no overflow",
+      "test": "390: chosen style, 1.6s staged title/control entry, keyboard play/seek/volume, mute, pause/resume preserves selected volume, no overflow",
       "design": {
-        "background": "rgb(234, 242, 248)",
+        "background": "rgb(238, 231, 218)",
         "font": "Georgia, \"Times New Roman\", \"Noto Serif SC\", \"Source Han Serif SC\", serif",
-        "duration": 1000,
-        "start": 0,
-        "midway": -13.623786926269531,
+        "fontStyle": "italic",
+        "duration": 1600,
+        "start": 366,
+        "midway": 24,
         "end": 24,
-        "titleY": 545.9375,
+        "titleY": 220.25,
         "playX": 42,
-        "playY": 492.75,
+        "playY": 182,
         "playRight": 86,
-        "titleX": 98,
-        "titleTop": 483.5625,
+        "titleX": 102,
+        "titleTop": 187.75,
+        "cardX": 24,
+        "overflow": false,
+        "artist": false
+      }
+    },
+    {
+      "test": "320: chosen style, 1.6s staged title/control entry, keyboard play/seek/volume, mute, pause/resume preserves selected volume, no overflow",
+      "design": {
+        "background": "rgb(238, 231, 218)",
+        "font": "Georgia, \"Times New Roman\", \"Noto Serif SC\", \"Source Han Serif SC\", serif",
+        "fontStyle": "italic",
+        "duration": 1600,
+        "start": 296,
+        "midway": 24,
+        "end": 24,
+        "titleY": 236.5,
+        "playX": 42,
+        "playY": 182,
+        "playRight": 86,
+        "titleX": 102,
+        "titleTop": 171.5,
         "cardX": 24,
         "overflow": false,
         "artist": false

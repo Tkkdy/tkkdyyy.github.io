@@ -103,7 +103,7 @@
 
 /* The card background is present immediately; only its contents enter. */
 .about-music{margin-bottom:40px}
-.about-music .music-card{margin:0;min-height:200px;padding:28px;animation:none}
+.about-music .music-card{margin:0;min-height:250px;padding:28px;animation:none;display:flex;flex-direction:column;justify-content:center}
 .about-music .music-heading{gap:16px}
 .about-music .music-card h2{font-size:30px}
 .about-music .music-controls{grid-template-columns:minmax(0,1fr) 100px;gap:18px;margin:24px 0 0}
@@ -124,7 +124,7 @@
   .about-music{position:fixed;top:128px;left:24px;width:clamp(340px,calc((100vw - 720px)/2 - 36px),440px);margin:0;z-index:5}
 }
 @media(max-width:600px){
-  .about-music .music-card{padding:24px 18px;min-height:190px}
+  .about-music .music-card{padding:24px 18px;min-height:230px}
   .about-music .music-card h2{font-size:25px}
   .about-music .music-play{width:44px;height:44px}
   .about-music .music-controls{grid-template-columns:minmax(0,1fr) 80px;gap:12px}

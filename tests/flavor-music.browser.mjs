@@ -65,7 +65,7 @@ try{
   await page.getByText('这首歌暂时无法播放。',{exact:true}).waitFor();assert.equal(await page.locator('audio').isVisible(),false);await shot(page,'music-autoplay-404');await c.close();
   report.checks.push('Autoplay-permitted path with MP3 404 keeps failure text and hides invalid controls.');
  }
- // The chosen card: solid pale blue, classic serif, play beside title, visible entrance.
+ // The chosen card: solid oatmeal, italic serif, play beside title, visible entrance.
  for(const width of [1440,390,320]){
   const {c,page}=await context(width);await page.goto(url+'about/');
   const design=await page.locator('.music-card').evaluate(card=>{
@@ -73,11 +73,11 @@ try{
    const start=card.getBoundingClientRect().right;
    if(animation)animation.currentTime=500;
    const midway=card.getBoundingClientRect().left;
-   if(animation)animation.finish();
+   for(const entry of card.getAnimations({subtree:true}))entry.finish();
    const rect=card.getBoundingClientRect(),title=card.querySelector('h2').getBoundingClientRect(),play=card.querySelector('[data-music-toggle]').getBoundingClientRect();
-   return {background:getComputedStyle(card).backgroundColor,font:getComputedStyle(card.querySelector('h2')).fontFamily,duration:animation?.effect.getTiming().duration,start,midway,end:rect.left,titleY:title.bottom,playX:play.left,playY:play.top,playRight:play.right,titleX:title.left,titleTop:title.top,cardX:rect.left,overflow:document.documentElement.scrollWidth>innerWidth,artist:card.querySelector('.music-artist,.music-kicker')!==null};
+   return {background:getComputedStyle(card).backgroundColor,font:getComputedStyle(card.querySelector('h2')).fontFamily,fontStyle:getComputedStyle(card.querySelector('h2')).fontStyle,duration:animation?.effect.getTiming().duration,start,midway,end:rect.left,titleY:title.bottom,playX:play.left,playY:play.top,playRight:play.right,titleX:title.left,titleTop:title.top,cardX:rect.left,overflow:document.documentElement.scrollWidth>innerWidth,artist:card.querySelector('.music-artist,.music-kicker')!==null};
   });
-  assert.equal(design.background,'rgb(234, 242, 248)');assert(design.font.includes('Georgia'));assert.equal(design.duration,1600);assert(design.playY<design.titleY);assert(design.playRight<design.titleX);assert(design.playX-design.cardX<=33);assert.equal(design.overflow,false);assert.equal(design.artist,false);
+  assert.equal(design.background,'rgb(238, 231, 218)');assert(design.font.includes('Georgia'));assert.equal(design.fontStyle,'italic');assert.equal(design.duration,1600);assert(design.playY<design.titleY);assert(design.playRight<design.titleX);assert(design.playX-design.cardX<=33);assert.equal(design.overflow,false);assert.equal(design.artist,false);
   assert(await page.locator('[data-music-toggle]').isVisible());assert.equal(await page.locator('audio').isVisible(),false);
   await page.locator('[data-music-toggle]').focus();await page.keyboard.press('Enter');await playing(page);await page.waitForTimeout(250);
   const seek=page.locator('[data-music-seek]');await seek.focus();await page.keyboard.press('PageUp');await page.waitForFunction(()=>document.querySelector('audio').currentTime>10);const seekRect=await seek.boundingBox();await page.mouse.click(seekRect.x+seekRect.width/2,seekRect.y+seekRect.height/2);await page.waitForFunction(()=>{const a=document.querySelector('audio');return a.currentTime>a.duration*0.4&&a.currentTime<a.duration*0.6;});

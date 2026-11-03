@@ -111,7 +111,11 @@ if (card && audio && status && controls && toggle && seek && elapsed && duration
     card.style.setProperty('--music-title-x', `${box.left + box.width / 2 - text.left - text.width / 2}px`);
     card.style.setProperty('--music-title-y', `${box.top + box.height / 2 - text.top - text.height / 2}px`);
     card.dataset.musicReady = 'true';
-    card.addEventListener('focusin', () => { for (const animation of card.getAnimations({ subtree: true })) animation.finish(); });
+    // Keyboard focus reveals controls immediately; pointer focus must not move the button between press and release.
+    card.addEventListener('focusin', event => {
+      if (!(event.target instanceof HTMLElement) || !event.target.matches(':focus-visible')) return;
+      for (const animation of card.getAnimations({ subtree: true })) animation.finish();
+    });
   }
 
   const start = () => {

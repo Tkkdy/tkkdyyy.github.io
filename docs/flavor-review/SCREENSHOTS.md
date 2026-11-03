@@ -119,3 +119,9 @@
 | [music-stage-390.webp](screenshots/music-stage-390.webp) | 最新放大卡片及分阶段动效的最终状态 |
 | [music-proportion-1920.webp](screenshots/music-proportion-1920.webp) | 最新比例调整：桌面440×200，末段上移0.4秒 |
 | [music-proportion-390.webp](screenshots/music-proportion-390.webp) | 最新比例调整：桌面440×200，末段上移0.4秒 |
+
+最新暖色组合候选：
+
+- [桌面 1920px](screenshots/music-oatmeal-1920.webp)
+- [手机视口 390px](screenshots/music-oatmeal-390.webp)
+- [专项原始结果](music-autofade-pages.json)
