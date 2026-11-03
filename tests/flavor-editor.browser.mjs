@@ -11,7 +11,7 @@ import { createBroker } from '../ops/admin-broker/core.mjs';
 import { createAdminServer } from '../ops/admin-broker/server.mjs';
 import { openDraftStore } from '../ops/admin-broker/private-drafts.mjs';
 import { SETTINGS_PATH } from '../src/lib/site-settings.mjs';
-const evidence=resolve('docs/flavor-review'),screens=join(evidence,'screenshots'),directory=await mkdtemp(join(tmpdir(),'flavor-editor-'));
+const evidence=resolve(process.env.EDITOR_EVIDENCE_DIR||'docs/flavor-review'),screens=join(evidence,'screenshots'),directory=await mkdtemp(join(tmpdir(),'flavor-editor-'));
 const store=await openDraftStore({directory}),origin='http://127.0.0.1:19544',repo='Tkkdy/tkkdyyy.github.io',base='a'.repeat(40),next='b'.repeat(40);
 const report={scope:'REAL local Chromium + broker + SQLite; SYNTHETIC OAuth and GitHub API; production editor not modified or authenticated',checks:[],upstreamWrites:[],pageErrors:[]};
 const paths=[SETTINGS_PATH,'src/content/images/photo-main-landscape.md'];

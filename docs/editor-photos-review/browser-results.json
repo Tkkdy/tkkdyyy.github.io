@@ -1,0 +1,38 @@
+{
+  "scope": "REAL local Chromium + broker + SQLite; SYNTHETIC OAuth and GitHub API; production editor not modified or authenticated",
+  "checks": [
+    "Real private SQLite photo draft; no GitHub write while editing; actual JPEG GPS/device tags stripped by browser canvas; no invented capture date/location; independent-session restore, revision conflict, mobile layout.",
+    "Explicit publication passes real broker policy: one WebP plus one Image Markdown on generated proposal branch, exact base, no merge; persistent receipt blocks replay after reload. GitHub writes are SYNTHETIC.",
+    "Dedicated recent-only mobile form preserves music byte-for-value, preview and private autosave; explicit proposal writes only settings JSON; reload prevents duplicate submission.",
+    "Aborted proposal transport persists pending intent; reload cannot replay unknown write.",
+    "Private-draft recovery routes and general content list remain functional with photo and settings resources."
+  ],
+  "upstreamWrites": [
+    {
+      "path": "/repos/Tkkdy/tkkdyyy.github.io/git/refs",
+      "method": "POST"
+    },
+    {
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "path": "/repos/Tkkdy/tkkdyyy.github.io/pulls",
+      "method": "POST"
+    },
+    {
+      "path": "/repos/Tkkdy/tkkdyyy.github.io/git/refs",
+      "method": "POST"
+    },
+    {
+      "path": "/graphql",
+      "method": "POST"
+    },
+    {
+      "path": "/repos/Tkkdy/tkkdyyy.github.io/pulls",
+      "method": "POST"
+    }
+  ],
+  "pageErrors": [],
+  "state": "PASS"
+}

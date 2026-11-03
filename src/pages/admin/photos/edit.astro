@@ -1,0 +1,35 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import {getEditorialStories} from '../../../lib/admin/stories';
+import '../../../styles/admin-photos.css';
+const stories=await getEditorialStories();
+---
+<AdminLayout title="编辑照片" section="照片" active="photos" stories={stories}>
+ <section class="stories-view photo-editor">
+  <header class="stories-heading"><div><h1>记录一个瞬间</h1><p>先保存在私人编辑台，准备好后再公开。</p></div><a href={`${import.meta.env.BASE_URL}admin/photos/`}>返回照片</a></header>
+  <p role="status" data-photo-message>正在读取私有草稿……</p>
+  <form data-photo-form hidden>
+   <div class="photo-editor-grid">
+    <section class="photo-upload-panel" aria-label="照片预览">
+     <label class="photo-upload">选择照片<input type="file" name="photo" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" /><small>JPEG、PNG、WebP、AVIF 或 GIF，最大 8 MB。上传后转换为 WebP，去除 EXIF、GPS 和设备信息。</small></label>
+     <figure data-photo-figure hidden><img data-photo-preview alt="待编辑照片预览" /><figcaption data-photo-caption></figcaption></figure>
+     <p class="photo-private-note">照片只在私有草稿中保存。点击“发布照片”后才创建公开仓库提案，CI 通过并合并后上线。</p>
+    </section>
+    <section class="photo-fields" aria-label="照片信息">
+     <label>标题（可留空）<input name="title" maxlength="240" autocomplete="off" /></label>
+     <label>照片说明<textarea name="alt" maxlength="500" rows="3" required placeholder="用一句话描述照片中能看到的内容"></textarea><small>用于读屏与图片无法显示时的说明。</small></label>
+     <label>想记下的话（可留空）<textarea name="caption" maxlength="1000" rows="3"></textarea></label>
+     <div class="photo-field-pair"><label>拍摄日期（可留空）<input name="capturedAt" type="date" /></label><label>公开地点（可留空）<input name="location" maxlength="160" placeholder="例如城市或区域，不必填写精确位置" /></label></div>
+     <details><summary>更多信息</summary><label>网址标识<input name="slug" maxlength="181" required pattern="[\p{L}\p{N}][\p{L}\p{N}\-]{0,180}" /></label><label>标签（每行一项）<textarea name="tags" rows="2"></textarea></label><label>系列（可留空）<input name="series" maxlength="160" /></label></details>
+     <fieldset class="photo-window"><legend>首页「一扇窗」</legend><label class="photo-check"><input name="window.enabled" type="checkbox" />允许这张原创照片出现在首页窗口</label><small>默认不参与。只展示你主动填写的公开信息，不从照片推断拍摄地点或时段。</small>
+      <div class="photo-window-options"><span>拍摄时段（可不选）</span>{[['late-night','凌晨'],['morning','早晨'],['daytime','白天'],['dusk','傍晚'],['night','夜晚']].map(([value,label])=><label class="photo-check"><input type="checkbox" name="window.timeOfDay" value={value} />{label}</label>)}</div>
+      <div class="photo-window-options"><span>季节（可不选）</span>{[['spring','春'],['summer','夏'],['autumn','秋'],['winter','冬']].map(([value,label])=><label class="photo-check"><input type="checkbox" name="window.seasons" value={value} />{label}</label>)}</div>
+      <label>窗边短句（可留空）<input name="window.note" maxlength="240" /></label>
+     </fieldset>
+    </section>
+   </div>
+   <footer class="photo-actions"><button type="button" data-photo-save>保存私有草稿</button><button type="button" data-photo-download>下载草稿备份</button><button class="primary-action" type="submit">发布照片</button></footer>
+  </form>
+ </section>
+</AdminLayout>
+<script>import {initializePhotoEditor} from '../../../lib/admin/photos-client';void initializePhotoEditor();</script>

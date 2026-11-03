@@ -1,0 +1,14 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import {getEditorialStories} from '../../../lib/admin/stories';
+import '../../../styles/admin-photos.css';
+const stories=await getEditorialStories();
+---
+<AdminLayout title="照片" section="照片" active="photos" stories={stories}>
+ <section class="stories-view photo-library">
+  <header class="stories-heading"><div><h1>照片</h1><p>独立记录一个瞬间。草稿保持私有，发布后进入网站的影像栏目。</p></div><a class="primary-action" href={`${import.meta.env.BASE_URL}admin/photos/edit/`}>上传新照片</a></header>
+  <p role="status" data-photo-list-message>正在读取照片与私有草稿……</p>
+  <div class="photo-list" data-photo-list></div>
+ </section>
+</AdminLayout>
+<script>import {initializePhotoLibrary} from '../../../lib/admin/photos-client';void initializePhotoLibrary();</script>
