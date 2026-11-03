@@ -26,7 +26,9 @@
       "file": "release_bundle.py",
       "beforeSha256": "56f9d048d9eb4a5f87b6266c5c9f77bbcffbdffb29784a3b9390b9bb92552117",
       "afterSha256": "7d918a36af8d16ac159e13d5acdaa5afe76ade8ab588f28667ee3a6e1f436bc5",
-      "action": "REPLACE"
+      "action": "REPLACE",
+      "repositorySha256": "b4afcadaf779cff64d92648853f4eecff190a23d664d5d888b57671dd0165b3d",
+      "repositoryChange": "Owner-approved exact-byte same-origin music asset; historical transition hashes retained."
     },
     {
       "file": "release_records.py",
