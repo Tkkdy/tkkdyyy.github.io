@@ -1,3 +1,4 @@
+import {PUBLICATION_MAX_BYTES} from '../../src/lib/publication-limits.mjs';
 import {validateAlbumFields} from '../../src/lib/photo-albums.mjs';
 /** Server-side limits for Editorial Studio and pinned Sveltia GitHub backend. */
 import {parse,Kind,valueFromASTUntyped,visit} from 'graphql';
@@ -9,7 +10,7 @@ const CONTENT=/^src\/content\/(articles|essays|fragments|projects|images)\/[\p{L
 const MEDIA=/^public\/uploads\/(?:[\p{L}\p{N}][\p{L}\p{N}_.-]*\/)*[\p{L}\p{N}][\p{L}\p{N}_.-]{0,180}\.(png|jpe?g|gif|webp|avif|svg)$/iu;
 export function permittedPath(path){return typeof path==='string'&&path.length<250&&(CONTENT.test(path)||MEDIA.test(path)||path===SETTINGS_PATH);}
 function decodeContents(value){
- requirePolicy(typeof value==='string'&&value.length<=11_000_000&&/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(value),'文件内容不是受支持的base64。');
+ requirePolicy(typeof value==='string'&&value.length<=11_000_000&&value.length%4===0&&/^[A-Za-z0-9+/]*={0,2}$/.test(value),'文件内容不是受支持的base64。');
  const data=Buffer.from(value,'base64');requirePolicy(data.length<=8_000_000,'单文件不得超过8MB。');return data;
 }
 const SVG_TAGS=new Set(['svg','g','path','rect','circle','ellipse','line','polyline','polygon','text','tspan','defs','linearGradient','radialGradient','stop','clipPath','mask','pattern','symbol','use','title','desc','image']);
@@ -72,7 +73,7 @@ export function validateCommit(input,config){
  requirePolicy(!deletions.some(file=>file.path===SETTINGS_PATH),'站点设置只能更新，不可删除。');
  const paths=new Set();let total=0;
  for(const file of [...additions,...deletions]){requirePolicy(permittedPath(file.path)&&!paths.has(file.path),'重复文件或不允许的路径。');paths.add(file.path);}
- for(const file of additions)total+=validateAddition(file);requirePolicy(total<=20_000_000,'本次发布资源总量超过20MB。');
+ for(const file of additions)total+=validateAddition(file);requirePolicy(total<=PUBLICATION_MAX_BYTES,'本次发布资源总量超过100 MB。');
  return {paths:[...paths],bytes:total};
 }
 export function authorizeGraphql(body,config){

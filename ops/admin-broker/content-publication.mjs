@@ -1,3 +1,4 @@
+import {PUBLICATION_MAX_BYTES} from '../../src/lib/publication-limits.mjs';
 import {createHash} from 'node:crypto';
 import {permittedPath, validateAddition, requirePolicy} from './policy.mjs';
 const ROOT='/repos/Tkkdy/tkkdyyy.github.io', ID=1355866312, OWNER=144055705;
@@ -38,7 +39,7 @@ export async function advanceContentPublication({github,original,active=()=>true
   const raw=Buffer.from(contents,'base64');
   requirePolicy(createHash('sha1').update(Buffer.from('blob '+raw.length+'\0')).update(raw).digest('hex')===entry.sha,'Git blob哈希不符。');
   bytes+=validateAddition({path:file.filename,contents});
-  requirePolicy(bytes<=20_000_000,'内容总量超限。');
+  requirePolicy(bytes<=PUBLICATION_MAX_BYTES,'内容总量超过100 MB。');
  }
  const runs=await github(ROOT+'/actions/workflows/ci.yml/runs?event=pull_request&head_sha='+pr.head.sha+'&per_page=100');
  requirePolicy(Number.isSafeInteger(runs.total_count)&&runs.total_count<=100&&Array.isArray(runs.workflow_runs),'CI列表不完整。');

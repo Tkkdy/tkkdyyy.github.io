@@ -7,7 +7,7 @@ const stories=await getEditorialStories();
 <AdminLayout title="上传照片" section="照片" active="photos" stories={stories}>
  <section class="stories-view photo-batch" data-photo-batch>
   <header class="stories-heading"><div><h1>选一些照片，慢慢写</h1><p>一次选择多张，每张单独填写说明。只发布你勾选的照片。</p></div><a href={`${import.meta.env.BASE_URL}admin/photos/`}>返回照片</a></header>
-  <label class="photo-upload">选择照片，可一次多选<input type="file" multiple accept="image/*" data-batch-files /><small>每张最大 8 MB，一组最多 20 张。照片逐张处理、去除原始定位等元数据，并保存为独立的私有草稿。</small></label>
+  <label class="photo-upload">选择照片，可一次多选<input type="file" multiple accept="image/*" data-batch-files /><small>原图每张最大 50 MB，一组最多 20 张，每批发布的压缩后资源总量最多 100 MB。保存前在浏览器逐张压缩至约 1 MB 以内、去除原始定位等元数据，并保存为独立的私有草稿。</small></label>
   <div class="batch-album-tools"><label>相簿名称（可选）<input data-batch-album-name maxlength="120" placeholder="给这一组照片起个名字" /></label><button type="button" data-batch-album-apply>将本组归入相簿</button><a data-batch-album-preview href="/admin/photos/album-preview/">预览相簿 ↗</a></div>
   <p role="status" data-batch-message>正在读取……</p>
   <div class="photo-batch-actions"><p data-batch-summary>尚未选择照片</p><button type="button" data-batch-publish disabled>发布选中的照片</button></div>

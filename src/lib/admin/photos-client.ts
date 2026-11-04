@@ -1,6 +1,6 @@
 import {validateAlbumFields} from '../photo-albums.mjs';
 import YAML from 'yaml';
-import {photoUploadDataUrl} from './photo-upload';
+import {photoUploadDataUrl,PHOTO_SOURCE_MAX_BYTES} from './photo-upload';
 import {createCloudDraftClient} from './cloud-drafts.mjs';
 import {readAdminSession,createGitHubClient,textToBase64} from './github-content.mjs';
 import {dataUrlFile} from './publish-story.mjs';
@@ -77,7 +77,7 @@ export async function initializePhotoEditor(){
   form.addEventListener('input',event=>{if(event.target!==file)schedule();});form.addEventListener('compositionstart',()=>{composing=true;clearTimeout(timer);});form.addEventListener('compositionend',()=>{composing=false;schedule();});
   file.addEventListener('change',async()=>{
    const selected=file.files?.[0];if(!selected)return;
-   if(selected.size>8_000_000){message!.textContent='照片不得超过 8 MB，请缩小后再上传。';return;}
+   if(selected.size>PHOTO_SOURCE_MAX_BYTES){message!.textContent='照片不得超过 50 MB，请缩小后再上传。';return;}
    const current=++sequence;processing=true;clearTimeout(timer);submit.disabled=true;message!.textContent='正在处理照片并去除敏感元数据……';
    try{const converted=await photoUploadDataUrl(selected);if(current!==sequence)return;image=converted;showImage();dirty=true;}
    catch(e){message!.textContent=e instanceof Error?e.message:'无法读取这张照片，请使用 JPEG、PNG 或 WebP。';}
