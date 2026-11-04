@@ -12,21 +12,32 @@ const base = process.env.PAGEFIND_TEST_BASE || '/tkkdyyy.github.io/';
 assert.ok(base.startsWith('/') && base.endsWith('/'));
 const temporary = await mkdtemp(join(tmpdir(), 'pagefind-chinese-'));
 const report = { checks: [], pageErrors: [], failedIndexRequests: [] };
-let server, browser, index;
+let server, browser, index, partialIndex;
 try {
   const created = await pagefind.createIndex();
   assert.deepEqual(created.errors, []);
   index = created.index;
-  for (const [url, content] of [
+  const fixtureDocuments = [
     ['/fixture/', '上下文正在成为个人 AI 的真正界面。云端一键发布验收 Development fixture'],
     ['/noise/', '云计算与存储设备，没有完整关键词。'],
     ['/terminal/', '端口服务，与另一页面不同。'],
     ['/english/', 'Development fixture English search'],
-  ]) {
+  ];
+  for (const [url, content] of fixtureDocuments) {
     const added = await index.addHTMLFile({ url, content: `<html lang="zh-CN"><body><main data-pagefind-body>${content}</main></body></html>` });
     assert.deepEqual(added.errors, []);
   }
   assert.deepEqual((await index.writeFiles({ outputPath: join(temporary, 'pagefind') })).errors, []);
+  const partial = await pagefind.createIndex();
+  assert.deepEqual(partial.errors, []);
+  partialIndex = partial.index;
+  for (const [url, content] of [...fixtureDocuments,
+    ['/split/', '云 端 云端一键发布验收 Development fixture'],
+  ]) {
+    const added = await partialIndex.addHTMLFile({ url, content: `<html lang="zh-CN"><body><main data-pagefind-body>${content}</main></body></html>` });
+    assert.deepEqual(added.errors, []);
+  }
+  assert.deepEqual((await partialIndex.writeFiles({ outputPath: join(temporary, 'partial', 'pagefind') })).errors, []);
   server = createServer(async (req, res) => {
     try {
       const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
@@ -43,7 +54,7 @@ try {
         res.setHeader('Content-Type', 'text/javascript');
         return res.end(await readFile('src/lib/search/chinese-fallback.mjs'));
       }
-      if (pathname.startsWith('/__fixture/pagefind/')) {
+      if (pathname.startsWith('/__fixture/pagefind/') || pathname.startsWith('/__fixture/partial/')) {
         root = temporary;
         relative = pathname.slice('/__fixture/'.length);
       } else {
@@ -86,6 +97,19 @@ try {
   assert.deepEqual(report.minimal.cloud, ['/__fixture/fixture/']);
   assert.deepEqual(report.minimal.mixed, ['/__fixture/fixture/']);
   assert.equal(report.minimal.englishCount, 2);
+  report.partial = await fixture.evaluate(async () => {
+    const pf = await import('/__fixture/partial/pagefind/pagefind.js');
+    const { searchWithChineseFallback } = await import('/__search-helper.mjs');
+    const urls = async result => Promise.all(result.results.map(async item => (await item.data()).url));
+    return {
+      original: await urls(await pf.search('云端')),
+      recovered: await urls(await searchWithChineseFallback(pf, '云端')),
+      mixed: await urls(await searchWithChineseFallback(pf, '云端 Development')),
+    };
+  });
+  assert.deepEqual(report.partial.original, ['/__fixture/partial/split/']);
+  assert.deepEqual(report.partial.recovered, ['/__fixture/partial/split/', '/__fixture/partial/fixture/']);
+  assert.deepEqual(report.partial.mixed, ['/__fixture/partial/split/', '/__fixture/partial/fixture/']);
   await fixtureContext.close();
 
   for (const entry of ['page', 'navigation']) {
@@ -128,6 +152,7 @@ try {
   if (browser) await browser.close();
   if (server) await new Promise(done => server.close(done));
   if (index) await index.deleteIndex();
+  if (partialIndex) await partialIndex.deleteIndex();
   await pagefind.close();
   // Only the unique directory created by this invocation is removed.
   await rm(temporary, { recursive: true });
