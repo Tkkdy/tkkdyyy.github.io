@@ -3,14 +3,11 @@
 // 编辑式摄影档案流：横 / 竖 / 方图按原比例交错，而不是统一卡片网格。
 import WindowPhoto from '../../components/WindowPhoto.astro';
 import ImageLayout from '../../layouts/ImageLayout.astro';
-import ImageFrame from '../../components/images/ImageFrame.astro';
+import PhotoAlbums from '../../components/images/PhotoAlbums.astro';
 import {
-  getImageDisplayTitle,
-  getImageOrientation,
   getPublishedImages,
   imageFileExists,
 } from '../../lib/content/images';
-import { formatDate } from '../../lib/content/homepage';
 import { withBase } from '../../lib/site-url';
 
 const images = await getPublishedImages();
@@ -22,48 +19,12 @@ const images = await getPublishedImages();
       <p class="images-kicker">Visual Journal</p>
       <h1 id="images-title" class="images-page-title">Images.</h1>
       <p class="images-page-lead">
-        单张照片组成的安静记录。比例保留，信息克制，不做成相册目录。
+        一些时刻，独自停留；一些故事，叠放在一起。点开一组照片，慢慢看。
       </p>
     </header>
 
     <WindowPhoto compact />
 
-    {
-      images.length === 0 ? (
-        <p class="images-empty">公开影像正在慢慢出现。</p>
-      ) : (
-        <div class="image-flow">
-          {images.map((image) => {
-            const { data } = image;
-            const orientation = getImageOrientation(data);
-            const hasFile = imageFileExists(data.image);
-            const caption = data.caption ?? data.title;
-            return (
-              <article class:list={['image-entry', `is-${orientation}`]}>
-                <a class="image-entry-link" href={withBase(`images/${data.slug}/`)} aria-label={getImageDisplayTitle(data)}>
-                  <ImageFrame
-                    src={data.image}
-                    alt={data.alt}
-                    title={data.title}
-                    orientation={orientation}
-                    hasFile={hasFile}
-                    sizes="(min-width: 1100px) 720px, 92vw"
-                  />
-                </a>
-                {(caption || data.location) && (
-                  <div class="image-entry-copy">
-                    {caption && <p class="image-entry-caption">{caption}</p>}
-                    <p class="image-entry-meta">
-                      <time datetime={formatDate(data.publishedAt)}>{formatDate(data.publishedAt)}</time>
-                      {data.location && <span>{data.location}</span>}
-                    </p>
-                  </div>
-                )}
-              </article>
-            );
-          })}
-        </div>
-      )
-    }
+    <PhotoAlbums photos={images.map(image=>({id:image.id,...image.data,image:withBase(image.data.image),hasFile:imageFileExists(image.data.image),href:withBase(`images/${image.data.slug}/`)}))} />
   </section>
 </ImageLayout>

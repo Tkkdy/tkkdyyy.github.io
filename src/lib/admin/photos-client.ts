@@ -1,3 +1,4 @@
+import {validateAlbumFields} from '../photo-albums.mjs';
 import YAML from 'yaml';
 import {photoUploadDataUrl} from './photo-upload';
 import {createCloudDraftClient} from './cloud-drafts.mjs';
@@ -50,22 +51,27 @@ export async function initializePhotoEditor(){
   const doc=parsed.doc,data=doc.toJS({maxAliasCount:0}),baseline=publishedMatches?live.resource.sourceBlobSha:(saved?.state?.sourceBlobSha||live?.resource.sourceBlobSha||'');
   let image=String(data.image||''),publication=publishedMatches?null:(saved?.state?.publication||null);
   attempted=Boolean(publication);
-  for(const name of ['title','alt','caption','capturedAt','location','slug','series']){const control=form.elements.namedItem(name) as HTMLInputElement|HTMLTextAreaElement;control.value=String(data[name]??'');if(name==='capturedAt')control.value=control.value.slice(0,10);}
+  for(const name of ['title','alt','caption','capturedAt','location','slug','series','frameDescription']){const control=form.elements.namedItem(name) as HTMLInputElement|HTMLTextAreaElement;control.value=String(data[name]??'');if(name==='capturedAt')control.value=control.value.slice(0,10);}
+  (form.elements.namedItem('albumCover') as HTMLInputElement).checked=data.albumCover===true;
+  (form.elements.namedItem('frameDisplay') as HTMLSelectElement).value=data.frameDisplay||'information';
   (form.elements.namedItem('tags') as HTMLTextAreaElement).value=(data.tags||[]).join('\n');
   (form.elements.namedItem('window.enabled') as HTMLInputElement).checked=data.window?.enabled===true;
   (form.elements.namedItem('window.note') as HTMLInputElement).value=String(data.window?.note||'');
   for(const name of ['timeOfDay','seasons'])for(const control of form.querySelectorAll<HTMLInputElement>(`[name="window.${name}"]`))control.checked=Array.isArray(data.window?.[name])&&data.window[name].includes(control.value);
   function showImage(){const url=photoURL(image);preview.src=url;figure.hidden=!url;preview.alt=value('alt')||'待编辑照片预览';file.required=!image;(form.querySelector('[data-photo-caption]') as HTMLElement).textContent=value('caption');}
   function snapshot(){
-   for(const name of ['title','alt','caption','capturedAt','location','slug','series']){const text=value(name);if(text)doc.set(name,text);else doc.delete(name);}
+   for(const name of ['title','alt','caption','capturedAt','location','slug','series','frameDescription']){const text=value(name);if(text)doc.set(name,text);else doc.delete(name);}
+   doc.set('albumCover',(form.elements.namedItem('albumCover') as HTMLInputElement).checked);doc.set('frameDisplay',(form.elements.namedItem('frameDisplay') as HTMLSelectElement).value);
    doc.set('image',image);doc.set('tags',value('tags').split('\n').map(x=>x.trim()).filter(Boolean));
    doc.setIn(['window','enabled'],(form.elements.namedItem('window.enabled') as HTMLInputElement).checked);
    for(const name of ['timeOfDay','seasons'])doc.setIn(['window',name],[...form.querySelectorAll<HTMLInputElement>(`[name="window.${name}"]:checked`)].map(x=>x.value));
    const note=value('window.note');if(note)doc.setIn(['window','note'],note);else doc.deleteIn(['window','note']);
    return {id:key,title:value('title')||value('alt')||'未命名照片',type:'Image',status:'draft',sourcePath:source||`src/content/images/${value('slug')}.md`,sourceBlobSha:baseline,rawContent:'---\n'+doc.toString()+'---\n'+parsed.body,...(publication?{publication}:{})};
   }
-  function lockFields(locked:boolean){for(const control of form.querySelectorAll<HTMLInputElement|HTMLTextAreaElement>('input,textarea'))control.disabled=locked;(form.querySelector<HTMLButtonElement>('[data-photo-save]')!).disabled=locked;}
+  function lockFields(locked:boolean){for(const control of form.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>('input,textarea,select'))control.disabled=locked;(form.querySelector<HTMLButtonElement>('[data-photo-save]')!).disabled=locked;}
   async function save(){if(processing)throw Error('照片仍在处理中，请稍候。');const state=snapshot();await client.save(state);dirty=snapshot().rawContent!==state.rawContent;message!.textContent='已保存到云端 · 私有照片草稿';return state;}
+  const batch=query.get('batch'),backLink=document.querySelector<HTMLAnchorElement>('[data-photo-back]');
+  if(batch&&/^[a-f0-9-]{36}$/.test(batch)&&backLink){backLink.href='/admin/photos/upload/?batch='+encodeURIComponent(batch);backLink.textContent='返回本组选图';backLink.addEventListener('click',async event=>{if(!dirty)return;event.preventDefault();if(processing||busy){message!.textContent='请等照片处理和保存完成后再返回。';return;}clearTimeout(timer);try{await save();location.assign(backLink.href);}catch(e){message!.textContent=e instanceof Error?e.message:'保存失败，请保留此页或下载备份。';}});}
   async function safeSave(){try{await save();}catch(e){dirty=true;message!.textContent=(e instanceof Error?e.message:'保存失败。')+' 当前照片仍在此页，可下载备份。';}}
   function schedule(){dirty=true;clearTimeout(timer);showImage();if(!composing&&!busy&&!processing&&!attempted)timer=window.setTimeout(()=>void safeSave(),900);}
   form.addEventListener('input',event=>{if(event.target!==file)schedule();});form.addEventListener('compositionstart',()=>{composing=true;clearTimeout(timer);});form.addEventListener('compositionend',()=>{composing=false;schedule();});
@@ -89,10 +95,12 @@ export async function initializePhotoEditor(){
     if(source?current?.sourceBlobSha!==baseline:Boolean(current))throw Error('这张照片的仓库版本已变化，请保留草稿并核对后再发布。');
     if(resources.some(item=>item.type==='Image'&&item.sourcePath!==source&&item.slug===value('slug')))throw Error('网址标识已被其他照片使用，请换一个。');
     const publishDoc=documentOf(state.rawContent).doc;publishDoc.set('status','published');if(!publishDoc.get('publishedAt'))publishDoc.set('publishedAt',today());
+    validateAlbumFields(publishDoc.toJS({maxAliasCount:0}));
     const uploads:{path:string;contentBase64:string}[]=[];
     if(image.startsWith('data:')){const upload=await dataUrlFile(image,'photo-'+value('slug'));publishDoc.set('image',upload.publicPath);uploads.push({path:upload.gitPath,contentBase64:upload.contentBase64});}
     const raw='---\n'+publishDoc.toString()+'---\n'+parsed.body;if(raw.includes('data:image/'))throw Error('照片尚未转换为发布资源。');
     const session=await readAdminSession(),github=createGitHubClient({owner:'Tkkdy',repo:'tkkdyyy.github.io',branch:session.branch,csrf:session.csrf});
+    if(document.querySelector('meta[name="editor-local-preview"]')){message!.textContent='本地预览：照片已通过发布检查并保存私有草稿，未创建提案、未更新线上网站。';return;}
     // Persist the write attempt before GitHub I/O: even a reload cannot blindly replay an unknown result.
     publication={state:'pending'};await client.save(snapshot());attempted=true;
     const result=await github.proposeFiles({expectedHeadOid:catalog.head,message:'Publish photo: '+value('slug'),files:[...uploads,{path,contentBase64:textToBase64(raw)}]});

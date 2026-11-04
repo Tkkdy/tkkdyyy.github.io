@@ -7,6 +7,7 @@
 import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
+import {validateAlbumFields} from './lib/photo-albums.mjs';
 
 // ---- 共用字段 ----
 
@@ -201,7 +202,10 @@ const images = defineCollection({
     publishedAt: z.coerce.date(),
     location: z.string().optional(),
     tags: z.array(z.string()).optional(),
-    series: z.string().optional(),
+    series: z.string().trim().min(1).max(120).optional(),
+    albumCover: z.boolean().optional(),
+    frameDisplay: z.enum(['information', 'date', 'description']).optional(),
+    frameDescription: z.string().max(240).optional(),
     /** 展示比例提示：真实文件仍按原比例渲染，不裁切。 */
     orientation: z.enum(['landscape', 'portrait', 'square']).optional(),
     featured: z.boolean().optional(),
@@ -213,7 +217,7 @@ const images = defineCollection({
       note: z.string().max(240).optional(),
     }).optional(),
     status: statusSchema,
-  }),
+  }).superRefine((data,ctx)=>{try{validateAlbumFields(data);}catch(error){ctx.addIssue({code:'custom',message:error instanceof Error?error.message:'相簿设置无效。'});}}),
 });
 
 export const collections = {
