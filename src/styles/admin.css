@@ -286,3 +286,18 @@ a { color: inherit; text-decoration: none; }
  .format-toolbar button,.editor-actions button,.sidebar-toggle { min-height:44px; min-width:44px; }
  .admin-access>div { position:fixed; right:12px; top:64px; max-width:calc(100vw - 24px); }
 }
+
+/* Publication progress remains visible until independent public verification. */
+.publish-progress .publish-summary { margin: 14px 0 8px; color: var(--admin-ink); font-size: 14px; font-weight: 600; line-height: 1.6; }
+.publish-progress .publish-detail, .publish-progress .publish-checked, .publish-progress .publish-target-detail { color: var(--admin-muted); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.publish-target { margin: 12px 0; padding: 12px; background: #f7f8f6; border: 1px solid var(--admin-line); border-radius: 6px; }
+.publish-target p { margin: 0 0 6px; font-size: 12px; line-height: 1.6; }
+.publish-target a, .publish-progress [data-check-details] { display: inline-block; margin-right: 8px; color: #245f52; font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+.publish-progress [hidden] { display: none !important; }
+.publish-target[data-state='success'] { border-color: #8db3a4; }
+.publish-target[data-state='failure'], .publish-progress[data-state='failure'] { border-color: #b87568; }
+.publish-progress[data-state='failure'] .publish-summary, .publish-target[data-state='failure'] [data-target-status] { color: #93473e; }
+.publish-progress li[data-status='waiting']::before { color: var(--admin-muted); }
+
+.publish-progress .secondary-action { width: 100%; margin-top: 8px; }
+.publish-progress [data-published-url] { display: block; margin-top: 10px; }

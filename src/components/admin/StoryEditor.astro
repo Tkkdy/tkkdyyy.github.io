@@ -108,17 +108,34 @@ const insertItems = [
     <a class="sveltia-fallback" href={`${base}admin/sveltia.html`}>打开 Sveltia 备用后台 <AdminIcon name="external" size={14} /></a>
     <a class="sveltia-fallback" href={`${base}admin/proposals/`}>历史提案与部署追踪</a>
     <div class="publishing-card publish-progress" data-publish-progress hidden>
-      <h2>发布进度</h2>
-      <ol>
-        <li data-publish-step="validate">内容校验</li>
-        <li data-publish-step="save">保存草稿</li>
-        <li data-publish-step="git">写入仓库</li>
-        <li data-publish-step="deploy">核验两站公开版本</li>
+      <h2>发布状态</h2>
+      <p class="publish-summary" data-publish-summary role="status" aria-live="polite" aria-atomic="true">尚未开始发布</p>
+      <p class="publish-detail" data-publish-detail>提交稿件后会自动检查、合并，再分别核验两个网站。</p>
+      <ol aria-label="发布步骤">
+        <li data-publish-step="save">保存草稿 · 等待</li>
+        <li data-publish-step="validate">校验内容 · 等待</li>
+        <li data-publish-step="git">提交稿件 · 等待</li>
+        <li data-publish-step="checks">自动检查 · 等待</li>
+        <li data-publish-step="merge">合并内容 · 等待</li>
+        <li data-publish-step="deploy">核验两站上线 · 等待</li>
       </ol>
-      <p data-target-status="pages">GitHub Pages：尚未核验</p>
-      <p data-target-status="vps">VPS：尚未核验</p>
+      <a data-check-details hidden target="_blank" rel="noopener noreferrer">查看检查详情 ↗</a>
+      <div class="publish-target" data-target-card="pages">
+        <p data-target-status="pages">GitHub Pages：尚未开始部署</p>
+        <p class="publish-target-detail" data-target-detail="pages"></p>
+        <a data-target-log="pages" hidden target="_blank" rel="noopener noreferrer">查看部署详情 ↗</a>
+        <a data-target-link="pages" hidden target="_blank" rel="noopener noreferrer">打开 GitHub Pages ↗</a>
+      </div>
+      <div class="publish-target" data-target-card="vps">
+        <p data-target-status="vps">正式站：尚未开始部署</p>
+        <p class="publish-target-detail" data-target-detail="vps"></p>
+        <a data-target-log="vps" hidden target="_blank" rel="noopener noreferrer">查看部署详情 ↗</a>
+        <a data-target-link="vps" hidden target="_blank" rel="noopener noreferrer">打开正式站 ↗</a>
+      </div>
+      <p class="publish-checked" data-publish-checked></p>
+      <p class="publish-detail" data-publish-tracking hidden></p>
       <button type="button" class="secondary-action" data-export-proposal hidden>导出当前提案记录</button>
-      <button type="button" class="secondary-action" data-refresh-deploy hidden>刷新两站状态</button>
+      <button type="button" class="secondary-action" data-refresh-deploy hidden>刷新发布状态</button>
       <a data-published-url hidden target="_blank" rel="noopener noreferrer">查看内容 ↗</a>
     </div>
   </aside>

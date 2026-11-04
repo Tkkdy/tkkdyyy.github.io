@@ -15,7 +15,7 @@ export function createGitHubClient({owner,repo,branch,csrf}){
  }
  return{
   branch,
-  async deploymentStatus(sha){return request('/api/deployments?sha='+encodeURIComponent(sha));},
+  async deploymentStatus(sha,sourcePath){return request('/api/deployments?sha='+encodeURIComponent(sha)+(sourcePath?'&source='+encodeURIComponent(sourcePath):''));},
   async authenticate(){return request(API_ROOT+'/user');},
   async getHead(){return (await request(`${API_ROOT}/repos/${owner}/${repo}/git/ref/heads/${encodeURIComponent(branch)}`)).object.sha;},
   async readFile(path,ref=branch){try{const f=await request(`${API_ROOT}/repos/${owner}/${repo}/contents/${encodeURIComponent(path).replace(/%2F/g,'/')}?ref=${encodeURIComponent(ref)}`);if(f.type!=='file'||!f.content)throw Error('内容文件无法读取。');return{path,sha:f.sha,content:base64ToText(f.content)};}catch(e){if(e.status===404)return null;throw e;}},
