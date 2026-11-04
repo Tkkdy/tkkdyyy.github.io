@@ -6,7 +6,7 @@ const stories=await getEditorialStories();
 ---
 <AdminLayout title="编辑照片" section="照片" active="photos" stories={stories}>
  <section class="stories-view photo-editor">
-  <header class="stories-heading"><div><h1>记录一个瞬间</h1><p>先保存在私人编辑台，准备好后再公开。</p></div><a href={`${import.meta.env.BASE_URL}admin/photos/`}>返回照片</a></header>
+  <header class="stories-heading"><div><h1>记录一个瞬间</h1><p>先保存在私人编辑台，准备好后再公开。</p></div><a data-photo-back href={`${import.meta.env.BASE_URL}admin/photos/`}>返回照片</a></header>
   <p role="status" data-photo-message>正在读取私有草稿……</p>
   <form data-photo-form hidden>
    <div class="photo-editor-grid">
@@ -21,6 +21,7 @@ const stories=await getEditorialStories();
      <label>想记下的话（可留空）<textarea name="caption" maxlength="1000" rows="3"></textarea></label>
      <div class="photo-field-pair"><label>拍摄日期（可留空）<input name="capturedAt" type="date" /></label><label>公开地点（可留空）<input name="location" maxlength="160" placeholder="例如城市或区域，不必填写精确位置" /></label></div>
      <details><summary>更多信息</summary><label>网址标识<input name="slug" maxlength="181" required pattern="[\p{L}\p{N}][\p{L}\p{N}\-]{0,180}" /></label><label>标签（每行一项）<textarea name="tags" rows="2"></textarea></label><label>系列（可留空）<input name="series" maxlength="160" /></label></details>
+     <fieldset class="photo-window"><legend>相簿与相纸白边</legend><label class="photo-check"><input type="checkbox" name="albumCover" />将这张设为相簿主图（需填写更多信息中的系列名称）</label><label>白边展示<select name="frameDisplay"><option value="information">图片信息</option><option value="date">拍摄日期</option><option value="description">物品描述</option></select></label><label>物品描述（可留空）<textarea name="frameDescription" maxlength="240" rows="2"></textarea></label></fieldset>
      <fieldset class="photo-window"><legend>首页「一扇窗」</legend><label class="photo-check"><input name="window.enabled" type="checkbox" />允许这张原创照片出现在首页窗口</label><small>默认不参与。只展示你主动填写的公开信息，不从照片推断拍摄地点或时段。</small>
       <div class="photo-window-options"><span>拍摄时段（可不选）</span>{[['late-night','凌晨'],['morning','早晨'],['daytime','白天'],['dusk','傍晚'],['night','夜晚']].map(([value,label])=><label class="photo-check"><input type="checkbox" name="window.timeOfDay" value={value} />{label}</label>)}</div>
       <div class="photo-window-options"><span>季节（可不选）</span>{[['spring','春'],['summer','夏'],['autumn','秋'],['winter','冬']].map(([value,label])=><label class="photo-check"><input type="checkbox" name="window.seasons" value={value} />{label}</label>)}</div>

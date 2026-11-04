@@ -158,7 +158,10 @@ collections:
       - { label: Published At, name: publishedAt, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
       - { label: Location, name: location, widget: string, required: false }
       - { label: Tags, name: tags, widget: list, required: false }
-      - { label: Series, name: series, widget: string, required: false }
+      - { label: Series / Album, name: series, widget: string, required: false }
+      - { label: Album Cover, name: albumCover, widget: boolean, required: false, default: false }
+      - { label: Polaroid Label, name: frameDisplay, widget: select, options: [information, date, description], required: false, default: information }
+      - { label: Object Description, name: frameDescription, widget: text, required: false }
       - { label: Orientation, name: orientation, widget: select, required: false, options: [landscape, portrait, square] }
       - { label: Featured, name: featured, widget: boolean, required: false, default: false }
       - label: Homepage

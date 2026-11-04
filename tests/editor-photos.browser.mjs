@@ -13,7 +13,7 @@ import { openDraftStore } from '../ops/admin-broker/private-drafts.mjs';
 import { SETTINGS_PATH } from '../src/lib/site-settings.mjs';
 const evidence=resolve('.flavor-builds/editor-photos-evidence'),screens=join(evidence,'screenshots'),directory=await mkdtemp(join(tmpdir(),'flavor-editor-'));
 await mkdir(screens,{recursive:true});
-const store=await openDraftStore({directory}),origin='http://127.0.0.1:19544',repo='Tkkdy/tkkdyyy.github.io',base='a'.repeat(40),next='b'.repeat(40);
+const store=await openDraftStore({directory}),origin='http://127.0.0.1:'+(process.env.EDITOR_TEST_PORT||'19544'),repo='Tkkdy/tkkdyyy.github.io',base='a'.repeat(40),next='b'.repeat(40);
 const report={scope:'REAL local Chromium + broker + SQLite; SYNTHETIC OAuth and GitHub API; production editor not modified or authenticated',checks:[],upstreamWrites:[],pageErrors:[]};
 const paths=[SETTINGS_PATH,'src/content/images/photo-main-landscape.md'];
 const files=await Promise.all(paths.map(async path=>{const bytes=await readFile(path);return{path,sha:createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex'),size:bytes.length,type:'blob',text:bytes.toString('utf8')};}));
@@ -36,7 +36,7 @@ const broker=createBroker(config,{draftStore:store,fetchImpl:async(url,options={
  if(options.method&&options.method!=='GET')throw Error('Unexpected upstream write '+url);
  return Response.json({id:1355866312,full_name:repo,owner:{id:144055705}});
 }});
-const server=await createAdminServer({origin,broker,staticRoot:resolve('dist-admin')});await new Promise(r=>server.listen(19544,'127.0.0.1',r));let browser;
+const server=await createAdminServer({origin,broker,staticRoot:resolve('dist-admin')});await new Promise(r=>server.listen(Number(new URL(origin).port),'127.0.0.1',r));let browser;
 async function session(width=1440){
  const c=await browser.newContext({viewport:{width,height:900}});const login=await c.request.get(origin+'/auth/login',{maxRedirects:0}),state=new URL(login.headers().location).searchParams.get('state');const callback=await c.request.get(origin+'/auth/callback?code=synthetic&state='+state,{maxRedirects:0});assert.equal(callback.status(),303);
  const page=await c.newPage();page.on('pageerror',e=>report.pageErrors.push(e.message));await page.goto(origin+'/admin/settings/');await page.locator('[data-settings-form]').waitFor({state:'visible'});return{c,page};

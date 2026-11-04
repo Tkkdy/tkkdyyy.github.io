@@ -1,0 +1,20 @@
+---
+import '../../styles/photo-albums.css';
+import {groupPhotoAlbums} from '../../lib/photo-albums.mjs';
+interface Props {photos?:Record<string,unknown>[];privatePreview?:boolean;}
+const {photos=[],privatePreview=false}=Astro.props;
+groupPhotoAlbums(photos); // Reject conflicting published covers during the actual build.
+const json=JSON.stringify(photos).replaceAll('<',String.raw`\u003c`);
+---
+<div class="photo-albums" data-photo-albums data-private-preview={privatePreview?'true':undefined}>
+ <p class="album-load-message" data-album-message role="status">{privatePreview?'正在读取私有照片草稿……':'正在展开影像记录……'}</p>
+ <div class="album-groups" data-album-groups></div>
+ <script type="application/json" data-album-data set:html={json}></script>
+ <dialog class="album-viewer" data-album-viewer aria-labelledby="album-viewer-title">
+  <div class="album-viewer-toolbar"><p id="album-viewer-title" data-viewer-title>照片</p><button type="button" data-viewer-close aria-label="关闭照片">关闭 <span aria-hidden="true">×</span></button></div>
+  <div class="album-viewer-shell" data-viewer-shell><button type="button" class="album-viewer-arrow" data-viewer-prev aria-label="上一张">←</button><figure class="album-viewer-paper" data-viewer-paper><div class="album-viewer-image" data-viewer-image></div><figcaption data-viewer-caption></figcaption></figure><button type="button" class="album-viewer-arrow" data-viewer-next aria-label="下一张">→</button></div>
+  <p class="album-viewer-count" data-viewer-count aria-live="polite"></p>
+ </dialog>
+ <noscript><p>启用 JavaScript 可以展开相簿，也可以打开单张影像：</p><ul>{photos.map(photo=><li><a href={String(photo.href||'#')}>{String(photo.title||photo.alt||'影像')}</a></li>)}</ul></noscript>
+</div>
+<script>import {initializePhotoAlbums} from '../../lib/photo-albums-client';document.querySelectorAll<HTMLElement>('[data-photo-albums]').forEach(root=>void initializePhotoAlbums(root));</script>

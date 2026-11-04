@@ -1,3 +1,4 @@
+import {validateAlbumFields} from '../../src/lib/photo-albums.mjs';
 /** Server-side limits for Editorial Studio and pinned Sveltia GitHub backend. */
 import {parse,Kind,valueFromASTUntyped,visit} from 'graphql';
 import {parseFragment} from 'parse5';
@@ -44,6 +45,7 @@ export function validateAddition({path,contents}){
   for(const field of ['publishedAt','updatedAt','startedAt','capturedAt'])if(Object.hasOwn(data,field))requirePolicy(typeof data[field]==='string'&&/^\d{4}-\d{2}-\d{2}/.test(data[field])&&Number.isFinite(Date.parse(data[field])),`${field}须为有效日期；未填写的可选日期应省略。`);
   if(['articles','essays'].includes(collection))requirePolicy(typeof data.title==='string'&&data.title.trim(),'缺少标题。');
   if(collection==='projects')requirePolicy(typeof data.name==='string'&&data.name.trim(),'项目缺少名称。');
+  if(collection==='images'){try{validateAlbumFields(data);}catch(error){requirePolicy(false,error.message);}}
   if(collection==='images')requirePolicy(typeof data.image==='string'&&data.image&&typeof data.alt==='string'&&data.alt.trim(),'影像缺少图片或说明。');
   if(collection!=='projects')requirePolicy(typeof data.publishedAt==='string'&&/^\d{4}-\d{2}-\d{2}/.test(data.publishedAt)&&Number.isFinite(Date.parse(data.publishedAt)),'缺少有效日期。');
   if(data.cover)requirePolicy(typeof data.coverAlt==='string'&&data.coverAlt.trim(),'封面缺少说明。');
