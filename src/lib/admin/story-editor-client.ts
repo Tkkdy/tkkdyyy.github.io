@@ -1,3 +1,4 @@
+import {proposalStatusView, deploymentStatusView, renderPublicationStatus} from './publication-status.mjs';
 import {continueCloudPublication} from './continue-cloud-publication.mjs';
 import { createCloudDraftClient } from './cloud-drafts.mjs';
 import {createPublicationAttempt} from './publication-attempt.mjs';
@@ -593,59 +594,70 @@ function initializeStoryEditor(editorRoot: HTMLElement, cloud?: ReturnType<typeo
   const refreshButton = editorRoot.querySelector<HTMLButtonElement>('[data-refresh-deploy]');
   const exportProposal = editorRoot.querySelector<HTMLButtonElement>('[data-export-proposal]');
   exportProposal?.addEventListener('click',()=>{const receipt=lastPublication?.proposal?.recoveryReceipt;if(typeof receipt!=='string')return;const url=URL.createObjectURL(new Blob([JSON.stringify({schema:1,receipt})],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='editorial-studio-proposal.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+  const setPublicationMessage = (summary: string, detail: string, failed=false) => {
+    if(progress instanceof HTMLElement){progress.hidden=false;progress.dataset.state=failed?'failure':'running';}
+    const heading=editorRoot.querySelector('[data-publish-summary]'),description=editorRoot.querySelector('[data-publish-detail]');
+    if(heading)heading.textContent=summary;if(description)description.textContent=detail;
+  };
+  const tracking=editorRoot.querySelector<HTMLElement>('[data-publish-tracking]');
+  const setTracking=(text: string)=>{if(tracking){tracking.textContent=text;tracking.hidden=!text;}};
   const updatePublishStep = (step: string, statusValue: string) => {
     const item = editorRoot.querySelector(`[data-publish-step="${step}"]`);
     if (!(item instanceof HTMLElement)) return;
     item.dataset.status = statusValue;
-    const labels: Record<string, string> = { running: '…', success: '✓', failure: '×', triggered: '↗' };
-    item.dataset.marker = labels[statusValue] || '';
+    const labels: Record<string,string>={save:'保存草稿',validate:'校验内容',git:'提交稿件',checks:'自动检查',merge:'合并内容',deploy:'核验两站上线'};
+    item.dataset.marker=({running:'…',success:'✓',failure:'×'} as Record<string,string>)[statusValue]||'';
+    item.textContent=`${labels[step]||step} · ${({running:'进行中',success:'完成',failure:'失败'} as Record<string,string>)[statusValue]||'等待'}`;
+    if(statusValue==='running')setPublicationMessage(`正在${labels[step]||step}`,'只有两站实际核验通过后，才会显示发布完成。');
   };
-
   const refreshDeployment = async (result: Awaited<ReturnType<typeof publishStory>>, generation=publicationGeneration) => {
     try {
-        let expectedSha = result.commitSha;
-        if (result.proposal) {
-          const proposal = await result.github.proposalStatus(result.proposal.pullRequestNumber);
-          if(generation!==publicationGeneration)return true;
-          if (proposal.branch !== result.proposal.branch || proposal.commitSha !== result.proposal.commitSha) throw new Error('提案身份变化。');
-          if(proposal.state==='PULL_REQUEST_CLOSED'){publicationAttempt.finish();if(cloud){delete state.publication;await saveCloud(snapshot());}}
-          if (proposal.state !== 'MERGED_ON_MAIN') {
-            const autoLabels: Record<string,string>={WAITING:'等待CI与保护规则，内容校验通过后自动合并',MERGED:'已合并，等待部署',NEEDS_UPDATE:'main已有更新，请比较并更新提案',CONFLICT:'内容冲突，未合并',CI_FAILED:'CI失败，未合并',STOPPED:'校验或合并结果未确认，请核验恢复',SESSION_EXPIRED:'会话已结束，请重新登录并恢复发布'};
-            const status = autoLabels[proposal.publication?.state] || ({PULL_REQUEST_OPEN:'内容提案待合并，尚未部署',PULL_REQUEST_CLOSED:'内容提案已关闭，未合并',PROPOSAL_CHANGED:'提案内容已变化，需重新审查'} as Record<string,string>)[proposal.state] || '提案状态尚未核验';
-            editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：${status}`; });
-            updatePublishStep('deploy', 'triggered');
-            return proposal.publication?.state !== 'WAITING';
-          }
-          expectedSha = proposal.mergedSha;
-          state.sourcePath=result.sourcePath;state.sourceBlobSha=result.sourceBlobSha;const hadCloudProposal=cloud&&state.publication;delete state.publication;persistDraft();if(hadCloudProposal)await saveCloud(snapshot());
-          publicationAttempt.finish();
-        }
-        const report = await result.github.deploymentStatus(expectedSha);
+      let expectedSha=result.commitSha;
+      if(result.proposal){
+        const proposal=await result.github.proposalStatus(result.proposal.pullRequestNumber);
         if(generation!==publicationGeneration)return true;
-        const labels: Record<string, string> = {CURRENT_VERSION_VERIFIED:'公开版本与 HTTP 健康核验通过', NOT_DEPLOYED:'测试分支未部署到生产', VERSION_DIFFERS:'线上版本与本次提交不同', FAILED:'公开健康检查失败', UNKNOWN:'尚未确认'};
-        for (const target of report.targets) {
-          const row = editorRoot.querySelector(`[data-target-status="${target.target}"]`);
-          if (row) row.textContent = `${target.target === 'pages' ? 'GitHub Pages' : 'VPS'}：${labels[target.status] || '尚未确认'}${target.actualSha ? `（${target.actualSha.slice(0, 8)}）` : ''}；流水线：${({SUCCEEDED:'已成功',FAILED:'失败',PENDING:'执行中',SKIPPED:'未部署',NOT_REQUESTED:'测试分支不触发生产',UNKNOWN:'尚未确认'} as Record<string,string>)[target.pipeline?.state] || '尚未确认'}${target.pipeline?.job ? ` · ${target.pipeline.job}` : ''}${target.pipeline?.step ? ` · ${target.pipeline.step}` : ''}`;
+        if(proposal.branch!==result.proposal.branch||proposal.commitSha!==result.proposal.commitSha)throw Error('提案身份变化，请打开提案核对。');
+        if(proposal.state!=='MERGED_ON_MAIN'){
+          const view=proposalStatusView(proposal);renderPublicationStatus(editorRoot,view);
+          if(proposal.state==='PULL_REQUEST_CLOSED'){publicationAttempt.finish();if(cloud){delete state.publication;await saveCloud(snapshot());}}
+          return view.done;
         }
-        updatePublishStep('deploy', report.targets.every((target: {status: string}) => target.status === 'CURRENT_VERSION_VERIFIED') ? 'success' : 'triggered');
-        return report.targets.every((target: {pipeline?: {state: string}}) => ['SUCCEEDED','SKIPPED','FAILED'].includes(target.pipeline?.state || ''));
-      } catch {
-        editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：本次状态查询失败，请刷新核验。`; });
-        updatePublishStep('deploy', 'triggered');
+        expectedSha=proposal.mergedSha;
+        // Retain the receipt through deployment so a reload can restore tracking.
+        if(state.sourcePath!==result.sourcePath||state.sourceBlobSha!==result.sourceBlobSha){
+          state.sourcePath=result.sourcePath;state.sourceBlobSha=result.sourceBlobSha;persistDraft();
+          if(cloud)await saveCloud(snapshot());
+        }
       }
+      const report=await result.github.deploymentStatus(expectedSha,result.sourcePath);
+      if(generation!==publicationGeneration)return true;
+      const view=deploymentStatusView(report);renderPublicationStatus(editorRoot,view);
+      if(!result.proposal){updatePublishStep('checks','success');updatePublishStep('merge','success');}
+      if(view.state==='success'){
+        publicationAttempt.finish();
+        if(cloud&&state.publication){delete state.publication;await saveCloud(snapshot());}
+      }
+      return view.done;
+    }catch(error){
+      if(generation!==publicationGeneration)return true;
+      const authentication=(error as {status?:number})?.status===401;
+      setPublicationMessage(authentication?'登录已过期，发布状态尚未确认':'状态查询暂时失败，发布结果尚未确认',authentication?'请重新登录后恢复此提案；稿件保留，无需重复提交。':'暂时无法获取最新状态，保留上次站点结果；将继续查询，也可点击刷新发布状态。');
+      return authentication;
+    }
   };
   let publicationPoll: number | undefined;
   const pollPublication = (result: Awaited<ReturnType<typeof publishStory>>, remaining=100) => {
     window.clearTimeout(publicationPoll);
-    if(remaining<=0)return;
+    if(remaining<=0){setTracking('自动跟踪已暂停，尚未确认的站点仍需核验。点击“刷新发布状态”继续；无需重复提交稿件。');return;}
+    setTracking('每 15 秒自动查询；也可以手动刷新。');
     const generation=publicationGeneration;
-    publicationPoll=window.setTimeout(async()=>{if(generation!==publicationGeneration)return;const done=await refreshDeployment(result,generation);if(!done&&generation===publicationGeneration)pollPublication(result,remaining-1);},15000);
+    publicationPoll=window.setTimeout(async()=>{if(generation!==publicationGeneration)return;const done=await refreshDeployment(result,generation);if(!done&&generation===publicationGeneration)pollPublication(result,remaining-1);else setTracking('');},15000);
   };
   window.addEventListener('pagehide',()=>window.clearTimeout(publicationPoll),{once:true});
   refreshButton?.addEventListener('click', async () => {
     if (!lastPublication) return;
-    refreshButton.disabled = true;
-    try { await refreshDeployment(lastPublication); } finally { refreshButton.disabled = false; }
+    refreshButton.disabled = true;window.clearTimeout(publicationPoll);setTracking('正在查询最新状态……');
+    try { const done=await refreshDeployment(lastPublication);if(!done)pollPublication(lastPublication);else setTracking(''); } finally { refreshButton.disabled = false; }
   });
 
   document.querySelectorAll<HTMLButtonElement>('[data-phase-action]').forEach((button) => button.addEventListener('click', async () => {
@@ -666,7 +678,9 @@ function initializeStoryEditor(editorRoot: HTMLElement, cloud?: ReturnType<typeo
       return;
     }
     if (action !== 'Publish') return;
-    publicationGeneration++;window.clearTimeout(publicationPoll);
+    publicationGeneration++;window.clearTimeout(publicationPoll);setTracking('');
+    editorRoot.querySelectorAll<HTMLAnchorElement>('[data-target-link],[data-target-log],[data-check-details]').forEach(link=>{link.hidden=true;link.removeAttribute('href');});
+    editorRoot.querySelectorAll('[data-target-detail]').forEach(row=>{row.textContent='';});
     if (exportProposal) exportProposal.hidden = true;
     if (refreshButton) refreshButton.hidden = true;
     editorRoot.querySelectorAll('[data-target-status]').forEach(row => { row.textContent = `${row.getAttribute('data-target-status') === 'pages' ? 'GitHub Pages' : 'VPS'}：尚未核验`; });
@@ -710,9 +724,9 @@ function initializeStoryEditor(editorRoot: HTMLElement, cloud?: ReturnType<typeo
         lastPublication = result;
         if (exportProposal) exportProposal.hidden = typeof result.proposal.recoveryReceipt !== 'string';
         if (refreshButton) { refreshButton.disabled = false; refreshButton.hidden = false; }
-        await refreshDeployment(result);
-        showToast(result.proposal.publication?.state==='WAITING'?'已提交自动发布：等待CI，草稿保留。':'提案状态已核验，草稿保留；两站部署结果见下方。');
-        if(result.proposal.publication?.state==='WAITING')pollPublication(result);
+        const done=await refreshDeployment(result);
+        showToast('稿件已提交；检查、合并及两站上线结果见发布状态。');
+        if(!done)pollPublication(result);
         return;
       }
 
@@ -728,12 +742,13 @@ function initializeStoryEditor(editorRoot: HTMLElement, cloud?: ReturnType<typeo
       persistDraft();
       lastPublication = result;
       if (refreshButton) refreshButton.hidden = false;
-      await refreshDeployment(result);
-      showToast(`内容已写入 ${result.branch}。两站结果见发布状态；版本核验不代表完整功能验收。`);
+      const done=await refreshDeployment(result);if(!done)pollPublication(result);
+      showToast('稿件已写入仓库，两站实际结果见发布状态。');
     } catch (error) {
       const running = progress?.querySelector<HTMLElement>('[data-status="running"]');
       if (running?.dataset.publishStep) updatePublishStep(running.dataset.publishStep, 'failure');
-      showToast(error instanceof Error ? error.message : '发布失败。');
+      const reason=error instanceof Error?error.message:'发布失败。';
+      setPublicationMessage('发布未完成',reason,true);showToast(reason);
     } finally {
       button.disabled = false;
       button.textContent = originalLabel;
@@ -758,6 +773,16 @@ function initializeStoryEditor(editorRoot: HTMLElement, cloud?: ReturnType<typeo
   });
 
   if(cloud&&state.publication){
+    setPublicationMessage('正在恢复发布状态','正在读取已有提案；不会重复提交稿件。');
+    const generation=publicationGeneration;
+    void readAdminSession().then(session=>continueCloudPublication({record:state.publication,session,resume:false})).then(async result=>{
+      if(generation!==publicationGeneration)return;
+      lastPublication=result;
+      if(publishedUrl instanceof HTMLAnchorElement){publishedUrl.href=result.proposal.url;publishedUrl.textContent='查看内容提案';publishedUrl.hidden=false;}
+      if(refreshButton)refreshButton.hidden=false;
+      if(exportProposal)exportProposal.hidden=typeof result.proposal.recoveryReceipt!=='string';
+      const done=await refreshDeployment(result,generation);if(!done)pollPublication(result);
+    }).catch(error=>{if(generation===publicationGeneration)setPublicationMessage('发布状态需恢复',error instanceof Error?error.message:'请重新登录并核对原提案。',true);});
     try{rememberProposal(state.publication,localStorage);const link=document.createElement('a');link.href='/admin/proposals/';link.textContent='查看此草稿的发布提案与双站状态';feedback.append(link);}catch{syncMessage('发布恢复记录需核对，请保留此草稿。');}
   }
   updateToolbar();
