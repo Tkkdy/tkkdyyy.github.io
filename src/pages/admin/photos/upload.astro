@@ -22,6 +22,11 @@ const stories=await getEditorialStories();
   <div class="batch-grid-heading"><h2>这一组照片</h2><div><button type="button" data-batch-select-all>全选</button><button type="button" data-batch-select-none>全不选</button></div></div>
   <div class="photo-batch-list" data-batch-list></div>
   <div class="photo-batch-actions"><div><p data-batch-summary>尚未选择照片</p><small>未选中的照片会保留为私有草稿。</small></div><button type="button" data-batch-publish disabled>预览并发布</button></div>
+  <dialog class="photo-sheet" data-photo-sheet aria-labelledby="photo-sheet-title">
+   <header class="photo-sheet-heading"><img data-photo-sheet-image alt="" /><div><h2 id="photo-sheet-title">这张照片</h2><p data-photo-sheet-name></p></div></header>
+   <div class="photo-sheet-body" data-photo-sheet-body></div>
+   <footer class="photo-sheet-footer"><p role="status" data-photo-sheet-message>其余信息继承整组设置，备注可以留空。</p><button type="button" data-photo-sheet-done autofocus>完成</button><button type="button" data-photo-sheet-return hidden>保留修改，返回列表</button></footer>
+  </dialog>
   <dialog class="batch-review" data-batch-review aria-labelledby="batch-review-title">
    <header class="batch-review-heading"><div><h2 id="batch-review-title">发布前，再看一眼</h2><p data-batch-review-summary></p></div><button type="button" data-batch-review-close>返回修改</button></header>
    <PhotoAlbums livePreview={true} />
