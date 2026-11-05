@@ -1,65 +1,22 @@
 ---
-// 影像：全站唯一大圆角容器（1rem），C 式不对称视觉流。
-// 三个视觉槽位（主横图 / 竖图 / 方图）是 v0.2.6 已批准的设计结构；
-// 每个槽位的影像内容来自 Content Collections（images），当前为 fixture 占位条目。
-// 图片比例（4:3 / 3:4 / 1:1）与方向标注（Landscape / Portrait）属于设计结构，保持硬编码。
+// Real files only. One to three photographs keep their intrinsic aspect ratios.
 import type { CollectionEntry } from 'astro:content';
 import { withBase } from '../lib/site-url';
-
-interface Props {
-  images: CollectionEntry<'images'>[];
-}
-
-const { images } = Astro.props;
-// 按 homepage.order 排序后依次对应三个槽位（当前为 3 条 fixture）
-const [mainImage, portraitImage, squareImage] = images;
+import { imageFileExists, getImageOrientation } from '../lib/content/images';
+interface Props { images: CollectionEntry<'images'>[]; }
+const images = Astro.props.images.filter((entry) => imageFileExists(entry.data.image)).slice(0, 3);
+const positions = ['photo-main', 'photo-portrait', 'photo-square'];
 ---
 <section class="photography">
   <div class="photo-container">
-    <div class="section-header photography-header">
-      <span>Visual Flow</span>
-      <span>影像</span>
-    </div>
-
-    <div class="photo-flow">
-      <!-- 主横图（向左偏移） -->
-      <div class="photo-main">
-        <a class="photo-link photo-link-main group" href={withBase(`images/${mainImage.data.slug}/`)}>
-          <div class="css-placeholder scale-inner scale-transition">
-            <span>{mainImage.data.title}</span>
-            <span class="ratio">4:3</span>
-          </div>
+    <div class="section-header photography-header"><span>Visual Flow</span><span>影像</span></div>
+    {images.length ? <div class="photo-flow" data-photo-count={images.length}>
+      {images.map(({ data }, index) => <figure class:list={[positions[index], `is-${getImageOrientation(data)}`]}>
+        <a class="photo-link photo-real-link group" href={withBase(`images/${data.slug}/`)}>
+          <img src={withBase(data.image)} alt={data.alt} loading="lazy" decoding="async" />
         </a>
-        <div class="photo-caption">
-          <span>{mainImage.data.caption}</span>
-          <span>Landscape</span>
-        </div>
-      </div>
-
-      <!-- 竖图（向右上偏移） -->
-      <div class="photo-portrait">
-        <a class="photo-link photo-link-portrait group" href={withBase(`images/${portraitImage.data.slug}/`)}>
-          <div class="css-placeholder scale-inner scale-transition">
-            <span>{portraitImage.data.title}</span>
-            <span class="ratio">3:4</span>
-          </div>
-        </a>
-        <div class="photo-caption right">
-          <span>{portraitImage.data.caption}</span>
-        </div>
-      </div>
-
-      <!-- 小方图（居中偏左偏移） -->
-      <div class="photo-square">
-        <a class="photo-link photo-link-square group" href={withBase(`images/${squareImage.data.slug}/`)}>
-          <div class="photo-square-inner tilt-right tilt-transition">
-            <div class="css-placeholder">
-              <span>{squareImage.data.title}</span>
-              <span class="ratio">1:1</span>
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
+        {(data.caption || data.title) && <figcaption class="photo-caption">{data.caption ?? data.title}</figcaption>}
+      </figure>)}
+    </div> : <div class="photo-empty"><p>沿途的光影，慢慢收集。</p><a class="link-underline" href={withBase('images/')}>影像记录 <span aria-hidden="true">→</span></a></div>}
   </div>
 </section>

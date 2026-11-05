@@ -1,0 +1,60 @@
+/* Router composes the existing Radar dossier styles with its own evidence layout. */
+.attention-detail .identity { grid-template-columns: minmax(0, 1.25fr) minmax(0, .85fr); gap: clamp(32px, 6vw, 100px); }
+.attention-detail .identity h1 { font-size: clamp(48px, 5.2vw, 84px); overflow-wrap: normal; }
+.attention-detail .identity-tagline { max-width: 24em; }
+.attention-detail .metadata-panel dd { overflow-wrap: anywhere; }
+.ar-modules { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 24px 16px; }
+.ar-modules .module { align-self: start; }
+.ar-capture { margin: 0; padding: 0 20px; }
+.ar-capture a { display: block; cursor: zoom-in; }
+.ar-capture img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
+.ar-capture figcaption { padding: 14px 0 18px; font-family: var(--mono); font-size: 11px; line-height: 1.8; color: var(--ink-muted); }
+.ar-module-copy { padding: 8px 24px 24px; color: var(--ink-soft); font-family: var(--serif); line-height: 1.9; }
+.ar-module-copy p { margin: 0 0 24px; }
+.ar-module-copy .ar-lead { color: var(--ink); font-size: clamp(22px, 2vw, 30px); line-height: 1.6; margin: 8px 0 24px; }
+.ar-routes { margin: 0 0 24px; }
+.ar-routes div { display: grid; grid-template-columns: 70px 1fr; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.ar-routes dt { font: 11px/1.9 var(--mono); color: var(--blue); }
+.ar-routes dd { margin: 0; font-size: 13px; }
+.ar-module-copy .ar-footnote { font-size: 12px; margin-bottom: 0; }
+.ar-system { grid-column: 1 / -1; }
+.ar-system-flow { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 24px; list-style: none; margin: 8px 24px 20px; padding: 0; }
+.ar-system-flow li { position: relative; padding: 24px 16px; border: 1px solid var(--line); text-align: center; }
+.ar-system-flow li:nth-child(2) { border-color: #a3b6ff; background: var(--blue-soft); }
+.ar-system-flow li + li::before { content: '→'; position: absolute; top: 40%; left: -21px; color: var(--blue); }
+.ar-system-flow strong { display: block; margin-bottom: 12px; font: 12px var(--mono); }
+.ar-system-flow span { color: var(--ink-soft); font-size: 13px; line-height: 1.8; }
+.ar-system-note { margin: 0 24px 24px; font-size: 12px; color: var(--ink-muted); }
+.ar-prose { max-width: none; padding: 0 28px 28px; font-size: 15px; }
+.ar-prose h2 { font-size: 23px; }
+.ar-prose a { color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
+.ar-prose :not(pre) > code { white-space: normal; overflow-wrap: anywhere; }
+.ar-prose p, .ar-prose li { overflow-wrap: anywhere; }
+.ar-console-note { border-top: 1px solid var(--line); padding-top: 24px; font-size: 13px; }
+.ar-console-note h3 { color: var(--ink); margin-top: 0; font-size: 18px; font-weight: 400; }
+.ar-bottom { display: flex; justify-content: space-between; gap: 16px; border-top: 1px solid var(--line); margin-top: 28px; padding: 24px 0 36px; font: 11px var(--mono); }
+@media (max-width: 1000px) {
+  .attention-detail .identity { grid-template-columns: 1fr; gap: 28px; }
+  .attention-detail .identity-side { max-width: 620px; width: 100%; }
+  .ar-modules { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+  .ar-routing .ar-module-copy { padding-inline: 16px; }
+  .ar-routes div { grid-template-columns: 1fr; gap: 4px; }
+}
+@media (max-width: 760px) {
+  .attention-detail .identity h1 { font-size: clamp(42px, 10vw, 64px); line-height: 1.1; }
+  .ar-modules { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .ar-modules .module-header { flex-wrap: wrap; gap: 8px; }
+  .ar-capture { padding-inline: 14px; }
+  .ar-module-copy, .ar-prose { padding-inline: 18px; }
+  .ar-routes div { grid-template-columns: 70px 1fr; }
+  .ar-system-flow { grid-template-columns: 1fr; gap: 22px; margin-inline: 18px; }
+  .ar-system-flow li + li::before { content: '↓'; top: -23px; left: calc(50% - 4px); }
+  .ar-console { grid-row: 3; }
+}
+/* Technical notes use the dossier rhythm rather than the essay page grid. */
+.attention-detail .ar-prose { display: block; color: var(--ink-soft); font-family: var(--serif); line-height: 1.95; }
+.attention-detail .ar-prose p { margin: 0 0 18px; text-align: start; }
+.attention-detail .ar-prose h2 { margin: 28px 0 16px; padding: 22px 0 0; border-top: 1px solid var(--line); text-align: left; font: 400 23px/1.5 var(--serif); }
+.attention-detail .ar-prose h2::after { display: none; }
+.attention-detail .ar-prose ul { list-style: disc; padding-left: 20px; margin: 0 0 20px; }
+.attention-detail .ar-prose li { padding-left: 4px; margin-bottom: 8px; }

@@ -1,0 +1,81 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import { withBase } from '../../lib/site-url';
+// Share the existing technical dossier typography, metadata and module treatment.
+import '../../styles/morning-radar-detail.css';
+import '../../styles/attention-router-detail.css';
+interface Props { project: CollectionEntry<'projects'>; }
+const { project } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+const [hardware, consoleDemo] = data.screenshots ?? [];
+const routes = [
+  ['NOW', '进入当前注意力'],
+  ['QUEUE', '排队等待合适时机'],
+  ['DIGEST', '归入摘要类路由'],
+  ['DROP', '过滤无需打扰的事件'],
+];
+---
+<article class="project-shell attention-detail">
+  <a class="back-link" href={withBase('projects/')}>← ALL PROJECTS</a>
+  <section class="identity" aria-labelledby="project-title">
+    <div class="identity-copy">
+      <h1 id="project-title">{data.name}</h1>
+      <p class="identity-tagline">{data.tagline}</p>
+      <p class="identity-descriptor">LOCAL-FIRST ATTENTION ROUTING / DESKTOP + E-PAPER</p>
+      <p class="identity-description">{data.description}</p>
+    </div>
+    <div class="identity-side">
+      <div class="identity-classification"><span>PERSONAL ATTENTION</span><span>v0.1.0</span></div>
+      <dl class="metadata-panel">
+        <div><dt>STATUS</dt><dd><span class="status-dot" aria-hidden="true"></span>DEVELOPING / 源码版</dd></div>
+        <div><dt>RELEASE</dt><dd><a href={`${data.githubUrl}/releases/tag/v0.1.0`}>v0.1.0 ↗</a></dd></div>
+        <div><dt>SOURCE</dt><dd><a href={data.githubUrl}>GITHUB ↗</a></dd></div>
+        <div><dt>STACK</dt><dd>{data.techStack?.join(' / ')}</dd></div>
+        <div><dt>HARDWARE</dt><dd>ESP32 / GDEY042Z98</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <div class="ar-modules">
+    {hardware && <section class="module ar-hardware">
+      <header class="module-header"><h2><span>01 /</span> HARDWARE PROTOTYPE</h2><span class="module-note">实拍 / 原型</span></header>
+      <figure class="project-screenshot ar-capture">
+        <a href={withBase(hardware.src)} aria-label="查看真机实拍原图"><img src={withBase(hardware.src)} alt={hardware.alt} width="4000" height="3000" decoding="async" /></a>
+        <figcaption>{hardware.caption}</figcaption>
+      </figure>
+    </section>}
+    <section class="module ar-routing">
+      <header class="module-header"><h2><span>02 /</span> ROUTING PRINCIPLE</h2></header>
+      <div class="ar-module-copy">
+        <p class="ar-lead">让重要的事出现，<br />让其他的事等待。</p>
+        <p>外部 Agent 负责理解与建议，本地 Hub 根据授权、事件时间与工作上下文执行确定性路由。基础 Hub 本身不调用 LLM。</p>
+        <dl class="ar-routes">{routes.map(([name, description]) => <div><dt>{name}</dt><dd>{description}</dd></div>)}</dl>
+        <p class="ar-footnote">DIGEST 是路由分类，并非 AI 自动摘要。提醒 ACK 不等于完成 Todo。</p>
+      </div>
+    </section>
+    <section class="module ar-system">
+      <header class="module-header"><h2><span>03 /</span> SYSTEM PATH</h2><span class="module-note">LOCAL FIRST</span></header>
+      <ol class="ar-system-flow">
+        <li><strong>INPUT</strong><span>待办 / 工作上下文 / 授权事件</span></li>
+        <li><strong>WINDOWS HUB</strong><span>Python · FastAPI · SQLite<br />确定性路由 / Scene / 缓存</span></li>
+        <li><strong>OUTPUT</strong><span>Web Console / 指定电子纸<br />Home · Workspace · Interrupt</span></li>
+      </ol>
+      <p class="ar-system-note">设备约 30 秒轮询，受电子纸刷新时间限制；不能用作紧急告警器。</p>
+    </section>
+    <section class="module ar-documentation">
+      <header class="module-header"><h2><span>04 /</span> CAPABILITIES & RELEASE NOTES</h2></header>
+      <div class="prose ar-prose"><Content /></div>
+    </section>
+    {consoleDemo && <section class="module ar-console">
+      <header class="module-header"><h2><span>05 /</span> WEB CONSOLE</h2><span class="module-note">DEMO DATA</span></header>
+      <figure class="project-screenshot ar-capture">
+        <a href={withBase(consoleDemo.src)} aria-label="查看 Web Console 演示原图"><img src={withBase(consoleDemo.src)} alt={consoleDemo.alt} width="1280" height="2024" loading="lazy" decoding="async" /></a>
+        <figcaption>{consoleDemo.caption}</figcaption>
+      </figure>
+      <div class="ar-module-copy ar-console-note"><h3>当前边界</h3><p>{data.statusNote}</p><p>Console 展示隔离的合成示例数据，保留原始连接与设备状态。精确公开固件的实屏、Wi-Fi、NVS / 断电恢复与长期可靠性仍待验收。</p></div>
+    </section>}
+  </div>
+  <nav class="ar-bottom" aria-label="项目导航"><a href={withBase('projects/')}>← 所有项目</a><a href={withBase('projects/morning-radar/')}>Morning Radar →</a></nav>
+</article>

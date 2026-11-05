@@ -18,7 +18,7 @@ githubUrl: "https://github.com/Tkkdy/Morning-Radar"
 updatedAt: 2026-08-17
 featured: true
 homepage:
-  show: true
+  show: false
   order: 1
 screenshots:
   - src: "/projects/morning-radar-2026-08-15.png"
