@@ -10,9 +10,10 @@ export async function inspectWorkflow({github,repository,expectedSha,branch}){
   if(details.total_count>100)return unknown('JOB_LIST_INCOMPLETE');
   return Object.fromEntries(['pages','vps'].map(target=>{
    const jobs=(details.jobs??[]).filter(j=>[target+'-build',target+'-deploy'].includes(j.name));const base={runId:run.id,url:`https://github.com/${repository}/actions/runs/${run.id}`};
-   if(jobs.length!==2)return [target,{...base,state:'UNKNOWN',reason:'TARGET_JOBS_NOT_RECOGNIZED'}];
    const failed=jobs.find(j=>['failure','timed_out','cancelled','action_required','startup_failure','stale'].includes(j.conclusion));
    if(failed)return[target,{...base,state:'FAILED',reason:failed.conclusion,job:failed.name,step:(failed.steps??[]).find(s=>s.conclusion==='failure')?.name?.slice(0,200)||null}];
+   if(['queued','in_progress','waiting','pending','requested'].includes(run.status)&&(jobs.length<2||jobs.some(j=>j.status!=='completed'))){const active=jobs.find(j=>j.status==='in_progress')||jobs.find(j=>j.status!=='completed');return[target,{...base,state:'PENDING',reason:'TARGET_JOBS_RUNNING',job:active?.name||null,step:active?.steps?.find(s=>s.status==='in_progress')?.name?.slice(0,200)||null}];}
+   if(jobs.length!==2)return [target,{...base,state:'UNKNOWN',reason:'TARGET_JOBS_NOT_RECOGNIZED'}];
    if(jobs.some(j=>j.status!=='completed'))return[target,{...base,state:'PENDING',reason:'TARGET_JOBS_RUNNING'}];
    if(jobs.every(j=>j.conclusion==='success'))return[target,{...base,state:'SUCCEEDED',reason:'TARGET_JOBS_SUCCEEDED'}];
    return[target,{...base,state:'SKIPPED',reason:'TARGET_NOT_DEPLOYED'}];

@@ -1,5 +1,6 @@
 /** Read-only acceptance of public version markers. Does not claim functional/full-file acceptance. */
-export async function inspectTargets({targets,branch,expectedSha,fetchImpl=fetch}){
+export async function inspectTargets({targets,branch,expectedSha,fetchImpl=fetch,contentPath=null}){
+ if(contentPath&&!/^(articles|essays)\/[a-z0-9]+(?:-[a-z0-9]+)*\/$|^fragments\/$/.test(contentPath))throw Error('Invalid content path');
  if(!/^[a-f0-9]{40}$/.test(expectedSha||''))throw Error('Invalid source SHA');
  return Promise.all(['pages','vps'].map(async target=>{
   const base={target,expectedSha,actualSha:null,status:'UNKNOWN',scope:'PUBLIC_VERSION_AND_HTTP_HEALTH'};
@@ -15,6 +16,7 @@ export async function inspectTargets({targets,branch,expectedSha,fetchImpl=fetch
    const actualSha=data.sourceSha;
    if(actualSha!==expectedSha)return {...base,actualSha,status:branch!=='main'?'NOT_DEPLOYED':'VERSION_DIFFERS',reason:branch!=='main'?'TEST_BRANCH_NOT_PRODUCTION':'REQUESTED_VERSION_NOT_LIVE',url:homepage};
    const health=await fetchImpl(origin,{method:'HEAD',redirect:'error',signal:AbortSignal.timeout(20000)});
+   if(health.status===200&&contentPath){const contentUrl=new URL(contentPath,origin).href;const content=await fetchImpl(contentUrl,{method:'HEAD',redirect:'error',signal:AbortSignal.timeout(20000)});return {...base,actualSha,contentUrl,status:content.status===200?'CURRENT_VERSION_VERIFIED':'FAILED',httpStatus:content.status,url:homepage,scope:'PUBLIC_VERSION_AND_CONTENT_HTTP_HEALTH',reason:content.status===200?'PUBLIC_MARKER_AND_CONTENT_MATCH':'CONTENT_HEALTH_FAILED'};}
    return {...base,actualSha,status:health.status===200?'CURRENT_VERSION_VERIFIED':'FAILED',httpStatus:health.status,url:homepage,reason:health.status===200?'PUBLIC_MARKER_AND_HEALTH_MATCH':'PUBLIC_HEALTH_FAILED'};
   }catch{return {...base,status:'UNKNOWN',reason:'PUBLIC_CHECK_FAILED'};}
  }));
