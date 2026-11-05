@@ -1,6 +1,7 @@
+import {PUBLICATION_MAX_BYTES} from '../publication-limits.mjs';
 import {validateAlbumFields,groupPhotoAlbums} from '../photo-albums.mjs';
 import YAML from 'yaml';
-import {photoUploadDataUrl} from './photo-upload';
+import {photoUploadDataUrl,PHOTO_SOURCE_MAX_BYTES} from './photo-upload';
 import {createCloudDraftClient} from './cloud-drafts.mjs';
 import {readAdminSession,createGitHubClient,textToBase64} from './github-content.mjs';
 import {dataUrlFile} from './publish-story.mjs';
@@ -111,7 +112,7 @@ export async function initializePhotoBatch(){
   try{for(let i=0;i<files.length;i++){
    const file=files[i];message.textContent=`正在处理 ${i+1}/${files.length}：${file.name}`;
    try{
-    if(file.size>8_000_000)throw Error('超过 8 MB，请缩小后再选择。');
+    if(file.size>PHOTO_SOURCE_MAX_BYTES)throw Error('超过 50 MB，请缩小后再选择。');
     const image=await photoUploadDataUrl(file),encoded=image.split(',')[1]||'';
     if(!/^data:image\/(?:webp|png|jpeg);base64,/.test(image)||Math.floor(encoded.length*3/4)>8_000_000)throw Error('转换后的照片过大或格式不支持，请缩小或转为 JPEG 后重试。');
     const key='draft-photo-'+crypto.randomUUID(),slug='photo-'+key.slice(-12),now=new Date(),date=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
@@ -142,7 +143,7 @@ export async function initializePhotoBatch(){
    }
    const albumPhotos=resources.filter((r:{type:string})=>r.type==='Image').map((r:{sourcePath:string;rawContent:string})=>({id:r.sourcePath,...parse(r.rawContent).doc.toJS({maxAliasCount:0})}));for(const {item} of prepared)albumPhotos.push({id:item.entry.key,...item.doc.toJS({maxAliasCount:0})});groupPhotoAlbums(albumPhotos);
    for(const file of files){if(paths.has(file.path))throw Error('发布资源路径重复。');paths.add(file.path);bytes+=atob(file.contentBase64).length;}
-   if(bytes>20_000_000)throw Error('所选照片总资源超过 20 MB，请减少本次勾选的数量。');
+   if(bytes>PUBLICATION_MAX_BYTES)throw Error('所选照片总资源超过 100 MB，请减少本次勾选的数量。');
    if(document.querySelector('meta[name="editor-local-preview"]')){message.textContent=`本地预览：${chosen.length} 张照片已通过发布检查并保存草稿，未创建提案、未更新线上网站。`;return;}
    for(const {item} of prepared){const intent={...snapshot(item),publication:{state:'pending'}};await item.client.save(intent);item.state=intent;marked.push(item);}
    const auth=await readAdminSession(),github=createGitHubClient({owner:'Tkkdy',repo:'tkkdyyy.github.io',branch:auth.branch,csrf:auth.csrf});

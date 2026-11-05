@@ -1,3 +1,4 @@
+import {publicationRequestLimit} from '../../src/lib/publication-limits.mjs';
 import {parse as parseYaml,stringify as yamlStringify} from 'yaml';
 /** Loopback HTTP adapter. No credentials/config files are served from the static root. */
 import http from 'node:http';
@@ -10,7 +11,7 @@ function htmlPolicy(body,{cms=false,cmsFrame=false}={}){
  const hashes=[...body.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)].filter(([,attrs])=>!/(?:^|\s)src\s*=/i.test(attrs)).map(([, ,script])=>"'sha256-"+createHash('sha256').update(script).digest('base64')+"'");
  return `default-src 'self'; script-src 'self' ${hashes.join(' ')}; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self'; media-src 'self' https:; connect-src 'self'${cms?' blob:':''}; frame-src 'self'; frame-ancestors ${cmsFrame?"'self'":"'none'"}; object-src 'none'; base-uri 'none'; form-action 'self'`;
 }
-export async function createAdminServer({origin,staticRoot,broker,verifyAccess=null,maxBodyBytes=30_000_000}){
+export async function createAdminServer({origin,staticRoot,broker,verifyAccess=null,maxBodyBytes}){
  const expected=new URL(origin);if(!['127.0.0.1','localhost'].includes(expected.hostname)&&expected.protocol!=='https:')throw Error('Public origin requires HTTPS.');
  const root=await realpath(staticRoot);
  const server=http.createServer(async(req,res)=>{
@@ -25,7 +26,7 @@ export async function createAdminServer({origin,staticRoot,broker,verifyAccess=n
    const url=new URL(req.url,expected);
    let body;
    if(req.method==='POST'){
-    const chunks=[];let size=0;for await(const chunk of req){size+=chunk.length;if(size>maxBodyBytes){send(413);req.destroy();return;}chunks.push(chunk);}body=Buffer.concat(chunks);
+    const chunks=[];let size=0;for await(const chunk of req){size+=chunk.length;if(size>(maxBodyBytes??publicationRequestLimit(url.pathname))){send(413);req.destroy();return;}chunks.push(chunk);}body=Buffer.concat(chunks);
    }
    const request=new Request(url,{method:req.method,headers:req.headers,...(body?{body}:{} )});
    if(url.pathname.startsWith('/auth/')||url.pathname.startsWith('/api/')){

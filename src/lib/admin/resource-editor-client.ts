@@ -1,5 +1,5 @@
 import YAML from 'yaml';
-import {photoUploadDataUrl} from './photo-upload';
+import {photoUploadDataUrl,PHOTO_SOURCE_MAX_BYTES} from './photo-upload';
 import {marked} from 'marked';
 import {sanitizeAdminHtml} from './safe-preview.mjs';
 import {createCloudDraftClient} from './cloud-drafts.mjs';
@@ -37,7 +37,7 @@ export async function initializeResourceEditor(){
    control.name=field.name;control.required=field.required!==false&&field.widget!=='boolean';label.append(control);controls.set(field.name,control);
    if(field.widget==='image'){
     const file=document.createElement('input');file.type='file';file.accept='image/png,image/jpeg,image/webp,image/gif,image/avif';file.setAttribute('aria-label','上传'+field.label);
-    file.addEventListener('change',async()=>{const image=file.files?.[0];if(!image)return;if(image.size>8_000_000){message.textContent='图片不得超过8 MB。';return;}
+    file.addEventListener('change',async()=>{const image=file.files?.[0];if(!image)return;if(image.size>(source.includes('/images/')?PHOTO_SOURCE_MAX_BYTES:8_000_000)){message.textContent=source.includes('/images/')?'照片不得超过 50 MB。':'图片不得超过8 MB。';return;}
      try{if(source.includes('/images/')){control.value=await photoUploadDataUrl(image);schedule();}else{const reader=new FileReader();reader.onload=()=>{control.value=String(reader.result);schedule();};reader.readAsDataURL(image);}}catch(error){message.textContent=error instanceof Error?error.message:'照片处理失败，未保存。';}
     });label.append(file);
     if(source.includes('/images/')){const hint=document.createElement('small');hint.textContent='上传照片会去除 EXIF / GPS 元数据，转换为最长边不超过 4096px 的 WebP。';label.append(hint);}

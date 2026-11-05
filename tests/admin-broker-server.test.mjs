@@ -1,3 +1,4 @@
+import {publicationRequestLimit} from '../src/lib/publication-limits.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import {mkdtemp,mkdir,writeFile,rm,symlink} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join} from 'node:path';import http from 'node:http';import {createAdminServer} from '../ops/admin-broker/server.mjs';
 async function fixture(t,session={repository:'Tkkdy/tkkdyyy.github.io',branch:'codex/probe'}){
  const dir=await mkdtemp(join(tmpdir(),'editorial-adapter-'));await mkdir(join(dir,'admin'));await writeFile(join(dir,'admin/index.html'),'<script>window.test=1</script><h1>Protected</h1>');await writeFile(join(dir,'admin/secret.env'),'PRIVATE');await writeFile(join(dir,'admin/config.yml'),'backend:\n  name: github\ncollections: []\n');
@@ -53,4 +54,10 @@ test('PR CMS config refuses main fallback and only its workspace frame permits s
  const normal=await fetch(f.origin+'/admin/sveltia.html',{headers}),frame=await fetch(f.origin+'/admin/sveltia-workspace.html',{headers});
  assert.match(normal.headers.get('content-security-policy'),/frame-ancestors 'none'/);assert.match(frame.headers.get('content-security-policy'),/frame-ancestors 'self'/);
  session.cmsWorkspace.state='PULL_REQUEST_OPEN';assert.equal((await fetch(f.origin+'/admin/config.yml',{headers})).status,403);
+});
+
+test('publication wire limit includes Base64 overhead without enlarging draft or restore requests',()=>{
+ for(const path of ['/api/proposals','/api/graphql'])assert.equal(publicationRequestLimit(path),140_000_000);
+ for(const path of ['/api/drafts','/api/proposals/restore','/api/cms-workspace'])assert.equal(publicationRequestLimit(path),30_000_000);
+ assert(4*Math.ceil(100_000_000/3)+1_000_000<publicationRequestLimit('/api/proposals'));
 });

@@ -34,3 +34,14 @@ test('CMS empty optional dates are rejected before commit instead of breaking bo
  const text='---\nslug: test-photo\nimage: /uploads/test.png\nalt: test\npublishedAt: 2026-10-25\nstatus: draft\ncapturedAt: \'\'\n---\n';
  assert.throws(()=>validateAddition({path:'src/content/images/test-photo.md',contents:Buffer.from(text).toString('base64')}),/有效日期/);
 });
+
+// Synthetic valid-magic buffers verify policy bytes only, not image decoding.
+test('publication accepts exactly 100MB and refuses one extra byte while retaining the 8MB per-resource guard',()=>{
+ const makeFile=(bytes,i)=>{const raw=Buffer.alloc(bytes);raw.write('RIFF',0);raw.write('WEBP',8);return {path:`public/uploads/boundary-${i}.webp`,contents:raw.toString('base64')};};
+ const files=Array.from({length:12},(_,i)=>makeFile(8_000_000,i));
+ const commit={...input(),fileChanges:{additions:[...files,makeFile(4_000_000,12)],deletions:[]}};
+ assert.equal(validateCommit(commit,config).bytes,100_000_000);
+ commit.fileChanges.additions[12]=makeFile(4_000_001,12);
+ assert.throws(()=>validateCommit(commit,config),/100 MB/);
+ assert.throws(()=>validateAddition(makeFile(8_000_001,13)),/8MB/);
+});

@@ -11,7 +11,7 @@ const stories=await getEditorialStories();
   <form data-photo-form hidden>
    <div class="photo-editor-grid">
     <section class="photo-upload-panel" aria-label="照片预览">
-     <label class="photo-upload">选择照片<input type="file" name="photo" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" /><small>JPEG、PNG、WebP、AVIF 或 GIF，最大 8 MB。上传后转换为 WebP，去除 EXIF、GPS 和设备信息。</small></label>
+     <label class="photo-upload">选择照片<input type="file" name="photo" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" /><small>JPEG、PNG、WebP、AVIF 或 GIF，原图最大 50 MB。保存前自动压缩至约 1 MB 以内并转换为 WebP，去除 EXIF、GPS 和设备信息。</small></label>
      <figure data-photo-figure hidden><img data-photo-preview alt="待编辑照片预览" /><figcaption data-photo-caption></figcaption></figure>
      <p class="photo-private-note">照片只在私有草稿中保存。点击“发布照片”后才创建公开仓库提案，CI 通过并合并后上线。</p>
     </section>
