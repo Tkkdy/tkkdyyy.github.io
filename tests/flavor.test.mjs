@@ -23,8 +23,12 @@ test('weighted random retains all-pool freedom and excludes the previous photo',
  for(let i=0;i<100;i++)assert.notEqual(choosePhoto(pool,context,'both').id,'both');
  assert.equal(photoWeight({id:'unknown',timeOfDay:'dusk',seasons:null},context),1);
 });
-test('site content defaults are honest; strict fields and safe music URLs',()=>{
- assert.deepEqual(validateSiteSettings(raw).recent,{doing:'',listening:'',thinking:''});
+test('site settings accept empty and populated recent notes; strict fields and safe music URLs',()=>{
+ assert.doesNotThrow(()=>validateSiteSettings(raw));
+ const empty={doing:'',listening:'',thinking:''};
+ assert.deepEqual(validateSiteSettings({...raw,recent:empty}).recent,empty);
+ const populated={doing:'整理照片',listening:'爵士乐',thinking:'下一次旅行'};
+ assert.deepEqual(validateSiteSettings({...raw,recent:populated}).recent,populated);
  for(const url of ['', '/music/angelika-vee-you-are-my-sunshine.mp3', 'https://music.example/song','https://media.example/authorized.mp3'])assert(validMusicSource(url));
  for(const url of ['/music/unreviewed.mp3','javascript:alert(1)','data:audio/mp3,x','http://example.com/','https://user:secret@example.com','//example.com','/music/../secret.mp3'])assert(!validMusicSource(url));
  for(const value of [{...raw,unknown:1},{...raw,recent:{...raw.recent,mood:'invented'}},{...raw,recent:{...raw.recent,doing:'x'.repeat(241)}}])assert.throws(()=>validateSiteSettings(value));
