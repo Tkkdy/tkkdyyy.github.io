@@ -55,7 +55,9 @@ export async function initializePhotoAlbums(root:HTMLElement){
   }
  }
  try{
-  if(root.dataset.privatePreview==='true'){
+  if(root.dataset.livePreview==='true'){
+   message.textContent='';root.addEventListener('photo-albums:update',event=>render((event as CustomEvent<Photo[]>).detail));
+  }else if(root.dataset.privatePreview==='true'){
    const query=new URL(location.href).searchParams,batch=query.get('batch'),back=document.querySelector<HTMLAnchorElement>('[data-album-back]');if(batch&&/^[a-f0-9-]{36}$/.test(batch)&&back)back.href='/admin/photos/upload/?batch='+batch;
    const api=async(path:string)=>{const r=await fetch(path,{credentials:'same-origin',cache:'no-store'});if(!r.ok)throw Error('请先登录私人编辑台，再预览草稿。');return r.json();};
    const session=await api('/api/session');if(!session.privateDrafts)throw Error('此页只预览受保护的照片草稿。');

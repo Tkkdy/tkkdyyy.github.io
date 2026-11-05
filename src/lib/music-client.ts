@@ -19,6 +19,20 @@ if (card && audio && status && controls && toggle && seek && elapsed && duration
   let leaving = false;
   let frame = 0;
   let lastVolume = 0.01;
+  let entryRequested = false;
+  let slowTimer = 0;
+  let entryFrame = 0;
+  const showCard = () => {
+    if (card.dataset.musicVisible === 'true') return;
+    card.dataset.musicVisible = 'true';
+    const title = card.querySelector('h2');
+    if (title && card.closest('.about-music')) {
+      const box = card.getBoundingClientRect(), text = title.getBoundingClientRect();
+      card.style.setProperty('--music-title-x', `${box.left + box.width / 2 - text.left - text.width / 2}px`);
+      card.style.setProperty('--music-title-y', `${box.top + box.height / 2 - text.top - text.height / 2}px`);
+      card.dataset.musicReady = 'true';
+    }
+  };
   const cancelFade = () => { cancelAnimationFrame(frame); frame = 0; };
   const setVolume = (value: number) => { lastVolume = value; audio.volume = value; };
   const time = (seconds: number) => Number.isFinite(seconds) ? `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}` : '--:--';
@@ -76,7 +90,7 @@ if (card && audio && status && controls && toggle && seek && elapsed && duration
   });
   for (const event of ['loadedmetadata', 'durationchange', 'timeupdate', 'seeked']) audio.addEventListener(event, syncProgress);
   const failed = () => {
-    unavailable = true; card.dataset.playback = 'error'; cancelFade(); audio.pause(); audio.hidden = true; controls.hidden = true; toggle.hidden = true;
+    clearTimeout(slowTimer); showCard(); unavailable = true; card.dataset.playback = 'error'; cancelFade(); audio.pause(); audio.hidden = true; controls.hidden = true; toggle.hidden = true;
     status.classList.add('music-state-error'); status.textContent = '这首歌暂时无法播放。';
   };
   audio.addEventListener('waiting', () => {
@@ -95,7 +109,7 @@ if (card && audio && status && controls && toggle && seek && elapsed && duration
       syncPlayback();
     });
   };
-  toggle.addEventListener('click', () => { if (audio.paused) play(); else audio.pause(); });
+  toggle.addEventListener('click', () => { entryRequested = true; clearTimeout(slowTimer); if (audio.paused) play(); else audio.pause(); });
   seek.addEventListener('input', () => {
     if (Number.isFinite(audio.duration) && audio.duration > 0) { audio.currentTime = Number(seek.value) / 100 * audio.duration; syncProgress(); }
   });
@@ -113,26 +127,32 @@ if (card && audio && status && controls && toggle && seek && elapsed && duration
   // Keep native controls usable without JS; replace only after the custom controls are bound.
   controls.hidden = false; toggle.hidden = false; audio.hidden = true;
   syncPlayback(); syncProgress(); syncVolume();
-  const title = card.querySelector('h2');
-  if (title && card.closest('.about-music')) {
-    const box = card.getBoundingClientRect(), text = title.getBoundingClientRect();
-    card.style.setProperty('--music-title-x', `${box.left + box.width / 2 - text.left - text.width / 2}px`);
-    card.style.setProperty('--music-title-y', `${box.top + box.height / 2 - text.top - text.height / 2}px`);
-    card.dataset.musicReady = 'true';
-    // Keyboard focus reveals controls immediately; pointer focus must not move the button between press and release.
-    card.addEventListener('focusin', event => {
-      if (!(event.target instanceof HTMLElement) || !event.target.matches(':focus-visible')) return;
-      for (const animation of card.getAnimations({ subtree: true })) animation.finish();
-    });
-  }
+  // Keyboard focus finishes the entrance without moving a pointer target mid-click.
+  card.addEventListener('focusin', event => {
+    if (!(event.target instanceof HTMLElement) || !event.target.matches(':focus-visible')) return;
+    for (const animation of card.getAnimations({ subtree: true })) animation.finish();
+  });
 
-  const start = () => {
-    leaving = false; status.textContent = '准备轻轻播放…';
+  const bufferedStart = () => {
+    if (unavailable || leaving || entryRequested || audio.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA) return;
+    entryRequested = true; clearTimeout(slowTimer); showCard();
     setVolume(Math.min(0.01, preferredVolume));
-    play();
+    // Reveal first; playback follows on the next paint and keeps the existing 35% fade.
+    entryFrame = requestAnimationFrame(() => { if (!leaving && !unavailable) play(); });
   };
-  window.addEventListener('pagehide', () => { leaving = true; cancelFade(); audio.pause(); audio.currentTime = 0; });
-  window.addEventListener('pageshow', event => { if (event.persisted) start(); });
-  if (audio.error || audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) failed();
-  else start();
+  const prepare = () => {
+    leaving = false; entryRequested = false;
+    clearTimeout(slowTimer);
+    if (audio.error || audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) { failed(); return; }
+    bufferedStart();
+    if (!entryRequested) slowTimer = window.setTimeout(() => {
+      if (unavailable || leaving || entryRequested) return;
+      showCard(); card.dataset.playback = 'delayed';
+      status.textContent = '音乐加载较慢，可以点击播放重试。';
+    }, 20000);
+  };
+  for (const event of ['canplaythrough', 'progress', 'loadeddata']) audio.addEventListener(event, bufferedStart);
+  window.addEventListener('pagehide', () => { leaving = true; clearTimeout(slowTimer); cancelAnimationFrame(entryFrame); cancelFade(); audio.pause(); audio.currentTime = 0; });
+  window.addEventListener('pageshow', event => { if (event.persisted) prepare(); });
+  prepare();
 }
