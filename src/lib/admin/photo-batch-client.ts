@@ -1,3 +1,4 @@
+import {showPhotoPublication} from './photo-publication-status';
 import {PUBLICATION_MAX_BYTES} from '../publication-limits.mjs';
 import {validateAlbumFields,groupPhotoAlbums} from '../photo-albums.mjs';
 import YAML from 'yaml';
@@ -9,7 +10,7 @@ import {dataUrlFile} from './publish-story.mjs';
 type Publication={state:string;url?:string;publishedContent?:string};
 type PhotoState={id:string;title:string;type:string;status:string;sourcePath:string;sourceBlobSha:string;rawContent:string;publication?:Publication};
 type Entry={key:string;name:string;selected:boolean;overrides?:string[];inherited?:Record<string,string>};
-type Item={entry:Entry;state:PhotoState;client:ReturnType<typeof createCloudDraftClient>;card:HTMLElement;status:HTMLElement;select:HTMLInputElement;fields:Record<string,HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>;cover:HTMLInputElement;timer:number;dirty:boolean;locked:boolean;conflict:boolean;body:string;doc:YAML.Document};
+type Item={entry:Entry;state:PhotoState;client:ReturnType<typeof createCloudDraftClient>;card:HTMLElement;status:HTMLElement;select:HTMLInputElement;fields:Record<string,HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>;cover:HTMLInputElement;saveButton:HTMLButtonElement;timer:number;dirty:boolean;locked:boolean;conflict:boolean;body:string;doc:YAML.Document};
 const UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const KEY=/^draft-photo-[a-f0-9-]{36}$/;
 const SLUG=/^[\p{L}\p{N}][\p{L}\p{N}-]{0,180}$/u;
@@ -23,6 +24,27 @@ export async function initializePhotoBatch(){
  const picker=root.querySelector<HTMLInputElement>('[data-batch-files]')!,list=root.querySelector<HTMLElement>('[data-batch-list]')!,message=root.querySelector<HTMLElement>('[data-batch-message]')!,summary=root.querySelector<HTMLElement>('[data-batch-summary]')!,publish=root.querySelector<HTMLButtonElement>('[data-batch-publish]')!;
  const items:Item[]=[];let entries:Entry[]=[],processing=false,busy=false,restoring=true,ready=false;
  const review=root.querySelector<HTMLDialogElement>('[data-batch-review]')!,confirm=root.querySelector<HTMLButtonElement>('[data-batch-confirm]')!;
+ const sheet=root.querySelector<HTMLDialogElement>('[data-photo-sheet]')!,sheetBody=root.querySelector<HTMLElement>('[data-photo-sheet-body]')!,sheetDone=root.querySelector<HTMLButtonElement>('[data-photo-sheet-done]')!,sheetMessage=root.querySelector<HTMLElement>('[data-photo-sheet-message]')!,sheetReturnButton=root.querySelector<HTMLButtonElement>('[data-photo-sheet-return]')!;
+ let sheetItem:Item|null=null,sheetContent:HTMLElement|null=null,sheetTrigger:HTMLButtonElement|null=null,sheetClosing=false;
+ function dismissSheet(){
+  if(!sheetItem||!sheetContent)return;const trigger=sheetTrigger;
+  sheetItem.card.insertBefore(sheetContent,sheetItem.status);sheetContent.hidden=true;sheetItem.card.classList.remove('is-editing');trigger?.setAttribute('aria-expanded','false');trigger?.setAttribute('aria-controls',sheetContent.id);
+  sheet.close();document.documentElement.classList.remove('photo-sheet-open');sheetItem=null;sheetContent=null;sheetTrigger=null;sheetClosing=false;update();trigger?.focus({preventScroll:true});
+ }
+ async function finishSheet(){
+  if(!sheetItem||sheetClosing||busy||processing)return;const item=sheetItem;sheetClosing=true;sheetReturnButton.hidden=true;sheetMessage.textContent='正在保存……';update();
+  try{if(item.dirty)await save(item);dismissSheet();}
+  catch(error){sheetMessage.textContent=messageOf(error)+' 修改保留在此页，可重试保存或先返回列表。';sheetReturnButton.hidden=false;}
+  finally{sheetClosing=false;update();}
+ }
+ function openSheet(item:Item,content:HTMLElement,trigger:HTMLButtonElement){
+  if(sheet.open)return;sheetItem=item;sheetContent=content;sheetTrigger=trigger;content.hidden=false;sheetBody.append(content);trigger.setAttribute('aria-controls','photo-single-sheet');sheet.id='photo-single-sheet';trigger.setAttribute('aria-expanded','true');item.card.classList.add('is-editing');
+  root!.querySelector<HTMLImageElement>('[data-photo-sheet-image]')!.src=item.card.querySelector('img')!.src;root!.querySelector<HTMLElement>('[data-photo-sheet-name]')!.textContent=item.entry.name;
+  sheetMessage.textContent=item.locked?'这张照片已提交发布，可以查看信息。':'其余信息继承整组设置，备注可以留空。';sheetReturnButton.hidden=true;sheet.showModal();document.documentElement.classList.add('photo-sheet-open');sheetDone.focus({preventScroll:true});
+ }
+ sheetDone.addEventListener('click',()=>void finishSheet());sheetReturnButton.addEventListener('click',dismissSheet);
+ sheet.addEventListener('cancel',event=>{event.preventDefault();void finishSheet();});
+ sheet.addEventListener('click',event=>{if(event.target!==sheet)return;const box=sheet.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)void finishSheet();});
  const groupFields=Object.fromEntries([...root.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>('[data-group-field]')].map(el=>[el.dataset.groupField!,el]));
  picker.disabled=true;
  const url=new URL(location.href),requested=url.searchParams.get('batch');
@@ -52,10 +74,10 @@ export async function initializePhotoBatch(){
   publish.textContent=selected.length?`预览并发布 ${selected.length} 张`:'预览并发布';
   publish.disabled=processing||busy||restoring||!selected.length||selected.some(x=>x.conflict);
   picker.disabled=!ready||processing||busy||restoring;
-  confirm.disabled=busy||processing||restoring;
+  confirm.disabled=busy||processing||restoring;sheetDone.disabled=busy||processing||restoring||sheetClosing;sheetReturnButton.disabled=sheetClosing;
   for(const field of Object.values(groupFields))field.disabled=picker.disabled;
   for(const button of root!.querySelectorAll<HTMLButtonElement>('[data-batch-select-all],[data-batch-select-none]'))button.disabled=picker.disabled;
-  for(const item of items){const disabled=busy||processing||restoring||item.locked||item.conflict;for(const field of Object.values(item.fields))field.disabled=disabled;item.cover.disabled=disabled;item.select.disabled=disabled;item.card.querySelector<HTMLButtonElement>('[data-item-save]')!.disabled=disabled;item.card.classList.toggle('is-selected',item.entry.selected);item.card.classList.toggle('is-cover',item.cover.checked);item.cover.name='cover-'+batch+'-'+item.fields.series.value;}
+  for(const item of items){const disabled=busy||processing||restoring||item.locked||item.conflict||(sheetClosing&&item===sheetItem);for(const field of Object.values(item.fields))field.disabled=disabled;item.cover.disabled=disabled;item.select.disabled=disabled;item.saveButton.disabled=disabled;item.card.classList.toggle('is-selected',item.entry.selected);item.card.classList.toggle('is-cover',item.cover.checked);item.cover.name='cover-'+batch+'-'+item.fields.series.value;}
 
  }
  function snapshot(item:Item):PhotoState{
@@ -75,13 +97,13 @@ export async function initializePhotoBatch(){
  function lock(item:Item,locked:boolean){
   item.locked=locked;item.select.disabled=locked||item.conflict;item.cover.disabled=locked||item.conflict;
   for(const field of Object.values(item.fields))field.disabled=locked;
-  const saveButton=item.card.querySelector<HTMLButtonElement>('[data-item-save]')!;saveButton.disabled=locked;
+  item.saveButton.disabled=locked;
  }
  function receipt(item:Item){
   lock(item,true);item.entry.selected=false;item.select.checked=false;
   item.status.textContent=item.state.publication?.state==='proposed'?'发布提案已提交，等待既有 CI 与合并流程。':'这张照片已有发布尝试，请核对历史提案，避免重复发布。';
   const href=item.state.publication?.url;
-  if(href&&/^https:\/\/github\.com\/Tkkdy\/tkkdyyy\.github\.io\/pull\/\d+$/.test(href)){const a=document.createElement('a');a.href=href;a.textContent='查看发布进度';item.status.append(' ',a);}
+  if(href&&/^https:\/\/github\.com\/Tkkdy\/tkkdyyy\.github\.io\/pull\/\d+$/.test(href)){const a=document.createElement('a');a.href=href;a.textContent='查看发布进度';item.status.append(' ',a);showPhotoPublication(root!,href);}
  }
  function mount(entry:Entry,state:PhotoState,client:Item['client'],dirty=false){
   const {doc,body}=parse(state.rawContent),data=doc.toJS({maxAliasCount:0});
@@ -90,33 +112,34 @@ export async function initializePhotoBatch(){
   const img=document.createElement('img');img.src=imageURL(String(data.image||''));img.alt=String(data.alt||'待填写说明的照片');img.loading='lazy';
   const editHint=document.createElement('span');editHint.className='batch-edit-hint';editHint.textContent='点击编辑';visual.append(img,editHint);
   const bar=document.createElement('div');bar.className='batch-card-bar';
-  const selection=document.createElement('label');selection.className='photo-check';const select=document.createElement('input');select.type='checkbox';select.checked=entry.selected;select.dataset.itemSelected='';selection.append(select,'发布');bar.append(selection);
+  const selection=document.createElement('label');selection.className='photo-check';const select=document.createElement('input');select.type='checkbox';select.checked=entry.selected;select.dataset.itemSelected='';selection.append(select,'选中发布');bar.append(selection);
   const coverLabel=document.createElement('label');coverLabel.className='photo-check batch-cover-check';const cover=document.createElement('input');cover.type='checkbox';cover.checked=data.albumCover===true;cover.dataset.itemCover='';coverLabel.append(cover,'主图');bar.append(coverLabel);
   const name=document.createElement('p');name.className='batch-file-name';name.textContent=entry.name;
   const content=document.createElement('div');content.className='photo-batch-fields';content.id='photo-options-'+entry.key;content.hidden=true;visual.setAttribute('aria-controls',content.id);
   const fields:Item['fields']={};
   const detail=document.createElement('details');detail.className='batch-frame-options';const detailTitle=document.createElement('summary');detailTitle.textContent='单张更多设置';detail.append(detailTitle);
-  for(const [name,label] of [['alt','单张说明'],['caption','单张短句（选填）'],['title','标题（选填）'],['series','相簿名称'],['capturedAt','拍摄日期'],['frameDescription','单张物品描述（选填）']]){
+  for(const [name,label] of [['alt','单张说明'],['caption','这张的备注（选填）'],['title','标题（选填）'],['series','相簿名称'],['capturedAt','拍摄日期'],['frameDescription','单张物品描述（选填）']]){
    const wrap=document.createElement('label');wrap.textContent=label;
    const control=['title','series','capturedAt'].includes(name)?document.createElement('input'):document.createElement('textarea');control.value=String(data[name]||'').slice(0,name==='capturedAt'?10:1000);control.maxLength=name==='alt'?500:name==='caption'?1000:name==='series'?120:240;control.dataset.field=name;if(control instanceof HTMLTextAreaElement)control.rows=2;if(control instanceof HTMLInputElement)control.type=name==='capturedAt'?'date':'text';
-   if(name==='alt'){control.placeholder='使用整组说明；在这里修改，只影响这一张';content.append(wrap);}else detail.append(wrap);wrap.append(control);fields[name]=control;
+   if(name==='caption'){control.placeholder='为这一张补充一句话；留空也可以';content.append(wrap);}else{if(name==='alt')control.placeholder='默认继承整组说明，只需在例外时修改';detail.append(wrap);}wrap.append(control);fields[name]=control;
   }
   const displayLabel=document.createElement('label');displayLabel.textContent='相纸白边展示';const display=document.createElement('select');display.dataset.field='frameDisplay';for(const [value,text] of [['information','照片说明'],['date','拍摄日期'],['description','物品描述']]){const option=document.createElement('option');option.value=value;option.textContent=text;display.append(option);}display.value=data.frameDisplay||'information';displayLabel.append(display);detail.append(displayLabel);fields.frameDisplay=display;content.append(detail);
   const status=document.createElement('p');status.setAttribute('role','status');status.className='photo-batch-status';status.textContent=dirty?'尚未保存':'已保存 · 私有草稿';
   const actions=document.createElement('div');actions.className='photo-batch-card-actions';
   const button=document.createElement('button');button.type='button';button.textContent='保存这张';button.dataset.itemSave='';
   const advanced=document.createElement('a');advanced.href='/admin/photos/edit/?draft='+encodeURIComponent(entry.key)+'&batch='+encodeURIComponent(batch);advanced.textContent='更多信息';actions.append(button,advanced);detail.append(actions);card.append(visual,bar,name,content,status);list.append(card);
-  visual.addEventListener('click',()=>{const expanded=Boolean(content.hidden);content.hidden=!expanded;visual.setAttribute('aria-expanded',String(expanded));card.classList.toggle('is-editing',expanded);if(expanded)fields.alt.focus({preventScroll:true});});
-  const item:Item={entry,state,client,card,status,select,fields,timer:0,dirty,locked:false,conflict:false,doc,body,cover};items.push(item);
+  visual.addEventListener('click',(event)=>{if(matchMedia('(max-width:600px)').matches){openSheet(item,content,visual);return;}const expanded=Boolean(content.hidden);content.hidden=!expanded;visual.setAttribute('aria-expanded',String(expanded));card.classList.toggle('is-editing',expanded);if(expanded&&event.detail===0)fields.caption.focus({preventScroll:true});});
+  const item:Item={entry,state,client,card,status,select,fields,timer:0,dirty,locked:false,conflict:false,doc,body,cover,saveButton:button};items.push(item);
   select.addEventListener('change',()=>{entry.selected=select.checked;persist();update();});
   for(const field of Object.values(fields)){
    let composing=false;const schedule=()=>{const fieldName=field.dataset.field!;if(fieldName in groupFields||fieldName==='frameDescription'){item.entry.overrides=[...new Set([...(item.entry.overrides||[]),fieldName])];persist();}img.alt=fields.alt.value||'待填写说明的照片';update();item.dirty=true;if(!processing&&!busy)message.textContent='每张照片独立保存；只会发布你勾选的照片。';status.textContent='待保存……';clearTimeout(item.timer);if(!composing&&!busy&&!item.locked)item.timer=window.setTimeout(()=>void save(item).catch(()=>{}),900);};
    field.addEventListener('input',schedule);field.addEventListener('compositionstart',()=>{composing=true;clearTimeout(item.timer);});field.addEventListener('compositionend',()=>{composing=false;schedule();});
   }
   cover.addEventListener('change',()=>{const series=item.fields.series.value.trim();if(cover.checked&&!series){cover.checked=false;message.textContent='请先填写相簿名称，再指定主图。';return;}if(cover.checked){for(const other of items){if(other!==item&&other.cover.checked&&other.fields.series.value.trim()===series){if(other.locked){cover.checked=false;message.textContent='这本相簿的主图已有发布尝试，请先核对提案。';return;}other.cover.checked=false;other.dirty=true;void save(other).catch(()=>{});}}}item.dirty=true;update();status.textContent='主图设置待保存……';clearTimeout(item.timer);item.timer=window.setTimeout(()=>void save(item).catch(()=>{}),900);});
-  const reset=document.createElement('button');reset.type='button';reset.className='batch-use-group';reset.textContent='恢复整组信息';content.insertBefore(reset,detail);reset.addEventListener('click',()=>{if(item.locked||item.conflict||busy)return;item.entry.overrides=[];for(const [name,value] of Object.entries(values()))item.fields[name].value=value;item.entry.inherited=values();markDirty(item);persist();update();});
+  const reset=document.createElement('button');reset.type='button';reset.className='batch-use-group';reset.textContent='恢复整组信息';detail.append(reset);reset.addEventListener('click',()=>{if(item.locked||item.conflict||busy)return;item.entry.overrides=[];for(const [name,value] of Object.entries(values()))item.fields[name].value=value;item.entry.inherited=values();markDirty(item);persist();update();});
   button.addEventListener('click',()=>void save(item).catch(()=>{}));
   advanced.addEventListener('click',async event=>{if(!item.dirty)return;event.preventDefault();try{await save(item);location.assign(advanced.href);}catch{message.textContent='请先处理这张照片的保存问题，或保留此页。';}});
+  const done=document.createElement('button');done.type='button';done.textContent='完成';done.className='batch-inline-done';content.append(done);done.addEventListener('click',async()=>{done.disabled=true;try{if(item.dirty)await save(item);content.hidden=true;visual.setAttribute('aria-expanded','false');card.classList.remove('is-editing');visual.focus({preventScroll:true});}catch{}finally{done.disabled=false;}});
   if(state.publication)receipt(item);update();return item;
  }
  window.addEventListener('beforeunload',event=>{if(processing||busy||items.some(x=>x.dirty)){event.preventDefault();event.returnValue='';}});

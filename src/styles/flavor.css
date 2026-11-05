@@ -62,3 +62,15 @@ main:has(>.life-window:not([hidden]))>.recent-notes{padding-top:0}
 .music-card{position:relative}
 .music-card:is([data-playback="loading"],[data-playback="blocked"],[data-playback="delayed"]) .music-state{position:absolute;left:28px;right:28px;bottom:12px;width:auto;height:auto;padding:0;margin:0;overflow:visible;clip-path:none;white-space:normal;font-size:11px;line-height:1.4;color:#8c7b67}
 @media(max-width:600px){.music-card:is([data-playback="loading"],[data-playback="blocked"],[data-playback="delayed"]) .music-state{left:18px;right:18px;bottom:10px}}
+
+/* A quiet introduction and a framed note, sharing the homepage content edge. */
+.home-intro{box-sizing:border-box;max-width:1200px;margin-inline:auto;padding:132px clamp(24px,5vw,72px) 28px;color:#595752}
+.home-intro-kicker{font-size:10px;letter-spacing:.15em;color:#827e75;margin:0 0 12px}
+.home-intro-line{font-family:var(--font-serif);font-size:clamp(18px,2vw,24px);font-weight:400;line-height:1.7;letter-spacing:.015em;margin:0}
+.home-intro+.life-window{padding-top:0}
+.home-intro~.recent-notes{display:block;padding-top:0;margin-top:18px;margin-bottom:40px}
+.recent-panel{display:grid;grid-template-columns:88px minmax(0,1fr);gap:24px;padding:26px 30px;border:1px solid #e4e1d8;border-radius:14px;background:#faf9f6}
+.recent-panel h2{display:grid;align-content:start;gap:6px;font-size:17px;font-family:var(--font-serif);line-height:1.6}
+.recent-panel h2 small{font-family:var(--font-sans);font-size:9px;letter-spacing:.15em;color:#8e887d}
+.recent-panel dl{gap:0}.recent-panel dl>div{font-size:14px;line-height:1.8;gap:20px;padding:9px 0}.recent-panel dl>div+div{border-top:1px solid #e9e5dc}.recent-panel dt{font-size:12px;align-self:center;color:#8b857a}
+@media(max-width:600px){.home-intro{padding-top:112px;padding-bottom:24px}.home-intro-kicker{font-size:9px}.recent-panel{grid-template-columns:1fr;gap:14px;padding:22px 20px}.recent-panel h2{display:flex;align-items:center;gap:12px}.recent-panel dl>div{grid-template-columns:5em minmax(0,1fr);gap:12px;font-size:14px;padding:10px 0}.home-intro~.recent-notes{margin-top:8px;margin-bottom:28px}}
