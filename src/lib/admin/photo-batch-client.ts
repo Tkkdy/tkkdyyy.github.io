@@ -1,3 +1,4 @@
+import {showPhotoPublication} from './photo-publication-status';
 import {PUBLICATION_MAX_BYTES} from '../publication-limits.mjs';
 import {validateAlbumFields,groupPhotoAlbums} from '../photo-albums.mjs';
 import YAML from 'yaml';
@@ -81,7 +82,7 @@ export async function initializePhotoBatch(){
   lock(item,true);item.entry.selected=false;item.select.checked=false;
   item.status.textContent=item.state.publication?.state==='proposed'?'发布提案已提交，等待既有 CI 与合并流程。':'这张照片已有发布尝试，请核对历史提案，避免重复发布。';
   const href=item.state.publication?.url;
-  if(href&&/^https:\/\/github\.com\/Tkkdy\/tkkdyyy\.github\.io\/pull\/\d+$/.test(href)){const a=document.createElement('a');a.href=href;a.textContent='查看发布进度';item.status.append(' ',a);}
+  if(href&&/^https:\/\/github\.com\/Tkkdy\/tkkdyyy\.github\.io\/pull\/\d+$/.test(href)){const a=document.createElement('a');a.href=href;a.textContent='查看发布进度';item.status.append(' ',a);showPhotoPublication(root!,href);}
  }
  function mount(entry:Entry,state:PhotoState,client:Item['client'],dirty=false){
   const {doc,body}=parse(state.rawContent),data=doc.toJS({maxAliasCount:0});
@@ -90,7 +91,7 @@ export async function initializePhotoBatch(){
   const img=document.createElement('img');img.src=imageURL(String(data.image||''));img.alt=String(data.alt||'待填写说明的照片');img.loading='lazy';
   const editHint=document.createElement('span');editHint.className='batch-edit-hint';editHint.textContent='点击编辑';visual.append(img,editHint);
   const bar=document.createElement('div');bar.className='batch-card-bar';
-  const selection=document.createElement('label');selection.className='photo-check';const select=document.createElement('input');select.type='checkbox';select.checked=entry.selected;select.dataset.itemSelected='';selection.append(select,'发布');bar.append(selection);
+  const selection=document.createElement('label');selection.className='photo-check';const select=document.createElement('input');select.type='checkbox';select.checked=entry.selected;select.dataset.itemSelected='';selection.append(select,'选中发布');bar.append(selection);
   const coverLabel=document.createElement('label');coverLabel.className='photo-check batch-cover-check';const cover=document.createElement('input');cover.type='checkbox';cover.checked=data.albumCover===true;cover.dataset.itemCover='';coverLabel.append(cover,'主图');bar.append(coverLabel);
   const name=document.createElement('p');name.className='batch-file-name';name.textContent=entry.name;
   const content=document.createElement('div');content.className='photo-batch-fields';content.id='photo-options-'+entry.key;content.hidden=true;visual.setAttribute('aria-controls',content.id);
@@ -106,7 +107,7 @@ export async function initializePhotoBatch(){
   const actions=document.createElement('div');actions.className='photo-batch-card-actions';
   const button=document.createElement('button');button.type='button';button.textContent='保存这张';button.dataset.itemSave='';
   const advanced=document.createElement('a');advanced.href='/admin/photos/edit/?draft='+encodeURIComponent(entry.key)+'&batch='+encodeURIComponent(batch);advanced.textContent='更多信息';actions.append(button,advanced);detail.append(actions);card.append(visual,bar,name,content,status);list.append(card);
-  visual.addEventListener('click',()=>{const expanded=Boolean(content.hidden);content.hidden=!expanded;visual.setAttribute('aria-expanded',String(expanded));card.classList.toggle('is-editing',expanded);if(expanded)fields.alt.focus({preventScroll:true});});
+  visual.addEventListener('click',(event)=>{const expanded=Boolean(content.hidden);content.hidden=!expanded;visual.setAttribute('aria-expanded',String(expanded));card.classList.toggle('is-editing',expanded);if(expanded&&(event.detail===0||matchMedia('(min-width:601px)').matches))fields.alt.focus({preventScroll:true});});
   const item:Item={entry,state,client,card,status,select,fields,timer:0,dirty,locked:false,conflict:false,doc,body,cover};items.push(item);
   select.addEventListener('change',()=>{entry.selected=select.checked;persist();update();});
   for(const field of Object.values(fields)){

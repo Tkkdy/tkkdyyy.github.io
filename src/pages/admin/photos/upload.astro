@@ -15,6 +15,9 @@ const stories=await getEditorialStories();
    <details class="batch-group-more"><summary>更多设置</summary><div class="batch-group-extra"><label>拍摄日期 <span class="field-hint">选填，不会自动补日期</span><input type="date" data-group-field="capturedAt" /></label><label>相纸白边展示<select data-group-field="frameDisplay"><option value="information">照片说明</option><option value="date">拍摄日期</option><option value="description">物品描述（使用说明文字）</option></select></label></div><p>日期和白边样式统一应用；单张例外可以点开照片修改。标题、地点、标签和首页选图仍在单张的更多信息中。</p></details>
    <p class="batch-group-note">整组信息自动保存到私有草稿，已单独修改的内容会保留。</p>
   </section>
+  <section class="photo-publications" data-photo-publications hidden aria-labelledby="photo-publications-title">
+   <h2 id="photo-publications-title">发布进度</h2><p>照片提交后，会依次检查、合并，再更新两站。这里会显示卡在哪一步。</p><div data-photo-publication-list></div>
+  </section>
   <p role="status" data-batch-message>正在读取……</p>
   <div class="batch-grid-heading"><h2>这一组照片</h2><div><button type="button" data-batch-select-all>全选</button><button type="button" data-batch-select-none>全不选</button></div></div>
   <div class="photo-batch-list" data-batch-list></div>

@@ -44,6 +44,10 @@ const { articles, essays, fragments, images, projects } = await getHomepageConte
   <body class="home home-refined">
     <Header />
     <main>
+      <section class="home-intro" aria-label="网站介绍">
+        <p class="home-intro-kicker">TKKDY · PERSONAL WEBSITE</p>
+        <p class="home-intro-line">一个记录技术、想法与日常的个人网站。</p>
+      </section>
       <WindowPhoto />
       <RecentNotes />
       <!-- 空状态保护（CONTENT_MODEL §12）：对应 Collection 没有首页内容时隐藏区块而不是崩溃。
