@@ -1,12 +1,14 @@
 /** About-page playback policy and fade acceptance in real Chromium; owner MP3 response fulfilled locally. */
 import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
-import {readFile,writeFile} from 'node:fs/promises';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {resolve,extname,sep} from 'node:path';
 import {chromium} from 'playwright';
 const root=resolve(process.env.FLAVOR_MUSIC_ROOT||'dist');
 const base=process.env.FLAVOR_MUSIC_BASE||'/tkkdyyy.github.io/';
 const target=base==='/'?'vps':'pages';
+const evidence=process.env.FLAVOR_MUSIC_EVIDENCE||'docs/flavor-review';
+await mkdir(`${evidence}/screenshots`,{recursive:true});
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.webp':'image/webp','.png':'image/png','.mp3':'audio/mpeg'};
 const server=createServer(async(req,res)=>{try{
  const path=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
@@ -27,7 +29,7 @@ async function context(width=1440){
  await c.route('https://fonts.googleapis.com/**',r=>r.abort());await c.route('https://fonts.gstatic.com/**',r=>r.abort());
  const page=await c.newPage();page.on('pageerror',e=>report.errors.push(e.message));return {c,page};
 }
-async function shot(page,name){const path=`docs/flavor-review/screenshots/${target}-${name}.webp`;await page.locator('.music-card').scrollIntoViewIfNeeded();await page.screenshot({path,type:'webp'});report.screenshots.push(path);}
+async function shot(page,name){const path=`${evidence}/screenshots/${target}-${name}.webp`;await page.locator('.music-card').scrollIntoViewIfNeeded();await page.screenshot({path,type:'webp'});report.screenshots.push(path);}
 async function playing(page){await page.waitForFunction(()=>{const a=document.querySelector('audio');return a&&!a.paused&&a.currentTime>0;});}
 async function samples(page){
  const values=[];for(let i=0;i<15;i++){values.push(await page.locator('audio').evaluate(a=>({volume:a.volume,time:a.currentTime,paused:a.paused})));await page.waitForTimeout(200);}
@@ -36,15 +38,28 @@ async function samples(page){
 }
 try{
  browser=await chromium.launch({headless:true,channel:process.env.PLAYWRIGHT_CHANNEL||'msedge'});
+ {
+  const {c,page}=await context();let release;const gate=new Promise(r=>release=r);
+  await page.route('**/*.mp3',async route=>{await gate;await route.continue();});
+  await page.goto(url+'about/',{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>document.querySelector('[data-music-controls]')?.hidden===false);
+  await page.waitForTimeout(400);
+  assert.equal(await page.locator('.music-card').isVisible(),false);
+  assert(await page.locator('audio').evaluate(a=>a.paused));
+  release();await page.waitForFunction(()=>['blocked','playing'].includes(document.querySelector('.music-card')?.dataset.playback));
+  assert(await page.locator('.music-card').isVisible());
+  report.checks.push('Delayed MP3: card stays hidden while buffering, reveals when ready, then follows actual browser autoplay policy.');await c.close();
+ }
+
  for(const width of [1440,390]){
-  const {c,page}=await context(width);const requests=[];page.on('request',r=>{if(r.url().endsWith('.mp3'))requests.push(r.url());});
+  const {c,page}=await context(width);await page.addInitScript(()=>{const original=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){if(!navigator.userActivation.isActive)return Promise.reject(new DOMException('Synthetic browser refusal','NotAllowedError'));return original.call(this);};});const requests=[];page.on('request',r=>{if(r.url().endsWith('.mp3'))requests.push(r.url());});
   await page.goto(url+'about/');await page.getByText('浏览器暂未允许自动播放，点击播放，音乐会轻轻淡入。',{exact:true}).waitFor({state:'attached'});
   assert(await page.locator('audio').evaluate(a=>a.paused));assert.equal(await page.locator('audio').getAttribute('preload'),'auto');assert(await page.locator('[data-music-state]').isVisible());await shot(page,`music-autoplay-blocked-${width}`);
   await page.locator('[data-music-toggle]').click();await playing(page);const fade=await samples(page);
   assert.equal(await page.locator('[data-music-state]').textContent(),'正在播放');await shot(page,`music-click-fade-${width}`);
   await page.locator('audio').evaluate(a=>a.pause());const paused=await page.locator('audio').evaluate(a=>a.volume);await page.waitForTimeout(300);assert.equal(await page.locator('audio').evaluate(a=>a.volume),paused);
   assert.equal(await page.locator('[data-music-state]').textContent(),'已暂停');
-  report.checks.push({test:`${width}: fresh visit autoplay blocked with eager buffering and visible feedback; custom play click fades over 2.4s to 35%; pause works`,fade});await c.close();
+  report.checks.push({test:`${width}: simulated NotAllowedError fallback with eager buffering and visible feedback; custom play click fades over 2.4s to 35%; pause works`,fade});await c.close();
  }
  for(const width of [1440,390]){
   const {c,page}=await context(width);await page.goto(url);if(width<768)await page.locator("[data-mobile-menu] summary").click();await page.locator(`a[href="${base}about/"]:visible`).first().click();await playing(page);const fade=await samples(page);await shot(page,`music-entry-autofade-${width}`);
@@ -91,4 +106,4 @@ try{
  }
  assert.deepEqual(report.errors,[]);report.state='PASS';
 }catch(error){report.state='FAIL';report.failure=error.stack;throw error;}
-finally{await browser?.close();await new Promise(r=>server.close(r));await writeFile(`docs/flavor-review/music-autofade-${target}.json`,JSON.stringify(report,null,2));console.log(JSON.stringify(report));}
+finally{await browser?.close();await new Promise(r=>server.close(r));await writeFile(`${evidence}/music-autofade-${target}.json`,JSON.stringify(report,null,2));console.log(JSON.stringify(report));}

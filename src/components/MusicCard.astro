@@ -5,7 +5,12 @@ import '../styles/flavor.css';
 const { music } = siteSettings;
 const directAudio = /\.mp3(?:[?#]|$)/i.test(music.source);
 ---
-{music.title && <section class="music-card" aria-labelledby="music-title" data-music-card data-state="paused">
+{music.title && musicSourceAvailable && directAudio && <script is:inline>
+  document.documentElement.classList.add('music-waits-for-audio');
+  // If the enhanced player fails to load, restore the native card instead of hiding it forever.
+  window.setTimeout(() => document.documentElement.classList.remove('music-waits-for-audio'), 20000);
+</script>}
+{music.title && <section class="music-card" aria-labelledby="music-title" data-music-card data-await-audio={musicSourceAvailable && directAudio ? 'true' : undefined} data-state="paused">
   <div class="music-heading">
     {musicSourceAvailable && directAudio && <button class="music-play" type="button" aria-label="播放" aria-pressed="false" data-music-toggle hidden>
       <svg class="music-icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
