@@ -8,7 +8,7 @@ import {dataUrlFile} from './publish-story.mjs';
 
 type Publication={state:string;url?:string;publishedContent?:string};
 type PhotoState={id:string;title:string;type:string;status:string;sourcePath:string;sourceBlobSha:string;rawContent:string;publication?:Publication};
-type Entry={key:string;name:string;selected:boolean};
+type Entry={key:string;name:string;selected:boolean;overrides?:string[];inherited?:Record<string,string>};
 type Item={entry:Entry;state:PhotoState;client:ReturnType<typeof createCloudDraftClient>;card:HTMLElement;status:HTMLElement;select:HTMLInputElement;fields:Record<string,HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>;cover:HTMLInputElement;timer:number;dirty:boolean;locked:boolean;conflict:boolean;body:string;doc:YAML.Document};
 const UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const KEY=/^draft-photo-[a-f0-9-]{36}$/;
@@ -22,21 +22,45 @@ export async function initializePhotoBatch(){
  const root=document.querySelector<HTMLElement>('[data-photo-batch]');if(!root)return;
  const picker=root.querySelector<HTMLInputElement>('[data-batch-files]')!,list=root.querySelector<HTMLElement>('[data-batch-list]')!,message=root.querySelector<HTMLElement>('[data-batch-message]')!,summary=root.querySelector<HTMLElement>('[data-batch-summary]')!,publish=root.querySelector<HTMLButtonElement>('[data-batch-publish]')!;
  const items:Item[]=[];let entries:Entry[]=[],processing=false,busy=false,restoring=true,ready=false;
+ const review=root.querySelector<HTMLDialogElement>('[data-batch-review]')!,confirm=root.querySelector<HTMLButtonElement>('[data-batch-confirm]')!;
+ const groupFields=Object.fromEntries([...root.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>('[data-group-field]')].map(el=>[el.dataset.groupField!,el]));
  picker.disabled=true;
  const url=new URL(location.href),requested=url.searchParams.get('batch');
  const batch=requested&&UUID.test(requested)?requested:crypto.randomUUID();
  url.searchParams.set('batch',batch);history.replaceState(null,'',url);
  const storageKey='editor-photo-batch:'+batch;
- function persist(){try{sessionStorage.setItem(storageKey,JSON.stringify(entries));}catch{message.textContent='本组列表暂时无法保留；已保存的照片仍可从「照片」中的私有草稿恢复。';}}
+ let savedDefaults=false;
+ try{const defaults=JSON.parse(sessionStorage.getItem(storageKey+':defaults')||'null');if(defaults&&typeof defaults==='object'){savedDefaults=true;for(const [name,field] of Object.entries(groupFields))if(typeof defaults[name]==='string')field.value=defaults[name].slice(0,name==='alt'?500:name==='series'?120:40);}}catch{}
+ function values():Record<string,string>{return {...Object.fromEntries(Object.entries(groupFields).map(([name,field])=>[name,field.value.trim()])),frameDescription:groupFields.alt.value.trim()};}
+ function markDirty(item:Item){item.dirty=true;item.status.textContent='正在保存……';clearTimeout(item.timer);if(!busy&&!processing&&!restoring&&!item.locked&&!item.conflict)item.timer=window.setTimeout(()=>void save(item).catch(()=>{}),600);}
+ function inherit(){
+  const defaults=values();
+  for(const item of items){if(item.locked||item.conflict)continue;for(const [name,value] of Object.entries(defaults)){if(item.entry.overrides?.includes(name))continue;if(item.fields[name].value!==value){item.fields[name].value=value;markDirty(item);}item.entry.inherited??={};item.entry.inherited[name]=value;}item.card.querySelector('img')!.alt=item.fields.alt.value||'待填写说明的照片';}
+  const series=new Set(items.map(item=>item.fields.series.value).filter(Boolean));
+  for(const name of series){const group=items.filter(item=>item.fields.series.value===name);if(!group.some(item=>item.cover.checked)){const first=group.find(item=>item.entry.selected&&!item.locked&&!item.conflict);if(first){first.cover.checked=true;markDirty(first);}}}
+  persist();update();
+ }
+ function restoreDefaults(){
+  if(!savedDefaults)for(const [name,field] of Object.entries(groupFields)){const unique=new Set(items.map(item=>item.fields[name].value));if(unique.size===1)field.value=items[0]?.fields[name].value||field.value;}
+  const defaults=values();for(const item of items){const overrides=new Set(item.entry.overrides||[]);for(const [name,value] of Object.entries(defaults)){const prior=item.entry.inherited?.[name];if(prior!==undefined?item.fields[name].value!==prior:item.fields[name].value!==value)overrides.add(name);}item.entry.overrides=[...overrides];}
+ }
+
+ function persist(){try{sessionStorage.setItem(storageKey,JSON.stringify(entries));sessionStorage.setItem(storageKey+':defaults',JSON.stringify(values()));}catch{message.textContent='本组列表暂时无法保留；已保存的照片仍可从「照片」中的私有草稿恢复。';}}
  function update(){
   const selected=items.filter(x=>x.entry.selected&&!x.locked);
   summary.textContent=items.length?`本组 ${items.length} 张 · 已选 ${selected.length} 张发布`:'尚未选择照片';
-  publish.textContent=selected.length?`发布选中的 ${selected.length} 张`:'发布选中的照片';
+  publish.textContent=selected.length?`预览并发布 ${selected.length} 张`:'预览并发布';
   publish.disabled=processing||busy||restoring||!selected.length||selected.some(x=>x.conflict);
   picker.disabled=!ready||processing||busy||restoring;
+  confirm.disabled=busy||processing||restoring;
+  for(const field of Object.values(groupFields))field.disabled=picker.disabled;
+  for(const button of root!.querySelectorAll<HTMLButtonElement>('[data-batch-select-all],[data-batch-select-none]'))button.disabled=picker.disabled;
+  for(const item of items){const disabled=busy||processing||restoring||item.locked||item.conflict;for(const field of Object.values(item.fields))field.disabled=disabled;item.cover.disabled=disabled;item.select.disabled=disabled;item.card.querySelector<HTMLButtonElement>('[data-item-save]')!.disabled=disabled;item.card.classList.toggle('is-selected',item.entry.selected);item.card.classList.toggle('is-cover',item.cover.checked);item.cover.name='cover-'+batch+'-'+item.fields.series.value;}
+
  }
  function snapshot(item:Item):PhotoState{
   for(const name of ['title','alt','caption','series','capturedAt','frameDescription']){const value=item.fields[name].value.trim();if(value)item.doc.set(name,value);else item.doc.delete(name);}
+  if(item.fields.frameDisplay.value==='description'&&!item.fields.frameDescription.value.trim()&&item.fields.alt.value.trim())item.doc.set('frameDescription',item.fields.alt.value.trim());
   item.doc.set('albumCover',item.cover.checked);item.doc.set('frameDisplay',item.fields.frameDisplay.value);
   const data=item.doc.toJS({maxAliasCount:0});
   return {...item.state,title:String(data.title||data.alt||'未命名照片'),rawContent:'---\n'+item.doc.toString()+'---\n'+item.body};
@@ -62,32 +86,35 @@ export async function initializePhotoBatch(){
  function mount(entry:Entry,state:PhotoState,client:Item['client'],dirty=false){
   const {doc,body}=parse(state.rawContent),data=doc.toJS({maxAliasCount:0});
   const card=document.createElement('article');card.className='photo-batch-card';card.dataset.photoKey=entry.key;
-  const visual=document.createElement('div');visual.className='photo-batch-visual';
+  const visual=document.createElement('button');visual.type='button';visual.className='photo-batch-visual';visual.dataset.itemEdit='';visual.setAttribute('aria-expanded','false');visual.setAttribute('aria-label','编辑 '+entry.name);
   const img=document.createElement('img');img.src=imageURL(String(data.image||''));img.alt=String(data.alt||'待填写说明的照片');img.loading='lazy';
-  const name=document.createElement('p');name.textContent=entry.name;visual.append(img,name);
-  const content=document.createElement('div');content.className='photo-batch-fields';
-  const selection=document.createElement('label');selection.className='photo-check';const select=document.createElement('input');select.type='checkbox';select.checked=entry.selected;select.dataset.itemSelected='';selection.append(select,'选择发布这张照片');content.append(selection);
+  const editHint=document.createElement('span');editHint.className='batch-edit-hint';editHint.textContent='点击编辑';visual.append(img,editHint);
+  const bar=document.createElement('div');bar.className='batch-card-bar';
+  const selection=document.createElement('label');selection.className='photo-check';const select=document.createElement('input');select.type='checkbox';select.checked=entry.selected;select.dataset.itemSelected='';selection.append(select,'发布');bar.append(selection);
+  const coverLabel=document.createElement('label');coverLabel.className='photo-check batch-cover-check';const cover=document.createElement('input');cover.type='checkbox';cover.checked=data.albumCover===true;cover.dataset.itemCover='';coverLabel.append(cover,'主图');bar.append(coverLabel);
+  const name=document.createElement('p');name.className='batch-file-name';name.textContent=entry.name;
+  const content=document.createElement('div');content.className='photo-batch-fields';content.id='photo-options-'+entry.key;content.hidden=true;visual.setAttribute('aria-controls',content.id);
   const fields:Item['fields']={};
-  for(const [name,label] of [['alt','照片说明'],['caption','想记下的话（可留空）'],['title','标题（可留空）']]){
+  const detail=document.createElement('details');detail.className='batch-frame-options';const detailTitle=document.createElement('summary');detailTitle.textContent='单张更多设置';detail.append(detailTitle);
+  for(const [name,label] of [['alt','单张说明'],['caption','单张短句（选填）'],['title','标题（选填）'],['series','相簿名称'],['capturedAt','拍摄日期'],['frameDescription','单张物品描述（选填）']]){
    const wrap=document.createElement('label');wrap.textContent=label;
-   const control=name==='title'?document.createElement('input'):document.createElement('textarea');control.value=String(data[name]||'');control.maxLength=name==='alt'?500:name==='caption'?1000:240;control.dataset.field=name;if(control instanceof HTMLTextAreaElement)control.rows=2;
-   if(name==='alt')control.placeholder='描述照片中能看到的内容，发布前需填写';wrap.append(control);content.append(wrap);fields[name]=control;
+   const control=['title','series','capturedAt'].includes(name)?document.createElement('input'):document.createElement('textarea');control.value=String(data[name]||'').slice(0,name==='capturedAt'?10:1000);control.maxLength=name==='alt'?500:name==='caption'?1000:name==='series'?120:240;control.dataset.field=name;if(control instanceof HTMLTextAreaElement)control.rows=2;if(control instanceof HTMLInputElement)control.type=name==='capturedAt'?'date':'text';
+   if(name==='alt'){control.placeholder='使用整组说明；在这里修改，只影响这一张';content.append(wrap);}else detail.append(wrap);wrap.append(control);fields[name]=control;
   }
-  const detail=document.createElement('details');detail.className='batch-frame-options';const detailTitle=document.createElement('summary');detailTitle.textContent='相簿与白边信息';detail.append(detailTitle);
-  for(const [name,label] of [['series','相簿名称（可留空）'],['capturedAt','拍摄日期（可留空）'],['frameDescription','物品描述（可留空）']]){const wrap=document.createElement('label');wrap.textContent=label;const control=name==='frameDescription'?document.createElement('textarea'):document.createElement('input');control.dataset.field=name;control.value=String(data[name]||'').slice(0,name==='capturedAt'?10:240);if(control instanceof HTMLInputElement)control.type=name==='capturedAt'?'date':'text';control.maxLength=name==='series'?120:240;wrap.append(control);detail.append(wrap);fields[name]=control;}
-  const coverLabel=document.createElement('label');coverLabel.className='photo-check';const cover=document.createElement('input');cover.type='checkbox';cover.checked=data.albumCover===true;cover.dataset.itemCover='';coverLabel.append(cover,'设为这本相簿的主图');detail.append(coverLabel);
-  const displayLabel=document.createElement('label');displayLabel.textContent='相纸白边展示';const display=document.createElement('select');display.dataset.field='frameDisplay';for(const [value,text] of [['information','图片信息'],['date','拍摄日期'],['description','物品描述']]){const option=document.createElement('option');option.value=value;option.textContent=text;display.append(option);}display.value=data.frameDisplay||'information';displayLabel.append(display);detail.append(displayLabel);fields.frameDisplay=display;content.append(detail);
-  const status=document.createElement('p');status.setAttribute('role','status');status.className='photo-batch-status';status.textContent=dirty?'尚未保存':'已恢复 · 私有草稿';content.append(status);
+  const displayLabel=document.createElement('label');displayLabel.textContent='相纸白边展示';const display=document.createElement('select');display.dataset.field='frameDisplay';for(const [value,text] of [['information','照片说明'],['date','拍摄日期'],['description','物品描述']]){const option=document.createElement('option');option.value=value;option.textContent=text;display.append(option);}display.value=data.frameDisplay||'information';displayLabel.append(display);detail.append(displayLabel);fields.frameDisplay=display;content.append(detail);
+  const status=document.createElement('p');status.setAttribute('role','status');status.className='photo-batch-status';status.textContent=dirty?'尚未保存':'已保存 · 私有草稿';
   const actions=document.createElement('div');actions.className='photo-batch-card-actions';
   const button=document.createElement('button');button.type='button';button.textContent='保存这张';button.dataset.itemSave='';
-  const advanced=document.createElement('a');advanced.href='/admin/photos/edit/?draft='+encodeURIComponent(entry.key)+'&batch='+encodeURIComponent(batch);advanced.textContent='更多信息';actions.append(button,advanced);content.append(actions);card.append(visual,content);list.append(card);
+  const advanced=document.createElement('a');advanced.href='/admin/photos/edit/?draft='+encodeURIComponent(entry.key)+'&batch='+encodeURIComponent(batch);advanced.textContent='更多信息';actions.append(button,advanced);detail.append(actions);card.append(visual,bar,name,content,status);list.append(card);
+  visual.addEventListener('click',()=>{const expanded=Boolean(content.hidden);content.hidden=!expanded;visual.setAttribute('aria-expanded',String(expanded));card.classList.toggle('is-editing',expanded);if(expanded)fields.alt.focus({preventScroll:true});});
   const item:Item={entry,state,client,card,status,select,fields,timer:0,dirty,locked:false,conflict:false,doc,body,cover};items.push(item);
   select.addEventListener('change',()=>{entry.selected=select.checked;persist();update();});
   for(const field of Object.values(fields)){
-   let composing=false;const schedule=()=>{item.dirty=true;if(!processing&&!busy)message.textContent='每张照片独立保存；只会发布你勾选的照片。';status.textContent='待保存……';clearTimeout(item.timer);if(!composing&&!busy&&!item.locked)item.timer=window.setTimeout(()=>void save(item).catch(()=>{}),900);};
+   let composing=false;const schedule=()=>{const fieldName=field.dataset.field!;if(fieldName in groupFields||fieldName==='frameDescription'){item.entry.overrides=[...new Set([...(item.entry.overrides||[]),fieldName])];persist();}img.alt=fields.alt.value||'待填写说明的照片';update();item.dirty=true;if(!processing&&!busy)message.textContent='每张照片独立保存；只会发布你勾选的照片。';status.textContent='待保存……';clearTimeout(item.timer);if(!composing&&!busy&&!item.locked)item.timer=window.setTimeout(()=>void save(item).catch(()=>{}),900);};
    field.addEventListener('input',schedule);field.addEventListener('compositionstart',()=>{composing=true;clearTimeout(item.timer);});field.addEventListener('compositionend',()=>{composing=false;schedule();});
   }
-  cover.addEventListener('change',()=>{const series=item.fields.series.value.trim();if(cover.checked&&!series){cover.checked=false;message.textContent='请先填写相簿名称，再指定主图。';return;}if(cover.checked){for(const other of items){if(other!==item&&other.cover.checked&&other.fields.series.value.trim()===series){if(other.locked){cover.checked=false;message.textContent='这本相簿的主图已有发布尝试，请先核对提案。';return;}other.cover.checked=false;other.dirty=true;void save(other).catch(()=>{});}}}item.dirty=true;status.textContent='主图设置待保存……';clearTimeout(item.timer);item.timer=window.setTimeout(()=>void save(item).catch(()=>{}),900);});
+  cover.addEventListener('change',()=>{const series=item.fields.series.value.trim();if(cover.checked&&!series){cover.checked=false;message.textContent='请先填写相簿名称，再指定主图。';return;}if(cover.checked){for(const other of items){if(other!==item&&other.cover.checked&&other.fields.series.value.trim()===series){if(other.locked){cover.checked=false;message.textContent='这本相簿的主图已有发布尝试，请先核对提案。';return;}other.cover.checked=false;other.dirty=true;void save(other).catch(()=>{});}}}item.dirty=true;update();status.textContent='主图设置待保存……';clearTimeout(item.timer);item.timer=window.setTimeout(()=>void save(item).catch(()=>{}),900);});
+  const reset=document.createElement('button');reset.type='button';reset.className='batch-use-group';reset.textContent='恢复整组信息';content.insertBefore(reset,detail);reset.addEventListener('click',()=>{if(item.locked||item.conflict||busy)return;item.entry.overrides=[];for(const [name,value] of Object.entries(values()))item.fields[name].value=value;item.entry.inherited=values();markDirty(item);persist();update();});
   button.addEventListener('click',()=>void save(item).catch(()=>{}));
   advanced.addEventListener('click',async event=>{if(!item.dirty)return;event.preventDefault();try{await save(item);location.assign(advanced.href);}catch{message.textContent='请先处理这张照片的保存问题，或保留此页。';}});
   if(state.publication)receipt(item);update();return item;
@@ -95,16 +122,33 @@ export async function initializePhotoBatch(){
  window.addEventListener('beforeunload',event=>{if(processing||busy||items.some(x=>x.dirty)){event.preventDefault();event.returnValue='';}});
  try{
   const auth=await readAdminSession();if(!auth.privateDrafts||auth.publicationMode!=='pull-request')throw Error('请登录私人编辑台后上传照片。');
-  try{const stored=JSON.parse(sessionStorage.getItem(storageKey)||'[]');if(Array.isArray(stored))entries=stored.filter((x:Entry)=>KEY.test(x?.key)&&typeof x.name==='string').slice(0,20).map((x:Entry)=>({key:x.key,name:x.name.slice(0,255),selected:x.selected===true}));}catch{}
+  try{const stored=JSON.parse(sessionStorage.getItem(storageKey)||'[]');if(Array.isArray(stored))entries=stored.filter((x:Entry)=>KEY.test(x?.key)&&typeof x.name==='string').slice(0,20).map((x:Entry)=>({key:x.key,name:x.name.slice(0,255),selected:x.selected===true,overrides:Array.isArray(x.overrides)?x.overrides.filter(name=>name in groupFields||name==='frameDescription'):[],inherited:x.inherited&&typeof x.inherited==='object'?x.inherited:{}}));}catch{}
   for(const entry of entries){
    try{const client=createCloudDraftClient({key:entry.key,session:readAdminSession}),saved=await client.load();if(!saved||saved.state.type!=='Image'){entry.selected=false;continue;}mount(entry,saved.state,client);}
    catch(error){const note=document.createElement('p');note.textContent=entry.name+'：'+messageOf(error);list.append(note);}
   }
-  ready=true;message.textContent=items.length?'已恢复本组照片；每张草稿独立保存，尚未选中的照片不会发布。':'选择照片后逐张填写说明，勾选准备公开的照片。';
+  restoreDefaults();ready=true;message.textContent=items.length?'已恢复本组照片和选择。整组填一次，单张可以不同。':'新上传的照片默认全选，点击缩略图可单独修改。';
  }catch(error){message.textContent=messageOf(error);return;}finally{restoring=false;update();}
- const previewLink=root.querySelector<HTMLAnchorElement>('[data-batch-album-preview]')!;previewLink.href='/admin/photos/album-preview/?batch='+batch;
- previewLink.addEventListener('click',async event=>{event.preventDefault();if(busy||processing){message.textContent='请等照片处理完成后再预览。';return;}try{for(const item of items)if(item.dirty&&!item.locked)await save(item);location.assign(previewLink.href);}catch(error){message.textContent=messageOf(error)+' 请保留此页并处理保存问题。';}});
- root.querySelector('[data-batch-album-apply]')!.addEventListener('click',async()=>{if(busy||processing)return;const name=root.querySelector<HTMLInputElement>('[data-batch-album-name]')!.value.trim();if(!name){message.textContent='请先填写相簿名称。';return;}try{for(const item of items.filter(x=>!x.locked)){item.fields.series.value=name;item.doc.set('series',name);item.dirty=true;await save(item);}message.textContent='已将本组未发布照片归入「'+name+'」。可在每张的相簿信息里指定一张主图。';}catch(error){message.textContent=messageOf(error)+' 已保存的照片保持私有，其他修改仍在本页。';}});
+ for(const field of Object.values(groupFields)){
+  let composing=false;field.addEventListener('compositionstart',()=>{composing=true;});field.addEventListener('compositionend',()=>{composing=false;inherit();});
+  field.addEventListener('input',()=>{if(!composing)inherit();});field.addEventListener('change',()=>{if(!composing)inherit();});
+ }
+ for(const [selector,selected] of [['[data-batch-select-all]',true],['[data-batch-select-none]',false]] as const)root.querySelector(selector)!.addEventListener('click',()=>{for(const item of items)if(!item.locked&&!item.conflict){item.entry.selected=selected;item.select.checked=selected;}persist();update();});
+ function closeReview(){if(busy)return;review.close();document.documentElement.classList.remove('batch-review-open');publish.focus({preventScroll:true});}
+ root.querySelector('[data-batch-review-close]')!.addEventListener('click',closeReview);
+ review.addEventListener('cancel',event=>{event.preventDefault();closeReview();});review.addEventListener('click',event=>{if(event.target===review)closeReview();});
+ publish.addEventListener('click',async()=>{
+  if(busy||processing)return;const chosen=items.filter(item=>item.entry.selected&&!item.locked);if(!chosen.length)return;
+  const missing=chosen.find(item=>!item.fields.alt.value.trim());if(missing){message.textContent='给整组填写一句照片说明即可；也可以点开照片单独填写。';groupFields.alt.focus();return;}
+  busy=true;update();
+  try{
+   for(const item of chosen)if(item.dirty)await save(item);
+   const photos=chosen.map(item=>({id:item.entry.key,...parse(snapshot(item).rawContent).doc.toJS({maxAliasCount:0}),hasFile:true}));for(const photo of photos)validateAlbumFields({...photo,status:'published'});groupPhotoAlbums(photos);
+   root.querySelector('[data-batch-review-summary]')!.textContent=`准备发布 ${chosen.length} 张；${items.length-chosen.length} 张继续保留为私有草稿。点击相簿可展开，再点照片放大。`;
+   confirm.textContent=document.querySelector('meta[name="editor-local-preview"]')?`本地检查 ${chosen.length} 张（不会上线）`:`确认发布 ${chosen.length} 张`;
+   review.showModal();document.documentElement.classList.add('batch-review-open');review.querySelector('[data-photo-albums]')!.dispatchEvent(new CustomEvent('photo-albums:update',{detail:photos}));
+  }catch(error){message.textContent=messageOf(error)+' 未提交发布。';}finally{busy=false;update();}
+ });
  picker.addEventListener('change',async()=>{
   const files=Array.from(picker.files||[]);if(!files.length||processing||busy)return;
   if(entries.length+files.length>20){message.textContent='一组最多 20 张，请分组选择。';picker.value='';return;}
@@ -116,15 +160,15 @@ export async function initializePhotoBatch(){
     const image=await photoUploadDataUrl(file),encoded=image.split(',')[1]||'';
     if(!/^data:image\/(?:webp|png|jpeg);base64,/.test(image)||Math.floor(encoded.length*3/4)>8_000_000)throw Error('转换后的照片过大或格式不支持，请缩小或转为 JPEG 后重试。');
     const key='draft-photo-'+crypto.randomUUID(),slug='photo-'+key.slice(-12),now=new Date(),date=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-    const doc=new YAML.Document({slug,image,alt:'',publishedAt:date,status:'draft',window:{enabled:false,timeOfDay:[],seasons:[]}});
-    const albumName=root.querySelector<HTMLInputElement>('[data-batch-album-name]')!.value.trim();if(albumName)doc.set('series',albumName);
+    const doc=new YAML.Document({slug,image,alt:groupFields.alt.value.trim(),publishedAt:date,status:'draft',window:{enabled:false,timeOfDay:[],seasons:[]}});
+    const defaults=values();for(const [name,value] of Object.entries(defaults))if(value)doc.set(name,value);if(defaults.series&&!items.some(item=>item.fields.series.value===defaults.series&&item.cover.checked))doc.set('albumCover',true);
     const state:PhotoState={id:key,title:'未命名照片',type:'Image',status:'draft',sourcePath:`src/content/images/${slug}.md`,sourceBlobSha:'',rawContent:'---\n'+doc.toString()+'---\n'};
-    const entry={key,name:file.name,selected:false},client=createCloudDraftClient({key,session:readAdminSession}),item=mount(entry,state,client,true);entries.push(entry);persist();await save(item);added++;
+    const entry:Entry={key,name:file.name,selected:true,overrides:[],inherited:values()},client=createCloudDraftClient({key,session:readAdminSession}),item=mount(entry,state,client,true);entries.push(entry);persist();await save(item);added++;
    }catch(error){failed++;failures.push(file.name+'：'+messageOf(error));}
-  }}finally{processing=false;picker.value='';persist();update();message.textContent=`本次已保存 ${added} 张私有照片草稿。`+(failed?` ${failed} 张未完成：${failures.join('；')}`:' 填写说明后，再勾选要发布的照片。');}
+  }}finally{processing=false;picker.value='';persist();update();message.textContent=`本次已保存 ${added} 张私有照片草稿。`+(failed?` ${failed} 张未完成：${failures.join('；')}`:' 已默认选中，可取消不想发布的照片。');}
  });
- publish.addEventListener('click',async()=>{
-  if(processing||busy)return;
+ confirm.addEventListener('click',async()=>{
+  if(processing||busy||!review.open)return;
   const chosen=items.filter(x=>x.entry.selected&&!x.locked);if(!chosen.length)return;
   const missing=chosen.find(x=>!x.fields.alt.value.trim());if(missing){message.textContent='请先为「'+missing.entry.name+'」填写照片说明。';missing.fields.alt.focus();return;}
   busy=true;for(const item of items){clearTimeout(item.timer);lock(item,true);}update();
@@ -155,6 +199,6 @@ export async function initializePhotoBatch(){
    if(!dispatched){for(const item of marked){const clean={...item.state};delete clean.publication;try{await item.client.save(clean);item.state=clean;}catch{receipt(item);}}}
    else for(const item of marked)receipt(item);
    message.textContent=messageOf(error)+(dispatched?' 请先核对历史提案，不要重复发布。':' 尚未发送发布请求。');
-  }finally{busy=false;for(const item of items){lock(item,Boolean(item.state.publication));if(item.dirty&&!item.locked&&!item.conflict)item.timer=window.setTimeout(()=>void save(item).catch(()=>{}),900);}persist();update();}
+  }finally{review.close();document.documentElement.classList.remove('batch-review-open');busy=false;for(const item of items){lock(item,Boolean(item.state.publication));if(item.dirty&&!item.locked&&!item.conflict)item.timer=window.setTimeout(()=>void save(item).catch(()=>{}),900);}persist();update();}
  });
 }

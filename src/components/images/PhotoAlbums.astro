@@ -1,12 +1,12 @@
 ---
 import '../../styles/photo-albums.css';
 import {groupPhotoAlbums} from '../../lib/photo-albums.mjs';
-interface Props {photos?:Record<string,unknown>[];privatePreview?:boolean;}
-const {photos=[],privatePreview=false}=Astro.props;
+interface Props {photos?:Record<string,unknown>[];privatePreview?:boolean;livePreview?:boolean;}
+const {photos=[],privatePreview=false,livePreview=false}=Astro.props;
 groupPhotoAlbums(photos); // Reject conflicting published covers during the actual build.
 const json=JSON.stringify(photos).replaceAll('<',String.raw`\u003c`);
 ---
-<div class="photo-albums" data-photo-albums data-private-preview={privatePreview?'true':undefined}>
+<div class="photo-albums" data-photo-albums data-live-preview={livePreview?'true':undefined} data-private-preview={privatePreview?'true':undefined}>
  <p class="album-load-message" data-album-message role="status">{privatePreview?'正在读取私有照片草稿……':'正在展开影像记录……'}</p>
  <div class="album-groups" data-album-groups></div>
  <script type="application/json" data-album-data set:html={json}></script>

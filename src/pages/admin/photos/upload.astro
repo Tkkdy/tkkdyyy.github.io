@@ -1,18 +1,29 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import PhotoAlbums from '../../../components/images/PhotoAlbums.astro';
 import {getEditorialStories} from '../../../lib/admin/stories';
 import '../../../styles/admin-photos.css';
 const stories=await getEditorialStories();
 ---
 <AdminLayout title="上传照片" section="照片" active="photos" stories={stories}>
  <section class="stories-view photo-batch" data-photo-batch>
-  <header class="stories-heading"><div><h1>选一些照片，慢慢写</h1><p>一次选择多张，每张单独填写说明。只发布你勾选的照片。</p></div><a href={`${import.meta.env.BASE_URL}admin/photos/`}>返回照片</a></header>
-  <label class="photo-upload">选择照片，可一次多选<input type="file" multiple accept="image/*" data-batch-files /><small>原图每张最大 50 MB，一组最多 20 张，每批发布的压缩后资源总量最多 100 MB。保存前在浏览器逐张压缩至约 1 MB 以内、去除原始定位等元数据，并保存为独立的私有草稿。</small></label>
-  <div class="batch-album-tools"><label>相簿名称（可选）<input data-batch-album-name maxlength="120" placeholder="给这一组照片起个名字" /></label><button type="button" data-batch-album-apply>将本组归入相簿</button><a data-batch-album-preview href="/admin/photos/album-preview/">预览相簿 ↗</a></div>
+  <header class="stories-heading"><div><h1>把这一组照片留下来</h1><p>一起填写，挑一张主图。单张有不同，再点开修改。</p></div><a href={`${import.meta.env.BASE_URL}admin/photos/`}>返回照片</a></header>
+  <label class="photo-upload"><span>选择照片 <small>可一次多选</small></span><input type="file" multiple accept="image/*" data-batch-files /><small>每张原图最多 50 MB，一组最多 20 张。保存前自动压缩并去除定位信息。</small></label>
+  <section class="batch-group-settings" aria-label="整组照片信息">
+   <label>相簿名称 <span class="field-hint">选填，留空则分开显示</span><input data-batch-album-name data-group-field="series" maxlength="120" placeholder="给这一组起个名字" /></label>
+   <label>这组照片的说明 <span class="field-hint">填写一次，每张都能单独修改</span><textarea data-group-field="alt" maxlength="240" rows="2" placeholder="这组照片里有什么，或你想记下的一句话"></textarea></label>
+   <details class="batch-group-more"><summary>更多设置</summary><div class="batch-group-extra"><label>拍摄日期 <span class="field-hint">选填，不会自动补日期</span><input type="date" data-group-field="capturedAt" /></label><label>相纸白边展示<select data-group-field="frameDisplay"><option value="information">照片说明</option><option value="date">拍摄日期</option><option value="description">物品描述（使用说明文字）</option></select></label></div><p>日期和白边样式统一应用；单张例外可以点开照片修改。标题、地点、标签和首页选图仍在单张的更多信息中。</p></details>
+   <p class="batch-group-note">整组信息自动保存到私有草稿，已单独修改的内容会保留。</p>
+  </section>
   <p role="status" data-batch-message>正在读取……</p>
-  <div class="photo-batch-actions"><p data-batch-summary>尚未选择照片</p><button type="button" data-batch-publish disabled>发布选中的照片</button></div>
+  <div class="batch-grid-heading"><h2>这一组照片</h2><div><button type="button" data-batch-select-all>全选</button><button type="button" data-batch-select-none>全不选</button></div></div>
   <div class="photo-batch-list" data-batch-list></div>
-  <p class="photo-batch-footnote">填写相簿名称可把照片叠成一组，留空则作为单张。未勾选的照片保留在私有草稿，不会随其他照片发布。更多拍摄信息可在每张照片的「更多信息」中填写。</p>
+  <div class="photo-batch-actions"><div><p data-batch-summary>尚未选择照片</p><small>未选中的照片会保留为私有草稿。</small></div><button type="button" data-batch-publish disabled>预览并发布</button></div>
+  <dialog class="batch-review" data-batch-review aria-labelledby="batch-review-title">
+   <header class="batch-review-heading"><div><h2 id="batch-review-title">发布前，再看一眼</h2><p data-batch-review-summary></p></div><button type="button" data-batch-review-close>返回修改</button></header>
+   <PhotoAlbums livePreview={true} />
+   <footer class="batch-review-actions"><span>仅包含你选中的照片；确认后才会提交发布。</span><button type="button" data-batch-confirm>确认发布</button></footer>
+  </dialog>
  </section>
 </AdminLayout>
 <script>import {initializePhotoBatch} from '../../../lib/admin/photo-batch-client';void initializePhotoBatch();</script>
