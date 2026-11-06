@@ -1,6 +1,6 @@
 ---
 slug: "2026-08-05-context-compounds"
-publishedAt: 2026-08-05T02:20:00+08:00
+publishedAt: 2026-08-05
 status: published
 tags:
   - AI
