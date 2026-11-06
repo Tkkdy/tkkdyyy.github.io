@@ -7,7 +7,7 @@ const photos = await getWindowPhotos();
 const first = photos[0];
 ---
 {first && <section class:list={['life-window', { 'life-window-compact': compact }]} aria-label={compact ? '此刻的照片' : '一扇窗'} data-window data-photos={JSON.stringify(photos)}>
-  <div class="window-heading"><span>{compact ? '此刻的照片' : '一扇窗'}</span><span aria-hidden="true">A moment, here.</span></div>
+  <div class="window-heading">{compact && <span>此刻的照片</span>}<span aria-hidden="true">A moment, here.</span></div>
   <figure>
     <a class="window-image-link" href={first.href} aria-label="查看这张影像" data-window-link>
       <img src={first.src} srcset={first.srcset} sizes={compact ? '(min-width: 768px) 720px, 92vw' : '(min-width: 1200px) 1056px, 90vw'} width={first.width} height={first.height} alt={first.alt} loading={compact ? 'lazy' : 'eager'} fetchpriority={compact ? 'auto' : 'high'} decoding="async" data-window-image />
