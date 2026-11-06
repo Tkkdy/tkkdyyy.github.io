@@ -1,10 +1,10 @@
+import {readPhotoLibrary,photoLibraryGroups,photoPreviewUrl} from './photo-library.mjs';
 import {validateAlbumFields} from '../photo-albums.mjs';
 import YAML from 'yaml';
 import {photoUploadDataUrl,PHOTO_SOURCE_MAX_BYTES} from './photo-upload';
 import {createCloudDraftClient} from './cloud-drafts.mjs';
 import {readAdminSession,createGitHubClient,textToBase64} from './github-content.mjs';
 import {dataUrlFile} from './publish-story.mjs';
-import {editorLink} from './editor-links.mjs';
 
 type Resource={type:string;sourcePath:string;sourceBlobSha:string;rawContent:string;title:string;status?:string;slug?:string};
 const IMAGE_PATH=/^src\/content\/images\/[\p{L}\p{N}][\p{L}\p{N}_.-]{0,180}\.md$/u;
@@ -16,17 +16,34 @@ function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMon
 
 export async function initializePhotoLibrary(){
  const list=document.querySelector<HTMLElement>('[data-photo-list]'),message=document.querySelector<HTMLElement>('[data-photo-list-message]');if(!list||!message)return;
+ const tabs=[...document.querySelectorAll<HTMLButtonElement>('[data-photo-tab]')];
  try{
   const auth=await readAdminSession();if(!auth.privateDrafts)throw Error('请在私人编辑台登录后管理照片。');
-  const [catalog,privateDrafts]=await Promise.all([api('/api/stories'),api('/api/drafts')]);
-  const photos:Resource[]=(catalog.resources||[]).filter((item:Resource)=>item.type==='Image');
-  list.replaceChildren();
-  for(const item of [...privateDrafts.drafts.filter((d:{type:string})=>d.type==='Image'),...photos]){
-   const link=document.createElement('a');link.className='photo-list-card';link.href=editorLink(item);
-   if(item.rawContent){const data=documentOf(item.rawContent).doc.toJS({maxAliasCount:0}),url=photoURL(String(data.image||''));if(url){const image=document.createElement('img');image.src=url;image.alt=String(data.alt||'');image.loading='lazy';link.append(image);}}
-   const title=document.createElement('strong');title.textContent=item.title||'未命名照片';const note=document.createElement('small');note.textContent=item.key?'私有草稿 · 继续编辑':item.status==='published'?'已发布 · 编辑照片':'仓库内容 · '+(item.status||'draft');link.append(title,note);list.append(link);
+  const {records,failures}=await readPhotoLibrary(readAdminSession,api);
+  let current=new URL(location.href).searchParams.get('tab')==='drafts'?'drafts':'published';
+  function render(){
+   list!.replaceChildren();
+   for(const tab of tabs){const active=tab.dataset.photoTab===current;tab.setAttribute('aria-pressed',String(active));tab.textContent=(tab.dataset.photoTab==='published'?'已上线':'草稿')+`（${records.filter(r=>r.tab===tab.dataset.photoTab).length}）`;}
+   const groups=photoLibraryGroups(records,current);
+   for(const group of groups){
+    const card=document.createElement('section');card.className='photo-album-card';
+    const link=document.createElement('a');link.className='photo-album-open';link.href='/admin/photos/upload/?album='+encodeURIComponent(group.key)+'&tab='+current;
+    const previews=document.createElement('div');previews.className='photo-album-previews';
+    for(const photo of group.photos.slice(0,4)){
+     const url=photoPreviewUrl(String(photo.data.image||''));
+     if(url){const img=document.createElement('img');img.src=url;img.alt=String(photo.data.alt||photo.state.title||'照片');img.loading='lazy';previews.append(img);}
+     else{const placeholder=document.createElement('span');placeholder.textContent='暂无预览';previews.append(placeholder);}
+    }
+    const title=document.createElement('h2');title.textContent=group.title;
+    const meta=document.createElement('p');meta.textContent=`${group.photos.length} 张照片 · ${current==='published'?'已上线':'私有草稿'}`;
+    const edit=document.createElement('span');edit.className='photo-album-edit';edit.textContent='查看与编辑 →';
+    link.append(previews,title,meta,edit);card.append(link);list!.append(card);
+   }
+   message!.textContent=groups.length?`${groups.length} 个相册 · 点击相册，查看照片并编辑整组信息。`:(current==='published'?'还没有已上线的照片。':'没有待编辑的照片草稿。');
+   if(failures.length)message!.textContent+=` ${failures.length} 份草稿暂时读取失败，请刷新重试。`;
   }
-  message.textContent=`${photos.length} 张仓库照片，${privateDrafts.drafts.filter((d:{type:string})=>d.type==='Image').length} 份私有照片草稿。`;
+  for(const tab of tabs)tab.addEventListener('click',()=>{current=tab.dataset.photoTab!;const url=new URL(location.href);url.searchParams.set('tab',current);history.replaceState(null,'',url);render();});
+  render();
  }catch(e){message.textContent=e instanceof Error?e.message:'照片读取失败。';}
 }
 
@@ -71,7 +88,7 @@ export async function initializePhotoEditor(){
   function lockFields(locked:boolean){for(const control of form.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>('input,textarea,select'))control.disabled=locked;(form.querySelector<HTMLButtonElement>('[data-photo-save]')!).disabled=locked;}
   async function save(){if(processing)throw Error('照片仍在处理中，请稍候。');const state=snapshot();await client.save(state);dirty=snapshot().rawContent!==state.rawContent;message!.textContent='已保存到云端 · 私有照片草稿';return state;}
   const batch=query.get('batch'),backLink=document.querySelector<HTMLAnchorElement>('[data-photo-back]');
-  if(batch&&/^[a-f0-9-]{36}$/.test(batch)&&backLink){backLink.href='/admin/photos/upload/?batch='+encodeURIComponent(batch);backLink.textContent='返回本组选图';backLink.addEventListener('click',async event=>{if(!dirty)return;event.preventDefault();if(processing||busy){message!.textContent='请等照片处理和保存完成后再返回。';return;}clearTimeout(timer);try{await save();location.assign(backLink.href);}catch(e){message!.textContent=e instanceof Error?e.message:'保存失败，请保留此页或下载备份。';}});}
+  if(batch&&/^[a-f0-9-]{36}$/.test(batch)&&backLink){backLink.href='/admin/photos/upload/?batch='+encodeURIComponent(batch);if(query.has('album'))backLink.href+='&album='+encodeURIComponent(query.get('album')!)+'&tab='+(query.get('tab')==='drafts'?'drafts':'published');backLink.textContent='返回本组选图';backLink.addEventListener('click',async event=>{if(!dirty)return;event.preventDefault();if(processing||busy){message!.textContent='请等照片处理和保存完成后再返回。';return;}clearTimeout(timer);try{await save();location.assign(backLink.href);}catch(e){message!.textContent=e instanceof Error?e.message:'保存失败，请保留此页或下载备份。';}});}
   async function safeSave(){try{await save();}catch(e){dirty=true;message!.textContent=(e instanceof Error?e.message:'保存失败。')+' 当前照片仍在此页，可下载备份。';}}
   function schedule(){dirty=true;clearTimeout(timer);showImage();if(!composing&&!busy&&!processing&&!attempted)timer=window.setTimeout(()=>void safeSave(),900);}
   form.addEventListener('input',event=>{if(event.target!==file)schedule();});form.addEventListener('compositionstart',()=>{composing=true;clearTimeout(timer);});form.addEventListener('compositionend',()=>{composing=false;schedule();});
