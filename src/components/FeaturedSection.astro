@@ -6,11 +6,13 @@ import { withBase } from '../lib/site-url';
 import { formatDate } from '../lib/content/homepage';
 
 interface Props {
-  article: CollectionEntry<'articles'>;
+  article: CollectionEntry<'articles'> | CollectionEntry<'essays'>;
 }
 
 const { article } = Astro.props;
 const { data } = article;
+const section = article.collection;
+const summary = "description" in data ? data.description : data.summary;
 ---
 <section class="hero">
   <div class="hero-grid">
@@ -41,13 +43,8 @@ const { data } = article;
         <span>精选文章</span>
       </div>
 
-      <a class="featured-card group" href={withBase(`articles/${article.data.slug}/`)}>
-        <div class="featured-media">
-          <div class="css-placeholder scale-inner scale-transition">
-            <span>Article Visual</span>
-            <span class="ratio">4:3</span>
-          </div>
-        </div>
+      <a class="featured-card group" href={withBase(`${section}/${data.slug}/`)}>
+        {data.cover && <div class="featured-media"><img class="home-cover" src={withBase(data.cover)} alt={data.coverAlt ?? ''} fetchpriority="high" /></div>}
         <div class="featured-body">
           <div class="featured-meta">
             <span class="featured-date">{formatDate(data.publishedAt)}</span>
@@ -56,7 +53,7 @@ const { data } = article;
             )}
           </div>
           <h2 class="featured-title">{data.title}</h2>
-          <p class="featured-summary">{data.description}</p>
+          <p class="featured-summary">{summary}</p>
           <span class="featured-cta">开始阅读 <span class="arrow">→</span></span>
         </div>
       </a>

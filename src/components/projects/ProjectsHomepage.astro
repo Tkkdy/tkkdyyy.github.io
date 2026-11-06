@@ -235,3 +235,18 @@ LINES  0032       NEXT   T
     flip?.addEventListener('pointerleave', () => flip.classList.remove('is-hovered'));
   }
 </script>
+
+<section class="home-added-projects" aria-label="更多正在进行的项目">
+ {projects.filter(({data}) => ['attention-router','fatfish-manager'].includes(data.slug)).map(({data}) => <article>
+  <p>{PROJECT_STATUS_LABELS[data.projectStatus]}</p>
+  <h2><a href={withBase(`projects/${data.slug}/`)}>{data.name} ↗</a></h2>
+  <p>{data.description}</p>
+ </article>)}
+</section>
+<style>
+ .home-added-projects { max-width:1200px; margin:48px auto 96px; padding:0 24px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:32px; }
+ .home-added-projects article { padding:28px; border:1px solid var(--color-border); }
+ .home-added-projects h2 { margin:16px 0; font-size:28px; }
+ .home-added-projects p { line-height:1.85; }
+ @media(max-width:639px) { .home-added-projects { grid-template-columns:1fr; } }
+</style>
