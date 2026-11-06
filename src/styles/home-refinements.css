@@ -122,3 +122,10 @@ body.home-refined {
  .home-refined .home-photo:nth-child(n) { width:100%; margin:0; }
  .home-project-card { padding:22px; }
 }
+
+.home-refined .home-essay-list { display:grid; gap:0; }
+.home-refined .home-essay-list .essay-card { padding:24px 0; border-top:1px solid var(--color-border); }
+.home-refined .home-essay-list .essay-card:first-child { padding-top:0; border-top:0; }
+.home-refined .home-essay-list .essay-title { font-size:clamp(22px,2.1vw,28px); line-height:1.5; margin-bottom:10px; }
+.home-refined .home-essay-list .essay-summary { margin-bottom:14px; }
+.home-refined .home-essay-list .essay-date { font-size:11px; }

@@ -14,6 +14,7 @@ import EssaysFragmentsSection from '../components/EssaysFragmentsSection.astro';
 import PhotographySection from '../components/PhotographySection.astro';
 
 import { getHomepageContent } from '../lib/content/homepage';
+import { getPublishedEssays } from '../lib/content/essays';
 
 import '../styles/tokens.css';
 import '../styles/global.css';
@@ -22,7 +23,9 @@ import '../styles/home-refinements.css';
 
 const { articles, essays, fragments, images, projects } = await getHomepageContent();
 const featured = essays.find((entry) => entry.data.featured) ?? articles[0];
-const remainingEssays = essays.filter((entry) => entry !== featured);
+const remainingEssays = (await getPublishedEssays())
+  .filter((entry) => entry.data.slug !== featured?.data.slug)
+  .slice(0, 6);
 ---
 
 <!doctype html>

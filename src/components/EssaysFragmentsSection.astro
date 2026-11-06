@@ -13,8 +13,7 @@ interface Props {
 }
 
 const { essays, fragments } = Astro.props;
-// 各取排序后的第一条（当前首页各只有一条）
-const [essay] = essays;
+
 
 ---
 <section class="essays-fragments">
@@ -24,15 +23,17 @@ const [essay] = essays;
       <div class="essays-col">
         <div class="section-header essays-header">
           <span>Essays</span>
-          <span>随笔</span>
+          <a href={withBase('essays/')}>全部随笔 →</a>
         </div>
 
-        <a class="essay-card group" href={withBase(`essays/${essay.data.slug}/`)}>
+        <div class="home-essay-list">
+        {essays.map((essay) => <a class="essay-card group" href={withBase(`essays/${essay.data.slug}/`)}>
           {essay.data.cover && <div class="essay-media"><img class="home-cover" src={withBase(essay.data.cover)} alt={essay.data.coverAlt ?? ''} loading="lazy" /></div>}
           <h3 class="essay-title">{essay.data.title}</h3>
           <p class="essay-summary">{essay.data.summary}</p>
           <div class="essay-date">{formatDate(essay.data.publishedAt)}</div>
-        </a>
+        </a>)}
+        </div>
       </div>
 
       <!-- 右：碎片堆叠 -->
