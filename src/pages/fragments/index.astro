@@ -70,6 +70,7 @@ const fragments = await getPublishedFragments();
                   <time class="fragment-entry-date" datetime={formatDate(data.publishedAt)}>
                     {formatDate(data.publishedAt)}
                   </time>
+                  {data.dateNote && <p class="fragment-entry-date">{data.dateNote}</p>}
 
                   {hasImage && data.image && (
                     <div class="fragment-entry-image">

@@ -107,6 +107,8 @@ const fragments = defineCollection({
     .object({
       slug: z.string(),
       publishedAt: z.coerce.date(),
+      /** 日期来源补充，例如原始日期未记时说明此处为发布日期。 */
+      dateNote: z.string().optional(),
       status: statusSchema,
       tags: taxonomyListSchema,
       image: z.string().optional(),
