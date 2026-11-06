@@ -10,7 +10,7 @@ tags:
   - 互联网
   - 回忆
 homepage:
-  show: true
+  show: false
   order: 1
 ---
 

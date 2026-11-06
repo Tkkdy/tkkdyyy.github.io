@@ -1,5 +1,5 @@
 ---
-name: "Morning Radar"
+name: "每日晨报 · Morning Radar"
 slug: "morning-radar"
 tagline: "让每日信号成为可以追溯、阅读和继续判断的晨报。"
 description: "Morning Radar 自动采集 AI 科技、重点公司市场数据、GitHub 项目动态和开发者社区信号，去重合并后生成可追溯的中文晨报、静态网站与微信摘要。"

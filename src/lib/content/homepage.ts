@@ -11,6 +11,7 @@
 // 首页显示哪种状态由组件决定，查询层只按发布状态过滤。
 
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { imageFileExists } from './images';
 
 type HomepageEntry = CollectionEntry<'articles'> | CollectionEntry<'essays'> | CollectionEntry<'fragments'> | CollectionEntry<'projects'> | CollectionEntry<'images'>;
 
@@ -82,11 +83,21 @@ export async function getHomepageFragments(): Promise<CollectionEntry<'fragments
 }
 
 export async function getHomepageImages(): Promise<CollectionEntry<'images'>[]> {
-  const entries = (await getCollection('images'))
-    .filter((e) => isPublished(e) && isShownOnHomepage(e))
-    .sort(byHomepageOrder);
-  assertUniqueHomepageOrder(entries, 'images');
-  return entries;
+  const published = (await getCollection('images'))
+    .filter((entry) => isPublished(entry) && imageFileExists(entry.data.image));
+  const selected = published.filter(isShownOnHomepage).sort(byHomepageOrder);
+  assertUniqueHomepageOrder(selected, 'images');
+  const automatic = published.filter((entry) => entry.data.homepage === undefined)
+    .sort((a, b) => Number(Boolean(b.data.albumCover)) - Number(Boolean(a.data.albumCover)) || byHomepageOrder(a, b));
+  // First show different series, then fill spare positions without duplicating photos.
+  const candidates = [...selected, ...automatic];
+  const series = new Set<string>();
+  const diverse = candidates.filter((entry) => {
+    const key = entry.data.series || entry.data.slug;
+    if (series.has(key)) return false;
+    series.add(key); return true;
+  });
+  return [...diverse, ...candidates.filter((entry) => !diverse.includes(entry))].slice(0, 3);
 }
 
 /** 项目与其他内容类型一样按发布状态过滤（projectStatus 是项目生命周期状态，不影响首页筛选） */
