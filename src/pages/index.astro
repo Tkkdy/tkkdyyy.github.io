@@ -23,9 +23,12 @@ import '../styles/home-refinements.css';
 
 const { articles, essays, fragments, images, projects } = await getHomepageContent();
 const featured = essays.find((entry) => entry.data.featured) ?? articles[0];
+const featuredImage = featured?.data.slug === 'ai'
+  ? images.find((image) => image.data.series === '东海岸日出' && image.data.albumCover)
+  : undefined;
 const remainingEssays = (await getPublishedEssays())
   .filter((entry) => entry.data.slug !== featured?.data.slug)
-  .slice(0, 6);
+  .slice(0, 3);
 ---
 
 <!doctype html>
@@ -57,7 +60,7 @@ const remainingEssays = (await getPublishedEssays())
       <RecentNotes />
       <!-- 空状态保护（CONTENT_MODEL §12）：对应 Collection 没有首页内容时隐藏区块而不是崩溃。
            没有封面时使用文字排版，不生成占位图。 -->
-      {featured && <FeaturedSection article={featured} />}
+      {featured && <FeaturedSection article={featured} image={featuredImage} />}
       {projects[0] && <ProjectsSection projects={projects} />}
       {remainingEssays[0] && fragments[0] && (
         <EssaysFragmentsSection essays={remainingEssays} fragments={fragments} />
