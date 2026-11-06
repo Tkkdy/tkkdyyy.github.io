@@ -5,15 +5,18 @@ import {getEditorialStories} from '../../../lib/admin/stories';
 import '../../../styles/admin-photos.css';
 const stories=await getEditorialStories();
 ---
-<AdminLayout title="上传照片" section="照片" active="photos" stories={stories}>
+<AdminLayout title="照片编辑" section="照片" active="photos" stories={stories}>
  <section class="stories-view photo-batch" data-photo-batch>
-  <header class="stories-heading"><div><h1>把这一组照片留下来</h1><p>一起填写，挑一张主图。单张有不同，再点开修改。</p></div><a href={`${import.meta.env.BASE_URL}admin/photos/`}>返回照片</a></header>
+  <header class="stories-heading"><div><h1>把这一组照片留下来</h1><p>地点、日期和说明整组填一次。点照片，只需选填单张说明。</p></div><a href={`${import.meta.env.BASE_URL}admin/photos/`}>返回照片</a></header>
   <label class="photo-upload"><span>选择照片 <small>可一次多选</small></span><input type="file" multiple accept="image/*" data-batch-files /><small>每张原图最多 50 MB，一组最多 20 张。保存前自动压缩并去除定位信息。</small></label>
   <section class="batch-group-settings" aria-label="整组照片信息">
-   <label>相簿名称 <span class="field-hint">选填，留空则分开显示</span><input data-batch-album-name data-group-field="series" maxlength="120" placeholder="给这一组起个名字" /></label>
-   <label>这组照片的说明 <span class="field-hint">填写一次，每张都能单独修改</span><textarea data-group-field="alt" maxlength="240" rows="2" placeholder="这组照片里有什么，或你想记下的一句话"></textarea></label>
-   <details class="batch-group-more"><summary>更多设置</summary><div class="batch-group-extra"><label>拍摄日期 <span class="field-hint">选填，不会自动补日期</span><input type="date" data-group-field="capturedAt" /></label><label>相纸白边展示<select data-group-field="frameDisplay"><option value="information">照片说明</option><option value="date">拍摄日期</option><option value="description">物品描述（使用说明文字）</option></select></label></div><p>日期和白边样式统一应用；单张例外可以点开照片修改。标题、地点、标签和首页选图仍在单张的更多信息中。</p></details>
-   <p class="batch-group-note">整组信息自动保存到私有草稿，已单独修改的内容会保留。</p>
+   <label>相册名称<input data-batch-album-name data-group-field="series" maxlength="120" placeholder="给这一组起个名字" /></label>
+   <label>整组说明<textarea data-group-field="alt" maxlength="240" rows="2" placeholder="这组照片里有什么，或你想记下的一句话"></textarea></label>
+   <div class="batch-group-extra"><label>地点（选填）<input data-group-field="location" maxlength="160" placeholder="例如：金沙公园" /></label><label>拍摄日期（选填）<input type="date" data-group-field="capturedAt" /></label></div>
+   <details class="batch-group-more"><summary>更多设置</summary><div class="batch-group-extra"><label>相纸白边展示<select data-group-field="frameDisplay"><option value="information">照片说明</option><option value="date">拍摄日期</option><option value="description">物品描述（使用说明文字）</option></select></label></div></details>
+   <p data-group-mixed hidden>这组原有信息不完全相同。修改某一项时，会统一应用到本组；未修改的项目保持原样。</p>
+   <datalist id="photo-album-names"></datalist>
+   <p class="batch-group-note">修改会自动保存到草稿，单张说明会保留。准备好后再发布更新。</p>
   </section>
   <section class="photo-publications" data-photo-publications hidden aria-labelledby="photo-publications-title">
    <h2 id="photo-publications-title">发布进度</h2><p>照片提交后，会依次检查、合并，再更新两站。这里会显示卡在哪一步。</p><div data-photo-publication-list></div>

@@ -46,7 +46,7 @@
 }
 
 .images-kicker {
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .images-page-title,
@@ -58,7 +58,7 @@
 }
 
 .images-page-title {
-  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-size: clamp(1.8rem, 2.8vw, 2.65rem);
   line-height: 1.05;
 }
 
@@ -70,9 +70,9 @@
 }
 
 .images-page-lead {
-  margin-top: 18px;
-  max-width: 28rem;
-  font-size: 1.02rem;
+  margin-top: 12px;
+  max-width: 34rem;
+  font-size: 0.9rem;
   line-height: 1.7;
 }
 
@@ -479,3 +479,7 @@
     transition: none;
   }
 }
+
+/* Keep the introduction modest so the albums lead the gallery. */
+@media (min-width: 768px) { .images-page { padding-top: 124px; } }
+.images-page > .photo-albums .album-groups { margin-top: 36px; }
