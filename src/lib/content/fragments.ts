@@ -10,5 +10,6 @@ export async function getPublishedFragments(): Promise<CollectionEntry<'fragment
   const entries = await getCollection('fragments');
   return entries
     .filter((entry) => entry.data.status === 'published')
-    .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+    .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
+      || a.data.slug.localeCompare(b.data.slug));
 }

@@ -5,7 +5,7 @@ status: published
 tags:
   - AI
 homepage:
-  show: true
+  show: false
   order: 1
 ---
 

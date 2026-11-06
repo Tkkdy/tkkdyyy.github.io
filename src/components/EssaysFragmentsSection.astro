@@ -40,11 +40,11 @@ const { essays, fragments } = Astro.props;
       <div class="fragments-col">
         <div class="section-header fragments-header">
           <span>Fragments</span>
-          <span>碎片</span>
+          <a href={withBase('fragments/')}>全部碎片 →</a>
         </div>
 
         <div class="fragment-stack">
-          {fragments.slice(0, 3).map((item) => <a class="fragment-item" href={withBase('fragments/')}>
+          {fragments.slice(0, 3).map((item) => <a class="fragment-item" href={withBase(`fragments/#${item.data.slug}`)}>
             <div class="fragment-date">{formatDate(item.data.publishedAt)}</div>
             <div class="fragment-text" set:html={renderMarkdownBody(item.body ?? '')} />
           </a>)}
