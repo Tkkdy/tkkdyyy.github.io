@@ -19,7 +19,8 @@ export function initializeWindows() {
       const run = ++generation;
       if (!photo) { root.hidden = true; greeting(); return; }
       button.disabled = true;
-      const next = new Image(); next.srcset = photo.srcset; next.sizes = image.sizes; next.src = photo.src;
+      // Set sizes before srcset so the preload starts with the final responsive candidate.
+      const next = new Image(); next.sizes = image.sizes; next.srcset = photo.srcset; next.src = photo.src;
       try { await next.decode(); } catch {
         if (run !== generation) return;
         bad.add(photo.id);
@@ -41,7 +42,10 @@ export function initializeWindows() {
     image.addEventListener('error', () => { if (current) bad.add(current); void show(choosePhoto(pool.filter(p => !bad.has(p.id)), context(), current)); });
     button.addEventListener('click', () => void show(choosePhoto(pool.filter(p => !bad.has(p.id)), context(), current)));
     let saved = ''; try { saved = sessionStorage.getItem(STORAGE_KEY) || ''; } catch { /* Storage can be denied. */ }
-    void show(pool.find(p => p.id === saved) || choosePhoto(pool, context()));
+    // Finish the server-rendered image request before changing its source.
+    // Otherwise first-visit random selection can abort an in-flight image load.
+    void image.decode().catch(() => undefined).then(() =>
+      show(pool.find(p => p.id === saved) || choosePhoto(pool, context())));
     // Refresh only the greeting across midnight/05:00; never rotate a photo automatically.
     let timer = window.setInterval(greeting, 15000);
     document.addEventListener('visibilitychange', greeting);
