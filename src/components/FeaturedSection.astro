@@ -7,11 +7,15 @@ import { formatDate } from '../lib/content/homepage';
 
 interface Props {
   article: CollectionEntry<'articles'> | CollectionEntry<'essays'>;
+  image?: CollectionEntry<'images'>;
 }
 
-const { article } = Astro.props;
+const { article, image } = Astro.props;
 const { data } = article;
 const section = article.collection;
+const cover = data.cover ?? image?.data.image;
+const coverAlt = data.coverAlt ?? image?.data.alt ?? '';
+
 const summary = "description" in data ? data.description : data.summary;
 ---
 <section class="hero">
@@ -44,7 +48,7 @@ const summary = "description" in data ? data.description : data.summary;
       </div>
 
       <a class="featured-card group" href={withBase(`${section}/${data.slug}/`)}>
-        {data.cover && <div class="featured-media"><img class="home-cover" src={withBase(data.cover)} alt={data.coverAlt ?? ''} fetchpriority="high" /></div>}
+        {cover && <div class="featured-media"><img class="home-cover" src={withBase(cover)} alt={coverAlt} fetchpriority="high" /></div>}
         <div class="featured-body">
           <div class="featured-meta">
             <span class="featured-date">{formatDate(data.publishedAt)}</span>
