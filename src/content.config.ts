@@ -203,6 +203,8 @@ const images = defineCollection({
     location: z.string().optional(),
     tags: z.array(z.string()).optional(),
     series: z.string().trim().min(1).max(120).optional(),
+    seriesDescription: z.string().trim().max(240).optional(),
+    showDetails: z.boolean().optional(),
     albumCover: z.boolean().optional(),
     frameDisplay: z.enum(['information', 'date', 'description']).optional(),
     frameDescription: z.string().max(240).optional(),

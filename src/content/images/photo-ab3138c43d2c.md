@@ -4,7 +4,7 @@ image: /uploads/photo-photo-ab3138c43d2c-1d810ef245f9.png
 publishedAt: 2026-11-05
 status: published
 window:
-  enabled: true
+  enabled: false
   timeOfDay:
     - daytime
   seasons:

@@ -4,7 +4,7 @@ image: /uploads/photo-photo-de30e799b11e-661184340d70.png
 publishedAt: 2026-11-05
 status: published
 window:
-  enabled: true
+  enabled: false
   timeOfDay:
     - daytime
   seasons:

@@ -20,3 +20,11 @@ body.images-page-body{--color-canvas:#f6f3f0;background-color:var(--color-canvas
  .album-group-heading{gap:6px 16px}
  .album-group-heading h2{font-size:17px}
 }
+
+.album-group-description{margin:-8px 0 12px;color:var(--color-ink-soft);font:14px/1.8 var(--font-serif)}
+
+/* Hidden stack cards must not widen the page for large albums. */
+.album-group:not(.is-open) .album-paper[data-beyond-stack]{display:none}
+
+
+.album-viewer-paper figcaption{flex-direction:column;gap:3px}
