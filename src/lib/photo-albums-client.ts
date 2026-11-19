@@ -1,6 +1,6 @@
 import YAML from 'yaml';
 import {frameText,groupPhotoAlbums} from './photo-albums.mjs';
-type Photo={id:string;image:string;alt:string;title?:string;caption?:string;capturedAt?:string|Date;series?:string;albumCover?:boolean;frameDisplay?:string;frameDescription?:string;orientation?:string;hasFile?:boolean;href?:string};
+type Photo={id:string;image:string;alt:string;title?:string;caption?:string;capturedAt?:string|Date;series?:string;seriesDescription?:string;location?:string;showDetails?:boolean;albumCover?:boolean;frameDisplay?:string;frameDescription?:string;orientation?:string;hasFile?:boolean;href?:string};
 type Album={key:string;title:string;photos:Photo[]};
 const safeImage=(src:string)=>{if(!src)return '';if(/^data:image\/(?:webp|png|jpeg);base64,/.test(src))return src;try{const url=new URL(src,location.origin);if((url.protocol==='https:'||url.origin===location.origin)&&!url.username&&!url.password)return url.href;}catch{}return '';};
 export async function initializePhotoAlbums(root:HTMLElement){
@@ -15,7 +15,7 @@ export async function initializePhotoAlbums(root:HTMLElement){
  function showPhoto(direction=0){
   if(!active)return;
   viewerAnimations.splice(0).forEach(a=>a.cancel());
-  const photo=active.photos[index];viewerImage.replaceChildren(imageNode(photo));viewerCaption.textContent=frameText(photo);viewerTitle.textContent=active.title;count.textContent=`${String(index+1).padStart(2,'0')} / ${String(active.photos.length).padStart(2,'0')}`;prev.disabled=index===0;next.disabled=index===active.photos.length-1;
+  const photo=active.photos[index];viewerImage.replaceChildren(imageNode(photo));const label=frameText(photo),detail=photo.showDetails?String(photo.caption||'').trim():'',place=photo.showDetails?String(photo.location||'').trim():'';viewerCaption.replaceChildren();for(const value of [label,detail!==label?detail:'',place]){if(value){const line=document.createElement('span');line.textContent=value;viewerCaption.append(line);}}viewerTitle.textContent=active.title;count.textContent=`${String(index+1).padStart(2,'0')} / ${String(active.photos.length).padStart(2,'0')}`;prev.disabled=index===0;next.disabled=index===active.photos.length-1;
   viewerAnimations.push(animate(paper,[{opacity:direction ? .25 : 0,transform:`translate(${direction*18}px,${direction?0:14}px) scale(${direction ? .994 : .965})`},{opacity:1,transform:'translate(0,0) scale(1)'}],direction?250:330));
  }
  function open(album:Album,photoIndex:number,button:HTMLElement){active=album;index=photoIndex;returnFocus=button;closing=false;closeGeneration++;if(!dialog.open)dialog.showModal();document.documentElement.classList.add('album-dialog-open');showPhoto();dialog.querySelector<HTMLButtonElement>('[data-viewer-close]')!.focus({preventScroll:true});}
@@ -38,7 +38,7 @@ export async function initializePhotoAlbums(root:HTMLElement){
     button.style.cssText=`--stack-x:${offset}px;--stack-y:${i===0?5:-8-i*4}px;--stack-r:${rotation}deg;--stack-z:${20-i};--spread-y:${[0,18,-5,12,-9,16][i%6]}px;--spread-r:${[-2,2.6,-1.4,2,-2.7,1.2][i%6]}deg`;
     const surface=document.createElement('span');surface.className='album-photo-surface'+(photo.orientation==='portrait'?' is-portrait':photo.orientation==='square'?' is-square':'');surface.append(imageNode(photo));const caption=document.createElement('span');caption.className='album-paper-caption';const text=document.createElement('span');text.textContent=frameText(photo);caption.append(text);button.append(surface,caption);stage.append(button);cards.push(button);
    }
-   const toggle=document.createElement('button');toggle.type='button';toggle.className='album-toggle';toggle.dataset.albumToggle='';toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls',stage.id);const label=document.createElement('span');label.textContent='展开这一组';const arrow=document.createElement('span');arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');toggle.append(label,arrow);if(album.photos.length>1)heading.insertBefore(toggle,total);article.append(heading,stage);groupsNode.append(article);
+   const toggle=document.createElement('button');toggle.type='button';toggle.className='album-toggle';toggle.dataset.albumToggle='';toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls',stage.id);const label=document.createElement('span');label.textContent='展开这一组';const arrow=document.createElement('span');arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');toggle.append(label,arrow);if(album.photos.length>1)heading.insertBefore(toggle,total);article.append(heading);const description=album.photos.find(photo=>photo.seriesDescription)?.seriesDescription;if(description){const note=document.createElement('p');note.className='album-group-description';note.textContent=description;article.append(note);}article.append(stage);groupsNode.append(article);
    let running:Animation[]=[],spreadGeneration=0;
    function spread(expanded:boolean){
     const generation=++spreadGeneration;const before=cards.map(card=>card.getBoundingClientRect()),height=stage.getBoundingClientRect().height;
