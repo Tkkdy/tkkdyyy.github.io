@@ -1,0 +1,11 @@
+header small{display:block;color:#b8c1d3;margin-top:5px;max-width:85vw}header{max-width:72vw}output{font-size:11px;text-align:right;max-width:25vw}nav{gap:8px;max-width:94vw}button:focus-visible,input:focus-visible{outline:2px solid #f4deaf;outline-offset:3px}label{white-space:nowrap}@media(max-width:650px){header{max-width:94vw}header strong{font-size:18px}header small{font-size:11px}output{top:133px;max-width:94vw;text-align:left}nav{gap:6px}button{padding:4px 7px}}
+
+body::before{display:none}
+
+.compare-link{position:fixed;right:24px;bottom:24px;color:#ead9f3;text-underline-offset:5px;z-index:2}
+a:focus-visible{outline:2px solid #f4deaf;outline-offset:5px}button:hover{background:#23334c}::selection{background:#655275;color:#fff4da}
+.journey{overflow:auto}.journey-track{height:340vh;pointer-events:none}.journey canvas{touch-action:pan-y}.journey nav{display:none}.journey-stops{position:fixed;bottom:24px;left:24px;display:flex;gap:10px;z-index:2}
+#journey-caption{position:fixed;left:6vw;top:38vh;max-width:20ch;font:clamp(18px,2.4vw,32px)/1.7 Georgia,'Microsoft YaHei',serif;color:#eee2f1;pointer-events:none}
+@media(max-width:650px){.compare-link{right:14px;bottom:190px;font-size:12px}.journey .compare-link{bottom:70px}.journey-stops{left:14px;bottom:20px}#journey-caption{left:24px;top:24vh;max-width:11ch;font-size:20px}}
+
+#journey-caption{z-index:1}.journey #metrics{display:none}

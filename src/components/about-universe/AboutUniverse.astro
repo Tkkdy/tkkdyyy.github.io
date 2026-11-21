@@ -1,0 +1,99 @@
+---
+import MeadowChapter from './MeadowChapter.astro';
+import { withBase } from '../../lib/site-url';
+import { celestialNodes, distantBodies, skyWhispers } from '../../lib/about-universe/entities';
+import backgrounds from '../../lib/about-universe/backgrounds.json';
+const whispers = [...skyWhispers, ...distantBodies.map(body=>({...body, kind:'body'}))];
+---
+<section class="universe-journey" data-universe data-sky={withBase(backgrounds.hero.full)} data-sky-preview={withBase(backgrounds.hero.preview)} data-sky-fallback={withBase(backgrounds.hero.fallback)} data-sky-detail-src={withBase(backgrounds.deep.full)} data-sky-detail-preview={withBase(backgrounds.deep.preview)} data-sky-detail-fallback={withBase(backgrounds.deep.fallback)} data-inner-sky={withBase('about-universe/sky-painted-inner-20261113.webp')} data-inner-sky-small={withBase('about-universe/sky-painted-inner-20261113-1000.webp')} data-orbit-art={withBase('about-universe/orbit-surface.webp')} data-moon={withBase('about-universe/moon.png')} data-cloud={withBase('about-universe/cloud.webp')} aria-label="About：一小片宇宙">
+  <script is:inline>
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches && location.hash!=='#meadow'){
+      document.currentScript.parentElement.setAttribute('data-staged','');
+    }
+  </script>
+  <div class="universe-stage">
+    <div class="universe-art" aria-hidden="true">
+      <picture><source media="(min-width: 901px)" srcset={withBase(backgrounds.hero.full)} /><img class="universe-sky" src={withBase(backgrounds.hero.preview)} width={backgrounds.output.width} height={backgrounds.output.height} alt="" fetchpriority="high" /></picture>
+      <img data-entry-deep alt="" decoding="async" />
+      <img class="universe-static-moon" src={withBase('about-universe/moon.png')} width="256" height="256" alt="" />
+      <svg class="universe-static-constellation" viewBox="0 0 260 120">
+        <path d="M15 28 67 78 117 40 166 88 224 16" fill="none" stroke="#e5d1b4" stroke-opacity=".35" stroke-width=".8" />
+        {[ [15,28], [67,78], [117,40], [166,88], [224,16] ].map(([cx,cy]) => <circle cx={cx} cy={cy} r="1.8" fill="#ffebc8" />)}
+      </svg>
+      <img data-entry-inner alt="" decoding="async" />
+      <div data-entry-orbit hidden style={`--orbit-image:url("${withBase('about-universe/entry-orbit.webp')}")`}></div>
+    </div>
+    <div class="universe-canvas" data-universe-canvas aria-hidden="true"></div>
+    <div class="universe-vignette" aria-hidden="true"></div>
+    <div class="universe-copy">
+      <h1 class="universe-title" data-entry-copy>About</h1>
+      <p class="universe-subtitle" aria-label="My website and me" data-entry-copy><span data-word="website">My website</span><span data-word="and"> and </span><span data-word="me">me</span></p>
+      <span class="universe-prefix" data-prefix="me" aria-hidden="true">About</span>
+      <span class="universe-prefix" data-prefix="website" aria-hidden="true">About</span>
+      <div class="universe-chapter-caption" data-caption="me"><h2 class="universe-sr-only">About Me</h2><p>一些经历，一些好奇，<br class="mobile-break" />和仍在继续的故事。</p></div>
+      <div class="universe-chapter-caption" data-caption="website"><h2 class="universe-sr-only">About My Website</h2><p>把想法写下，把日子留住。</p></div>
+    </div>
+    <a class="universe-scroll" href="#universe-chapters" data-scroll-cue data-entry-copy><span class="universe-sr-only">向下滚动，走进深空</span><i aria-hidden="true"></i></a>
+    <aside class="universe-nebula-note" data-nebula-note style={`--whisper-cloud:url("${withBase('about-universe/cloud.webp')}")`}>
+      <button type="button" aria-expanded="false" aria-controls="nebula-copy" aria-label="阅读星云里的几句话"><span>星云里的几句话</span></button>
+      <div id="nebula-copy" class="universe-nebula-copy" data-nebula-copy>
+        <p>探索技术与表达的交叉点。<br />这里安放长文、项目，<br />与一闪而过的念头。</p>
+        <p>把想法写下，把日子留住。</p>
+      </div>
+    </aside>
+    <div class="universe-nodes" data-pagefind-ignore>
+      {celestialNodes.map(node => <button class="universe-node" data-node={node.id} data-planet-src={withBase(node.asset)} style={`--planet-art:url("${withBase(node.asset)}")`} type="button" aria-haspopup="dialog" aria-controls={node.kind === 'reading' ? 'universe-reading' : 'universe-story'} aria-label={node.title}><span>{node.label}</span><small>走近一点 ↗</small></button>)}
+    </div>
+    <div class="universe-whispers" data-pagefind-ignore>
+      {whispers.map(spot => <div class="universe-whisper" data-whisper={spot.id} data-kind={spot.kind} data-ring={'ring' in spot && spot.ring ? 'true' : 'false'}>
+        <button type="button" aria-label={`阅读${spot.title}`} aria-expanded="false" aria-controls={`whisper-${spot.id}`}></button>
+        <div class="universe-whisper-copy" id={`whisper-${spot.id}`} role="note"><p>{spot.title}</p><p>{spot.text}</p></div>
+      </div>)}
+    </div>
+    <a class="universe-deeper-cue" href="#universe-inner" data-deeper-cue>沿着银河，继续深入 <span aria-hidden="true">↓</span></a>
+    <section class="universe-inner-chapter" id="universe-inner" data-inner-chapter aria-labelledby="inner-title">
+      <div class="universe-inner-static" aria-hidden="true" style={`--inner-static:url("${withBase('about-universe/sky-painted-inner-20261113-1000.webp')}")`}></div>
+      <div class="universe-orbit-static" aria-hidden="true" style={`background-image:url("${withBase('about-universe/planet-close.png')}")`}></div>
+      <noscript><style>.universe-inner-static,.universe-orbit-static{display:block!important}</style></noscript>
+      <div class="universe-inner-copy">
+        <h2 id="inner-title">银河更深处</h2>
+        <p>越过熟悉的光，<br />还有一些远方，正在慢慢展开。</p>
+        <a href="#meadow">抵达暮色草坡 ↓</a><br />
+        <a href="#universe-chapters" data-return-chapters>回到银河 <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+    <div class="universe-utilities" data-pagefind-ignore>
+      <a href="#about-music" aria-label="前往音乐播放器">♫ <span>听一会儿</span></a>
+      <button type="button" data-motion-toggle aria-pressed="false" hidden>暂停星空</button>
+    </div>
+  </div>
+  <div data-earlier-worlds aria-hidden="true"></div>
+  <span id="meadow-flight" aria-hidden="true"></span>
+  <span id="meadow" aria-hidden="true"></span>
+  <MeadowChapter />
+  <div id="universe-chapters" class="universe-destination" aria-hidden="true"></div>
+</section>
+<dialog class="universe-dialog universe-reading" id="universe-reading" aria-labelledby="reading-title">
+  <button class="universe-dialog-close" type="button" data-dialog-close aria-label="关闭文字，返回星空">关闭 <span aria-hidden="true">×</span></button>
+  <div class="universe-reading-copy">
+    <p class="universe-dialog-kicker">音乐星球</p>
+    <h2 id="reading-title">让旋律，<br />在这里停一会儿。</h2>
+    <p>琴键、弦音，与夜色里轻轻回响的片刻。<br />留一点时间，听一会儿。</p>
+    <a class="universe-content-link" href="#about-music">听一会儿 <span aria-hidden="true">↗</span></a>
+  </div>
+  <img class="universe-static-planet" src={withBase(celestialNodes[0].asset)} width="1254" height="1254" alt="绘本里的音乐星球：钢琴、大提琴与花间小屋" loading="lazy" />
+</dialog>
+<dialog class="universe-dialog universe-story" id="universe-story" aria-labelledby="story-title">
+  <button class="universe-dialog-close" type="button" data-dialog-close aria-label="离开故事，返回原来的星空">返回星空 <span aria-hidden="true">×</span></button>
+  <div class="universe-story-copy">
+    <p class="universe-dialog-kicker">摄影星球</p>
+    <h2 id="story-title">把光，<br />留在经过的地方。</h2>
+    <p>一面湖，一扇取景窗。<br />沿途看见的片刻，在这里慢慢展开。</p>
+    <a class="universe-content-link" href={withBase('images/')}>看看影像 <span aria-hidden="true">↗</span></a>
+  </div>
+  <img class="universe-static-planet" src={withBase(celestialNodes[1].asset)} width="1254" height="1254" alt="绘本里的摄影星球：相机、湖水与取景窗" loading="lazy" />
+</dialog>
+<script>
+  import { mountAboutUniverse } from '../../lib/about-universe/bootstrap';
+  mountAboutUniverse();
+</script>

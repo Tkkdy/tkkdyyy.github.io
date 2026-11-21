@@ -2,6 +2,7 @@
 import { siteSettings, musicSourceAvailable } from '../lib/content/site-settings';
 import { withBase } from '../lib/site-url';
 import '../styles/flavor.css';
+const { autoStart = true } = Astro.props;
 const { music } = siteSettings;
 const directAudio = /\.mp3(?:[?#]|$)/i.test(music.source);
 ---
@@ -10,7 +11,7 @@ const directAudio = /\.mp3(?:[?#]|$)/i.test(music.source);
   // If the enhanced player fails to load, restore the native card instead of hiding it forever.
   window.setTimeout(() => document.documentElement.classList.remove('music-waits-for-audio'), 20000);
 </script>}
-{music.title && <section class="music-card" aria-labelledby="music-title" data-music-card data-await-audio={musicSourceAvailable && directAudio ? 'true' : undefined} data-state="paused">
+{music.title && <section class="music-card" aria-labelledby="music-title" data-music-card data-music-autostart={String(autoStart)} data-await-audio={musicSourceAvailable && directAudio ? 'true' : undefined} data-state="paused">
   <div class="music-heading">
     {musicSourceAvailable && directAudio && <button class="music-play" type="button" aria-label="播放" aria-pressed="false" data-music-toggle hidden>
       <svg class="music-icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
@@ -19,7 +20,7 @@ const directAudio = /\.mp3(?:[?#]|$)/i.test(music.source);
     <h2 id="music-title">{music.title}</h2>
   </div>
   {musicSourceAvailable && (directAudio ? <>
-    <audio controls preload="auto" aria-label={`聆听 ${music.title}`} data-music><source src={withBase(music.source)} type="audio/mpeg" /></audio>
+    <audio controls preload={autoStart ? 'auto' : 'none'} aria-label={`聆听 ${music.title}`} data-music><source src={withBase(music.source)} type="audio/mpeg" /></audio>
     <div class="music-controls" data-music-controls hidden>
       <div class="music-progress">
         <input class="music-range" type="range" min="0" max="100" step="0.1" value="0" aria-label="播放进度" aria-valuetext="0:00 / --:--" data-music-seek disabled />

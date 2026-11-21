@@ -4,15 +4,18 @@
 // 内容全部来自项目中已有的公开信息（PRODUCT.md / 首页与页脚文案），
 // 只使用公开身份 tkkdy，不虚构任何个人信息。
 // 当前无真实公开联系方式 URL，因此不显示联系方式区块。
+import AboutUniverse from '../components/about-universe/AboutUniverse.astro';
 import MusicCard from '../components/MusicCard.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SeoHead from '../components/SeoHead.astro';
 import { withBase } from '../lib/site-url';
+import backgrounds from '../lib/about-universe/backgrounds.json';
 
 import '../styles/tokens.css';
 import '../styles/global.css';
 import '../styles/about.css';
+import '../styles/about-universe.css';
 ---
 
 <!doctype html>
@@ -21,7 +24,22 @@ import '../styles/about.css';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <SeoHead title="关于 — tkkdy" />
-
+    <meta name="theme-color" content="#070a1b" />
+    <link rel="preload" as="image" href={withBase(backgrounds.hero.full)} media="(min-width: 901px)" />
+    <link rel="preload" as="image" href={withBase(backgrounds.hero.preview)} media="(max-width: 900px)" />
+    <script is:inline>
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (location.hash === '#meadow') document.documentElement.classList.add('meadow-arrival');
+        else if (!location.hash && performance.getEntriesByType('navigation')[0]?.type !== 'back_forward') {
+          document.documentElement.classList.add('universe-boot');
+          setTimeout(() => document.documentElement.classList.remove('universe-boot'), 7000);
+        }
+      }
+    </script>
+    <style is:inline>
+      html.universe-boot:not(:has([data-enhanced="true"])) .universe-curtain{display:none}
+      @media(prefers-reduced-motion:no-preference){.meadow-arrival .universe-journey:not([data-renderer="static"]){height:890svh}}
+    </style>
     <!--
       字体：与 v0.2.6 原型一致，临时沿用 Google Fonts 在线加载。
       未下载或提交任何字体文件；后续如需自托管再另行决策。
@@ -30,22 +48,23 @@ import '../styles/about.css';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500&family=Noto+Serif+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
+      rel="stylesheet" media="print" onload="this.media='all'"
     />
   </head>
-  <body>
+  <body class="about-universe-page dark-section">
     <Header />
     <main data-pagefind-body>
       <meta name="pagefind-meta" data-pagefind-meta="title: 关于" />
       <meta name="pagefind-meta" data-pagefind-meta="type: 关于" />
-      <section class="about-page">
-        <aside class="about-music" aria-label="音乐播放器"><MusicCard /></aside>
+      <AboutUniverse />
+      <section id="about-text" class="about-page" aria-label="关于这个网站">
+        <aside class="about-music" id="about-music" aria-label="音乐播放器"><MusicCard autoStart={false} /></aside>
         <header class="about-page-header">
           <div class="section-header">
             <span>About</span>
             <span>关于</span>
           </div>
-          <h1 class="about-page-title">关于</h1>
+          <h2 class="about-page-title">关于这里</h2>
         </header>
 
         <div class="about-body">
@@ -89,5 +108,6 @@ import '../styles/about.css';
       </section>
     </main>
     <Footer />
+    <div class="universe-curtain" data-universe-curtain aria-hidden="true"></div>
   </body>
 </html>

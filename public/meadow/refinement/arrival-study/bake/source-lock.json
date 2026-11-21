@@ -1,0 +1,23 @@
+{
+  "id": {
+    "variant": "D",
+    "source": "../coast/landing/shoulder.js",
+    "sha256": "042ee90b4ace8d42975f168695c11a5ded0393dafc7e7b4e2a1b8a2262ff6f88",
+    "dependencies": {
+      "../coast/landing/shoulder.js": "042ee90b4ace8d42975f168695c11a5ded0393dafc7e7b4e2a1b8a2262ff6f88",
+      "../../../shared/validate-contract.js": "81a3eac9d0965cae57284829f7323384fc79401ab6f9fb44dc56b6515ba4631f",
+      "../../provider.js": "05c9ffd963f750a225ecc749d313722367097c8f577ea3153ccd03df0a0861ee",
+      "../../../modules/planet-terrain/config.js": "2c8bb4404e869a71b025e7d70ad3be3ff1de2af957d6aebffa3181fe265443bd",
+      "../../visual-r9/a-structure/sampler.js": "f912f431ab8cd2c59934fb3a98814b54aa3cc9a88effc6fb90d760352d43a1d3",
+      "../../directed-lc/composition/shoulder-c2.js": "5aff4238805700dbf6d25fab2d18cfa4c72581fd39d13121970ea610be2beb8f"
+    }
+  },
+  "sourceLF": {
+    "../coast/landing/shoulder.js": "a59b250ae2e0e8fadcb737157d94e77b6964103a2c0c9ea4db4f2b251e3a9796",
+    "../../../shared/validate-contract.js": "01f6a91ff9e8b7d8a61788f51771b40cd8c430c4b6050d897bea6b8d13f11a6a",
+    "../../provider.js": "f4dbb861c51fdee08404d32d7dbb7641146e7792bca9c648082755183692ec48",
+    "../../../modules/planet-terrain/config.js": "0e67ed843ba5adfc5531b096af31a5d7ec0ce0d6418491608e391fa50c406cea",
+    "../../visual-r9/a-structure/sampler.js": "f3e861208ec983b5a0997de68dfbfaf548a3e7b1b61d6c43e21bd5591cfef050",
+    "../../directed-lc/composition/shoulder-c2.js": "6b02e29b30f6bb3f9f10726af473b1cd40ccbb93d0e46e1c759ad600e2ac8f31"
+  }
+}

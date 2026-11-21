@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<defs>
+ <radialGradient id="gold" cx="28%" cy="65%" r="90%"><stop stop-color="#fff0c9"/><stop offset=".52" stop-color="#e9c190"/><stop offset="1" stop-color="#ae80a0"/></radialGradient>
+ <mask id="crescent"><circle cx="127" cy="129" r="78" fill="white"/><circle cx="159" cy="96" r="78" fill="black"/></mask>
+ <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="9"/></filter>
+ <filter id="grain" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".2" numOctaves="3" seed="17" result="noise"/><feComposite in="noise" in2="SourceGraphic" operator="in" result="texture"/><feBlend in="SourceGraphic" in2="texture" mode="soft-light"/></filter>
+</defs>
+<g mask="url(#crescent)"><circle cx="127" cy="129" r="78" fill="#ffdfb8" filter="url(#glow)" opacity=".75"/><circle cx="127" cy="129" r="78" fill="url(#gold)" filter="url(#grain)"/></g>
+<path d="M72 74 A78 78 0 0 0 181 185" fill="none" stroke="#fff0cf" stroke-opacity=".65" stroke-width=".7"/>
+</svg>
