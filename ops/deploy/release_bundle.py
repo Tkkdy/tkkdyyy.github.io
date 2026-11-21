@@ -3,7 +3,20 @@ import hashlib,io,json,re,stat,urllib.parse,zipfile
 from html.parser import HTMLParser
 from pathlib import Path,PurePosixPath
 from indexing_profile import indexing_profile
-LIMIT=50_000_000
+BASE_LIMIT=50_000_000
+LIMIT=150_000_000
+MEADOW_BINARIES={
+    'meadow/prototype-astra-world/blender-study/art/storybook-study.glb.bin': (4101950, '4a6ed93848dbffb145aa1ae378205d3e6a3000598f55e8f35cae81dab64ada8a'),
+    'meadow/refinement/arrival-study/bake/D-desktop.bin': (9654033, '7f6ee297b6f7f1aacf606d54c212feaefb11954ee8f0531f11b9ff522e9500ee'),
+    'meadow/refinement/arrival-study/bake/D-mobile.bin': (6932080, 'ba39adf7bc8d3bc765705b7ea864b1c89e7863a37085a006d313a26f61141a9f'),
+    'meadow/refinement/cache/desktop.bin': (9545095, '1d4dbd2bb580da2d14f07e379d2a614f60228dc0d4e4787d4e50f5a0a6bff7d4'),
+    'meadow/refinement/cache/mobile.bin': (7429023, '0824eca0d9442e3dec2fa9888a8453654910166096468ef716b3dbc9762ef38d'),
+    'meadow/refinement/visual-r3/terrain/baked-desktop.bin': (4759700, '492f347c75bc925684560a6e3e31cced9c9293e087c13b76b6f239b54282142c'),
+    'meadow/refinement/visual-r3/terrain/baked-mobile.bin': (4310492, 'aa54ba5920ff91e0005beffb748750707f45abe476ab9a6e21fadd617cd209ce'),
+    'meadow/refinement/visual-r9/a-structure/baked-desktop.bin': (4602557, '10a2ef0ffd89f4c15e043659671c23d37d5d733cee4d4a72cff12f729d72c3ef'),
+    'meadow/refinement/visual-r9/a-structure/baked-mobile.bin': (4173335, '93ee180c5e95d99f6819783c5c465ce04e0743009f1898f8ad921acd4c2ea30b'),
+}
+SCENE_PREFIXES=('site/meadow/', 'site/about-universe/')
 EXT={'.html','.css','.js','.json','.xml','.txt','.svg','.png','.jpg','.jpeg','.webp','.gif','.ico','.woff','.woff2','.ttf','.webmanifest','.pagefind','.pf_meta','.pf_index','.pf_fragment'}
 def sha(b):return hashlib.sha256(b).hexdigest()
 def require(ok,msg):
@@ -38,7 +51,8 @@ def validate_site(data,site,profile='preview'):
         safe_name(name);p=PurePosixPath(name)
         require(p.parts[0].lower()!='admin' and p.name.lower() not in ('config.yml','config.yaml','package.json','package-lock.json','sveltia.html'),'admin/config exposure')
         approved_audio = name == 'music/angelika-vee-you-are-my-sunshine.mp3' and sha(body) == 'adc173db8379532b145a498b995549f58eea29b97caffe3d31525f331fdd8213'
-        require(p.suffix.lower() in EXT or approved_audio,'nonstatic extension '+name)
+        approved_model = name in MEADOW_BINARIES and (len(body),sha(body)) == MEADOW_BINARIES[name]
+        require(p.suffix.lower() in EXT or approved_audio or approved_model,'nonstatic extension '+name)
         require(not re.search(rb'-----BEGIN (?:[A-Z ]*PRIVATE KEY)|github_pat_[A-Za-z0-9_]{30,}|gh[pousr]_[A-Za-z0-9]{30,}|sk-proj-[A-Za-z0-9_-]{30,}',body),'possible secret '+name)
         if p.suffix!='.html':continue
         h=HTML();h.feed(body.decode())
@@ -73,6 +87,13 @@ def validate_site(data,site,profile='preview'):
     links=[x.text for x in ET.fromstring(data['rss.xml']).iter('link')]
     require(links and all(u and u.startswith(site+'/') for u in links),'invalid RSS')
     return {'files':len(data),'html':sum(n.endswith('.html') for n in data),'sitemapUrls':len(urls)}
+def validate_member_sizes(members):
+    require(sum(i.file_size for i in members)<=LIMIT,'expanded ZIP too large')
+    require(sum(i.file_size for i in members if not i.filename.startswith(SCENE_PREFIXES))<=BASE_LIMIT,'base site too large')
+    for item in members:
+        approved=MEADOW_BINARIES.get(item.filename.removeprefix('site/')) if item.filename.startswith('site/') else None
+        require(item.file_size<=8_000_000 or (approved and item.file_size==approved[0]),'oversized entry '+item.filename)
+
 def load_bundle(raw,digest,site,workflow=None,profile='preview'):
     profile=indexing_profile(profile)
     require(len(raw)<=LIMIT and sha(raw)==digest,'bundle size/hash')
@@ -80,7 +101,7 @@ def load_bundle(raw,digest,site,workflow=None,profile='preview'):
         members=z.infolist();names=[i.filename for i in members]
         require(len(names)==len(set(names)) and len(names)<=5000,'duplicate/excessive entries')
         require(all(not i.is_dir() and not i.flag_bits&1 and not stat.S_ISLNK(i.external_attr>>16) for i in members),'linked/encrypted/directory entry')
-        require(sum(i.file_size for i in members)<=LIMIT and all(i.file_size<=8_000_000 for i in members),'expanded ZIP too large')
+        validate_member_sizes(members)
         require(all(n in ('manifest.json','release.json') or n.startswith('site/') for n in names),'unknown entry')
         for name in names:safe_name(name)
         metadata=json.loads(z.read('release.json'));manifest=json.loads(z.read('manifest.json'))
