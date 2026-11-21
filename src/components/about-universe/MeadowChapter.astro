@@ -1,0 +1,56 @@
+---
+import {withBase} from '../../lib/site-url';
+---
+<section data-meadow data-src={withBase('meadow/refinement/light-studio/scene.html')} aria-labelledby="meadow-title">
+  <template data-passage-art>
+  {['sky','frames'].map(kind=><div class={`passage-${kind}`} aria-hidden="true"><picture>
+    <source media="(max-aspect-ratio:4/5)" srcset={withBase(`meadow/passage-tall-${kind}.webp`)} />
+    <source media="(min-aspect-ratio:19/10)" srcset={withBase(`meadow/passage-wide-${kind}.webp`)} />
+    <img src={withBase(`meadow/passage-desktop-${kind}.webp`)} loading="lazy" decoding="async" alt="" /></picture></div>)}
+  {[34,32,30,28,26,23,20].map(i=>{
+    const key=i===34?'landing':'detail-'+i;
+    return <div class="passage-detail" data-frame={i} aria-hidden="true"><picture>
+      <source media="(max-aspect-ratio:4/5)" srcset={withBase(`meadow/passage-tall-${key}.webp`)} />
+      <source media="(min-aspect-ratio:19/10)" srcset={withBase(`meadow/passage-wide-${key}.webp`)} />
+      <img src={withBase(`meadow/passage-desktop-${key}.webp`)} loading={i===34||i===20?'eager':'lazy'} fetchpriority={i===34?'high':'auto'} decoding="async" alt="" />
+    </picture></div>
+  })}
+  <picture class="meadow-poster" aria-hidden="true"><source media="(max-width:649px)" srcset={withBase('meadow/mobile-poster.webp')} /><img src={withBase('meadow/desktop-poster.webp')} width="1366" height="768" loading="lazy" decoding="async" alt="" /></picture>
+  </template>
+  <noscript><picture><img src={withBase('meadow/desktop-poster.webp')} alt="" loading="lazy" /></picture></noscript>
+  <div class="meadow-viewport"></div><div class="meadow-copy"><h2 id="meadow-title">一颗星球，<br/>慢慢生长</h2><p>夜色、暖光、花与星空。</p><span role="status">正在准备星球…</span></div>
+  <div class="meadow-actions"><button type="button" data-retry hidden>重新载入</button><button type="button" data-flight disabled>沿银河，靠近小屋</button><a href="#about-text">继续阅读 ↓</a></div>
+</section>
+<style>
+ [data-meadow]{position:relative;isolation:isolate;background:#1b2140;color:#faefdf;height:100svh;min-height:380px;overflow:hidden}
+ .meadow-viewport,.meadow-viewport :global(iframe){position:absolute;inset:0;width:100%;height:100%;border:0;color-scheme:dark}
+ [data-meadow] picture,[data-meadow] picture img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+ .passage-detail,.passage-frames,.passage-sky{display:none;position:absolute;inset:0;pointer-events:none;overflow:hidden}
+ [data-meadow][data-passage]{background:transparent}
+ [data-passage]:not([data-ready]) .passage-frames{display:block;transform:scale(var(--tile-scale,1));transform-origin:54% 42%;opacity:var(--planet,0)}
+ [data-meadow] .passage-frames picture{width:700%;height:500%;transform:translate3d(calc(var(--tile-x,0%)/7),calc(var(--tile-y,0%)/5),0)}
+ [data-meadow] .passage-frames img,[data-meadow] .passage-sky img{object-fit:fill}
+ [data-passage]:not([data-ready]) .passage-sky{display:block;opacity:var(--sky,0);transform:var(--sky-transform)}
+ [data-passage] .meadow-poster,[data-ready] .meadow-poster{display:none}
+ [data-passage][data-detail="20"]:not([data-ready]) [data-frame="20"],
+ [data-passage][data-detail="23"]:not([data-ready]) [data-frame="23"],
+ [data-passage][data-detail="26"]:not([data-ready]) [data-frame="26"],
+ [data-passage][data-detail="28"]:not([data-ready]) [data-frame="28"],
+ [data-passage][data-detail="30"]:not([data-ready]) [data-frame="30"],
+ [data-passage][data-detail="32"]:not([data-ready]) [data-frame="32"],
+ [data-passage][data-detail="34"]:not([data-ready]) [data-frame="34"]{display:block;transform:scale(var(--detail-scale));transform-origin:54% 42%}
+ [data-passage][data-detail]:not([data-ready]) .passage-frames{visibility:hidden}
+ [data-landing-ready]:not([data-ready]):not([data-passage]) .passage-sky{display:block;transform:scale(1.10)}
+ [data-landing-ready]:not([data-ready]):not([data-passage]) [data-frame="34"]{display:block;transform:scale(1.16);transform-origin:54% 42%}
+ [data-landing-ready]:not([data-passage]) .meadow-poster{display:none}
+ [data-meadow] .passage-detail img{object-fit:fill}
+ .meadow-viewport{visibility:hidden}
+ [data-meadow][data-ready] .meadow-viewport{visibility:visible}
+ [data-passage][data-ready] .meadow-viewport{opacity:var(--planet,0)}
+ [data-meadow][data-passage] :is(.meadow-copy,.meadow-actions){opacity:var(--copy,0);z-index:2}
+ .meadow-copy,.meadow-actions{position:absolute;left:5.5%;z-index:1}.meadow-copy{top:10%;pointer-events:none}.meadow-copy h2{font:400 clamp(32px,3vw,55px)/1.45 var(--font-serif);margin:0 0 20px}.meadow-copy p{font-size:15px}.meadow-copy span{display:block;font-size:12px;margin-top:10px}
+ .meadow-actions{bottom:5%;display:flex;gap:20px;align-items:center}.meadow-actions :is(a,button){font:inherit;color:inherit;background:#182137b8;border:1px solid #c5bec84d;border-radius:4px;padding:7px 12px;cursor:pointer}.meadow-actions button:disabled{opacity:.55}
+</style>
+<script>
+ import '../../lib/about-universe/meadow-chapter.js';
+</script>

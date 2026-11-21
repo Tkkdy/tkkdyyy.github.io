@@ -1,0 +1,243 @@
+/* About-only scenery. Existing shared navigation, search and music keep their own styles. */
+html:has(.about-universe-page){background:#070a1b;scrollbar-gutter:stable;color-scheme:dark}
+body.about-universe-page{background:#070a1b;color:#f1e7d7}
+.about-universe-page #about-text{content-visibility:auto;contain-intrinsic-block-size:auto 1250px}
+.about-universe-page main{max-width:none;padding:0}
+.about-universe-page .site-header{opacity:1;visibility:visible;translate:0 0;transition:opacity 240ms ease,translate 240ms ease,visibility 0s}
+.about-universe-page .site-header[data-universe-hidden="true"]{opacity:0;visibility:hidden;translate:0 -12px;transition-duration:160ms,160ms,0s;transition-delay:0s,0s,160ms}
+.universe-journey{position:relative;isolation:isolate}
+.universe-stage{position:relative;height:155svh;min-height:1100px;background:#080c20;overflow:clip}
+.universe-art,.universe-canvas,.universe-vignette{position:absolute;inset:0;height:100svh;pointer-events:none}
+.universe-art picture{display:block;width:100%;height:100%}
+.universe-sky{width:100%;height:100%;object-fit:cover}
+.universe-static-moon{position:absolute;left:73%;top:21%;width:100px;transform:rotate(-10deg)}
+.universe-static-constellation{position:absolute;left:15%;top:21%;width:220px;overflow:visible}
+.universe-canvas canvas{display:block;width:100%;height:100%}
+.universe-vignette{background:radial-gradient(ellipse at 50% 46%,transparent 15%,#07081733 100%),linear-gradient(0deg,#080c2045,transparent 35%);z-index:1}
+.universe-copy{position:absolute;inset:0;z-index:2;pointer-events:none;text-align:center;color:#f4e6cc}
+[data-entry-copy]{opacity:calc(var(--entry-opacity,1) * var(--journey-opacity,1))}
+.universe-title{position:absolute;left:50%;top:calc(100svh - clamp(220px,27svh,300px));transform:translateX(-50%);font:italic 400 clamp(56px,5.2vw,82px)/1.12 Georgia,'Times New Roman',serif;letter-spacing:-.045em;text-shadow:0 2px 30px #080b2b60}
+.universe-subtitle{position:absolute;top:calc(100svh - 148px);left:0;right:0;font:400 clamp(24px,1.9vw,29px)/1.35 Georgia,'Times New Roman',serif;letter-spacing:-.025em;white-space:nowrap}
+.universe-subtitle [data-word="and"]{margin-inline:.22em}
+.universe-subtitle span{display:inline-block;will-change:transform}
+.universe-prefix{position:absolute;display:none;line-height:1.35;letter-spacing:-.025em;opacity:0}
+.universe-chapter-caption{position:absolute;top:106svh;left:12%;right:28%;font:400 13px/2 var(--font-serif);letter-spacing:.06em;color:#c3bdcdbf}
+.universe-chapter-caption::before{display:block;content:'About Me';font:400 32px/1.4 Georgia,serif;letter-spacing:-.03em;color:#f4e6cc;margin-bottom:16px}
+.universe-chapter-caption[data-caption="website"]{top:130svh}
+.universe-chapter-caption[data-caption="website"]::before{content:'About My Website'}
+.mobile-break{display:none}
+.universe-scroll{position:absolute;z-index:3;top:calc(100svh - 96px);left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:16px;padding:12px 20px;color:#ead8b2bf;font:400 10px/1.5 var(--font-serif);letter-spacing:.2em}
+.universe-scroll i{display:block;height:42px;width:1px;background:linear-gradient(#e6cda389,#e6cda300);position:relative}
+.universe-scroll i::after{content:"";position:absolute;top:30px;left:-3px;width:7px;height:7px;border-right:1px solid #efdbb8;border-bottom:1px solid #efdbb8;transform:rotate(45deg)}
+.universe-scroll i::before{content:'';position:absolute;width:3px;height:3px;border-radius:50%;background:#f3dbb5;top:0;left:-1px}
+.universe-utilities{position:absolute;top:calc(100svh - 62px);left:38px;right:38px;display:flex;align-items:center;justify-content:space-between;z-index:3;color:#e4d6bf9c;font-size:10px;letter-spacing:.07em;pointer-events:none}
+.universe-utilities>*{pointer-events:auto;min-height:44px;display:inline-flex;align-items:center;gap:9px;padding:8px 0}
+.universe-utilities button[hidden]{display:none}
+.universe-utilities button{font-size:10px;border-bottom:1px solid #e4d6bf30}
+.universe-node{position:absolute;z-index:3;left:78%;top:108svh;transform:translate(-50%,-25px);width:124px;min-height:108px;padding:55px 8px 4px;text-align:center;line-height:1.6;color:#dfc9a9;touch-action:manipulation}
+.universe-node[data-node="quiet-orbit"]{top:132svh}
+.universe-node::before{content:'';display:block;position:absolute;left:50%;top:15px;width:34px;height:34px;transform:translateX(-50%);background:var(--planet-art) center/contain no-repeat}
+.universe-node[data-node="quiet-orbit"]::before{width:44px;height:44px;top:5px}
+.universe-node span{font:400 11px/1.8 var(--font-serif);letter-spacing:.1em}
+.universe-node small{display:block;font:400 8px/1.8 var(--font-sans);letter-spacing:.1em;opacity:.5}
+.universe-node:hover small,.universe-node:focus-visible small{opacity:1}
+.universe-node[hidden]{display:none}
+.universe-destination{position:absolute;bottom:70svh}
+.universe-sr-only{position:absolute!important;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.universe-journey:is([data-enhanced=true],[data-staged]){height:890svh}
+.universe-journey:is([data-enhanced=true],[data-staged]) .universe-stage{position:sticky;top:0;height:100svh;min-height:0}
+.universe-journey[data-enhanced="true"] .universe-art{visibility:hidden}
+.universe-journey:is([data-enhanced=true],[data-staged]) .universe-prefix{display:block}
+.universe-journey:is([data-enhanced=true],[data-staged]) .universe-chapter-caption{top:42%;left:12%;right:22%;opacity:0}
+.universe-journey:is([data-enhanced=true],[data-staged]) .universe-chapter-caption[data-caption="website"]{top:73%}
+.universe-journey:is([data-enhanced=true],[data-staged]) .universe-chapter-caption::before{display:none}
+.universe-journey[data-enhanced="true"] .universe-node::before{display:none}
+.universe-dialog{position:fixed;margin:auto;max-width:calc(100vw - 32px);color:#e7dccd;border:1px solid #d8c6b92b;background:#131422f5;padding:78px 44px 44px;box-shadow:0 30px 100px #0005}
+.universe-dialog::backdrop{background:#02030a65;backdrop-filter:blur(5px)}
+.universe-dialog:not([open]){display:none}
+.universe-dialog-close{position:absolute;top:22px;right:24px;min-height:44px;display:flex;align-items:center;gap:24px;color:#d6cbbb;font-size:11px;letter-spacing:.06em}
+.universe-dialog-close span{font-size:25px;font-weight:200}
+.universe-dialog-kicker{font:400 9px/1.5 var(--font-sans);letter-spacing:.24em;color:#c6ac90;margin-bottom:24px}
+.universe-dialog h2{font:400 clamp(26px,3vw,42px)/1.6 var(--font-serif);letter-spacing:.015em;margin-bottom:28px}
+.universe-dialog p:not(.universe-dialog-kicker){font:400 13px/2.2 var(--font-serif);color:#c6bcc4;margin-bottom:20px}
+.universe-dialog p.universe-placeholder{margin-top:36px;margin-bottom:0;font:400 10px/1.8 var(--font-sans);letter-spacing:.12em;color:#a99d9b}
+.universe-story{width:100vw;max-width:none;height:100dvh;max-height:none;inset:0;padding:0;border:0;background:radial-gradient(ellipse at 72% 70%,#644453,#282039 38%,#0b0a19 80%);box-shadow:none}
+.universe-story::backdrop{background:#0b0a19}
+.universe-story-copy{position:absolute;left:12%;top:30%;right:45%;z-index:1}
+.universe-story h2{font-size:clamp(30px,3.1vw,48px);line-height:1.7}
+body:has([data-renderer="webgl"]) .universe-story{background:transparent}
+body:has([data-renderer="webgl"]) .universe-story::backdrop{background:transparent;backdrop-filter:none}
+.about-universe-page .about-page{--color-ink:#e2d8cb;--color-ink-soft:#bdb7c4;--color-ink-muted:#9892a5;--color-border:#d8cfbb26;--color-accent:#e6caa3;position:relative;max-width:980px;padding:110px 32px 90px}
+.about-universe-page .about-page-header{max-width:624px}
+.about-universe-page .about-page-title{font-size:30px;font-weight:400}
+.about-universe-page .about-lead{font-size:15px}
+.about-universe-page .about-music{position:static;width:auto;max-width:624px;margin:0 auto 80px;scroll-margin-top:110px}
+.about-universe-page .about-music .music-card{background:#1b1c2c;color:#d9c6ae;border:1px solid #dbc9ac1c;border-radius:10px;min-height:210px;padding:28px 32px}
+.about-universe-page .about-music .music-play{background:#292738;color:#d9c6ae;border-color:#9a7e655c;box-shadow:none}
+.about-universe-page .about-music .music-state{color:#c9bba9}
+.about-universe-page .site-footer{border-color:#d8cfbb1f}
+.about-universe-page .site-footer :is(.footer-desc,.footer-copyright,.footer-connect-label){color:#9a94a5}
+.about-universe-page .site-footer :is(.footer-wordmark,.footer-connect a){color:#c8bec9;border-color:#d8cfbb26}
+.about-universe-page .site-footer .footer-wordmark img{filter:invert(1)}
+.about-universe-page :is(.universe-node,.universe-scroll,.universe-utilities a,.universe-utilities button,.universe-dialog button):focus-visible{outline:1px solid #e5c79e;outline-offset:5px}
+.universe-curtain{display:none;position:fixed;inset:0;background:#000;z-index:2147483646;pointer-events:none;--unveil:-24%;mask-image:linear-gradient(135deg,transparent calc(var(--unveil) - 13%),#000 calc(var(--unveil) + 13%))}
+.universe-boot .universe-curtain{display:block}
+@media(max-width:600px){
+  .universe-title{top:calc(100svh - 260px);font-size:60px}
+  .universe-subtitle{top:calc(100svh - 172px);font-size:24px}
+  .universe-static-moon{left:72%;top:20%;width:76px}
+  .universe-static-constellation{left:8%;top:23%;width:108px}
+  .universe-scroll{top:calc(100svh - 106px);font-size:9px}
+  .universe-utilities{left:22px;right:22px;top:calc(100svh - 64px);font-size:9px}
+  .universe-node{width:76px;padding-inline:2px}
+  .universe-node span{font-size:9px;letter-spacing:.03em}
+  .universe-node small{font-size:7px}
+  .universe-journey:is([data-enhanced=true],[data-staged]) .universe-chapter-caption{left:8%;right:23%;top:42%;font-size:11px;line-height:2}
+  .universe-journey:is([data-enhanced=true],[data-staged]) .universe-chapter-caption[data-caption="website"]{top:73%}
+  .mobile-break{display:block}
+  .universe-dialog h2{font-size:26px}
+  .universe-dialog p:not(.universe-dialog-kicker){font-size:12px}
+  .universe-story-copy{left:9%;right:9%;top:20%}
+  .universe-story h2{font-size:30px;line-height:1.7}
+  .about-universe-page .about-page{padding:72px 24px}
+  .about-universe-page .about-music .music-card{padding:26px 20px}
+}
+@media(prefers-reduced-motion:reduce){
+  .about-universe-page .site-header,.about-universe-page .site-header[data-universe-hidden]{transition:none;translate:none}
+  .universe-curtain{display:none!important}
+  .universe-subtitle span{will-change:auto}
+  .about-universe-page .about-music .music-card,.about-universe-page .about-music [data-music-ready] :is(h2,.music-play,.music-controls){animation:none!important}
+}
+
+/* The native modal owns focus; keep the previous scene UI out of the story artwork. */
+body:has(#universe-story[open]) :is(.site-header,.universe-copy,.universe-nodes,.universe-utilities,.universe-scroll){visibility:hidden}
+
+/* The upper-left cloud reveals existing site copy, without a separate panel chrome. */
+.universe-nebula-note{position:absolute;z-index:4;left:7%;top:12svh;width:clamp(210px,22vw,330px);color:#e8dfd2}
+.universe-nebula-note::before{content:'';position:absolute;inset:-28px -35px -35px;background-image:var(--whisper-cloud);background-size:100% 100%;opacity:.10;pointer-events:none;transition:opacity 600ms ease}
+.universe-nebula-note button{position:relative;width:100%;min-height:100px;text-align:left;background:none;border:0;padding:20px 25px;color:#d3c8df;font:400 11px/1.8 var(--font-serif)}
+.universe-nebula-note button span{opacity:.36;transition:opacity 450ms ease}
+.universe-nebula-copy{position:relative;padding:0 25px 24px;font:400 14px/2.2 var(--font-serif);transition:opacity 650ms ease,visibility 650ms;opacity:.92}
+.universe-nebula-copy p+p{margin-top:14px;font-size:12px;color:#cabdd1}
+.universe-nebula-note[data-ready][data-open=false] .universe-nebula-copy{opacity:0;visibility:hidden;pointer-events:none}
+.universe-nebula-note[data-open=true]::before{opacity:.32}
+.universe-nebula-note[data-open=true] button span{opacity:.75}
+.universe-nebula-note button:focus-visible{outline:1px solid #e5c79e;outline-offset:3px}
+.universe-dialog>:not([data-dialog-close]){transition:opacity 450ms ease}
+.universe-dialog[data-approaching=true]>:not([data-dialog-close]){opacity:0}
+body:has([data-renderer=webgl]) .universe-reading::backdrop{background:transparent;backdrop-filter:none}
+body:has(.universe-dialog[open]) :is(.site-header,.universe-copy,.universe-nodes,.universe-utilities,.universe-scroll,.universe-nebula-note){visibility:hidden}
+@media(max-width:600px){
+ .universe-nebula-note{left:1%;top:14svh;width:245px}
+ .universe-nebula-note button{min-height:80px}
+ .universe-nebula-copy{font-size:12px;line-height:2}
+}
+@media(prefers-reduced-motion:reduce){
+ .universe-nebula-note::before,.universe-nebula-note button span,.universe-nebula-copy,.universe-dialog>:not([data-dialog-close]){transition:none}
+}
+
+/* Each content world has its own illustration, including the static fallback. */
+.universe-reading{inset:0;margin:0;width:100vw;max-width:none;height:100dvh;max-height:none;padding:0;border:0;box-shadow:none;overflow-y:auto;background:radial-gradient(ellipse at 72% 70%,#644453,#282039 38%,#0b0a19 80%)}
+.universe-reading-copy{position:absolute;left:9%;top:23%;right:57%;z-index:1}
+.universe-static-planet{position:absolute;right:3%;top:11%;width:min(50vw,84dvh);height:auto;pointer-events:none}
+body:has([data-renderer=webgl]) .universe-static-planet{display:none}
+body:has([data-renderer=webgl]) .universe-reading{background:transparent}
+.universe-content-link{display:inline-flex;align-items:center;gap:24px;min-height:44px;margin-top:8px;border-bottom:1px solid #d9bd965c;color:#ead5b3;font:400 12px/1.8 var(--font-serif);letter-spacing:.08em}
+.universe-content-link:hover{color:#fff0d6;border-bottom-color:#d9bd96}
+.universe-content-link:focus-visible{outline:1px solid #e5c79e;outline-offset:5px}
+@media(max-width:600px){
+ .universe-reading-copy{left:9%;right:9%;top:14%}
+ .universe-static-planet{width:98vw;max-height:50dvh;object-fit:contain;right:-5%;top:auto;bottom:0}
+}
+
+/* The first-frame points and the eventual worlds share the same reachable targets. */
+.universe-node>span{opacity:var(--node-caption,1)}
+.universe-node small{opacity:calc(var(--node-caption,1)*.5)}
+.universe-node[data-distant=true]{width:44px;min-height:44px;padding:0;transform:translate(-50%,-50%)}
+.universe-node[data-distant=true]>span,.universe-node[data-distant=true] small{visibility:hidden}
+.universe-node[data-distant=true]:is(:hover,:focus-visible)>span{position:absolute;top:39px;left:50%;transform:translateX(-50%);white-space:nowrap;visibility:visible;opacity:.8}
+.universe-node::after{content:'';position:absolute;top:7px;left:50%;width:30px;height:30px;transform:translateX(-50%);border-radius:50%;box-shadow:0 0 22px #f0d6ae66;opacity:0;transition:opacity 250ms ease;pointer-events:none}
+.universe-node:is(:hover,:focus-visible)::after{opacity:.8}
+.universe-whispers{position:absolute;inset:0 0 auto;height:100svh;z-index:5;pointer-events:none}
+.universe-whisper{position:absolute;width:44px;height:44px;transform:translate(-50%,-50%);pointer-events:auto}
+.universe-whisper[hidden]{display:none}
+.universe-whisper button{position:absolute;inset:0;width:44px;min-height:44px;border:0;background:none;border-radius:50%;cursor:pointer}
+.universe-whisper button::before{content:'';position:absolute;inset:9px;border:1px solid #e8d6b94a;border-radius:50%;box-shadow:0 0 22px #ebccae36;opacity:0;transition:opacity 250ms ease}
+.universe-whisper[data-open=true] button::before{opacity:.75}
+.universe-whisper button:focus-visible{outline:1px solid #e5c79e;outline-offset:4px}
+.universe-whisper-copy{position:absolute;left:calc(100% + 8px);top:6px;width:min(230px,calc(100vw - 48px));padding:10px 14px;color:#d9cfdd;text-align:left;text-shadow:0 2px 12px #050817;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 280ms ease,visibility 280ms}
+.universe-whisper-copy::before{content:'';position:absolute;inset:-9px -18px;background:radial-gradient(ellipse,#070c22d9,transparent 74%);z-index:-1;pointer-events:none}
+.universe-whisper-copy p:first-child{font:400 11px/1.8 var(--font-serif);letter-spacing:.12em;color:#e7d6b7;margin-bottom:7px}
+.universe-whisper-copy p+p{font:400 12px/2 var(--font-serif);letter-spacing:.03em}
+.universe-whisper[data-open=true] .universe-whisper-copy{opacity:.9;visibility:visible;pointer-events:auto}
+.universe-whisper[data-side=left] .universe-whisper-copy{left:auto;right:calc(100% + 8px)}
+.universe-whisper[data-vertical=above] .universe-whisper-copy{top:auto;bottom:24px}
+.universe-whisper[data-vertical=below] .universe-whisper-copy{top:42px}
+body:has(.universe-dialog[open]) .universe-whispers{visibility:hidden}
+/* Quiet bodies still exist as reading spots when the GPU scene is unavailable. */
+.universe-journey:not([data-renderer=webgl]) .universe-whisper[data-kind=body]::before{content:'';position:absolute;inset:9px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#8c8997,#35374e 55%,#171c35);opacity:.55;pointer-events:none}
+.universe-journey:not([data-renderer=webgl]) .universe-whisper[data-ring=true]::after{content:'';position:absolute;inset:15px 5px;border:1px solid #bda9bc4d;border-radius:50%;transform:rotate(-18deg);pointer-events:none}
+@media(prefers-reduced-motion:reduce){
+ .universe-node::after,.universe-whisper button::before,.universe-whisper-copy{transition:none}
+}
+
+/* Keep the note hoverable while crossing the small gap from its star. */
+.universe-whisper-copy::after{content:'';position:absolute;left:-8px;right:0;top:-44px;bottom:-44px;z-index:-1}
+.universe-whisper[data-side=left] .universe-whisper-copy::after{left:0;right:-8px}
+
+/* A third, continuous chapter beyond the original two-screen approach. */
+.universe-stage{height:255svh}
+.universe-destination{top:100svh;bottom:auto}
+.universe-deeper-cue{position:absolute;left:50%;top:148svh;transform:translateX(-50%);z-index:4;display:flex;align-items:center;gap:18px;min-height:44px;font:400 11px/1.8 var(--font-serif);letter-spacing:.08em;color:#e0cbb2}
+.universe-deeper-cue span{font-size:16px}
+.universe-inner-chapter{position:absolute;inset:160svh 0 auto;height:95svh;z-index:2;overflow:clip;scroll-margin-top:0}
+.universe-inner-static{position:absolute;inset:0;display:none;background:var(--inner-static) center/cover no-repeat;pointer-events:none}
+.universe-journey[data-renderer=static] :is(.universe-inner-static,.universe-orbit-static){display:block}
+.universe-orbit-static{position:absolute;left:-3%;top:36%;width:min(48vw,70svh);aspect-ratio:1;background:center/contain no-repeat;display:none;pointer-events:none}
+.universe-inner-copy{position:absolute;left:57%;right:8%;top:37%;color:#f1e1c7;max-width:30ch}
+.universe-inner-copy h2{font:400 clamp(28px,3vw,42px)/1.5 var(--font-serif);letter-spacing:.04em;margin-bottom:24px}
+.universe-inner-copy p{font:400 13px/2.25 var(--font-serif);letter-spacing:.05em;color:#c5bdce}
+.universe-inner-copy a{display:inline-flex;align-items:center;gap:26px;min-height:44px;margin-top:26px;border-bottom:1px solid #bfa69066;font:400 11px/1.8 var(--font-serif);letter-spacing:.08em;color:#e1c9aa}
+.universe-inner-copy a:hover,.universe-deeper-cue:hover{color:#fff0d9}
+.universe-inner-copy a:focus-visible,.universe-deeper-cue:focus-visible{outline:1px solid #e5c79e;outline-offset:5px}
+.universe-journey:is([data-enhanced=true],[data-staged]) .universe-deeper-cue{top:auto;bottom:85px;opacity:0}
+.universe-journey:is([data-enhanced=true],[data-staged]) .universe-inner-chapter{inset:0;height:100%;opacity:0;pointer-events:none}
+.universe-journey:is([data-enhanced=true],[data-staged]) .universe-inner-copy a{pointer-events:auto}
+.universe-journey:is([data-enhanced=true],[data-staged]) :is(.universe-inner-static,.universe-orbit-static){display:none}
+.universe-journey[data-inner-active=true] .universe-nebula-note{visibility:hidden}
+body:has(.universe-dialog[open]) :is(.universe-deeper-cue,.universe-inner-chapter){visibility:hidden}
+@media(max-width:600px){
+ .universe-inner-copy{left:32%;right:7%;top:23%}
+ .universe-inner-copy h2{font-size:28px;margin-bottom:18px}
+ .universe-inner-copy p{font-size:12px}
+ .universe-orbit-static{left:-13%;top:49%;width:96vw}
+ .universe-deeper-cue{white-space:nowrap;font-size:10px}
+ .universe-journey:is([data-enhanced=true],[data-staged]) .universe-deeper-cue{bottom:92px}
+}
+
+/* Both stages share a viewport. The anchor is at the end of the camera move. */
+[data-earlier-worlds]{position:absolute;inset:0 0 auto;height:1px;pointer-events:none}
+#meadow{display:block;height:0}
+#meadow-flight{position:absolute;top:160svh;height:0}
+@media(prefers-reduced-motion:no-preference){
+  .universe-journey:has(> #meadow-flight:target):not([data-renderer=static]){height:890svh}
+  .universe-journey:is([data-enhanced=true],[data-staged]) > #meadow-flight,
+  .universe-journey:not([data-renderer=static]) > #meadow-flight:target{top:475svh}
+}
+@media(prefers-reduced-motion:no-preference){
+  :is(.universe-journey:is([data-enhanced=true],[data-staged]),.meadow-arrival .universe-journey:not([data-renderer=static])){height:890svh}
+  :is(.universe-journey:is([data-enhanced=true],[data-staged]),.meadow-arrival .universe-journey:not([data-renderer=static])) > .universe-stage{position:sticky;top:0;height:100svh;min-height:0}
+  :is(.universe-journey:is([data-enhanced=true],[data-staged]),.meadow-arrival .universe-journey:not([data-renderer=static])) > [data-earlier-worlds]{height:490svh}
+  :is(.universe-journey:is([data-enhanced=true],[data-staged]),.meadow-arrival .universe-journey:not([data-renderer=static])) > #meadow{position:absolute;top:750svh}
+  :is(.universe-journey:is([data-enhanced=true],[data-staged]),.meadow-arrival .universe-journey:not([data-renderer=static])) > [data-meadow]{position:sticky;top:0;height:100svh;min-height:0;margin-top:-100svh;z-index:6}
+}
+
+.universe-stage .universe-inner-copy,.universe-stage .universe-utilities{opacity:var(--depart-copy,1)}
+.universe-art :is([data-entry-deep],[data-entry-inner],[data-entry-orbit]){display:none}
+[data-staged] .universe-art{overflow:hidden}
+[data-staged] .universe-art[data-posed] :is(picture,[data-entry-deep],.universe-static-moon,[data-entry-inner],[data-entry-orbit]:not([hidden])){display:block;position:absolute;left:0;top:0;transform-origin:center}
+[data-staged] .universe-art [data-entry-inner]{width:100%;height:100%;object-fit:cover}
+.universe-art [data-entry-deep],.universe-art [data-entry-inner]{opacity:0}
+[data-entry-orbit]{background:var(--orbit-image) center/100% 100% no-repeat}
+[data-entry-orbit]::before{content:'';position:absolute;inset:30% -35%;border:1px solid #d2bfab66;border-radius:50%;transform:rotate(-17deg)}
+[data-staged] .universe-canvas{visibility:hidden}

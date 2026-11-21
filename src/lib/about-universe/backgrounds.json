@@ -1,0 +1,37 @@
+{
+  "viewport": {
+    "width": 2560,
+    "height": 1400
+  },
+  "output": {
+    "width": 1697,
+    "height": 927
+  },
+  "preview": {
+    "width": 1280,
+    "height": 699
+  },
+  "transition": {
+    "start": 0.5,
+    "end": 0.88
+  },
+  "hero": {
+    "full": "about-universe/sky-painted-r3-clean-hero.webp",
+    "preview": "about-universe/sky-painted-r3-clean-hero-1280.webp",
+    "fallback": "about-universe/sky-painted-r3-clean-hero-854.webp"
+  },
+  "deep": {
+    "full": "about-universe/sky-painted-r3-clean-deep.webp",
+    "preview": "about-universe/sky-painted-r3-clean-deep-1280.webp",
+    "fallback": "about-universe/sky-painted-r3-clean-deep-854.webp",
+    "transform": {
+      "a": 0.8454919615713181,
+      "b": -7.263424907149803e-05,
+      "c": 9.146845087459043e-05,
+      "d": 0.9160046050123213,
+      "tx": 0.08741271088705714,
+      "ty": 0.0021315961592033024
+    }
+  },
+  "sourceDirectory": "design/about-universe-clean-r3-20261112"
+}

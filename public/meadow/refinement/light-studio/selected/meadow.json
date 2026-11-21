@@ -1,0 +1,30 @@
+{
+  "format": "about-universe-light/2",
+  "preset": "approved",
+  "light": {
+    "key": 2.57,
+    "sun": "#c68a53",
+    "sky": "#1100ff",
+    "under": "#4a414d",
+    "fill": "#ffd91a",
+    "skyPower": 0.7,
+    "fillPower": 0.2,
+    "angle": 24,
+    "elevation": 29,
+    "shadow": 0.64,
+    "radius": 4.25,
+    "tint": "#fc61ff",
+    "bounce": 0.09,
+    "distribution": "sky",
+    "window": 0.47,
+    "haze": 0.085,
+    "hazeTint": "#ff9272",
+    "galaxy": 1.02,
+    "exposure": 0,
+    "rolloff": 0
+  },
+  "view": "default",
+  "yaw": 0,
+  "scene": "meadow",
+  "air": 124
+}

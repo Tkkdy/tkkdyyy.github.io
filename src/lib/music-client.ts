@@ -138,12 +138,12 @@ if (card && audio && status && controls && toggle && seek && elapsed && duration
     entryRequested = true; clearTimeout(slowTimer); showCard();
     setVolume(Math.min(0.01, preferredVolume));
     // Reveal first; playback follows on the next paint and keeps the existing 35% fade.
-    entryFrame = requestAnimationFrame(() => { if (!leaving && !unavailable) play(); });
+    if (card.dataset.musicAutostart !== 'false') entryFrame = requestAnimationFrame(() => { if (!leaving && !unavailable) play(); });
   };
-  const prepare = () => {
+  const prepare = (startingLoad = false) => {
     leaving = false; entryRequested = false;
     clearTimeout(slowTimer);
-    if (audio.error || audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) { failed(); return; }
+    if (audio.error || (!startingLoad && audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE)) { failed(); return; }
     bufferedStart();
     if (!entryRequested) slowTimer = window.setTimeout(() => {
       if (unavailable || leaving || entryRequested) return;
@@ -153,6 +153,24 @@ if (card && audio && status && controls && toggle && seek && elapsed && duration
   };
   for (const event of ['canplaythrough', 'progress', 'loadeddata']) audio.addEventListener(event, bufferedStart);
   window.addEventListener('pagehide', () => { leaving = true; clearTimeout(slowTimer); cancelAnimationFrame(entryFrame); cancelFade(); audio.pause(); audio.currentTime = 0; });
-  window.addEventListener('pageshow', event => { if (event.persisted) prepare(); });
-  prepare();
+  let pendingVisibility: IntersectionObserver | undefined;
+  const prepareWhenNear = () => {
+    pendingVisibility?.disconnect();
+    if (audio.preload !== 'none') { prepare(); return; }
+    const load = () => {
+      pendingVisibility?.disconnect();
+      audio.preload = 'auto';
+      audio.load();
+      // load() can report NETWORK_NO_SOURCE until its queued source selection runs.
+      prepare(true);
+    };
+    if (!('IntersectionObserver' in window)) { load(); return; }
+    pendingVisibility = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) load();
+    }, { rootMargin: '400px 0px' });
+    pendingVisibility.observe(card);
+  };
+  window.addEventListener('pagehide', () => pendingVisibility?.disconnect());
+  window.addEventListener('pageshow', event => { if (event.persisted) prepareWhenNear(); });
+  prepareWhenNear();
 }
