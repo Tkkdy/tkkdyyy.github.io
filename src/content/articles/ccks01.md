@@ -1,5 +1,5 @@
 ---
-{ slug: ccks01, publishedAt: 2026-11-06, status: published, tags: [ AI ], homepage: { show: false }, title: "信息抽取学习记录 #01", description: "2026-11-20 ", updatedAt: 2026-11-22, categories: [ 技术 ], publishNumber: 1 }
+{ slug: ccks01, publishedAt: 2026-11-06, status: published, tags: [ AI ], homepage: { show: false }, title: "信息抽取学习记录 #01", description: "2026-11-20 ", updatedAt: 2026-11-22, categories: [ 技术 ], publishNumber: 2 }
 ---
 
 这两天集中补了一遍信息抽取的基础知识。
