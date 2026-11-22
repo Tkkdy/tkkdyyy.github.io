@@ -1,5 +1,5 @@
 ---
-{ slug: ccks01, publishedAt: 2026-11-06, status: published, tags: [ AI ], homepage: { show: false }, title: "信息抽取学习记录 #01", description: "2026-11-20 ", updatedAt: 2026-11-22, categories: [ 技术 ], publishNumber: 2 }
+{ slug: ccks01, publishedAt: 2026-11-22, status: published, tags: [ AI ], homepage: { show: false }, title: "信息抽取学习记录 #01", description: "2026-11-20 ", updatedAt: 2026-11-22, categories: [ 技术 ], publishNumber: 2 }
 ---
 
 这两天集中补了一遍信息抽取的基础知识。
@@ -118,7 +118,11 @@ Loss 用来衡量预测和训练标签之间的差距；接下来通过反向传
 
 之前 G3 第二轮在验证集上的结果是：
 
-指标结果Precision0.3333Recall0.6476Micro-F10.4401
+| 指标 | 结果 |
+| --- | ---: |
+| Precision | 0.3333 |
+| Recall | 0.6476 |
+| Micro-F1 | 0.4401 |
 
 现在至少能更直观地看懂这三个数字了：模型找回了部分标准答案，但输出中也混入了不少错误答案。
 
