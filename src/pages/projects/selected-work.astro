@@ -1,0 +1,201 @@
+---
+import ProjectLayout from '../../layouts/ProjectLayout.astro';
+import { withBase } from '../../lib/site-url';
+
+// The VPS release bundle accepts a restricted list of static file types.
+const portfolioPdfUrl = 'https://raw.githubusercontent.com/Tkkdy/tkkdyyy.github.io/main/docs/portfolio/Boen_Li_Selected_Product_Work.pdf';
+
+const cases = [
+  {
+    title: '肥鱼管家',
+    category: '个人 AI 助理',
+    summary: '围绕聊天中的任务确认、进度和权限设计流程，让用户能看清助理答应了什么、实际做了什么。',
+  },
+  {
+    title: '字幕工坊',
+    category: '人工校对工作流',
+    summary: '通过回听样例梳理字幕校对流程，把定位原音、逐句修改、恢复进度和导出放在同一条工作线上。',
+  },
+  {
+    title: 'Attention Router',
+    category: 'Agent × IoT',
+    summary: '为 Agent 通知设计即时提醒、排队、汇总和丢弃四种处理方式，并把提醒接到电子纸设备。',
+  },
+  {
+    title: 'Morning Radar',
+    category: '资讯工作流',
+    summary: '把多源资讯收集、去重、摘要和发布串成每日晨报，保留原始来源，并用漏报和中断案例改进流程。',
+    href: withBase('projects/morning-radar/'),
+  },
+];
+---
+
+<ProjectLayout
+  title="精选作品 / Selected Product Work — Boen Li"
+  description="Boen Li 的五个产品案例，涵盖交互设计、个人 AI 助理、字幕校对、Agent 通知和资讯工作流。"
+>
+  <div class="portfolio">
+    <a class="project-nav" href={withBase('projects/')}>← 项目档案</a>
+
+    <header class="portfolio-intro">
+      <div>
+        <p class="byline">Boen Li / Selected Product Work</p>
+        <h1>精选作品</h1>
+        <p class="intro-copy">五个案例，记录我如何发现问题、做产品取舍，并用实际成果验证想法。</p>
+      </div>
+      <a class="download" href={portfolioPdfUrl}>下载作品集 PDF</a>
+    </header>
+
+    <article class="featured-case" aria-labelledby="about-universe-title">
+      <figure>
+        <img
+          src={withBase('projects/selected-work/about-universe.jpg')}
+          alt="夜空下的微缩山地，花树和亮着暖光的小屋围在水边"
+          width="1920"
+          height="945"
+        />
+        <figcaption>About Universe 开发阶段截图</figcaption>
+      </figure>
+      <div class="featured-copy">
+        <p class="case-category">交互式个人介绍</p>
+        <h2 id="about-universe-title">About Universe</h2>
+        <p>把个人介绍做成一个可以探索的微缩星球。通过同机位截图和网页交互检查，反复调整光照、材质与镜头。</p>
+        <a class="text-link" href={withBase('about/')}>体验 About Universe</a>
+      </div>
+    </article>
+
+    <ul class="case-list" aria-label="更多作品">
+      {cases.map(({ title, category, summary, href }) => (
+        <li>
+          <p class="case-category">{category}</p>
+          <h2>{title}</h2>
+          <p>{summary}</p>
+          {href && <a class="text-link" href={href}>查看项目详情</a>}
+        </li>
+      ))}
+    </ul>
+  </div>
+</ProjectLayout>
+
+<style>
+  .portfolio {
+    width: min(100% - 2.5rem, 68rem);
+    margin: 0 auto;
+    padding-block: clamp(6.5rem, 12vw, 9rem) clamp(4rem, 8vw, 7rem);
+    color: var(--color-ink);
+  }
+
+  .project-nav,
+  .text-link {
+    color: var(--color-accent);
+    font-size: 0.9rem;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .portfolio-intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+    margin-block: clamp(1.7rem, 5vw, 3rem) 2.1rem;
+  }
+
+  .byline,
+  .case-category,
+  figcaption {
+    color: var(--color-ink-soft);
+    font-size: 0.85rem;
+  }
+
+  h1,
+  h2 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+  }
+
+  h1 {
+    margin-block: 0.3rem 0.75rem;
+    font-size: clamp(2.75rem, 7vw, 5.125rem);
+    line-height: 1.13;
+  }
+
+  .intro-copy {
+    max-width: 35rem;
+    color: var(--color-ink-soft);
+    line-height: 1.7;
+  }
+
+  .download {
+    display: inline-block;
+    padding: 0.7rem 1rem;
+    background: var(--color-surface-project);
+    color: var(--color-ink-inverse);
+    font-size: 0.9rem;
+  }
+
+  .download:hover {
+    background: var(--color-accent);
+  }
+
+  .featured-case {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: center;
+    gap: clamp(1.25rem, 4vw, 3rem);
+    border-block: 1px solid var(--color-border-strong);
+    padding-block: 1.25rem;
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  figcaption {
+    margin-block-start: 0.45rem;
+  }
+
+  .featured-copy > p:not(.case-category),
+  .case-list li > p:not(.case-category) {
+    margin-block: 0.45rem 0.75rem;
+    color: var(--color-ink-soft);
+    line-height: 1.75;
+  }
+
+  .featured-copy h2 {
+    font-size: clamp(1.75rem, 4vw, 2.65rem);
+    line-height: 1.25;
+  }
+
+  .case-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(1.25rem, 5vw, 4rem);
+    padding: 0;
+    list-style: none;
+  }
+
+  .case-list li {
+    padding-block: 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .case-list h2 {
+    margin-block-start: 0.15rem;
+    font-size: 1.45rem;
+  }
+
+  @media (max-width: 42rem) {
+    .featured-case,
+    .case-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

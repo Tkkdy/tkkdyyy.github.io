@@ -35,6 +35,7 @@ const codexTitle = codex ? splitTitle(codex.data.name, ' Proxy') : ['', ''];
     <div class="projects-masthead-copy">
       <h1 id="projects-page-title">Work in progress.</h1>
       <p>把真实输出、调试痕迹与未完成的边界放在同一张工作台上。每一行，按项目自己的证据生长。</p>
+      <a class="selected-work-link" href={withBase('projects/selected-work/')}>查看精选作品 <span aria-hidden="true">→</span></a>
     </div>
     <p class="projects-masthead-thesis projects-mono" aria-hidden="true">
       ONE ROW IS A STAGE.<br />EACH PROJECT DECIDES<br />WHAT HAPPENS THERE.
@@ -249,4 +250,24 @@ LINES  0032       NEXT   T
  .home-added-projects h2 { margin:16px 0; font-size:28px; }
  .home-added-projects p { line-height:1.85; }
  @media(max-width:639px) { .home-added-projects { grid-template-columns:1fr; } }
+</style>
+
+<style>
+  .selected-work-link {
+    display: inline-block;
+    margin-block-start: 1rem;
+    padding: 0.6rem 0.9rem;
+    background: var(--color-ink-inverse);
+    color: var(--color-surface-project);
+    font-weight: 600;
+  }
+
+  .selected-work-link:is(:hover, :focus-visible) {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .selected-work-link span {
+    margin-inline-start: 0.35em;
+  }
 </style>
