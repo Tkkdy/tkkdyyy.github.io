@@ -2,199 +2,427 @@
 import ProjectLayout from '../../layouts/ProjectLayout.astro';
 import { withBase } from '../../lib/site-url';
 
-// The VPS release bundle accepts a restricted list of static file types.
-const portfolioPdfUrl = 'https://raw.githubusercontent.com/Tkkdy/tkkdyyy.github.io/main/docs/portfolio/Boen_Li_Selected_Product_Work.pdf';
+// Keep the PDF in the public repository because the VPS bundle has a static file allowlist.
+const portfolioPdfUrl = 'https://raw.githubusercontent.com/Tkkdy/tkkdyyy.github.io/main/docs/portfolio/Boen_Li_Selected_Works_2026.pdf';
 
 const cases = [
   {
-    title: '肥鱼管家',
-    category: '个人 AI 助理',
-    summary: '围绕聊天中的任务确认、进度和权限设计流程，让用户能看清助理答应了什么、实际做了什么。',
+    id: 'feiyu',
+    title: '肥鱼 FEIYU',
+    category: '个人 AI 助理 · 产品与系统设计',
+    lead: '待办可以成为委托的起点，让 AI 在授权后协助推进生活里的事情。',
+    image: { file: 'feiyu.webp', width: 1180, height: 666, alt: '肥鱼本地原型的对话与左侧导航', caption: '使用脚本模型验证界面与数据流的本地原型。' },
+    flow: ['自然语言记录任务与想法', '明确授权后委托推进', '分别呈现进度、成果与完成状态'],
+    details: [
+      ['产品洞察', '常见待办工具侧重记录事项，许多 Agent 则围绕工作委托。我想探索一个日常可用、能长期协助个人生活的助手。'],
+      ['已实现', '实现了自然语言记录任务与想法、数据持久化、账户隔离和关键操作确认。按需生成小工具已完成离线原型验证。'],
+      ['关键取舍', '询问和授权各有独立步骤，看到提醒和完成事项也各有自己的状态。多 Agent 协作只在能减少操作负担时引入。'],
+    ],
+    status: '本地可运行原型。更完整的主动委托与真实模型自主执行闭环仍在推进。',
   },
   {
-    title: '字幕工坊',
-    category: '人工校对工作流',
-    summary: '通过回听样例梳理字幕校对流程，把定位原音、逐句修改、恢复进度和导出放在同一条工作线上。',
-  },
-  {
+    id: 'attention-router',
     title: 'Attention Router',
-    category: 'Agent × IoT',
-    summary: '为 Agent 通知设计即时提醒、排队、汇总和丢弃四种处理方式，并把提醒接到电子纸设备。',
+    category: 'Agent × IoT · 本地优先',
+    lead: '给 Agent 一个安静的物理输出窗口，让重要的事被看见，减少打断。',
+    image: { file: 'attention-router.webp', width: 1176, height: 724, alt: 'Agent 经 Windows Hub 路由到 ESP32 电子纸的系统概念图', caption: '系统概念图。模块和路由名称来自已实现的软件原型。' },
+    details: [
+      ['发现问题', '重要提醒容易埋在聊天记录里，电脑弹窗又会打断专注。电子纸提供一个独立的待办与提醒入口。'],
+      ['设计方案', 'Python Hub 接收授权任务和事件，按明确规则选择 NOW、QUEUE、DIGEST 或 DROP，再通过 ESP32 电子纸和 Web Console 展示。'],
+      ['产品边界', 'ACK 表示用户已知晓提醒。待办是否完成由独立状态记录。当前路由依据明确规则。'],
+    ],
+    status: '开源 v0.1.0，已有真实设备原型。公开候选固件的最终真机闭环仍待补充验收。',
+    links: [{ label: '查看 Attention Router 源码', href: 'https://github.com/Tkkdy/attention-router' }],
   },
   {
-    title: 'Morning Radar',
-    category: '资讯工作流',
-    summary: '把多源资讯收集、去重、摘要和发布串成每日晨报，保留原始来源，并用漏报和中断案例改进流程。',
-    href: withBase('projects/morning-radar/'),
+    id: 'about-universe',
+    title: 'About Universe',
+    category: 'Web 3D · 视觉与交互设计',
+    lead: '把个人介绍做成一个可以停留、慢慢探索的私人微缩宇宙。',
+    image: { file: 'about-universe.webp', width: 1500, height: 733, alt: '星空下的微缩星球、小屋、花树与暖色地平线', caption: '2026 年 11 月的真实开发阶段渲染。可在网站体验当前画面。' },
+    details: [
+      ['体验设计', '用滚动、镜头推进和星点响应组织进入过程，让访问者逐步发现星球、小屋、花树与夜空。'],
+      ['实现', '从场景概念、模型与素材做到网页交互，在 Blender、WebGL 场景和实际网页之间来回核对。借助 Coding Agent 加快实现，亲自做视觉审查与调整。'],
+      ['迭代方法', '通过截图对照、A/B 实验和视觉审计定位不自然的原因，分别检查构图、光照、材质和网页性能。'],
+    ],
+    status: '交互式 About 页面已发布。',
+    links: [{ label: '体验 About Universe', href: withBase('about/') }],
   },
+  {
+    id: 'morning-radar',
+    title: 'Morning Radar',
+    category: 'AI 产品 · 自动化与编辑',
+    lead: '把每天值得看的动态整理成一份精简、可追溯的晨报。',
+    details: [
+      ['用户需求', '长期追踪 AI、科技和项目动态需要筛选。重复报道、缺失来源和无价值摘要会增加阅读负担。'],
+      ['实际交付', '完成定时采集、去重聚合、LLM 结构化处理、静态网页发布和微信摘要。阅读时，事实、分析与原始来源可以分开查看。'],
+      ['迭代判断', '从漏报、模型失败和排序误差中整理坏例，加入回放、失败恢复和 Shadow Evaluation。实验排序独立于正式输出。'],
+    ],
+    status: '持续维护中。Editorial 新排序仍在 Shadow 模式，正式晨报继续使用现有排序。',
+    links: [
+      { label: '查看项目详情', href: withBase('projects/morning-radar/') },
+      { label: '查看 Morning Radar 源码', href: 'https://github.com/Tkkdy/Morning-Radar' },
+    ],
+  },
+  {
+    id: 'subtitle-workshop',
+    title: '字幕工坊 Subtitle Workshop',
+    category: '创作工具 · 体验与工程',
+    lead: '自动转写之后，创作者可以逐段回听、把字幕改对，再带回视频。',
+    image: { file: 'subtitle-workshop.webp', width: 1440, height: 814, alt: '字幕工坊早期网页的上传区和编辑预览', caption: '早期网页截图。当前编辑界面和部署版本已有迭代。' },
+    flow: ['上传素材', '生成字幕', '逐段回听和改错', '保存与导出'],
+    details: [
+      ['创作痛点', '转写后常有错字、长句与时间边界问题。字幕压进视频之后，逐句修正的成本更高。'],
+      ['设计选择', '把人工审校放在交付之前，支持分段播放、手动编辑、草稿保存和恢复，以及 SRT、VTT、TXT、ZIP 导出。'],
+      ['实际验证', '在浏览器检查长句按节奏切分、编辑后关闭再重新打开的恢复，以及多格式导出。一条 18.18 秒的样例切成了 6 段。'],
+    ],
+    status: 'HTTPS 邀请制内测。AI 智能校对仍未开放。',
+    links: [{ label: '打开字幕工坊内测入口', href: 'https://subtitle.tkkdy.me' }],
+  },
+  {
+    id: 'ccks-2026',
+    title: 'CCKS 2026 Task 5',
+    category: '研究 · 模型评估',
+    lead: '复杂约束属性抽取需要同时验证两个问题。模型找到了哪些候选，它们又有多少真正满足条件？',
+    details: [
+      ['研究问题', '例如，文本提到“北京”，但题目问的是“实际前往的城市”。怎样减少看似合理、实际不满足条件的抽取？'],
+      ['实验方法', '训练 RoBERTa + Span 基线，建立元素级评估，对照 LLM 推理和误报漏报，并尝试用候选池做两阶段筛选。'],
+      ['研究判断', 'Top-80 候选覆盖 93.64% 的金标，候选池也包含大量错误选项。交叉筛选将 Micro-F1 从 0.5568 提到 0.5823，同时误删 124 个真阳性。下一轮需要继续平衡召回与精度。'],
+    ],
+    status: '以上数字仅用于内部开发评估。方法复现和补充验证仍在进行。',
+  },
+];
+
+const morningPipeline = [
+  ['多源采集', 'RSS / Atom、GitHub Releases、Hacker News'],
+  ['清洗与判断', '去重、来源追溯、候选排序、LLM 摘要、事实与分析分离'],
+  ['每日交付', '静态网页、中文简报、微信摘要'],
+];
+
+const ccksResults = [
+  ['RoBERTa / Span', 'G3 第二轮训练', '0.4401'],
+  ['DeepSeek Flash', '非思考推理', '0.5568'],
+  ['Cross-filter', 'Flash 输出与 Top-80 候选取交集', '0.5823'],
 ];
 ---
 
 <ProjectLayout
-  title="精选作品 / Selected Product Work — Boen Li"
-  description="Boen Li 的五个产品案例，涵盖交互设计、个人 AI 助理、字幕校对、Agent 通知和资讯工作流。"
+  title="精选作品 2026 / Selected Works — Boen Li"
+  description="李博恩 Boen Li 的 2026 作品集，收录个人 AI 助理、Agent 与电子纸、Web 3D、资讯工作流、字幕工具和 CCKS 研究。"
 >
   <div class="portfolio">
-    <a class="project-nav" href={withBase('projects/')}>← 项目档案</a>
+    <a class="text-link project-nav" href={withBase('projects/')}>← 项目档案</a>
 
     <header class="portfolio-intro">
       <div>
-        <p class="byline">Boen Li / Selected Product Work</p>
-        <h1>精选作品</h1>
-        <p class="intro-copy">五个案例，记录我如何发现问题、做产品取舍，并用实际成果验证想法。</p>
+        <p class="byline">李博恩 Boen Li · Selected Works 2026</p>
+        <h1>把想法，变成产品。</h1>
+        <p class="intro-copy">我从真实使用中的问题出发，先判断什么值得做，再用 AI、设计和工程把想法做成可以体验和验证的产品。我关注个人助理、人与 AI 的交互，以及技术如何进入日常生活。</p>
+        <p class="identity">AI-Native Builder · 深圳技术大学物联网工程本科在读</p>
       </div>
-      <a class="download" href={portfolioPdfUrl}>下载作品集 PDF</a>
+      <div class="portfolio-actions">
+        <a class="download" href={portfolioPdfUrl}>下载完整作品集 PDF <span>7 页</span></a>
+        <a class="text-link" href="mailto:boenli1210@gmail.com">邮件联系</a>
+        <a class="text-link" href="https://github.com/Tkkdy">GitHub</a>
+      </div>
     </header>
 
-    <article class="featured-case" aria-labelledby="about-universe-title">
-      <figure>
-        <img
-          src={withBase('projects/selected-work/about-universe.jpg')}
-          alt="夜空下的微缩山地，花树和亮着暖光的小屋围在水边"
-          width="1920"
-          height="945"
-        />
-        <figcaption>About Universe 开发阶段截图</figcaption>
-      </figure>
-      <div class="featured-copy">
-        <p class="case-category">交互式个人介绍</p>
-        <h2 id="about-universe-title">About Universe</h2>
-        <p>把个人介绍做成一个可以探索的微缩星球。通过同机位截图和网页交互检查，反复调整光照、材质与镜头。</p>
-        <a class="text-link" href={withBase('about/')}>体验 About Universe</a>
-      </div>
-    </article>
+    <nav class="contents" aria-label="作品目录">
+      <ul>
+        {cases.map(({ id, title }) => <li><a class="text-link" href={'#' + id}>{title}</a></li>)}
+      </ul>
+    </nav>
 
-    <ul class="case-list" aria-label="更多作品">
-      {cases.map(({ title, category, summary, href }) => (
-        <li>
+    {cases.map(({ id, title, category, lead, image, flow, details, status, links }, index) => (
+      <article class="case" id={id} aria-labelledby={id + '-title'}>
+        <header class="case-heading">
           <p class="case-category">{category}</p>
-          <h2>{title}</h2>
-          <p>{summary}</p>
-          {href && <a class="text-link" href={href}>查看项目详情</a>}
-        </li>
-      ))}
-    </ul>
+          <h2 id={id + '-title'}>{title}</h2>
+          <p class="case-lead">{lead}</p>
+        </header>
+
+        {image && (
+          <figure>
+            <img
+              src={withBase('projects/selected-work/' + image.file)}
+              width={image.width}
+              height={image.height}
+              alt={image.alt}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+            <figcaption>{image.caption}</figcaption>
+          </figure>
+        )}
+
+        {id === 'about-universe' && (
+          <div class="scene-details">
+            <img src={withBase('projects/selected-work/about-universe-house.webp')} width="950" height="720" alt="小屋的窗光和近处地形" loading="lazy" decoding="async" />
+            <img src={withBase('projects/selected-work/about-universe-tree.webp')} width="430" height="400" alt="花树枝桠和星空的材质细节" loading="lazy" decoding="async" />
+          </div>
+        )}
+
+        {flow && (
+          <ol class="case-flow" aria-label={title + '工作流程'}>
+            {flow.map((step) => <li>{step}</li>)}
+          </ol>
+        )}
+
+        {id === 'morning-radar' && (
+          <ol class="pipeline" aria-label="每日晨报流程">
+            {morningPipeline.map(([stage, description]) => <li><strong>{stage}</strong><span>{description}</span></li>)}
+          </ol>
+        )}
+
+        {id === 'ccks-2026' && (
+          <table class="evaluation">
+            <caption>同一内部验证集的元素级 Micro-F1 · 1,418 道题</caption>
+            <thead><tr><th scope="col">方法</th><th scope="col">设置</th><th scope="col">Micro-F1</th></tr></thead>
+            <tbody>
+              {ccksResults.map(([method, setup, score]) => (
+                <tr><th scope="row">{method}</th><td>{setup}</td><td>{score}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        <dl class="case-notes">
+          {details.map(([label, description]) => (
+            <div><dt>{label}</dt><dd>{description}</dd></div>
+          ))}
+        </dl>
+
+        <footer class="case-footer">
+          <p>{status}</p>
+          {links && <div class="case-links">{links.map(({ label, href }) => <a class="text-link" href={href}>{label}</a>)}</div>}
+        </footer>
+      </article>
+    ))}
   </div>
 </ProjectLayout>
 
 <style>
   .portfolio {
-    width: min(100% - 2.5rem, 68rem);
-    margin: 0 auto;
-    padding-block: clamp(6.5rem, 12vw, 9rem) clamp(4rem, 8vw, 7rem);
+    width: min(100% - 2.5rem, 65rem);
+    margin-inline: auto;
+    padding-block: clamp(6.5rem, 12vw, 9rem) clamp(3rem, 8vw, 6rem);
     color: var(--color-ink);
+    line-height: 1.75;
+  }
+
+  .text-link {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 
   .project-nav,
-  .text-link {
-    color: var(--color-accent);
+  .byline,
+  .identity,
+  .case-category,
+  figcaption,
+  .case-footer {
     font-size: 0.9rem;
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
-  }
-
-  .portfolio-intro {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1.5rem 3rem;
-    margin-block: clamp(1.7rem, 5vw, 3rem) 2.1rem;
   }
 
   .byline,
+  .identity,
   .case-category,
-  figcaption {
+  figcaption,
+  .case-footer {
     color: var(--color-ink-soft);
-    font-size: 0.85rem;
+  }
+
+  .portfolio-intro {
+    margin-block: clamp(1.75rem, 5vw, 3rem) 1.75rem;
   }
 
   h1,
   h2 {
     font-family: var(--font-serif);
     font-weight: 600;
+    line-height: 1.22;
   }
 
   h1 {
-    margin-block: 0.3rem 0.75rem;
-    font-size: clamp(2.75rem, 7vw, 5.125rem);
-    line-height: 1.13;
+    margin-block: 0.25rem 0.85rem;
+    font-size: clamp(2.15rem, 7vw, 4.5rem);
   }
 
   .intro-copy {
-    max-width: 35rem;
-    color: var(--color-ink-soft);
-    line-height: 1.7;
+    max-width: 42rem;
+  }
+
+  .identity {
+    margin-top: 0.5rem;
+  }
+
+  .portfolio-actions,
+  .contents ul,
+  .case-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem 1.15rem;
+    align-items: center;
+  }
+
+  .portfolio-actions {
+    margin-top: 1.25rem;
   }
 
   .download {
-    display: inline-block;
-    padding: 0.7rem 1rem;
+    padding: 0.6rem 0.9rem;
     background: var(--color-surface-project);
     color: var(--color-ink-inverse);
     font-size: 0.9rem;
+  }
+
+  .download span {
+    padding-inline-start: 0.35rem;
+    opacity: 0.8;
   }
 
   .download:hover {
     background: var(--color-accent);
   }
 
-  .featured-case {
-    display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-    align-items: center;
-    gap: clamp(1.25rem, 4vw, 3rem);
+  .contents ul {
+    padding: 0.8rem 0;
     border-block: 1px solid var(--color-border-strong);
-    padding-block: 1.25rem;
+    list-style: none;
+    font-size: 0.875rem;
+  }
+
+  .case {
+    scroll-margin-top: 5.5rem;
+    padding-block: clamp(2rem, 5.5vw, 4rem);
+    border-bottom: 1px solid var(--color-border-strong);
+  }
+
+  .case-heading {
+    margin-bottom: 1.25rem;
+  }
+
+  h2 {
+    margin-block: 0.15rem 0.5rem;
+    font-size: clamp(1.8rem, 4.7vw, 3rem);
+  }
+
+  .case-lead {
+    color: var(--color-ink-soft);
   }
 
   figure {
     margin: 0;
+    max-width: 51rem;
   }
 
   img {
     display: block;
     width: 100%;
     height: auto;
+    border: 1px solid var(--color-border);
   }
 
   figcaption {
-    margin-block-start: 0.45rem;
+    margin-top: 0.45rem;
   }
 
-  .featured-copy > p:not(.case-category),
-  .case-list li > p:not(.case-category) {
-    margin-block: 0.45rem 0.75rem;
-    color: var(--color-ink-soft);
-    line-height: 1.75;
-  }
-
-  .featured-copy h2 {
-    font-size: clamp(1.75rem, 4vw, 2.65rem);
-    line-height: 1.25;
-  }
-
-  .case-list {
+  .scene-details {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: clamp(1.25rem, 5vw, 4rem);
-    padding: 0;
-    list-style: none;
+    gap: 0.65rem;
+    max-width: 33rem;
+    margin-top: 0.75rem;
   }
 
-  .case-list li {
-    padding-block: 1.25rem;
+  .scene-details img {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .case-flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.75rem;
+    padding: 0.8rem 1rem 0.8rem 2.4rem;
+    background: var(--color-surface-sand);
+    font-size: 0.9rem;
+  }
+
+  .pipeline,
+  .case-notes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.05rem clamp(1rem, 4vw, 2.4rem);
+  }
+
+  .pipeline {
+    list-style-position: inside;
+    margin: 0;
+    padding: 1rem;
+    background: var(--color-surface-sand);
+  }
+
+  .pipeline span {
+    display: block;
+    color: var(--color-ink-soft);
+    font-size: 0.9rem;
+  }
+
+  .case-notes {
+    margin: 1.25rem 0 1.1rem;
+  }
+
+  .case-notes dt {
+    font-weight: 600;
+  }
+
+  .case-notes dd {
+    margin: 0.25rem 0 0;
+    color: var(--color-ink-soft);
+  }
+
+  .case-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.25rem;
+    border-top: 1px solid var(--color-border);
+    padding-top: 0.8rem;
+  }
+
+  .case-links {
+    justify-content: flex-start;
+  }
+
+  .evaluation {
+    width: min(100%, 47rem);
+    border-collapse: collapse;
+    background: var(--color-surface-sand);
+    text-align: left;
+    font-size: 0.9rem;
+  }
+
+  .evaluation caption {
+    text-align: left;
+    font-weight: 600;
+    padding-bottom: 0.4rem;
+  }
+
+  .evaluation th,
+  .evaluation td {
+    padding: 0.45rem clamp(0.4rem, 1.5vw, 0.85rem);
     border-bottom: 1px solid var(--color-border);
   }
 
-  .case-list h2 {
-    margin-block-start: 0.15rem;
-    font-size: 1.45rem;
+  .evaluation td:last-child {
+    font-variant-numeric: tabular-nums;
   }
 
-  @media (max-width: 42rem) {
-    .featured-case,
-    .case-list {
+  @media (max-width: 43rem) {
+    .pipeline,
+    .case-notes {
       grid-template-columns: 1fr;
     }
   }
