@@ -117,7 +117,11 @@ function dispose(){
  releaseAssets();
  debug.disposed=true;debug.remainingMotionTargets=motionTargets.size;
 }
-debug.dispose=dispose;addEventListener('pagehide',dispose,{once:true,signal:abort.signal});
+debug.dispose=dispose;
+// The browser owns final document cleanup. Keep the last image and GPU objects
+// intact while a history entry is frozen, so Back restores the exact scene.
+addEventListener('pagehide',()=>{cancelAnimationFrame(frameHandle);frameHandle=0;},{signal:abort.signal});
+addEventListener('pageshow',syncFrames,{signal:abort.signal});
 try{
  const start=performance.now();
  renderer=new T.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'high-performance'});

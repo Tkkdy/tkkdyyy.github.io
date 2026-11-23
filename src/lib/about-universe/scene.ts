@@ -242,7 +242,7 @@ export async function createScene(root: HTMLElement, signal: AbortSignal, quiet:
   const storyPlanet=new Sprite(nodes[1].planet.texture);storyPlanet.anchor.set(0.5);
   const storyRing=new Graphics();story.addChild(storyRing,storyPlanet);
   const storyFront=new Graphics();story.addChild(storyFront);
-  let progress=0, depth=0, departure=0, entryZoom=1, storyAmount=0, elapsed=0, destroyed=false, suspended=false, inView=true;
+  let progress=0, depth=0, departure=0, entryZoom=1.04, storyAmount=0, elapsed=0, destroyed=false, suspended=false, inView=true;
   let selectedNode=celestialNodes[1].id;
   // Low-power desktops can still react to the pointer and render a scheduled meteor,
   // without running a permanent background ticker.
@@ -252,16 +252,25 @@ export async function createScene(root: HTMLElement, signal: AbortSignal, quiet:
   let meteorTimer=0,meteorCount=0;
   const meteorHistory: Array<{at:number;dx:number;dy:number;tail:number}> = [];
   let lastRenderAt = performance.now();
-  let width=0,height=0;
+  let width=host.clientWidth,height=host.clientHeight,viewportDirty=true;
+  let renderFrame=0;
+  // Scroll, the ambient ticker, asset arrivals and story tweens share one draw.
+  function requestRender(){
+    if(!renderFrame&&!destroyed&&!document.hidden)renderFrame=requestAnimationFrame(()=>{
+      renderFrame=0;render();
+    });
+  }
   root.dataset.ambient=String(motionEnabled); root.dataset.renderer='webgl';
   root.dataset.meteorCount = '0';
   const pointerStrength = (now: number) => motionEnabled
     ? clamp(1 - Math.max(0, now - lastPointer - 180) / 1650) : 0;
   const render=() => {
     if(destroyed) return;
-    width=host.clientWidth; height=host.clientHeight;
     if(!width || !height) return;
-    if(app.screen.width!==width || app.screen.height!==height) app.renderer.resize(width,height);
+    if(viewportDirty){
+      if(app.screen.width!==width || app.screen.height!==height)app.renderer.resize(width,height);
+      viewportDirty=false;
+    }
     const dive=smooth(depth),camera=cameraAt(progress,entryZoom*(1+dive*2.8));
     innerWorld.visible=depth>0;nearOrbit.visible=depth>0;
     const advance=smooth(departure);
@@ -433,7 +442,7 @@ export async function createScene(root: HTMLElement, signal: AbortSignal, quiet:
       halo.width=halo.height=26/group.scale.x*(1-growth)+node.radius*8*growth;
       halo.alpha=0.85*(1-growth)+0.24*growth;
       if(ring)ring.alpha=smooth((progress-0.12)/0.66);
-      button.hidden=depth>0.16;button.style.left=nodeX+'px';button.style.top=p.y+'px';
+      button.hidden=depth>0.16;button.style.left='0';button.style.top='0';button.style.translate=nodeX+'px '+p.y+'px';
       button.dataset.distant=String(progress<0.38);
       button.style.setProperty('--node-caption',String(smooth((progress-0.32)/0.55)));
       button.dataset.planetDiameter=diameter.toFixed(4);button.dataset.planetReveal=planet.alpha.toFixed(4);
@@ -455,7 +464,7 @@ export async function createScene(root: HTMLElement, signal: AbortSignal, quiet:
       }
       if(spot.id==='far-orbit'&&depth>0){x=orbitX;y=orbitY;}
       region.hidden=(depth>.16&&spot.id!=='far-orbit')||x<22||x>width-22||y<22||y>height-22;
-      region.style.left=x+'px';region.style.top=y+'px';
+      region.style.left='0';region.style.top='0';region.style.translate=x+'px '+y+'px';
       glow.position.set(x,y);glow.width=glow.height=('hero' in spot?32:50)+item.response*18;
       glow.alpha=item.response*('hero' in spot?0.42:0.16);
     }
@@ -510,13 +519,13 @@ export async function createScene(root: HTMLElement, signal: AbortSignal, quiet:
       (motionEnabled && innerSky !== null && innerFade < 1));
   const tick=() => {
     elapsed += Math.min(0.08, app.ticker.deltaMS / 1000);
-    render();
+    requestRender();
     if (!needsFrame()) app.stop();
   };
   app.ticker.add(tick);
   const syncTicker=() => {
     if(needsFrame()) app.start(); else app.stop();
-    render();
+    requestRender();
   };
   function scheduleMeteor(delay=1100) {
     clearTimeout(meteorTimer);
@@ -554,7 +563,9 @@ export async function createScene(root: HTMLElement, signal: AbortSignal, quiet:
   stageElement.addEventListener('pointerenter',onPointer,{passive:true,signal});
   stageElement.addEventListener('pointerleave',onLeave,{signal});
   document.addEventListener('visibilitychange',onVisibility,{signal});
-  const resize=new ResizeObserver(()=>render());resize.observe(host);
+  const resize=new ResizeObserver(([entry])=>{
+    width=entry.contentRect.width;height=entry.contentRect.height;viewportDirty=true;requestRender();
+  });resize.observe(host);
   const visibility=new IntersectionObserver(entries=>{
     inView=entries[0].isIntersecting;
     if(!inView)meteors.forEach(m=>m.startedAt=-Infinity);
@@ -568,15 +579,20 @@ export async function createScene(root: HTMLElement, signal: AbortSignal, quiet:
   const idle=window.requestIdleCallback?.(prepare,{timeout:1000});
   if(idle!==undefined)signal.addEventListener('abort',()=>window.cancelIdleCallback(idle),{once:true});
   return {
-    setProgress(value,inner=0,leaving=0){departure=leaving;progress=clamp(value);depth=clamp(inner);if(progress>.08)requestDetail();if(progress>.85)requestInner();render();},
-    setEntryZoom(value){entryZoom=value;render();},
+    setProgress(value,inner=0,leaving=0){
+      const p=clamp(value),d=clamp(inner);
+      if(progress===p&&depth===d&&departure===leaving)return;
+      departure=leaving;progress=p;depth=d;
+      if(progress>.08)requestDetail();if(progress>.85)requestInner();requestRender();
+    },
+    setEntryZoom(value){entryZoom=value;requestRender();},
     setAmbient(value){
       motionEnabled=value;ambient=value;
       if (!value) {meteors.forEach(m=>m.startedAt=-Infinity);lastPointer=-Infinity;stars.forEach(star=>star.response=0);}
       root.dataset.ambient=String(value);scheduleMeteor();syncTicker();
     },
-    setStory(value,nodeId){if(nodeId)selectedNode=nodeId;storyAmount=clamp(value);render();},
-    suspend(value){suspended=value;meteors.forEach(m=>m.startedAt=-Infinity);scheduleMeteor();if(value)app.stop();else syncTicker();},
-    destroy(){if(destroyed)return;destroyed=true;clearTimeout(meteorTimer);resize.disconnect();visibility.disconnect();app.stop();orbit?.dispose();app.destroy(true,{children:true,texture:true,textureSource:true});delete root.dataset.renderer;},
+    setStory(value,nodeId){if(nodeId)selectedNode=nodeId;storyAmount=clamp(value);requestRender();},
+    suspend(value){suspended=value;meteors.forEach(m=>m.startedAt=-Infinity);scheduleMeteor();if(value){app.stop();cancelAnimationFrame(renderFrame);renderFrame=0;}else syncTicker();},
+    destroy(){if(destroyed)return;destroyed=true;cancelAnimationFrame(renderFrame);clearTimeout(meteorTimer);resize.disconnect();visibility.disconnect();app.stop();orbit?.dispose();app.destroy(true,{children:true,texture:true,textureSource:true});delete root.dataset.renderer;},
   };
 }

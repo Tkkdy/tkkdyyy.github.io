@@ -30,14 +30,9 @@ import '../styles/about-universe.css';
     <script is:inline>
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
         if (location.hash === '#meadow') document.documentElement.classList.add('meadow-arrival');
-        else if (!location.hash && performance.getEntriesByType('navigation')[0]?.type !== 'back_forward') {
-          document.documentElement.classList.add('universe-boot');
-          setTimeout(() => document.documentElement.classList.remove('universe-boot'), 7000);
-        }
       }
     </script>
     <style is:inline>
-      html.universe-boot:not(:has([data-enhanced="true"])) .universe-curtain{display:none}
       @media(prefers-reduced-motion:no-preference){.meadow-arrival .universe-journey:not([data-renderer="static"]){height:890svh}}
     </style>
     <!--
@@ -108,6 +103,5 @@ import '../styles/about-universe.css';
       </section>
     </main>
     <Footer />
-    <div class="universe-curtain" data-universe-curtain aria-hidden="true"></div>
   </body>
 </html>

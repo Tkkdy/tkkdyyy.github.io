@@ -44,7 +44,12 @@ export function paintedEntry(root:HTMLElement){
     if(!orbit.hidden){place(orbit,x,y,diameter,diameter);orbit.style.opacity=String(smooth(depth/.2))}
     const m=project({x:w<600?.66:.62,y:w<600?-.68:-.49,z:2250},camera,w,h);
     const moonSize=Math.min(w<600?76:110,h*.13)*m.scale*2.25;place(moon,m.x,m.y,moonSize,moonSize);moon.style.opacity=String(1-smooth((p-.30)/.28));
-    nodes.forEach((button,i)=>{const n=project(celestialNodes[i].position,camera,w,h);button.style.left=n.x+'px';button.style.top=n.y+'px';button.hidden=depth>.16});
+    nodes.forEach((button,i)=>{
+      const n=project(celestialNodes[i].position,camera,w,h);
+      button.style.left=(w<600?Math.min(w-39,n.x):n.x)+'px';button.style.top=n.y+'px';button.hidden=depth>.16;
+      button.dataset.distant=String(p<.38);
+      button.style.setProperty('--node-caption',String(smooth((p-.32)/.55)));
+    });
   }
   function dispose(){
     delete art.dataset.posed;

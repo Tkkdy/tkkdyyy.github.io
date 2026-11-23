@@ -14,7 +14,7 @@ export function waitForGraphics(signal:AbortSignal,eligible=()=>true,initialDela
     let timer=0;
     const finish=()=>{
       clearTimeout(timer);
-      removeEventListener('scroll',check);removeEventListener('resize',check);
+      removeEventListener('scroll',check);removeEventListener('resize',check);removeEventListener('pageshow',check);
       document.removeEventListener('visibilitychange',check);signal.removeEventListener('abort',finish);
       resolve();
     };
@@ -24,7 +24,7 @@ export function waitForGraphics(signal:AbortSignal,eligible=()=>true,initialDela
       const remaining=Math.max(busyUntil,earliest)-performance.now();
       if(remaining>0)timer=window.setTimeout(check,remaining+1);else if(!document.hidden&&eligible())finish();
     }
-    addEventListener('scroll',check,{passive:true});addEventListener('resize',check);
+    addEventListener('scroll',check,{passive:true});addEventListener('resize',check);addEventListener('pageshow',check);
     document.addEventListener('visibilitychange',check);signal.addEventListener('abort',finish,{once:true});
     check();
   });

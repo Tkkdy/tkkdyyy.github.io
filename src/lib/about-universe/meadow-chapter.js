@@ -4,7 +4,7 @@ import {waitForGraphics} from './graphics-scheduler';
 (()=>{
  const root=document.querySelector('[data-meadow]'),slot=root.querySelector('.meadow-viewport'),status=root.querySelector('[role=status]');
  const flight=root.querySelector('[data-flight]'),retry=root.querySelector('[data-retry]');
- let frame=null,visible=false,near=false,failed=false,timeout=0,release=0,raf=0,close=false,yaw=0,progress=null;
+ let pageAway=false,frame=null,visible=false,near=false,failed=false,timeout=0,release=0,raf=0,close=false,yaw=0,progress=null;
  const journey=root.closest('[data-universe]'),oldStage=journey.querySelector('.universe-stage');
  const motion=matchMedia('(prefers-reduced-motion: reduce)');
  const clamp=n=>Math.max(0,Math.min(1,n)),ease=n=>{const t=clamp(n);return t*t*(3-2*t)};
@@ -106,7 +106,7 @@ import {waitForGraphics} from './graphics-scheduler';
   // A failed navigation can leave a browser-owned error document in this slot.
   try{return frame?.contentWindow?.__integration}catch{return undefined}
  }
- function active(){return visible&&!document.hidden}
+ function active(){return !pageAway&&visible&&!document.hidden}
  function drop(remember=true){
   const old=frame;if(!old)return;
   clearTimeout(timeout);clearTimeout(release);cancelAnimationFrame(raf);
@@ -147,6 +147,7 @@ import {waitForGraphics} from './graphics-scheduler';
  }
  function sync(){
   clearTimeout(release);
+  if(pageAway)return;
   debug()?.setChapterVisible?.(active());
   if(!active()){cancelAnimationFrame(raf);raf=0}
   if(near&&!document.hidden){
@@ -171,8 +172,13 @@ import {waitForGraphics} from './graphics-scheduler';
  window.addEventListener('studio-ready',ready);
  window.addEventListener('meadow-failed',()=>{if(frame)fail()});
  document.addEventListener('visibilitychange',sync);
- window.addEventListener('pagehide',()=>{waiting?.abort();waiting=null;drop()});
- window.addEventListener('pageshow',e=>{if(e.persisted)sync()});
+ window.addEventListener('pagehide',()=>{
+  pageAway=true;waiting?.abort();waiting=null;
+  clearTimeout(release);cancelAnimationFrame(raf);cancelAnimationFrame(pending);pending=0;
+  debug()?.setChapterVisible?.(false);
+ });
+ window.addEventListener('pageshow',e=>{pageAway=false;if(e.persisted){schedule();sync()}});
+
  retry.onclick=()=>{drop(false);failed=false;start()};
  flight.onclick=()=>{
   const d=debug();if(!d?.ready)return;cancelAnimationFrame(raf);
