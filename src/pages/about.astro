@@ -28,9 +28,29 @@ import '../styles/about-universe.css';
     <link rel="preload" as="image" href={withBase(backgrounds.hero.full)} media="(min-width: 901px)" />
     <link rel="preload" as="image" href={withBase(backgrounds.hero.preview)} media="(max-width: 900px)" />
     <script is:inline>
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      (() => {
+        const motion = matchMedia('(prefers-reduced-motion: reduce)');
+        if (motion.matches) return;
         if (location.hash === '#meadow') document.documentElement.classList.add('meadow-arrival');
-      }
+        if (location.hash || performance.getEntriesByType('navigation')[0]?.type === 'back_forward') return;
+        // Start with the document, never with the late-arriving WebGL renderer.
+        document.documentElement.classList.add('universe-boot');
+        const lifetime = new AbortController();
+        const finish = () => {
+          document.documentElement.classList.remove('universe-boot');
+          clearTimeout(timeout);
+          lifetime.abort();
+        };
+        const timeout = setTimeout(finish, 3000);
+        document.addEventListener('animationend', event => {
+          if (event.animationName === 'universe-unveil') finish();
+        }, { signal: lifetime.signal });
+        addEventListener('scroll', () => { if (scrollY > 20) finish(); }, { passive: true, signal: lifetime.signal });
+        document.addEventListener('pointerdown', finish, { signal: lifetime.signal });
+        document.addEventListener('keydown', finish, { signal: lifetime.signal });
+        addEventListener('pageshow', event => { if (event.persisted) finish(); }, { signal: lifetime.signal });
+        motion.addEventListener('change', () => { if (motion.matches) finish(); }, { signal: lifetime.signal });
+      })();
     </script>
     <style is:inline>
       @media(prefers-reduced-motion:no-preference){.meadow-arrival .universe-journey:not([data-renderer="static"]){height:890svh}}
@@ -47,6 +67,7 @@ import '../styles/about-universe.css';
     />
   </head>
   <body class="about-universe-page dark-section">
+    <div class="universe-curtain" data-universe-curtain aria-hidden="true"></div>
     <Header />
     <main data-pagefind-body>
       <meta name="pagefind-meta" data-pagefind-meta="title: 关于" />

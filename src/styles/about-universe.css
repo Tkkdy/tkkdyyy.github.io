@@ -246,3 +246,14 @@ body:has(.universe-dialog[open]) :is(.universe-deeper-cue,.universe-inner-chapte
   top:50%;width:2px;height:2px;transform:translate(-50%,-50%);
   border-radius:50%;background:#ffe7bf;box-shadow:0 0 7px 2px #ead6b74d
 }
+
+/* Reveal the already-rendered painting once; GPU readiness cannot restart it. */
+@property --unveil{syntax:'<percentage>';inherits:false;initial-value:-24%}
+.universe-curtain{
+  display:none;position:fixed;inset:0;z-index:2147483646;pointer-events:none;background:#000;
+  mask-image:linear-gradient(135deg,transparent calc(var(--unveil) - 13%),#000 calc(var(--unveil) + 13%));
+}
+@keyframes universe-unveil{from{--unveil:-24%}to{--unveil:154%}}
+@media(prefers-reduced-motion:no-preference){
+  .universe-boot .universe-curtain{display:block;animation:universe-unveil 2.65s ease-in-out both}
+}

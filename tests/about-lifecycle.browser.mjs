@@ -54,16 +54,30 @@ try{
   await page.goto(base+'about/',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.querySelector('.universe-sky')?.complete);
   await page.waitForTimeout(900);
-  assert.equal(await page.locator('[data-universe-curtain]').count(),0);
+  assert.equal(await page.locator('[data-universe-curtain]').count(),1);
   const initial=await page.evaluate(()=>({
    title:getComputedStyle(document.querySelector('h1')).opacity,
    art:getComputedStyle(document.querySelector('.universe-art')).visibility,
    canvas:getComputedStyle(document.querySelector('.universe-canvas')).visibility,
    boot:document.documentElement.classList.contains('universe-boot')
   }));
-  assert.deepEqual(initial,{title:'1',art:'visible',canvas:'hidden',boot:false});
+  assert.deepEqual(initial,{title:'1',art:'visible',canvas:'hidden',boot:true});
+  const reveal=await page.locator('[data-universe-curtain]').evaluate(el=>({
+    animation:getComputedStyle(el).animationName,progress:parseFloat(getComputedStyle(el).getPropertyValue('--unveil'))
+  }));
+  assert.equal(reveal.animation,'universe-unveil');
+  assert(reveal.progress>-24&&reveal.progress<154);
+  await shot(page,'opening-reveal');
+  await page.waitForFunction(()=>!document.documentElement.classList.contains('universe-boot'));
+  assert.equal(await page.locator('[data-universe-curtain]').evaluate(el=>getComputedStyle(el).display),'none');
+  assert.equal(await page.locator('[data-universe]').getAttribute('data-enhanced'),null);
   await shot(page,'desktop-loading');release();await ready(page);await shot(page,'desktop-ready');
-  record({name:'cold load keeps artwork and text visible until the GPU is ready',initial});
+  assert.equal(await page.locator('[data-universe-curtain]').evaluate(el=>getComputedStyle(el).display),'none');
+  record({name:'opening reveal runs before GPU startup and does not replay when it is ready',initial,reveal});
+  await page.reload({waitUntil:'domcontentloaded'});
+  assert(await page.locator('html').evaluate(el=>el.classList.contains('universe-boot')));
+  await page.waitForFunction(()=>!document.documentElement.classList.contains('universe-boot'));
+  await ready(page);
   const cdp=await ctx.newCDPSession(page);await cdp.send('Performance.enable');
   const beforeMetrics=await cdp.send('Performance.getMetrics');
   const performanceResult=await page.evaluate(async()=>{
