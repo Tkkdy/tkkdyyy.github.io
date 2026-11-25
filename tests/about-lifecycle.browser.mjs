@@ -225,4 +225,3 @@ try{
  await writeFile(resolve(output,'results.json'),JSON.stringify(report,null,2));
  await browser.close();await new Promise(r=>server.close(r));
 }
-
