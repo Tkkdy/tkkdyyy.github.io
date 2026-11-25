@@ -6,7 +6,9 @@ export function mountSkyWhispers(root:HTMLElement,signal:AbortSignal) {
   const regions=[...root.querySelectorAll<HTMLElement>('[data-whisper]')];
   let active:string|null=null,pinned:string|null=null,mouseSpot:string|null=null;
   function place(region:HTMLElement) {
-    const x=Number.parseFloat(region.style.left)||0,y=Number.parseFloat(region.style.top)||0;
+    const translation=region.style.translate.split(' ');
+    const x=Number.parseFloat(translation[0]||region.style.left)||0;
+    const y=Number.parseFloat(translation[1]||region.style.top)||0;
     region.dataset.side=x+280>stage.clientWidth?'left':'right';
     region.dataset.vertical=y>innerHeight-130?'above':y<110?'below':'middle';
     const stageBox=stage.getBoundingClientRect(),noteWidth=Math.min(230,stage.clientWidth-48);
@@ -64,7 +66,7 @@ export function mountSkyWhispers(root:HTMLElement,signal:AbortSignal) {
       const body=distantBodies.find(spot=>spot.id===region.dataset.whisper);
       const x=star?width/2+(star.hero.x-.5)*backgrounds.output.width*cover:width*(.5+body!.position.x*1000/body!.position.z);
       const y=star?height/2+(star.hero.y-.5)*backgrounds.output.height*cover:height*(.5+body!.position.y*1000/body!.position.z);
-      region.style.left=x+'px';region.style.top=y+'px';
+      region.style.translate='';region.style.left=x+'px';region.style.top=y+'px';
       region.hidden=x<22||x>width-22||y<22||y>height-22;
       place(region);
     }

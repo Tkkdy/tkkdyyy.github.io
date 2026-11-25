@@ -5,7 +5,7 @@ import { celestialNodes } from './entities';
 import { mountNebulaNote } from './nebula-note';
 import { mountSkyWhispers } from './sky-whispers';
 import type { UniverseScene } from './scene';
-/** Full-document routing: dispose on pagehide; rebuild cleanly on BFCache pageshow. */
+/** Preserve the rendered document on departure, including the BFCache snapshot. */
 export function mountAboutUniverse() {
   const root=document.querySelector<HTMLElement>('[data-universe]');
   if(!root)return;
@@ -32,7 +32,9 @@ export function mountAboutUniverse() {
   mountSkyWhispers(root,navigationLifetime.signal);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   let controller:AbortController|null=null, scene:UniverseScene|null=null;
-  let disposeJourney=()=>{},disposeEntry=()=>{},disposeTween=()=>{},disposePainting=()=>{};
+  let disposeJourney=()=>{},disposeTween=()=>{},disposePainting=()=>{};
+  let pageAway=false,journeyCovered=false;
+  const syncScene=()=>scene?.suspend(pageAway||journeyCovered||Boolean(activeDialog));
   let approach=0,approachGeneration=0,approachNode:string|undefined;
   let activeDialog:HTMLDialogElement|null=null,returnTarget:HTMLElement|null=null,savedScroll=0;
   const dialogs=[...document.querySelectorAll<HTMLDialogElement>('.universe-dialog')];
@@ -44,7 +46,7 @@ export function mountAboutUniverse() {
     syncHeader();
     returnTarget?.focus({preventScroll:true});returnTarget=null;
     void storyTo(0);
-    scene?.suspend(false);
+    syncScene();
   }
   const close=()=>{
     const dialog=activeDialog;
@@ -61,7 +63,7 @@ export function mountAboutUniverse() {
     disposeTween();approach=0;approachNode=node.id;scene?.setStory(0,node.id);
     dialog.dataset.approaching=String(Boolean(scene)&&!reduced.matches);
     dialog.showModal();
-    scene?.suspend(true);
+    syncScene();
     void storyTo(1,node.id);
   };
   async function storyTo(value:number,nodeId=approachNode) {
@@ -101,17 +103,17 @@ export function mountAboutUniverse() {
     approachGeneration++;approach=0;
     dialogs.forEach(dialog=>dialog.dataset.approaching='false');
     root!.removeAttribute('data-planet-zoom');
-    disposePainting();disposeEntry();disposeJourney();disposeTween();scene?.destroy();scene=null;
+    disposePainting();disposeJourney();disposeTween();scene?.destroy();scene=null;
     root!.removeAttribute('data-enhanced');root!.removeAttribute('data-staged');motion.hidden=true;
-    root!.querySelectorAll<HTMLButtonElement>('[data-node]').forEach(button=>{button.hidden=false;button.style.removeProperty('left');button.style.removeProperty('top');button.style.removeProperty('--node-caption');delete button.dataset.distant;});
+    root!.querySelectorAll<HTMLButtonElement>('[data-node]').forEach(button=>{button.hidden=false;button.style.removeProperty('left');button.style.removeProperty('top');button.style.removeProperty('translate');button.style.removeProperty('--node-caption');delete button.dataset.distant;});
   }
-  async function start(restored=false) {
+  async function start() {
     if(controller||scene)dispose();
     if(reduced.matches){
       root!.removeAttribute('data-staged');
-      document.documentElement.classList.remove('universe-boot');root!.dataset.entry='complete';root!.dataset.renderer='static';return;
+      root!.dataset.entry='complete';root!.dataset.renderer='static';return;
     }
-    controller=new AbortController();const current=controller;
+    journeyCovered=false;controller=new AbortController();const current=controller;
     try{
       root!.setAttribute('data-staged','');
       if(current.signal.aborted)return;
@@ -119,45 +121,51 @@ export function mountAboutUniverse() {
       let pose:[number,number,number]=[0,0,0],covered=false;
       disposeJourney=createJourney(root!,{
         setProgress(p,depth=0,exit=0){pose=[p,depth,exit];if(scene)scene.setProgress(...pose);else preview.update(...pose)},
-        suspend(value){covered=value;scene?.suspend(value)}
+        suspend(value){covered=value;journeyCovered=value;syncScene()}
       });
-      const visible=()=>!covered&&root!.getBoundingClientRect().bottom>0;
+      const visible=()=>!pageAway&&!covered&&root!.getBoundingClientRect().bottom>0;
       const quiet=()=>waitForGraphics(current.signal,visible);
       // A visitor can pass the entire star field before its first GPU frame.
       await new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve())));
       await waitForGraphics(current.signal,visible,650);
       if(current.signal.aborted)return;
-      const [{createScene},{enterUniverse}]=await Promise.all([import('./scene'),import('./entry-timeline')]);
+      const {createScene}=await import('./scene');
       await quiet();if(current.signal.aborted)return;
       const created=await createScene(root!,current.signal,quiet);
       if(current.signal.aborted){created.destroy();return;}
-      scene=created;scene.setProgress(...pose);scene.suspend(covered);
-      root!.dataset.enhanced='true';root!.removeAttribute('data-staged');
-      disposeEntry=enterUniverse(root!,scene,restored||scrollY>30);
+      scene=created;scene.setProgress(...pose);
       if(activeDialog){
         approach=1;approachNode=activeDialog.id==='universe-reading'?'little-note':'quiet-orbit';
-        scene.suspend(true);scene.setStory(1,approachNode);
+        scene.setStory(1,approachNode);
       }
+      // Also draw an already-open story before suspension: cancelling this first
+      // frame would expose a blank canvas when its slow-loading module arrives.
+      await new Promise<void>(resolve=>requestAnimationFrame(()=>resolve()));
+      if(current.signal.aborted)return;
+      root!.dataset.enhanced='true';root!.removeAttribute('data-staged');
+      root!.dataset.entry='complete';syncScene();
       motion.hidden=false;
       const paused=root!.dataset.ambient!=='true';
       motion.setAttribute('aria-pressed',String(paused));motion.textContent=paused?'让星空流动':'暂停星空';
     }catch(error){
       if(current.signal.aborted)return;
       dispose();root!.dataset.renderer='static';root!.dataset.entry='complete';
-      document.documentElement.classList.remove('universe-boot');
       console.warn('[about-universe] Static artwork fallback.',error);
     }
   }
-  window.addEventListener('pagehide',()=>{close();dispose();});
-  window.addEventListener('pageshow',event=>{syncHeader();if(event.persisted)void start(true);});
-  reduced.addEventListener('change',()=>void start(true));
+  window.addEventListener('pagehide',()=>{pageAway=true;syncScene();});
+  window.addEventListener('pageshow',event=>{
+    pageAway=false;syncHeader();syncScene();
+    if(event.persisted&&!controller&&!scene)void start();
+  });
+  reduced.addEventListener('change',()=>void start());
   // A direct landing on the meadow can defer the earlier Pixi chapter until the reader returns.
   let entryObserver:IntersectionObserver|null=null;
   if(document.documentElement.classList.contains('meadow-arrival')&&!reduced.matches){
     document.querySelector('#meadow')?.scrollIntoView({behavior:'instant'});
     entryObserver=new IntersectionObserver(([entry])=>{
       if(!entry.isIntersecting)return;
-      entryObserver?.disconnect();entryObserver=null;void start(true);
+      entryObserver?.disconnect();entryObserver=null;void start();
     },{rootMargin:'180px 0px'});
     entryObserver.observe(root.querySelector('[data-earlier-worlds]')!);
   }else void start();

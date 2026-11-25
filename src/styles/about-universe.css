@@ -12,6 +12,8 @@ body.about-universe-page{background:#070a1b;color:#f1e7d7}
 .universe-sky{width:100%;height:100%;object-fit:cover}
 .universe-static-moon{position:absolute;left:73%;top:21%;width:100px;transform:rotate(-10deg)}
 .universe-static-constellation{position:absolute;left:15%;top:21%;width:220px;overflow:visible}
+.universe-canvas{visibility:hidden}
+[data-enhanced="true"] .universe-canvas{visibility:visible}
 .universe-canvas canvas{display:block;width:100%;height:100%}
 .universe-vignette{background:radial-gradient(ellipse at 50% 46%,transparent 15%,#07081733 100%),linear-gradient(0deg,#080c2045,transparent 35%);z-index:1}
 .universe-copy{position:absolute;inset:0;z-index:2;pointer-events:none;text-align:center;color:#f4e6cc}
@@ -80,8 +82,6 @@ body:has([data-renderer="webgl"]) .universe-story::backdrop{background:transpare
 .about-universe-page .site-footer :is(.footer-wordmark,.footer-connect a){color:#c8bec9;border-color:#d8cfbb26}
 .about-universe-page .site-footer .footer-wordmark img{filter:invert(1)}
 .about-universe-page :is(.universe-node,.universe-scroll,.universe-utilities a,.universe-utilities button,.universe-dialog button):focus-visible{outline:1px solid #e5c79e;outline-offset:5px}
-.universe-curtain{display:none;position:fixed;inset:0;background:#000;z-index:2147483646;pointer-events:none;--unveil:-24%;mask-image:linear-gradient(135deg,transparent calc(var(--unveil) - 13%),#000 calc(var(--unveil) + 13%))}
-.universe-boot .universe-curtain{display:block}
 @media(max-width:600px){
   .universe-title{top:calc(100svh - 260px);font-size:60px}
   .universe-subtitle{top:calc(100svh - 172px);font-size:24px}
@@ -104,7 +104,6 @@ body:has([data-renderer="webgl"]) .universe-story::backdrop{background:transpare
 }
 @media(prefers-reduced-motion:reduce){
   .about-universe-page .site-header,.about-universe-page .site-header[data-universe-hidden]{transition:none;translate:none}
-  .universe-curtain{display:none!important}
   .universe-subtitle span{will-change:auto}
   .about-universe-page .about-music .music-card,.about-universe-page .about-music [data-music-ready] :is(h2,.music-play,.music-controls){animation:none!important}
 }
@@ -241,3 +240,20 @@ body:has(.universe-dialog[open]) :is(.universe-deeper-cue,.universe-inner-chapte
 [data-entry-orbit]{background:var(--orbit-image) center/100% 100% no-repeat}
 [data-entry-orbit]::before{content:'';position:absolute;inset:30% -35%;border:1px solid #d2bfab66;border-radius:50%;transform:rotate(-17deg)}
 [data-staged] .universe-canvas{visibility:hidden}
+
+/* The loading painting uses the same distant stars as the first live frame. */
+[data-staged] .universe-node[data-distant=true]::before{
+  top:50%;width:2px;height:2px;transform:translate(-50%,-50%);
+  border-radius:50%;background:#ffe7bf;box-shadow:0 0 7px 2px #ead6b74d
+}
+
+/* Reveal the already-rendered painting once; GPU readiness cannot restart it. */
+@property --unveil{syntax:'<percentage>';inherits:false;initial-value:-24%}
+.universe-curtain{
+  display:none;position:fixed;inset:0;z-index:2147483646;pointer-events:none;background:#000;
+  mask-image:linear-gradient(135deg,transparent calc(var(--unveil) - 13%),#000 calc(var(--unveil) + 13%));
+}
+@keyframes universe-unveil{from{--unveil:-24%}to{--unveil:154%}}
+@media(prefers-reduced-motion:no-preference){
+  .universe-boot .universe-curtain{display:block;animation:universe-unveil 2.65s ease-in-out both}
+}
